@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   944025,
+   390362,
+   1156748,
+   848625,
+   417382
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 57459,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型XSS，注入点在图片caption字段，经典payload，无绕过无链，成熟套路。",
+   "attack_chain": "单点：caption字段→存储→触发。",
+   "bypass_technique": "无实质绕过，直接注入HTML属性。",
+   "defensive_insight": "对用户输入进行HTML实体编码，使用CSP。"
+  },
+  {
+   "id": 944025,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用macOS文件隔离机制（MOTW类似物）的缺失，以及.fileloc/.url快捷方式文件处理危险行为，跨多个应用和浏览器，可组合提升严重性。",
+   "attack_chain": "下载文件→未标记隔离→绕过安全警告→执行任意文件或利用快捷方式触发。",
+   "bypass_technique": "利用文件隔离缺失和快捷方式文件处理，绕过下载安全机制。",
+   "defensive_insight": "应用应主动设置隔离属性，系统应限制快捷方式文件执行任意路径。"
+  },
+  {
+   "id": 848625,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 信息泄露",
+   "reasoning": "是。无权限员工通过构造URL直接访问应用数据，绕过权限检查，暴露应用安装和产品配置信息。",
+   "attack_chain": "获取产品ID→构造URL→访问应用数据→信息泄露。",
+   "bypass_technique": "直接构造URL绕过前端权限控制。",
+   "defensive_insight": "后端必须验证所有API请求的权限，不能依赖前端隐藏。"
+  },
+  {
+   "id": 390362,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用file://和brave://同源特性，通过HTML导入读取本地文件，绕过修复。",
+   "attack_chain": "file://页面→导入brave://资源→读取本地文件。",
+   "bypass_technique": "利用同源策略的宽松定义，通过HTML导入访问特权资源。",
+   "defensive_insight": "严格区分本地源和特权源，限制HTML导入的跨源访问。"
+  },
+  {
+   "id": 417382,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 会话管理",
+   "reasoning": "是。会话撤销功能未覆盖GraphQL端点，导致已撤销会话仍可查询敏感信息。",
+   "attack_chain": "捕获GraphQL请求→撤销会话→重放请求→信息泄露。",
+   "bypass_technique": "利用会话撤销逻辑的遗漏，重放已捕获的请求。",
+   "defensive_insight": "确保所有端点（包括GraphQL）都检查会话状态，统一会话管理。"
+  },
+  {
+   "id": 170156,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。安装向导中的反射型XSS，经典错误消息回显，无绕过。",
+   "attack_chain": "单点：dbName参数→错误回显→XSS。",
+   "bypass_technique": "无实质绕过，直接注入。",
+   "defensive_insight": "对错误消息中的用户输入进行编码。"
+  },
+  {
+   "id": 295680,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "其他",
+   "reasoning": "部分。mruby代码生成器中的越界读，导致段错误，属于内存破坏，但无绕过，PoC完整。",
+   "attack_chain": "单点：恶意脚本→越界读→崩溃。",
+   "bypass_technique": "无绕过，直接利用解析器缺陷。",
+   "defensive_insight": "加强代码生成器的边界检查，进行模糊测试。"
+  },
+  {
+   "id": 2777,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，参数未转义，经典payload，无绕过。",
+   "attack_chain": "单点：u参数→反射→XSS。",
+   "bypass_technique": "无实质绕过。",
+   "defensive_insight": "对输出进行编码。"
+  },
+  {
+   "id": 1156748,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XXE / 跨组件攻击链",
+   "reasoning": "是。通过恶意sitemap触发XXE，利用外部DTD读取文件，跨服务器和解析器。",
+   "attack_chain": "恶意sitemap→解析器→XXE→数据外带。",
+   "bypass_technique": "利用外部实体和参数实体绕过限制。",
+   "defensive_insight": "禁用外部实体，使用安全的XML解析器。"
+  },
+  {
+   "id": 1927360,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "认证绕过 / 会话管理",
+   "reasoning": "部分。2FA激活后旧会话未失效，常见会话管理缺陷，但影响明确。",
+   "attack_chain": "单点：激活2FA→旧会话仍有效。",
+   "bypass_technique": "无绕过，利用会话未失效。",
+   "defensive_insight": "激活2FA后应使所有旧会话失效。"
+  },
+  {
+   "id": 265232,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "其他",
+   "reasoning": "部分。通过自动点击绕过安全软件弹窗，思路巧妙，但依赖窗口检测。",
+   "attack_chain": "检测弹窗→自动点击允许→绕过。",
+   "bypass_technique": "利用UI自动化绕过安全提示。",
+   "defensive_insight": "安全软件应防止自动化点击，增加交互复杂度。"
+  },
+  {
+   "id": 330135,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。S3桶ACL配置错误，公开读权限，常见配置问题。",
+   "attack_chain": "单点：S3桶→ACL泄露。",
+   "bypass_technique": "无绕过，直接利用配置错误。",
+   "defensive_insight": "定期审计S3权限，遵循最小权限原则。"
+  },
+  {
+   "id": 242171,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。Unicode字符导致服务器错误，属于输入验证缺陷，无绕过。",
+   "attack_chain": "单点：特殊Unicode→服务器错误。",
+   "bypass_technique": "无实质绕过。",
+   "defensive_insight": "加强输入验证，处理Unicode规范化。"
+  },
+  {
+   "id": 145517,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。检测到过时jQuery版本，无实际利用，信息泄露价值低。",
+   "attack_chain": "单点：查看源码→版本泄露。",
+   "bypass_technique": "无。",
+   "defensive_insight": "更新依赖库，隐藏版本信息。"
+  },
+  {
+   "id": 1245094,
+   "value_score": 0,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告内容为占位符，无具体步骤，无法判断真实性。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "无。"
+  },
+  {
+   "id": 789652,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，参数直接回显，经典payload，无绕过。",
+   "attack_chain": "单点：pt参数→反射→XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "输出编码。"
+  },
+  {
+   "id": 16696,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。2FA设置变更无延迟，属于设计缺陷，但无具体技术细节。",
+   "attack_chain": "单点：2FA变更→资金转移。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对敏感操作增加延迟和通知。"
+  },
+  {
+   "id": 17540,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。paste ID插入script标签未转义，绕过XSS过滤器，但属于常见注入点。",
+   "attack_chain": "单点：paste ID→script标签→XSS。",
+   "bypass_technique": "利用script标签上下文绕过过滤。",
+   "defensive_insight": "对插入script标签的内容进行严格编码。"
+  },
+  {
+   "id": 308156,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。密码修改无通知，属于功能缺失，非漏洞。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "增加安全通知。"
+  },
+  {
+   "id": 1241483,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "会话管理",
+   "reasoning": "否。报告为占位符，步骤不完整，无法判断真实性。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "无。"
+  }
+ ]
+}

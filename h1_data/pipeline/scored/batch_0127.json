@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 13,
+  "dropped": 7,
+  "avg_score": 5.6,
+  "top_n": [
+   469372,
+   1773895,
+   1408692,
+   227486,
+   499348
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1773895,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 竞争条件",
+   "reasoning": "是。Airflow 的敏感值掩码机制在任务因 depends_on_past 被跳过时失效，导致密码明文泄露。这利用了调度状态与渲染流程之间的竞态，属于框架行为利用，非普通配置错误。",
+   "attack_chain": "构造依赖链→触发任务失败→再次触发使后续任务跳过→查看渲染模板获取明文密码。",
+   "bypass_technique": "利用 depends_on_past 导致任务跳过，但渲染模板仍生成，且掩码逻辑未覆盖此状态。",
+   "defensive_insight": "确保敏感值在任何渲染路径（包括跳过任务）都进行掩码；对渲染模板的访问进行权限校验。"
+  },
+  {
+   "id": 400,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "部分。GIF 解压炸弹是已知攻击手法，但此处利用 40k 帧导致资源耗尽，属于经典 DoS 变体，思路不新颖，且缺少详细复现步骤。",
+   "attack_chain": "上传恶意 GIF→服务端解压处理→资源耗尽超时。",
+   "bypass_technique": "无实质绕过，直接利用未限制帧数的 GIF 格式。",
+   "defensive_insight": "限制 GIF 帧数、解压后尺寸，并设置处理超时。"
+  },
+  {
+   "id": 357213,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。公开 S3 桶导致配置文件泄露，属于常见配置错误，无绕过或攻击链，信息量虽完整但价值低。",
+   "attack_chain": "直接访问公开 S3 链接获取配置。",
+   "bypass_technique": "无。",
+   "defensive_insight": "S3 桶应设置私有访问策略，并定期审计。"
+  },
+  {
+   "id": 1057269,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。公开文件泄露 PII，属于常见信息泄露，无技术难度，无绕过，攻击链简单。",
+   "attack_chain": "直接访问公开 URL 下载文件。",
+   "bypass_technique": "无。",
+   "defensive_insight": "敏感文件应置于认证之后，并实施访问控制。"
+  },
+  {
+   "id": 499348,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 授权绕过",
+   "reasoning": "是。导出的 Activity 未校验 intent URI，导致可加载 file:// 和 javascript://，实现本地文件窃取和 JS 注入。这利用了 Android 组件间通信的信任边界，可跨应用攻击。",
+   "attack_chain": "恶意应用构造 intent→启动 Twitter Lite Activity→加载 file:// 或 javascript://→窃取文件或执行 JS。",
+   "bypass_technique": "利用 exported Activity 未过滤 URI scheme，直接传递危险 URI。",
+   "defensive_insight": "对 exported 组件严格校验 intent 数据，限制允许的 scheme 和 host。"
+  },
+  {
+   "id": 1408692,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 授权绕过",
+   "reasoning": "是。Nextcloud 修复了 /data/data 路径检查，但未考虑 /data/user/0 符号链接，导致绕过。这利用了 Android 文件系统路径的等价性，属于框架行为利用，且可跨应用泄露任意文件。",
+   "attack_chain": "恶意应用返回 file:///data/user/0/... URI→Nextcloud 上传功能未正确校验→敏感文件上传至共享目录。",
+   "bypass_technique": "使用 /data/user/0/ 替代 /data/data/ 绕过路径前缀检查。",
+   "defensive_insight": "应使用 canonical path 进行校验，并限制仅允许应用私有目录内的文件。"
+  },
+  {
+   "id": 1244722,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS，参数未过滤，直接注入 HTML，无绕过，无攻击链，成熟套路。",
+   "attack_chain": "构造恶意 URL→服务端反射→浏览器执行。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对输出进行编码，使用 CSP。"
+  },
+  {
+   "id": 527042,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用",
+   "reasoning": "部分。HTTP/2 请求触发 use-after-free，属于协议实现缺陷，但 PoC 依赖 ASAN 环境，实际利用难度高，且为已知 CVE。",
+   "attack_chain": "构造恶意 HTTP/2 请求→触发内存释放后使用→可能导致崩溃或信息泄露。",
+   "bypass_technique": "无绕过，直接利用协议实现漏洞。",
+   "defensive_insight": "升级 Apache 至修复版本，加强内存管理。"
+  },
+  {
+   "id": 358001,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型 XSS，通过 profile name 注入 HTML 标签，无过滤，无绕过，常见套路。",
+   "attack_chain": "修改 profile name 为恶意标签→其他用户访问 snippets 页面时执行。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对用户输入进行 HTML 编码，实施 CSP。"
+  },
+  {
+   "id": 43065,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / IDOR",
+   "reasoning": "是。通过修改 DELETE 请求中的 account_id 和 app_id，实现跨应用删除成员，属于 IDOR 导致的越权操作。攻击链清晰，可导致 DoS 和权限破坏。",
+   "attack_chain": "拦截删除请求→修改 account_id 和 app_id→删除其他应用成员→造成 DoS。",
+   "bypass_technique": "直接篡改请求参数，未校验对象所有权。",
+   "defensive_insight": "服务端应校验当前用户对目标资源的权限，使用不可预测的 ID。"
+  },
+  {
+   "id": 1490470,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "认证绕过",
+   "reasoning": "部分。通过篡改响应中的 status 字段实现认证绕过，属于客户端信任问题，但需要拦截响应，实际攻击场景受限。",
+   "attack_chain": "登录请求→拦截响应→修改 status 为 true→获得管理员权限。",
+   "bypass_technique": "修改响应体中的布尔值，绕过服务端验证。",
+   "defensive_insight": "认证状态应由服务端会话管理，不应依赖客户端响应。"
+  },
+  {
+   "id": 1071918,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 跨组件攻击链",
+   "reasoning": "部分。共享访问的 Moderator 角色通过特定 URL 获得支持门户的完全访问权限，属于会话管理缺陷，跨组件（主站与支持系统）权限未隔离。",
+   "attack_chain": "接受共享邀请→访问特定 URL→获得父用户支持工单权限。",
+   "bypass_technique": "利用共享会话在子域间未隔离，直接访问支持系统。",
+   "defensive_insight": "共享访问应限制在特定功能，子域间会话应隔离。"
+  },
+  {
+   "id": 227486,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "是。通过 WAF 绕过和 DOM 注入，利用现有脚本触发 onclick，实现 XSS。攻击链完整，绕过技巧精妙，可窃取信用卡信息。",
+   "attack_chain": "构造恶意 URL→绕过 WAF 注入属性→利用现有脚本触发 onclick→执行恶意 JS→钓鱼。",
+   "bypass_technique": "使用 %u0022 绕过 WAF，注入 onclick 属性，利用现有事件绑定。",
+   "defensive_insight": "正确编码输出，不依赖 WAF，增加 CSRF 保护。"
+  },
+  {
+   "id": 1317031,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。Akamai ARL 参数反射 XSS，已知漏洞，无新意，无绕过。",
+   "attack_chain": "构造恶意 URL→服务端反射→浏览器执行。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对 ARL 参数进行编码，升级 Akamai 配置。"
+  },
+  {
+   "id": 158021,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。错误信息泄露服务器路径，属于常见信息泄露，无技术含量。",
+   "attack_chain": "上传 SVG 文件→触发错误→泄露路径。",
+   "bypass_technique": "无。",
+   "defensive_insight": "隐藏详细错误信息，使用通用错误提示。"
+  },
+  {
+   "id": 469372,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。卡巴斯基警告页面的链接可预测，利用证书重绑定技术获取链接，进而覆盖证书警告、禁用 Safe Money 等。这利用了安全软件与浏览器的交互机制，攻击链完整，影响广泛。",
+   "attack_chain": "MitM 攻击→加载恶意页面→获取可预测链接→自动覆盖警告或禁用保护。",
+   "bypass_technique": "利用可预测的 GUID 和递增 link_id，结合证书重绑定获取有效链接。",
+   "defensive_insight": "警告页面应使用不可预测的签名链接，并隔离到独立域。"
+  },
+  {
+   "id": 8459,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。点击劫持，缺少 X-Frame-Options，常见配置错误，无技术难度。",
+   "attack_chain": "构造恶意页面 iframe 嵌入登录面板→诱导点击。",
+   "bypass_technique": "无。",
+   "defensive_insight": "设置 X-Frame-Options 或 CSP frame-ancestors。"
+  },
+  {
+   "id": 268245,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "开放重定向",
+   "reasoning": "否。开放重定向，参数未过滤，常见漏洞，无绕过。",
+   "attack_chain": "构造恶意 URL→点击刷新→重定向到外部。",
+   "bypass_technique": "无。",
+   "defensive_insight": "校验重定向目标，仅允许白名单域名。"
+  },
+  {
+   "id": 512076,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "反序列化",
+   "reasoning": "部分。XML-RPC 参数未过滤导致反序列化，属于已知漏洞类型，但可能被利用进行 RCE，影响较大。",
+   "attack_chain": "构造恶意序列化 payload→发送到 XML-RPC→触发反序列化→可能 RCE。",
+   "bypass_technique": "无绕过，直接利用未过滤的 unserialize。",
+   "defensive_insight": "禁用危险函数，对输入进行严格校验。"
+  },
+  {
+   "id": 406704,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。路径参数未过滤导致反射 XSS，常见套路，无绕过。",
+   "attack_chain": "构造恶意 URL→服务端反射→浏览器执行。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对路径参数进行编码，使用 CSP。"
+  }
+ ]
+}

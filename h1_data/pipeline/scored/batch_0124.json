@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   139626,
+   730111,
+   454365,
+   785833,
+   950881
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1241460,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。ApiService 将内容以 text/html 和 inline Content-Disposition 提供，导致存储型 XSS。这是常见的 MIME 类型配置错误，没有绕过或非预期行为，属于成熟套路。",
+   "attack_chain": "单点：用户上传恶意内容→服务端以 text/html 返回→浏览器执行脚本。",
+   "bypass_technique": "无实质绕过，直接利用错误的 Content-Type 设置。",
+   "defensive_insight": "对用户上传的内容应使用安全的 Content-Type（如 text/plain）并设置 Content-Disposition: attachment，同时进行内容消毒。"
+  },
+  {
+   "id": 172574,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 业务逻辑",
+   "reasoning": "部分。通过 URL 中的引号和标签注入到 JavaScript 变量中，导致存储型 XSS。利用的是 WordPress 的 Follow 按钮组件未正确转义用户输入，属于常见 XSS 但有一定变形（注入点在 JS 上下文），且需要特定条件（未登录）。",
+   "attack_chain": "构造恶意 URL→用户点击→Follow 按钮加载→注入的脚本执行。",
+   "bypass_technique": "利用 URL 中的 `\"` 和 `>` 闭合属性，注入 `<script>` 标签。",
+   "defensive_insight": "对用户输入进行上下文感知的编码，尤其是在 JavaScript 字符串中，应使用 JSON 编码或转义引号。"
+  },
+  {
+   "id": 161217,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 内存破坏",
+   "reasoning": "是。wddx_deserialize 在处理 XML 结构时，对布尔叶子节点添加元素导致空指针解引用。这是对 PHP 内部解析行为的利用，属于框架行为利用，但需要特定输入，且是已知 bug 的复现，启发性中等。",
+   "attack_chain": "构造恶意 WDDX XML→触发 php_wddx_pop_element 空指针→崩溃。",
+   "bypass_technique": "利用 XML 结构中的布尔叶子节点添加子元素，触发空指针。",
+   "defensive_insight": "更新 PHP 版本，修复 wddx 扩展的 bug；若不需要，禁用 wddx 扩展。"
+  },
+  {
+   "id": 519418,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。Trace.axd 未禁用导致敏感信息泄露，这是典型的配置错误，没有绕过或非预期行为，属于成熟套路。",
+   "attack_chain": "单点：访问 Trace.axd→查看请求详情→获取敏感信息。",
+   "bypass_technique": "无实质绕过，直接利用未禁用的调试功能。",
+   "defensive_insight": "在生产环境禁用 Trace.axd，并确保调试功能关闭。"
+  },
+  {
+   "id": 19334,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 类型混淆",
+   "reasoning": "部分。在图片上传的 height 参数中注入脚本，服务端错误地将其反射到错误消息中，导致 XSS。利用的是参数类型校验失败时的反射，属于轻微变形，但思路可借鉴。",
+   "attack_chain": "上传图片时在 height 参数注入脚本→服务端返回错误消息包含脚本→浏览器执行。",
+   "bypass_technique": "利用类型校验错误消息未转义，注入 HTML/JS。",
+   "defensive_insight": "对所有反射到响应中的输入进行编码，尤其是错误消息。"
+  },
+  {
+   "id": 950881,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。通过修改请求中的用户 ID 参数，可以更改任意用户的邮箱，进而接管账户。这是典型的 IDOR，但攻击链完整（修改邮箱→重置密码→接管），且用户 ID 可预测，属于优雅的授权绕过。",
+   "attack_chain": "登录→修改邮箱请求→篡改 ID 为目标用户→保存→通过忘记密码重置目标密码→接管。",
+   "bypass_technique": "直接修改请求中的 ID 参数，未校验所有权。",
+   "defensive_insight": "服务端必须校验资源所有权，不能信任客户端提供的 ID。"
+  },
+  {
+   "id": 21603,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。登录页面缺少暴力破解保护，这是常见的配置缺失，没有绕过或非预期行为，属于成熟套路。",
+   "attack_chain": "单点：暴力破解登录。",
+   "bypass_technique": "无实质绕过，直接利用缺少速率限制。",
+   "defensive_insight": "实施登录速率限制、验证码和账户锁定策略。"
+  },
+  {
+   "id": 20221,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。在账单地址字段注入标准 XSS payload，导致存储型 XSS。这是常见的输入未过滤问题，没有绕过或非预期行为。",
+   "attack_chain": "单点：提交恶意字段→存储→其他用户查看时执行。",
+   "bypass_technique": "无实质绕过，直接利用未过滤输入。",
+   "defensive_insight": "对所有用户输入进行输出编码，并实施内容安全策略。"
+  },
+  {
+   "id": 50626,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。在主题标题中注入标准 XSS payload，导致存储型 XSS。这是常见的输入未过滤问题，没有绕过或非预期行为。",
+   "attack_chain": "单点：提交恶意标题→存储→其他用户查看时执行。",
+   "bypass_technique": "无实质绕过，直接利用未过滤输入。",
+   "defensive_insight": "对所有用户输入进行输出编码，并实施内容安全策略。"
+  },
+  {
+   "id": 730111,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "命令注入 / 框架行为利用",
+   "reasoning": "是。gity 模块将用户输入直接格式化进命令字符串，导致命令注入。这是对 Node.js 子进程执行行为的利用，属于框架行为利用，且可抽象为通用判断条件（任何未转义用户输入的命令拼接）。",
+   "attack_chain": "构造恶意 commit 消息→gity 拼接命令→执行任意命令。",
+   "bypass_technique": "利用 shell 元字符（如分号）注入额外命令。",
+   "defensive_insight": "使用 execFile 或 spawn 并传递参数数组，避免字符串拼接。"
+  },
+  {
+   "id": 894876,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 配置错误",
+   "reasoning": "部分。通过上传 SVG 文件作为联系人头像，导致存储型 XSS。这是对 SVG 文件 MIME 类型处理不当的利用，属于常见但有一定变形（绕过图片上传限制）。",
+   "attack_chain": "上传恶意 SVG→存储→其他用户查看时执行脚本。",
+   "bypass_technique": "利用 SVG 文件中的脚本，绕过图片上传限制。",
+   "defensive_insight": "对上传的图片进行内容消毒，禁止 SVG 或剥离脚本。"
+  },
+  {
+   "id": 258201,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "部分。通过修改 DraftID 参数，可以覆盖其他用户的草稿。这是典型的 IDOR，但攻击链简单（覆盖数据），且需要猜测 ID，属于常见但有一定启发性。",
+   "attack_chain": "提交评论时修改 DraftID→覆盖他人草稿。",
+   "bypass_technique": "直接修改请求中的 DraftID，未校验所有权。",
+   "defensive_insight": "服务端必须校验资源所有权，不能信任客户端提供的 ID。"
+  },
+  {
+   "id": 1587374,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 信息泄露",
+   "reasoning": "部分。通过修改 campaignId 参数，可以查看其他用户的广告账户余额和交易历史。这是典型的 IDOR，但攻击链简单（信息泄露），且 ID 可预测，属于常见但有一定启发性。",
+   "attack_chain": "登录→拦截请求→修改 campaignId→获取他人财务信息。",
+   "bypass_technique": "直接修改请求中的 campaignId，未校验所有权。",
+   "defensive_insight": "服务端必须校验资源所有权，不能信任客户端提供的 ID。"
+  },
+  {
+   "id": 454365,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "原型污染 / 框架行为利用",
+   "reasoning": "是。通过 jQuery 的 $.extend 深拷贝，利用 __proto__ 属性污染 Object.prototype。这是对 JavaScript 原型链行为的利用，属于框架行为利用，且可抽象为通用判断条件（任何深拷贝函数都可能受影响）。",
+   "attack_chain": "构造 JSON 对象包含 __proto__→传入 $.extend→污染原型→影响所有对象。",
+   "bypass_technique": "利用 JSON.parse 创建 __proto__ 属性，绕过 jQuery 的检查。",
+   "defensive_insight": "避免使用不安全的深拷贝函数，或对 __proto__ 进行过滤。"
+  },
+  {
+   "id": 181594,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。404 错误页面未过滤用户输入，导致内容注入。这是常见的错误页面配置问题，没有绕过或非预期行为。",
+   "attack_chain": "单点：构造恶意 URL→404 页面反射内容。",
+   "bypass_technique": "无实质绕过，直接利用未过滤的 URL 路径。",
+   "defensive_insight": "对错误页面中的用户输入进行编码，或使用静态错误页面。"
+  },
+  {
+   "id": 785833,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 认证绕过",
+   "reasoning": "是。通过允许同一邮箱多次注册，攻击者可以利用密码重置功能接管账户。这是对业务逻辑的巧妙利用，攻击链完整（注册→获取用户名→重置密码→接管），且可抽象为通用判断条件（邮箱唯一性缺失）。",
+   "attack_chain": "攻击者注册邮箱→受害者注册同一邮箱→攻击者获取用户名列表→重置受害者密码→接管。",
+   "bypass_technique": "利用邮箱重复注册，结合密码重置流程。",
+   "defensive_insight": "强制邮箱唯一性，或在密码重置时验证邮箱所有权。"
+  },
+  {
+   "id": 471265,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "子域名接管 / 配置错误",
+   "reasoning": "部分。未使用的域名 spcc.mobi 仍被微信接口引用，且域名可购买，导致子域名接管风险。这是常见的配置错误，但攻击链需要购买域名，且影响有限。",
+   "attack_chain": "购买域名→接管微信接口→进行钓鱼。",
+   "bypass_technique": "无实质绕过，直接利用未使用的域名。",
+   "defensive_insight": "清理未使用的域名，并确保所有引用的域名都在控制之下。"
+  },
+  {
+   "id": 203912,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。在讨论标题中注入标准 XSS payload，导致存储型 XSS。这是常见的输入未过滤问题，没有绕过或非预期行为。",
+   "attack_chain": "单点：提交恶意标题→存储→其他用户查看时执行。",
+   "bypass_technique": "无实质绕过，直接利用未过滤输入。",
+   "defensive_insight": "对所有用户输入进行输出编码，并实施内容安全策略。"
+  },
+  {
+   "id": 54779,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少 SPF 记录，导致邮件伪造风险。这是常见的配置缺失，没有绕过或非预期行为。",
+   "attack_chain": "单点：利用缺少 SPF 发送伪造邮件。",
+   "bypass_technique": "无实质绕过，直接利用配置缺失。",
+   "defensive_insight": "为所有域名配置 SPF、DKIM 和 DMARC。"
+  },
+  {
+   "id": 139626,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 状态混淆",
+   "reasoning": "是。通过 Conduit API 可以绕过 Passphrase 的“永久锁定”功能，获取已锁定凭据的私钥。这是对状态混淆的利用，锁定状态未在 API 层生效，属于优雅的绕过，且可抽象为通用判断条件（状态检查不一致）。",
+   "attack_chain": "创建凭据→锁定→启用 Conduit 访问→通过 API 查询获取私钥。",
+   "bypass_technique": "利用 API 与 UI 状态不一致，绕过锁定。",
+   "defensive_insight": "确保所有访问路径都执行相同的权限和状态检查。"
+  }
+ ]
+}

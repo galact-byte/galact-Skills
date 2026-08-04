@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1520931,
+   73256,
+   423496,
+   341925,
+   1560717
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 125242,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。通过修改URL参数绕过OTP验证，属于典型的参数篡改，思路简单，无新意。",
+   "attack_chain": "注册时获取OTP请求URL，修改email和phone参数，触发OTP发送，绕过验证。",
+   "bypass_technique": "直接修改GET请求中的email和phone参数，未验证参数一致性。",
+   "defensive_insight": "服务端应验证OTP请求与注册信息的绑定，并对参数进行完整性校验。"
+  },
+  {
+   "id": 152281,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告仅提及PHP bug链接和提交历史，未提供漏洞细节、PoC或影响分析，信息严重不足。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "无"
+  },
+  {
+   "id": 412677,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。使用临时邮箱注册是常见手法，无技术含量，且影响有限。",
+   "attack_chain": "使用临时邮箱注册大量账号。",
+   "bypass_technique": "无，直接利用临时邮箱服务。",
+   "defensive_insight": "限制临时邮箱域名，增加验证码或手机验证。"
+  },
+  {
+   "id": 243138,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "部分。输入未加引号导致HTML属性注入，但当前无法利用，属于潜在XSS，且报告者自认非漏洞。",
+   "attack_chain": "搜索参数注入HTML属性，可能导致未来XSS。",
+   "bypass_technique": "利用未加引号的属性注入HTML标签。",
+   "defensive_insight": "对输出进行HTML编码，确保属性值加引号。"
+  },
+  {
+   "id": 73256,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "反序列化 / 内存破坏",
+   "reasoning": "是。PHP yaml_parse在反序列化失败时双重释放，属于经典内存破坏，但利用链清晰，可导致任意代码执行。",
+   "attack_chain": "构造恶意YAML触发php_var_unserialize失败，导致双重释放，进而控制EIP。",
+   "bypass_technique": "利用错误路径中的双重释放，通过内存布局控制实现代码执行。",
+   "defensive_insight": "修复双重释放，确保错误路径正确清理资源。"
+  },
+  {
+   "id": 141244,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "是。通过cvo_sid1参数注入JavaScript，绕过分号限制，属于反射型XSS，但利用方式较为直接。",
+   "attack_chain": "构造恶意URL，注入alert脚本，窃取cookie。",
+   "bypass_technique": "使用%3b绕过分号过滤，闭合引号注入脚本。",
+   "defensive_insight": "对参数进行严格过滤和编码，避免直接拼接JS。"
+  },
+  {
+   "id": 1520931,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "竞争条件 / 协议行为利用",
+   "reasoning": "是。Rust标准库remove_dir_all存在TOCTOU漏洞，利用符号链接替换目录，可删除任意文件，属于系统调用行为利用，通用性强。",
+   "attack_chain": "攻击者控制目录，在检查与删除之间替换为符号链接，导致删除任意文件。",
+   "bypass_technique": "利用TOCTOU窗口，替换目录为符号链接。",
+   "defensive_insight": "使用安全的目录删除API，避免跟随符号链接，或使用文件描述符操作。"
+  },
+  {
+   "id": 1668028,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "是。桌面客户端将文件名作为HTML渲染，导致存储型XSS，属于客户端漏洞，但利用场景有限。",
+   "attack_chain": "上传恶意文件名，同步失败时通知中渲染HTML。",
+   "bypass_technique": "利用文件名中的HTML标签，未进行转义。",
+   "defensive_insight": "客户端应对文件名进行HTML编码，或使用纯文本渲染。"
+  },
+  {
+   "id": 1560717,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 跨组件攻击链",
+   "reasoning": "是。通过Diffusion提交消息引用受限文件，绕过权限检查，使文件公开，属于跨组件逻辑漏洞。",
+   "attack_chain": "在提交消息中嵌入文件引用，同步到Phabricator后文件被公开。",
+   "bypass_technique": "利用提交消息的解析，绕过文件权限检查。",
+   "defensive_insight": "在渲染提交消息时检查文件权限，或禁止引用受限文件。"
+  },
+  {
+   "id": 1379842,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "认证绕过",
+   "reasoning": "是。密码重置响应中直接返回用户ID和重置码，导致账户接管，属于敏感信息泄露。",
+   "attack_chain": "请求密码重置，响应中泄露ID和code，直接构造重置链接。",
+   "bypass_technique": "利用响应中的敏感信息，无需邮箱验证。",
+   "defensive_insight": "不要在响应中返回敏感信息，重置码应通过邮箱发送。"
+  },
+  {
+   "id": 341925,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 0
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 协议行为利用",
+   "reasoning": "是。利用URL解析差异，在redirect_uri中注入?绕过白名单，属于协议行为利用，可窃取用户信息。",
+   "attack_chain": "构造redirect_uri=evil.com?a=.mail.ru，使OAuth按钮向攻击者发送postMessage。",
+   "bypass_technique": "利用URL解析差异，将恶意域名伪装成mail.ru子域。",
+   "defensive_insight": "严格验证redirect_uri，禁止包含特殊字符，使用精确匹配。"
+  },
+  {
+   "id": 486732,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XXE",
+   "reasoning": "是。绕过之前的修复，通过外部实体请求攻击者服务器，属于盲XXE，但影响有限。",
+   "attack_chain": "构造恶意XML，通过x.js参数触发外部实体请求。",
+   "bypass_technique": "利用外部实体加载，绕过过滤。",
+   "defensive_insight": "禁用外部实体，或对XML解析进行严格配置。"
+  },
+  {
+   "id": 118855,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "内存破坏",
+   "reasoning": "否。仅提供CVE链接，无漏洞详情和PoC，信息不足。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "无"
+  },
+  {
+   "id": 262109,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。纯前端JS错误，非安全漏洞。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "无"
+  },
+  {
+   "id": 1461207,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。仅404链接，非安全漏洞。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "无"
+  },
+  {
+   "id": 423496,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 跨组件攻击链",
+   "reasoning": "是。利用邀请链接的token未绑定商店，跨商店复用，绕过注册限制，属于跨组件逻辑漏洞。",
+   "attack_chain": "在攻击者商店生成邀请链接，替换域名到目标商店，成功注册。",
+   "bypass_technique": "邀请token未绑定商店ID，可跨商店使用。",
+   "defensive_insight": "邀请token应绑定商店ID，并在验证时检查。"
+  },
+  {
+   "id": 427835,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "SSRF",
+   "reasoning": "是。日历订阅功能允许任意URL请求并返回响应，属于SSRF，可访问内网。",
+   "attack_chain": "构造URL请求内网资源，响应直接显示。",
+   "bypass_technique": "无，直接利用功能。",
+   "defensive_insight": "验证URL，禁止内网地址，限制响应类型。"
+  },
+  {
+   "id": 1536936,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "IDOR",
+   "reasoning": "否。通过枚举message参数访问他人NIN，属于典型IDOR，但影响严重。",
+   "attack_chain": "枚举message参数，获取他人NIN信息。",
+   "bypass_technique": "无，直接枚举。",
+   "defensive_insight": "实施访问控制，验证用户权限。"
+  },
+  {
+   "id": 361337,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。缺少后端长度校验导致DoS，属于常见输入验证问题。",
+   "attack_chain": "发送超长字段，消耗服务器资源。",
+   "bypass_technique": "无，直接利用。",
+   "defensive_insight": "后端严格校验输入长度。"
+  },
+  {
+   "id": 1068434,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链",
+   "reasoning": "是。CTF write-up展示了多种漏洞利用技巧，包括LFI绕过、类型混淆、SSRF链等，启发性强。",
+   "attack_chain": "多步骤组合，从信息泄露到权限提升。",
+   "bypass_technique": "利用字符串替换绕过、类型混淆、DNS rebind等。",
+   "defensive_insight": "加强输入验证，避免敏感信息泄露，实施纵深防御。"
+  }
+ ]
+}

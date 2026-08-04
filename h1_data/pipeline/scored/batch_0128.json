@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   15362,
+   36211,
+   1785145,
+   1026265,
+   1309435
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 631227,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。HTML标签注入在文件名中，属于常见的存储型XSS变体，无特殊绕过或链，启发性低。",
+   "attack_chain": "重命名文件夹为HTML标签→客户端渲染时执行。",
+   "bypass_technique": "无实质绕过，直接利用未过滤的文件名。",
+   "defensive_insight": "对文件名进行HTML实体编码或使用安全的渲染方式。"
+  },
+  {
+   "id": 145850,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。利用自定义403错误页反射用户输入，属于内容欺骗的常见套路，无绕过或链。",
+   "attack_chain": "构造恶意URL→服务器返回包含用户文本的403页面。",
+   "bypass_technique": "无实质绕过，直接利用错误页配置。",
+   "defensive_insight": "自定义错误页不应包含用户输入，或进行转义。"
+  },
+  {
+   "id": 15362,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用Flash沙箱的本地文件访问权限与远程挂载漏洞组合，实现远程利用，无需用户交互。技术点在于沙箱边界绕过和跨域数据窃取，启发性强。",
+   "attack_chain": "远程挂载Flash applet到本地沙箱→利用本地文件读取漏洞→窃取敏感数据并外传。",
+   "bypass_technique": "利用Flash沙箱类型混淆，将远程内容以本地文件权限运行。",
+   "defensive_insight": "及时更新Flash插件，限制沙箱权限，或弃用Flash。"
+  },
+  {
+   "id": 112025,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型XSS，经典payload，无特殊绕过或链，启发性低。",
+   "attack_chain": "在链接URL中注入XSS payload→点击触发。",
+   "bypass_technique": "无实质绕过，直接利用未过滤输入。",
+   "defensive_insight": "对链接URL进行白名单校验和输出编码。"
+  },
+  {
+   "id": 490728,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。利用文件名作为链接的javascript: URI，触发XSS，属于非预期但简单的绕过，启发性中等。",
+   "attack_chain": "创建恶意文件名→目录列表渲染为链接→点击执行JS。",
+   "bypass_technique": "利用javascript:协议在链接中执行代码。",
+   "defensive_insight": "对文件名进行协议白名单过滤，或对链接进行安全处理。"
+  },
+  {
+   "id": 36211,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 状态混淆",
+   "reasoning": "是。通过重复打开和解决重复工单，无限提升声誉，利用了状态转换的逻辑漏洞。技术点在于重复操作导致积分重复计算，启发性强。",
+   "attack_chain": "创建工单→标记重复→重新打开→再次解决→重复循环→声誉无限增长。",
+   "bypass_technique": "利用重复工单状态转换，绕过积分上限。",
+   "defensive_insight": "对重复工单的积分计算进行去重，或限制状态转换次数。"
+  },
+  {
+   "id": 1785145,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "是。在公开GitHub仓库中发现硬编码的Jira API token，直接获得完整访问权限。技术点在于敏感信息泄露的严重性，启发性强。",
+   "attack_chain": "搜索GitHub→发现token→调用Jira API→获取敏感数据。",
+   "bypass_technique": "无绕过，直接利用泄露的凭据。",
+   "defensive_insight": "定期扫描代码仓库中的敏感信息，使用密钥管理服务。"
+  },
+  {
+   "id": 1026265,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 配置错误",
+   "reasoning": "是。利用CVE-2020-3187的路径遍历漏洞，通过cookie中的token参数删除任意文件，属于已知漏洞的实战利用，但影响严重。技术点在于cookie中的路径遍历，启发性中等。",
+   "attack_chain": "识别WebVPN→构造cookie token=../→删除文件→DoS。",
+   "bypass_technique": "利用cookie中的路径遍历，绕过访问控制。",
+   "defensive_insight": "升级Cisco ASA软件，修复路径遍历漏洞。"
+  },
+  {
+   "id": 10109,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。密码重置邮件轰炸，常见逻辑漏洞，无特殊绕过或链，启发性低。",
+   "attack_chain": "重复请求密码重置→邮件轰炸。",
+   "bypass_technique": "无实质绕过，直接利用缺少速率限制。",
+   "defensive_insight": "添加验证码和速率限制。"
+  },
+  {
+   "id": 1167817,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "配置错误",
+   "reasoning": "部分。联邦共享未加密存储密码，理论风险，但缺乏实际利用步骤，信息不足。",
+   "attack_chain": "数据库泄露→获取联邦共享密码→访问远程数据。",
+   "bypass_technique": "无实质绕过，依赖数据库泄露。",
+   "defensive_insight": "加密存储联邦共享密码，并定期审计。"
+  },
+  {
+   "id": 245172,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。通过添加分号绕过相同域名检查，实现双重存储XSS，属于轻微变形，启发性中等。",
+   "attack_chain": "在自定义域名注入javascript:→点击查看触发XSS。",
+   "bypass_technique": "利用分号绕过相同输入检查。",
+   "defensive_insight": "对输入进行严格白名单校验，并输出编码。"
+  },
+  {
+   "id": 275714,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "子域名接管",
+   "reasoning": "是。通过Mashery服务注册未使用的子域名，实现完全控制，属于典型的子域名接管，但利用过程清晰。技术点在于第三方服务的域名配置，启发性中等。",
+   "attack_chain": "发现子域名指向Mashery→注册账户→添加域名→控制内容。",
+   "bypass_technique": "利用第三方服务的域名配置漏洞。",
+   "defensive_insight": "定期清理未使用的DNS记录，监控第三方服务配置。"
+  },
+  {
+   "id": 185914,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误",
+   "reasoning": "部分。静态缓存密钥导致缓存绕过，可增强DoS攻击，属于配置错误，启发性中等。",
+   "attack_chain": "获取静态密钥→构造请求绕过缓存→增加服务器负载。",
+   "bypass_technique": "利用已知密钥绕过缓存机制。",
+   "defensive_insight": "为每个安装生成唯一密钥，并安全存储。"
+  },
+  {
+   "id": 736283,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误",
+   "reasoning": "部分。Firebase数据库未设置权限，公开可读写，属于常见配置错误，但影响明确。",
+   "attack_chain": "访问公开的Firebase URL→读取或写入数据。",
+   "bypass_technique": "无实质绕过，直接利用开放权限。",
+   "defensive_insight": "配置Firebase安全规则，限制访问。"
+  },
+  {
+   "id": 1309435,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "CSRF",
+   "reasoning": "是。利用CORS配置误解，通过表单提交实现CSRF，绕过SameSite缺失，属于经典但有效的绕过。技术点在于CORS不阻止CSRF，启发性中等。",
+   "attack_chain": "构造恶意表单→受害者访问→自动提交→执行操作。",
+   "bypass_technique": "利用表单提交绕过CORS限制。",
+   "defensive_insight": "使用CSRF令牌和SameSite cookie属性。"
+  },
+  {
+   "id": 47627,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。通过错误消息枚举邮箱，常见逻辑漏洞，无特殊绕过或链，启发性低。",
+   "attack_chain": "自动化请求→根据响应区分注册状态→枚举邮箱。",
+   "bypass_technique": "无实质绕过，直接利用错误消息差异。",
+   "defensive_insight": "统一错误消息，避免泄露注册状态。"
+  },
+  {
+   "id": 659419,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，经典payload，无特殊绕过或链，启发性低。",
+   "attack_chain": "构造恶意URL→参数注入→执行JS。",
+   "bypass_technique": "无实质绕过，直接利用未过滤参数。",
+   "defensive_insight": "对参数进行输出编码和输入验证。"
+  },
+  {
+   "id": 73566,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，经典payload，无特殊绕过或链，启发性低。",
+   "attack_chain": "构造恶意URL→参数注入→点击按钮触发。",
+   "bypass_technique": "无实质绕过，直接利用未过滤参数。",
+   "defensive_insight": "对参数进行输出编码和输入验证。"
+  },
+  {
+   "id": 1397804,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "开放重定向",
+   "reasoning": "部分。通过额外头实现开放重定向，但缺乏具体细节，信息不足。",
+   "attack_chain": "添加恶意头→服务器重定向到钓鱼网站。",
+   "bypass_technique": "利用头注入或代理配置。",
+   "defensive_insight": "验证重定向目标，限制头传递。"
+  },
+  {
+   "id": 214845,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "其他",
+   "reasoning": "部分。通过复杂Ruby代码触发mruby VM崩溃，属于内存破坏漏洞，但利用条件苛刻，启发性中等。",
+   "attack_chain": "构造恶意Ruby代码→执行→触发SIGSEGV。",
+   "bypass_technique": "利用VM的NULL指针解引用。",
+   "defensive_insight": "修复VM中的空指针检查，进行模糊测试。"
+  }
+ ]
+}

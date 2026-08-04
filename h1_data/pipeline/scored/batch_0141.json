@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.4,
+  "top_n": [
+   1806939,
+   1081878,
+   2055132,
+   85720,
+   864354
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 2055132,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 认证绕过",
+   "reasoning": "是。利用 redirect_to 参数在已认证状态下触发 javascript: 伪协议，绕过常规的 URL 校验，实现反射型 XSS。技术点在于对重定向目标的过滤不严，且与认证状态结合，形成看似安全的流程中的漏洞。",
+   "attack_chain": "已认证用户访问特定 URL → redirect_to 参数注入 javascript: 伪协议 → 点击继续触发 XSS → 窃取会话或篡改页面。",
+   "bypass_technique": "利用 javascript: 伪协议绕过 URL 白名单校验，在重定向流程中执行脚本。",
+   "defensive_insight": "严格校验重定向参数，仅允许 http/https 协议，并禁止 javascript: 等危险协议。"
+  },
+  {
+   "id": 284082,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 存储型XSS",
+   "reasoning": "部分。通过报告模板名称注入 HTML/脚本，在嵌入代码中反射执行，属于存储型 XSS 的变体。技术点在于嵌入代码未对模板名称进行转义，导致脚本在第三方页面执行。",
+   "attack_chain": "创建恶意报告模板 → 名称注入脚本 → 分享嵌入代码 → 受害者访问嵌入页面触发 XSS。",
+   "bypass_technique": "利用模板名称字段注入 HTML 标签，绕过前端限制，在嵌入代码中执行。",
+   "defensive_insight": "对用户输入进行严格的 HTML 转义，尤其是在嵌入代码生成时。"
+  },
+  {
+   "id": 5933,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 配置错误",
+   "reasoning": "部分。应用在审核前即可被访问，且上传文件类型无限制，属于业务逻辑缺陷。技术点在于审核流程的缺失和文件上传校验不严。",
+   "attack_chain": "创建恶意应用 → 提交审核 → 在审核期间分享链接 → 其他用户安装恶意应用 → 上传可执行文件。",
+   "bypass_technique": "利用审核前的访问权限和文件上传无限制，绕过安全审查。",
+   "defensive_insight": "在应用审核通过前禁止公开访问，并严格限制上传文件类型。"
+  },
+  {
+   "id": 1081878,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 任意文件删除",
+   "reasoning": "是。通过 image_temp 参数进行路径遍历，结合 copy 和 unlink 实现任意文件删除，且可进一步利用目录列表泄露文件内容。技术点在于未过滤用户输入直接用于文件操作，且删除前复制到可访问目录，形成信息泄露链。",
+   "attack_chain": "构造恶意 image_temp 参数 → 复制目标文件到公开目录 → 删除原文件 → 访问公开目录获取文件内容。",
+   "bypass_technique": "利用路径遍历（../）绕过路径限制，结合 copy 和 unlink 实现删除和泄露。",
+   "defensive_insight": "对文件路径进行规范化校验，禁止包含 ../ 等危险字符，并限制文件操作目录。"
+  },
+  {
+   "id": 8088,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。通过数组参数触发 PHP 警告，泄露完整路径，属于常见的信息泄露手法，无特殊绕过或攻击链。",
+   "attack_chain": "单点：构造数组参数 → 触发警告 → 泄露路径。",
+   "bypass_technique": "无实质绕过，直接利用参数类型错误。",
+   "defensive_insight": "关闭错误显示，或对参数进行类型检查。"
+  },
+  {
+   "id": 1943013,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "CRLF注入",
+   "reasoning": "部分。通过 URL 中的 %0D%0A 注入 Set-Cookie 头，属于 CRLF 注入的经典案例，但影响有限，且无进一步利用链。",
+   "attack_chain": "构造恶意 URL → 注入 CRLF → 设置任意 Cookie → 可能配合其他漏洞。",
+   "bypass_technique": "利用 URL 编码绕过过滤，注入 CRLF 字符。",
+   "defensive_insight": "对用户输入进行 CRLF 过滤，或使用安全的 URL 编码处理。"
+  },
+  {
+   "id": 137905,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "部分。利用 WordPress 的 flashmediaelement.swf 文件中的 Flash XSS，属于已知组件漏洞，但 PoC 简单，无特殊绕过。",
+   "attack_chain": "单点：访问恶意 URL → Flash 执行 JS。",
+   "bypass_technique": "利用 Flash 文件的 jsinitfunction 参数注入。",
+   "defensive_insight": "更新组件版本，或移除不必要的 Flash 文件。"
+  },
+  {
+   "id": 31408,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "内存破坏 / 框架行为利用",
+   "reasoning": "是。利用正则表达式编译时的栈溢出，导致越界读写，可绕过 ASLR 甚至实现任意代码执行。技术点在于递归函数中指针未同步，属于底层框架行为利用，极具启发性。",
+   "attack_chain": "构造恶意正则 → 触发栈溢出 → 越界读写 → 绕过 ASLR → 可能 RCE。",
+   "bypass_technique": "利用正则表达式中的前向引用导致栈溢出，结合堆风水实现任意读写。",
+   "defensive_insight": "修复 Flash Player 的编译逻辑，或限制正则表达式的复杂度。"
+  },
+  {
+   "id": 137152,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "点击劫持",
+   "reasoning": "否。点击劫持是常见漏洞，无特殊绕过或攻击链，且 substate 为 informative，信息不足。",
+   "attack_chain": "单点：iframe 加载目标页面 → 诱导用户点击。",
+   "bypass_technique": "无实质绕过，直接利用缺少 X-Frame-Options。",
+   "defensive_insight": "设置 X-Frame-Options 或 CSP frame-ancestors。"
+  },
+  {
+   "id": 1624374,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 信息泄露",
+   "reasoning": "部分。注册后即可访问用户列表，属于授权绕过，但步骤简单，无复杂攻击链。",
+   "attack_chain": "注册账号 → 登录 → 访问用户列表 → 泄露 PII。",
+   "bypass_technique": "利用默认权限配置，未对用户列表访问进行限制。",
+   "defensive_insight": "对敏感数据访问进行权限校验。"
+  },
+  {
+   "id": 242119,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "命令注入 / 权限提升",
+   "reasoning": "部分。通过 virtualmin 驱动中的命令注入，可重置密码或获取 shell，属于已知 CVE，但利用条件明确。",
+   "attack_chain": "登录面板 → 注入命令 → 重置密码或执行系统命令。",
+   "bypass_technique": "利用未过滤的用户输入拼接命令。",
+   "defensive_insight": "使用参数化命令或白名单校验。"
+  },
+  {
+   "id": 2160178,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。默认凭据登录，属于配置错误，无技术含量。",
+   "attack_chain": "单点：使用默认凭据登录。",
+   "bypass_technique": "无实质绕过，直接利用默认凭据。",
+   "defensive_insight": "强制修改默认密码，禁用默认账号。"
+  },
+  {
+   "id": 138622,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS / 自XSS",
+   "reasoning": "否。密码重置页面中的自 XSS，需要用户输入恶意密码，影响有限，且 substate 为 informative。",
+   "attack_chain": "单点：用户输入恶意密码 → 触发 XSS。",
+   "bypass_technique": "无实质绕过，直接利用输入未过滤。",
+   "defensive_insight": "对密码字段进行输出编码。"
+  },
+  {
+   "id": 137119,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 存储型XSS",
+   "reasoning": "部分。通过徽章名称注入 XSS，属于存储型 XSS 的常见场景，但 PoC 完整。",
+   "attack_chain": "创建恶意徽章 → 名称注入脚本 → 查看徽章触发 XSS。",
+   "bypass_technique": "利用输入未过滤，直接注入 HTML 标签。",
+   "defensive_insight": "对用户输入进行 HTML 编码。"
+  },
+  {
+   "id": 149369,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "信息泄露",
+   "reasoning": "否。仅显示 SSL 证书信息，属于正常信息，且 substate 为 not-applicable，无漏洞。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "无需修复。"
+  },
+  {
+   "id": 833470,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "HTML注入 / 钓鱼",
+   "reasoning": "部分。通过注册时的 Name 参数注入 HTML，在邮件中渲染，可用于钓鱼，属于输入验证缺失。",
+   "attack_chain": "注册时注入 HTML → 邮件发送给受害者 → 受害者打开邮件看到恶意内容。",
+   "bypass_technique": "利用未过滤的输入，直接注入 HTML 标签。",
+   "defensive_insight": "对用户输入进行 HTML 转义，尤其是在邮件模板中。"
+  },
+  {
+   "id": 864354,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "命令注入 / 框架行为利用",
+   "reasoning": "是。npm 模块 diskstats 中，用户输入直接拼接到 child_process.exec 命令，导致命令注入。技术点在于未使用安全的 execFile/spawn，且路径参数未过滤，可执行任意命令。",
+   "attack_chain": "调用 diskstats.check 传入恶意路径 → 拼接命令 → 执行任意命令。",
+   "bypass_technique": "利用分号等命令分隔符注入额外命令。",
+   "defensive_insight": "使用 execFile 或 spawn 代替 exec，并对输入进行白名单校验。"
+  },
+  {
+   "id": 85720,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "IDOR / 授权绕过",
+   "reasoning": "是。任何共享用户都可以删除其他用户的共享权限，因为服务端未验证操作者是否为钱包所有者。技术点在于业务逻辑中权限校验缺失，属于典型的 IDOR。",
+   "attack_chain": "用户 B 构造删除请求 → 指定用户 C 的 ID → 服务端未校验 → 删除成功。",
+   "bypass_technique": "直接修改请求中的 bankUserId 参数，绕过权限检查。",
+   "defensive_insight": "在服务端验证操作者是否具有相应权限。"
+  },
+  {
+   "id": 64184,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "CSRF / 授权绕过",
+   "reasoning": "部分。缺少 CSRF 保护，可诱导管理员添加或删除用户组，属于常见漏洞，但利用链清晰。",
+   "attack_chain": "构造恶意页面 → 诱导管理员访问 → 自动提交请求 → 修改用户组。",
+   "bypass_technique": "利用 CSRF 漏洞，无需绕过。",
+   "defensive_insight": "添加 CSRF Token 验证。"
+  },
+  {
+   "id": 1806939,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 类型混淆 / 跨组件攻击链",
+   "reasoning": "是。利用 LinkedIn 的 decoration 功能，将 URN 注入文本字段，通过 URN 解析获取任意用户的邮箱。技术点在于 decoration 功能未限制可展开的字段，且 URN 解析未做权限校验，导致信息泄露。",
+   "attack_chain": "在个人资料中添加恶意 URN → 使用 decoration 查询 → 触发 URN 解析 → 获取邮箱。",
+   "bypass_technique": "利用 decoration 功能，将 URN 注入文本字段，绕过字段类型限制。",
+   "defensive_insight": "限制 decoration 可展开的字段，并对 URN 解析进行权限校验。"
+  }
+ ]
+}

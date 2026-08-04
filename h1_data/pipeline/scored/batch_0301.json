@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   2212193,
+   905607,
+   356809,
+   593229,
+   1912778
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 110,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "配置错误",
+   "reasoning": "否。这是典型的暴力破解攻击，无任何技术细节或绕过，且 substate 为 informative，信息不足。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "实施账户锁定或验证码机制。"
+  },
+  {
+   "id": 82725,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。Markdown 链接中的 javascript: 协议 XSS 是常见套路，无特殊绕过。",
+   "attack_chain": "单点：评论框注入 javascript: 链接 → 点击触发 XSS。",
+   "bypass_technique": "利用 Markdown 链接协议未过滤。",
+   "defensive_insight": "过滤或禁止 javascript: 等危险协议。"
+  },
+  {
+   "id": 356809,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "是。exceljs 库解析 XLSX 时未转义单元格内容，导致存储型 XSS。技术点在于库的信任边界：库本身不负责输出转义，但应用直接拼接导致 XSS。可抽象为库使用不当的通用问题。",
+   "attack_chain": "构造恶意 XLSX → 应用解析并渲染 → 浏览器执行脚本。",
+   "bypass_technique": "利用库不转义数据，直接注入 HTML/脚本。",
+   "defensive_insight": "库应提供转义选项，应用输出时需转义。"
+  },
+  {
+   "id": 2212193,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 认证绕过",
+   "reasoning": "是。libcurl 未规范化主机名大小写，导致 PSL 检查被绕过，可设置超级 Cookie。技术点在于协议实现细节：大小写不敏感但 PSL 检查未规范化。可抽象为通用判断条件。",
+   "attack_chain": "构造混合大小写域名 → 绕过 PSL → 设置超级 Cookie → 跨域发送。",
+   "bypass_technique": "利用域名大小写差异绕过 PSL 检查。",
+   "defensive_insight": "在 PSL 检查前规范化主机名和 Cookie 域。"
+  },
+  {
+   "id": 164662,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "部分。通过 Cookie 注入触发存储型 XSS，且利用 Django 的 Cookie 处理缺陷。技术点在于 Cookie 注入与 XSS 的组合，但依赖特定框架行为。",
+   "attack_chain": "Cookie 注入 → 触发 XSS → 执行脚本。",
+   "bypass_technique": "利用 Cookie 注入绕过输入过滤。",
+   "defensive_insight": "对 Cookie 值进行严格校验和转义。"
+  },
+  {
+   "id": 389592,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS，利用查询字符串注入，常见套路。",
+   "attack_chain": "单点：构造 URL → 反射 XSS。",
+   "bypass_technique": "无特殊绕过。",
+   "defensive_insight": "对输出进行编码。"
+  },
+  {
+   "id": 300817,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。SSL 重协商 DoS 是已知漏洞，无新意。",
+   "attack_chain": "单点：发起大量重协商 → DoS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁用不安全的 SSL 重协商。"
+  },
+  {
+   "id": 460815,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 信息泄露",
+   "reasoning": "部分。通过搜索 API 绕过项目功能限制，泄露里程碑信息。技术点在于 API 与 UI 权限不一致。",
+   "attack_chain": "禁用功能 → 通过 API 搜索 → 泄露数据。",
+   "bypass_technique": "利用 API 与 UI 权限不一致。",
+   "defensive_insight": "确保 API 与 UI 权限一致。"
+  },
+  {
+   "id": 275245,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少 rel=noreferrer 导致 referrer 泄露，是常见配置问题。",
+   "attack_chain": "单点：点击链接 → referrer 泄露。",
+   "bypass_technique": "无。",
+   "defensive_insight": "添加 rel=noreferrer。"
+  },
+  {
+   "id": 389250,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "IDOR",
+   "reasoning": "否。典型 IDOR，且信息被大量打码，无法判断具体细节。",
+   "attack_chain": "单点：修改参数 → 访问他人数据。",
+   "bypass_technique": "无。",
+   "defensive_insight": "实施访问控制。"
+  },
+  {
+   "id": 1167919,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "部分。默认配置导致用户搜索泄露到外部服务器，技术点在于默认配置不安全。",
+   "attack_chain": "用户搜索 → 默认查询外部服务器 → 泄露。",
+   "bypass_technique": "无绕过，利用默认配置。",
+   "defensive_insight": "默认关闭外部查询。"
+  },
+  {
+   "id": 321410,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "部分。通过修改组 ID 绕过成员检查，是常见的 IDOR 变体。",
+   "attack_chain": "创建事件 → 修改组 ID → 绕过权限。",
+   "bypass_technique": "参数篡改。",
+   "defensive_insight": "服务端校验用户组成员资格。"
+  },
+  {
+   "id": 267473,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型 XSS，使用 svg/onload 载荷，常见。",
+   "attack_chain": "单点：提交标题 → 存储 XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "输入过滤和输出编码。"
+  },
+  {
+   "id": 355501,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "路径遍历",
+   "reasoning": "部分。路径遍历但仅限有扩展名的文件，技术点在于扩展名过滤的绕过。",
+   "attack_chain": "构造 ../ 路径 → 读取文件。",
+   "bypass_technique": "利用扩展名限制绕过。",
+   "defensive_insight": "规范化路径并限制访问范围。"
+  },
+  {
+   "id": 1912778,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 认证绕过",
+   "reasoning": "是。libcurl 连接重用未检查 FTP 选项，导致使用错误凭据。技术点在于连接池匹配逻辑缺陷。",
+   "attack_chain": "复用连接 → 使用错误凭据 → 访问数据。",
+   "bypass_technique": "利用连接重用逻辑缺陷。",
+   "defensive_insight": "连接重用前检查所有相关选项。"
+  },
+  {
+   "id": 905607,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 认证绕过",
+   "reasoning": "是。开放重定向与 OAuth 结合导致账户接管，技术点在于重定向的巧妙构造（///）和 token 泄露。",
+   "attack_chain": "开放重定向 → OAuth 回调 → token 泄露 → 账户接管。",
+   "bypass_technique": "利用 URL 解析差异绕过重定向校验。",
+   "defensive_insight": "严格校验重定向目标，OAuth 回调需验证。"
+  },
+  {
+   "id": 84709,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 状态混淆",
+   "reasoning": "部分。禁用账户后 access_token 未失效，导致权限维持。技术点在于状态同步缺陷。",
+   "attack_chain": "获取 token → 禁用账户 → 使用 token 创建账户。",
+   "bypass_technique": "利用 token 未失效。",
+   "defensive_insight": "禁用账户时使所有 token 失效。"
+  },
+  {
+   "id": 593229,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 类型混淆",
+   "reasoning": "是。整数溢出导致越界读，技术点在于 size_t 下溢和循环条件缺陷。",
+   "attack_chain": "构造 MIME 数据 → 触发整数溢出 → 越界读。",
+   "bypass_technique": "利用整数溢出绕过边界检查。",
+   "defensive_insight": "使用安全整数运算和边界检查。"
+  },
+  {
+   "id": 1296584,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。利用内部邮箱前缀获得免费配送，是简单的业务逻辑漏洞。",
+   "attack_chain": "注册内部邮箱 → 获得特权。",
+   "bypass_technique": "无。",
+   "defensive_insight": "验证邮箱所有权。"
+  },
+  {
+   "id": 227181,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "部分。self-XSS 通过同步功能变为非 self，技术点在于跨账户同步。",
+   "attack_chain": "创建恶意文件夹 → 同步 → 受害者触发 XSS。",
+   "bypass_technique": "利用同步功能扩大影响。",
+   "defensive_insight": "对文件夹名称进行过滤。"
+  }
+ ]
+}

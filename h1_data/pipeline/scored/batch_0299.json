@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1903322,
+   681617,
+   141463,
+   981036,
+   763994
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 786822,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 业务逻辑",
+   "reasoning": "部分。用户名中的HTML在通知中执行，属于存储型XSS，但触发条件需要管理员操作（创建频道、设置权限），且影响范围有限。技术点在于通知渲染未过滤用户可控数据，但思路常见。",
+   "attack_chain": "设置恶意用户名→创建频道并邀请用户→设置权限触发通知→HTML执行。",
+   "bypass_technique": "无特殊绕过，直接利用未过滤的用户名输入。",
+   "defensive_insight": "对所有用户可控数据在输出到HTML上下文时进行编码，尤其在通知和日志中。"
+  },
+  {
+   "id": 763994,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 跨组件攻击链",
+   "reasoning": "是。通过修改purchase_order_id参数，攻击者可以发送任意订单的邮件到自己的邮箱，导致信息泄露。技术点在于IDOR，但结合邮件发送功能形成跨组件攻击链，且影响范围广（任意商店数据）。",
+   "attack_chain": "安装Stocky应用→创建订单→拦截发送邮件请求→修改订单ID为受害者ID→邮件发送到攻击者邮箱→获取敏感数据。",
+   "bypass_technique": "直接修改POST请求中的purchase_order_id参数，未校验所有权。",
+   "defensive_insight": "服务端必须校验资源所有权，不能信任客户端传入的ID。"
+  },
+  {
+   "id": 859395,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。典型的反射型XSS，参数直接注入HTML，无任何绕过或变形，成熟套路。",
+   "attack_chain": "构造恶意URL→参数注入→执行脚本。",
+   "bypass_technique": "无，直接利用未过滤参数。",
+   "defensive_insight": "对所有输入进行输出编码，使用安全框架。"
+  },
+  {
+   "id": 658089,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。密码重置接口缺乏速率限制，导致邮件轰炸，属于常见配置问题，无技术亮点。",
+   "attack_chain": "构造重置密码请求→批量发送→邮件轰炸。",
+   "bypass_technique": "无，直接利用无速率限制。",
+   "defensive_insight": "对敏感接口实施速率限制和验证码。"
+  },
+  {
+   "id": 819088,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 跨组件攻击链",
+   "reasoning": "部分。通过绕过字符限制导致500错误和客户端DoS，技术点在于服务端未正确限制输入长度，但属于资源消耗类，思路较常见。",
+   "attack_chain": "创建Moment→修改title/description为超长字符串→服务端500→分享链接→受害者客户端崩溃。",
+   "bypass_technique": "直接发送超长参数，绕过前端限制。",
+   "defensive_insight": "服务端必须严格限制输入长度，并合理处理超长请求。"
+  },
+  {
+   "id": 373950,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "部分。Smarty模板未对JavaScript上下文进行转义，导致反射型XSS。技术点在于模板引擎的上下文感知缺失，属于框架行为利用，但影响需认证。",
+   "attack_chain": "构造恶意URL→参数注入模板→执行JS。",
+   "bypass_technique": "利用Smarty模板未转义，注入JavaScript代码。",
+   "defensive_insight": "模板引擎应自动根据上下文转义，或开发者显式使用escape修饰符。"
+  },
+  {
+   "id": 1063298,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "认证绕过",
+   "reasoning": "否。通过修改表单值绕过前端验证，属于客户端校验，服务端未验证，常见套路。",
+   "attack_chain": "访问登录页→修改表单值→绕过前端校验→登录成功。",
+   "bypass_technique": "直接修改DOM值，绕过JavaScript校验。",
+   "defensive_insight": "服务端必须进行身份验证，不能依赖客户端校验。"
+  },
+  {
+   "id": 903424,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 配置错误",
+   "reasoning": "是。桌面客户端未验证SSL证书，允许中间人攻击，技术点在于客户端信任无效证书，属于协议行为利用，且影响用户信任。",
+   "attack_chain": "设置代理或DNS欺骗→替换证书→控制页面内容→诱导用户输入凭据。",
+   "bypass_technique": "利用客户端未验证证书，使用自签名证书进行MITM。",
+   "defensive_insight": "客户端必须验证SSL证书链，并警告用户无效证书。"
+  },
+  {
+   "id": 802846,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "保留，普通",
+   "category": "其他",
+   "reasoning": "部分。tcpdump的VTP解析器存在缓冲区溢出，属于经典内存安全漏洞，但利用需要特定pcap文件，且影响有限。",
+   "attack_chain": "构造恶意pcap→触发解析→缓冲区溢出。",
+   "bypass_technique": "无，直接利用未检查的边界。",
+   "defensive_insight": "使用安全函数，进行边界检查，使用ASAN等工具。"
+  },
+  {
+   "id": 6907,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。CSRF漏洞，缺少token验证，常见套路，无技术亮点。",
+   "attack_chain": "诱导用户访问恶意页面→自动提交表单→修改邮箱。",
+   "bypass_technique": "无，直接利用缺少CSRF防护。",
+   "defensive_insight": "使用CSRF令牌，验证请求来源。"
+  },
+  {
+   "id": 733051,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，参数未过滤，常见套路。",
+   "attack_chain": "构造恶意URL→参数注入→执行脚本。",
+   "bypass_technique": "无，直接利用未过滤参数。",
+   "defensive_insight": "对所有输入进行输出编码。"
+  },
+  {
+   "id": 681617,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 0
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "是。通过恶意torrent文件名在localhost上存储XSS，利用浏览器对本地服务的信任，技术点在于文件名未过滤和本地服务上下文，跨组件攻击链。",
+   "attack_chain": "下载恶意torrent→文件名注入XSS→访问localhost端口→执行JS→窃取本地服务数据。",
+   "bypass_technique": "利用torrent文件名未过滤，在本地服务上下文中执行脚本。",
+   "defensive_insight": "对下载文件名进行严格过滤，本地服务应验证来源。"
+  },
+  {
+   "id": 311449,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 0
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 业务逻辑",
+   "reasoning": "是。通过公开的声誉分变化推断未披露的报告，技术点在于信息聚合，属于业务逻辑漏洞，但影响有限。",
+   "attack_chain": "监控研究者声誉分变化→推断报告的公司→提前发现漏洞。",
+   "bypass_technique": "利用公开数据的时间差。",
+   "defensive_insight": "延迟公开声誉分变化，直到报告解决。"
+  },
+  {
+   "id": 1903322,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 跨组件攻击链",
+   "reasoning": "是。通过修改订单ID，攻击者可以向他人订单添加商品并泄露地址，技术点在于IDOR，但结合订单修改功能形成跨组件攻击链，影响财务和隐私。",
+   "attack_chain": "创建订单→拦截添加商品请求→修改订单ID为受害者→添加商品并泄露信息。",
+   "bypass_technique": "直接修改URL中的订单ID，未校验所有权。",
+   "defensive_insight": "服务端必须校验资源所有权，不能信任客户端传入的ID。"
+  },
+  {
+   "id": 486837,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 业务逻辑",
+   "reasoning": "部分。未发布的词条仍可通过特定URL访问，技术点在于状态混淆，但影响有限。",
+   "attack_chain": "创建词条→取消发布→通过URL访问→泄露信息。",
+   "bypass_technique": "直接访问未发布内容的URL。",
+   "defensive_insight": "服务端应检查发布状态，未发布内容不应可访问。"
+  },
+  {
+   "id": 768322,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "命令注入",
+   "reasoning": "否。管理员可添加PHP扩展并上传shell，属于配置错误，无技术亮点。",
+   "attack_chain": "添加PHP扩展→上传shell→执行命令。",
+   "bypass_technique": "无，直接利用配置错误。",
+   "defensive_insight": "限制文件类型，禁止上传可执行文件。"
+  },
+  {
+   "id": 1462175,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。密码长度无限制，可能导致DoS，但属于常见配置问题，无技术亮点。",
+   "attack_chain": "设置超长密码→服务器资源消耗。",
+   "bypass_technique": "无，直接利用无限制。",
+   "defensive_insight": "限制密码长度，使用bcrypt等算法。"
+  },
+  {
+   "id": 242314,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。开放重定向，常见套路，无技术亮点。",
+   "attack_chain": "构造恶意URL→重定向到钓鱼网站。",
+   "bypass_technique": "无，直接利用重定向逻辑。",
+   "defensive_insight": "验证重定向目标，限制为内部域名。"
+  },
+  {
+   "id": 141463,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "是。AngularJS模板注入导致存储型XSS，技术点在于旧版Angular的模板表达式执行，属于框架行为利用，且可导致账户接管。",
+   "attack_chain": "在地址字段注入模板表达式→保存→页面加载时执行→窃取cookie。",
+   "bypass_technique": "利用AngularJS的模板表达式执行任意代码。",
+   "defensive_insight": "升级Angular版本，对用户输入进行转义，避免使用模板表达式。"
+  },
+  {
+   "id": 981036,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 配置错误",
+   "reasoning": "是。通过GraphQL直接修改min_bounty参数，绕过前端限制，技术点在于客户端信任，属于业务逻辑漏洞，但影响有限。",
+   "attack_chain": "拦截GraphQL请求→修改min_bounty→提交→成功绕过限制。",
+   "bypass_technique": "直接构造GraphQL请求，绕过前端滑块限制。",
+   "defensive_insight": "服务端必须验证业务规则，不能信任客户端输入。"
+  }
+ ]
+}

@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   837328,
+   684268,
+   566056,
+   397527,
+   642675
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 140377,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。CSRF token 存储在 cookie 中属于设计不佳，但并非直接可利用的漏洞，且报告为 informative，缺乏实际攻击场景。没有产生'原来还能这样'的感受。",
+   "attack_chain": "无直接攻击链，仅为设计缺陷。",
+   "bypass_technique": "无绕过。",
+   "defensive_insight": "将 CSRF token 与 cookie 分离，使用独立的会话状态。"
+  },
+  {
+   "id": 684268,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "是。利用 javascript: URL 和 window.opener 属性，在管理员设置 Grafana 仪表盘时注入存储型 XSS，并通过 window.opener 窃取 CSRF token 实现账户接管。技术点在于对 URL 协议校验缺失和 window.opener 的跨窗口访问，属于框架行为利用。",
+   "attack_chain": "管理员设置 Grafana URL 为 javascript:payload → 其他管理员点击链接 → 新标签页执行 JS → 通过 window.opener 访问原页面 → 窃取 CSRF token → 添加 SSH 密钥。",
+   "bypass_technique": "使用 javascript: 协议绕过 URL 验证，利用 target=_blank 的 window.opener 特性。",
+   "defensive_insight": "严格校验 URL 协议仅允许 http/https；为 target=_blank 添加 rel=noopener。"
+  },
+  {
+   "id": 6352,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。经典的反射型 XSS，通过 URL 参数注入 img onerror，无任何绕过或创新，信息量少。",
+   "attack_chain": "单点：URL 参数 → 反射 → 执行 JS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对输出进行编码，使用 CSP。"
+  },
+  {
+   "id": 566056,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 框架行为利用",
+   "reasoning": "是。Node.js 框架 larvitbase-api 动态 require 用户可控路径，导致任意文件加载。利用路径遍历（../../）绕过路由限制，加载任意 JS 文件。技术点在于框架设计缺陷，可抽象为通用判断条件。",
+   "attack_chain": "构造 URL 包含 ../../ → 服务器 require 任意 JS 文件 → 执行任意代码。",
+   "bypass_technique": "路径遍历绕过路由，利用 require 动态加载。",
+   "defensive_insight": "对用户输入进行白名单校验，避免动态 require 用户可控路径。"
+  },
+  {
+   "id": 170618,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "内存破坏",
+   "reasoning": "部分。PHP WDDX 反序列化中的越界读，通过精心构造的 XML 触发，属于已知 CVE，但 PoC 完整，技术细节清晰。非预期性在于对属性数组的边界检查缺失，但属于常见内存破坏类型。",
+   "attack_chain": "构造恶意 XML → wddx_deserialize → 越界读 → 崩溃或信息泄露。",
+   "bypass_technique": "利用属性数组的 NULL 元素绕过循环检查。",
+   "defensive_insight": "修复 PHP 内核，对属性数组进行严格边界检查。"
+  },
+  {
+   "id": 716570,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。Hexo-admin 插件中的存储型 XSS，通过文章内容注入，属于常见 CMS 插件漏洞，无特殊绕过。",
+   "attack_chain": "发布恶意文章 → 存储 → 访问页面触发。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对用户输入进行 HTML 编码，使用 CSP。"
+  },
+  {
+   "id": 642675,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "SSRF / 协议行为利用",
+   "reasoning": "是。利用 IPv6 地址嵌入 IPv4 的方式绕过 SSRF 防护，如 [0:0:0:0:0:ffff:127.0.0.1] 表示 127.0.0.1。技术点在于协议解析差异，可通用化。",
+   "attack_chain": "构造 IPv6 嵌入地址 → 绕过黑名单 → 访问内网。",
+   "bypass_technique": "IPv6/IPv4 地址嵌入绕过。",
+   "defensive_insight": "对 SSRF 防护进行规范化，解析所有 IP 格式。"
+  },
+  {
+   "id": 646505,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "是。通过 postMessage 与 Shopify.API.remoteRedirect 交互，利用 javascript: URL 执行任意代码，实现 DOM XSS。技术点在于 postMessage 消息验证缺失和 javascript: 协议滥用，跨组件（主题代码与 Shopify 应用）。",
+   "attack_chain": "恶意主题代码 → 打开应用窗口 → postMessage 发送 remoteRedirect → 应用执行 javascript: URL → 窃取会话。",
+   "bypass_technique": "利用 postMessage 和 javascript: 协议绕过。",
+   "defensive_insight": "验证 postMessage 来源，禁止 javascript: 协议。"
+  },
+  {
+   "id": 135293,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "内存破坏",
+   "reasoning": "部分。PHP bcpowmod 接受负 scale 导致内存破坏，属于已知 CVE，但 PoC 简单，技术点在于参数校验缺失。",
+   "attack_chain": "调用 bcpowmod 传入负 scale → 内存破坏。",
+   "bypass_technique": "无。",
+   "defensive_insight": "修复 PHP 内核，对参数进行严格校验。"
+  },
+  {
+   "id": 254285,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露",
+   "reasoning": "部分。ICQ 群聊 about 字段超长导致内存泄露，返回额外数据。技术点在于未限制输入长度，导致缓冲区溢出，但属于常见输入验证问题。",
+   "attack_chain": "发送超长 about 字段 → 服务器返回内存碎片 → 信息泄露。",
+   "bypass_technique": "无。",
+   "defensive_insight": "限制输入长度，修复内存管理。"
+  },
+  {
+   "id": 112224,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "开放重定向",
+   "reasoning": "否。参数 ref_url 未校验，导致开放重定向，属于常见漏洞，无特殊绕过。",
+   "attack_chain": "构造恶意链接 → 用户点击 → 重定向到恶意网站。",
+   "bypass_technique": "无。",
+   "defensive_insight": "校验重定向 URL 白名单。"
+  },
+  {
+   "id": 339137,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。ICQ 聊天中通过昵称注入 XSS，属于常见存储型 XSS，无特殊绕过。",
+   "attack_chain": "设置恶意昵称 → 受害者查看 → 执行 JS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对用户输入进行编码。"
+  },
+  {
+   "id": 272432,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。CORS 配置为 *，属于常见配置错误，无技术含量。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "限制 CORS 来源。"
+  },
+  {
+   "id": 837328,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 跨组件攻击链",
+   "reasoning": "是。通过 WebSocket 控制受害者 UI 元素，结合路径遍历和参数注入，实现任意 POST 请求。技术点在于 WebSocket 消息未验证和 URL 参数优先级，可抽象为通用攻击模式。",
+   "attack_chain": "WebSocket 注入恶意 form-update → 修改受害者 algo-id → 受害者点击按钮 → 发送恶意 POST 请求。",
+   "bypass_technique": "利用路径遍历和 URL 参数优先级绕过。",
+   "defensive_insight": "验证 WebSocket 消息来源，限制 UI 元素修改。"
+  },
+  {
+   "id": 446662,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "DoS",
+   "reasoning": "部分。Node.js HTTP/2 大 SETTINGS 帧导致 CPU 过载，属于协议实现缺陷，但攻击方式简单。",
+   "attack_chain": "发送大 SETTINGS 帧 → CPU 过载 → DoS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "限制 SETTINGS 帧大小，及时关闭连接。"
+  },
+  {
+   "id": 257119,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。Wakatime 邀请功能允许未验证邮箱发送邀请，属于业务逻辑缺陷，但无技术含量。",
+   "attack_chain": "创建未验证邮箱账户 → 发送恶意邀请 → 受害者上当。",
+   "bypass_technique": "无。",
+   "defensive_insight": "验证邮箱后再允许邀请。"
+  },
+  {
+   "id": 126539,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。Shopify 合作伙伴页面反射型 XSS，参数未编码，常见漏洞。",
+   "attack_chain": "构造恶意链接 → 执行 JS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对输出进行编码。"
+  },
+  {
+   "id": 397527,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "信息泄露 / 跨组件攻击链",
+   "reasoning": "是。通过 GitHub 泄露的 Electron 应用源码，提取 Slack token，实现内部聊天访问。技术点在于供应链攻击和逆向工程，跨组件。",
+   "attack_chain": "GitHub 搜索 → 下载 Electron 应用 → 逆向提取 token → 访问 Slack。",
+   "bypass_technique": "利用公开源码和逆向工程。",
+   "defensive_insight": "避免提交敏感文件，使用 git-secrets，定期轮换 token。"
+  },
+  {
+   "id": 21210,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 竞争条件",
+   "reasoning": "部分。Mavenlink 权限变更与邀请操作之间的竞争条件，导致权限提升。技术点在于状态混淆，但场景具体。",
+   "attack_chain": "用户 B 打开邀请界面 → 用户 A 降低权限 → 用户 B 提交邀请 → 成功。",
+   "bypass_technique": "利用权限变更与操作之间的时间差。",
+   "defensive_insight": "在操作时重新验证权限。"
+  },
+  {
+   "id": 361647,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。OLX 反射型 XSS，参数未转义单引号，常见漏洞。",
+   "attack_chain": "构造恶意链接 → 执行 JS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对输出进行编码。"
+  }
+ ]
+}

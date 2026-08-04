@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 19,
+  "kept": 12,
+  "dropped": 7,
+  "avg_score": 5.7,
+  "top_n": [
+   288955,
+   591302,
+   176308,
+   361269,
+   192210
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 591302,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "缓存投毒 / 协议行为利用",
+   "reasoning": "是。利用缓存未按 Origin 键控，将任意 Origin 回显到 Access-Control-Allow-Origin 并缓存，导致跨源请求被 CORS 阻断，形成 DoS。技术点在于缓存键缺失 Origin 维度，且服务端回显 Origin 未校验，组合成可规模化的缓存投毒。区别于普通缓存投毒，此攻击针对 CORS 头，影响面广且可抽象为通用判据。",
+   "attack_chain": "攻击者发送带恶意 Origin 的请求→缓存服务器缓存响应→受害者从不同 Origin 请求同一 URL→浏览器因 CORS 不匹配阻止响应→服务不可用。",
+   "bypass_technique": "利用缓存未键控 Origin，注入任意 Origin 值到 Access-Control-Allow-Origin 头。",
+   "defensive_insight": "缓存键应包含 Origin 头；对 Origin 进行白名单校验，不直接回显。"
+  },
+  {
+   "id": 418151,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。缺乏速率限制导致可重复启动 bot，属于常见业务逻辑缺陷，无绕过或创新。",
+   "attack_chain": "重复发送启动 bot 请求→多次激活→消息轰炸。",
+   "bypass_technique": "无，直接利用缺少速率限制。",
+   "defensive_insight": "对启动操作实施速率限制和幂等性检查。"
+  },
+  {
+   "id": 446238,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。EXIF 未剥离是常见信息泄露，无绕过或创新，属于成熟套路。",
+   "attack_chain": "上传含 EXIF 的图片→公开下载→提取元数据。",
+   "bypass_technique": "无，直接利用未处理元数据。",
+   "defensive_insight": "上传时剥离 EXIF 元数据。"
+  },
+  {
+   "id": 174474,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 业务逻辑",
+   "reasoning": "部分。通过 URL 片段注入 Cookie，并利用 path=/ 扩大作用域，属于非预期行为，但技术点较具体，可与其他漏洞组合。",
+   "attack_chain": "构造带 # 的 URL→注入 Cookie→配合 XSS 或会话固定。",
+   "bypass_technique": "利用 URL 片段不发送到服务器，但被客户端解析为 Cookie 注入。",
+   "defensive_insight": "严格校验 Cookie 来源，对 URL 片段进行过滤。"
+  },
+  {
+   "id": 592525,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。第三方库未转义导致 XSS，属于供应链漏洞，但技术点常见，PoC 完整。",
+   "attack_chain": "用户输入恶意 HTML→组件未转义→浏览器执行。",
+   "bypass_technique": "无，直接利用库的缺陷。",
+   "defensive_insight": "使用安全的渲染方法，对用户输入进行转义。"
+  },
+  {
+   "id": 288955,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 跨组件攻击链",
+   "reasoning": "是。利用 Android 组件导出和 URI 解码差异，结合符号链接实现任意文件读写，导致 token 泄露。技术点在于 URI 解码与文件路径处理的差异，以及符号链接的巧妙运用，可抽象为通用攻击模式。",
+   "attack_chain": "恶意应用构造特殊 URI→触发导出 Activity→复制文件时路径穿越→覆盖或泄露敏感文件。",
+   "bypass_technique": "利用 URI 解码和路径规范化差异，结合符号链接绕过目录限制。",
+   "defensive_insight": "对传入 URI 进行严格校验，使用随机文件名，避免使用用户可控路径。"
+  },
+  {
+   "id": 361269,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 配置错误",
+   "reasoning": "是。torsocks 将洋葱地址解析为回环地址，导致本地地址检查误判为可信，从而信任远程节点。技术点在于代理工具对地址解析的副作用，属于协议行为利用，可抽象为通用判断条件。",
+   "attack_chain": "用户使用 torsocks 连接远程节点→本地地址检查误判→信任恶意节点→数据泄露。",
+   "bypass_technique": "利用代理工具将远程地址映射为本地地址，绕过信任检查。",
+   "defensive_insight": "对 .onion 等特殊地址进行额外检查，或明确提示用户信任级别。"
+  },
+  {
+   "id": 192210,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 授权绕过",
+   "reasoning": "是。通过 API 直接提交 body_html 字段绕过前端过滤，实现存储型 XSS。技术点在于 API 与前端过滤不一致，属于跨组件攻击链，可抽象为通用判断条件。",
+   "attack_chain": "攻击者通过 API 修改评论→注入恶意 HTML→用户访问触发 XSS。",
+   "bypass_technique": "利用 API 未过滤的字段绕过前端 sanitization。",
+   "defensive_insight": "服务端对所有输入进行统一过滤，不信任前端。"
+  },
+  {
+   "id": 1911568,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。未授权缓存清除是常见配置错误，无绕过或创新。",
+   "attack_chain": "发送 PURGE 请求→清除缓存→影响可用性。",
+   "bypass_technique": "无，直接利用未授权接口。",
+   "defensive_insight": "对 PURGE 请求进行身份验证和授权。"
+  },
+  {
+   "id": 326434,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。参数篡改导致重复投票，属于常见业务逻辑漏洞，无绕过或创新。",
+   "attack_chain": "捕获投票请求→修改选项 ID→重复提交→多次投票。",
+   "bypass_technique": "无，直接利用缺少服务端校验。",
+   "defensive_insight": "服务端记录用户投票状态，防止重复投票。"
+  },
+  {
+   "id": 243611,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。Unicode 校验问题，但信息不足，无法判断具体漏洞。",
+   "attack_chain": "无明确攻击链。",
+   "bypass_technique": "无。",
+   "defensive_insight": "完善 Unicode 输入校验。"
+  },
+  {
+   "id": 1066189,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "认证绕过 / 业务逻辑",
+   "reasoning": "部分。通过 GET 请求直接确认邮箱，绕过验证流程，导致账户接管。技术点在于缺少 CSRF 保护和验证步骤，但思路较直接。",
+   "attack_chain": "构造确认邮箱请求→修改邮箱→重置密码→接管账户。",
+   "bypass_technique": "利用未验证的邮箱确认接口。",
+   "defensive_insight": "邮箱确认需验证所有权，并实施 CSRF 防护。"
+  },
+  {
+   "id": 956449,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "开放重定向 / 协议行为利用",
+   "reasoning": "部分。利用 Google 重定向功能绕过域名白名单，属于协议行为利用，但依赖第三方服务，通用性有限。",
+   "attack_chain": "构造嵌套 URL→绕过白名单→重定向到恶意网站。",
+   "bypass_technique": "利用可信域名的重定向功能。",
+   "defensive_insight": "对重定向目标进行严格校验，避免嵌套。"
+  },
+  {
+   "id": 83578,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。SPF 记录配置错误，属于常见配置问题，无绕过或创新。",
+   "attack_chain": "无攻击链，仅配置错误。",
+   "bypass_technique": "无。",
+   "defensive_insight": "正确配置 SPF 记录，避免过多 DNS 查询。"
+  },
+  {
+   "id": 1944515,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "ReDoS / 协议行为利用",
+   "reasoning": "部分。URI 解析器对特定输入存在 ReDoS，属于已知 CVE，但 PoC 完整，技术点在于正则表达式缺陷。",
+   "attack_chain": "发送恶意 URI→触发正则回溯→CPU 耗尽。",
+   "bypass_technique": "无，直接利用正则缺陷。",
+   "defensive_insight": "使用安全的正则表达式，限制输入长度。"
+  },
+  {
+   "id": 84371,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。存储型 XSS，但技术点常见，PoC 完整。",
+   "attack_chain": "提交恶意评论→存储→用户访问触发。",
+   "bypass_technique": "无，直接利用未过滤输入。",
+   "defensive_insight": "对评论内容进行转义和过滤。"
+  },
+  {
+   "id": 176308,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 0
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 协议行为利用",
+   "reasoning": "是。利用 crossdomain.xml 信任的域名存在 Flash 漏洞，通过跨站 Flash 绕过 OAuth 授权。技术点在于 Flash 跨域策略与 OAuth 流程的组合，属于跨组件攻击链，但复现依赖 Flash 环境。",
+   "attack_chain": "攻击者托管恶意 Flash→通过 yimg.com 发送请求→读取响应→获取授权。",
+   "bypass_technique": "利用 crossdomain.xml 信任的域名中的 Flash 漏洞。",
+   "defensive_insight": "移除不必要的 crossdomain.xml，或限制信任域。"
+  },
+  {
+   "id": 293363,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "认证绕过",
+   "reasoning": "否。注销后 token 未失效，属于常见会话管理缺陷，无绕过或创新。",
+   "attack_chain": "获取 token→注销后仍可用→访问用户数据。",
+   "bypass_technique": "无，直接利用未撤销的 token。",
+   "defensive_insight": "服务端实现 token 撤销机制。"
+  },
+  {
+   "id": 890555,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。CTF 提交 flag，无漏洞信息。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "无。"
+  },
+  {
+   "id": 15619,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "认证绕过",
+   "reasoning": "否。Cookie 固定是常见漏洞，无绕过或创新。",
+   "attack_chain": "设置固定 cookie→受害者登录→攻击者使用该 cookie。",
+   "bypass_technique": "无，直接利用未更新的会话 ID。",
+   "defensive_insight": "登录后重新生成会话 ID。"
+  }
+ ]
+}

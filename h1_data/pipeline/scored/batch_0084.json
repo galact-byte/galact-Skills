@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 8,
+  "dropped": 12,
+  "avg_score": 4.6,
+  "top_n": [
+   392859,
+   895778,
+   2337427,
+   2274981,
+   1161401
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 116057,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "路径遍历",
+   "reasoning": "否。描述模糊，仅提及目录浏览，无具体参数、请求或验证，且为informative状态，无法判断真实性。",
+   "attack_chain": "未明确",
+   "bypass_technique": "无",
+   "defensive_insight": "需提供具体路径和复现步骤。"
+  },
+  {
+   "id": 1211061,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。暴露composer的installed.json是常见配置错误，泄露的是依赖信息而非用户敏感数据，无绕过或链。",
+   "attack_chain": "直接访问installed.json获取依赖列表。",
+   "bypass_technique": "无",
+   "defensive_insight": "禁止web根目录暴露composer相关文件。"
+  },
+  {
+   "id": 343464,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 授权绕过",
+   "reasoning": "部分。GraphQL查询未授权访问team_member_groups，泄露内部组名和权限，但属于常见对象级授权缺失，思路常规。",
+   "attack_chain": "构造GraphQL查询获取team对象中的敏感字段。",
+   "bypass_technique": "利用GraphQL内省和未授权字段查询。",
+   "defensive_insight": "实施字段级授权，限制敏感字段的查询权限。"
+  },
+  {
+   "id": 392859,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "SSRF / 协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用libcurl支持gopher协议，通过302重定向将SSRF转化为SMTP命令发送，实现内网邮件发送。绕过IP黑名单使用多种编码，且攻击链跨API、内网SMTP、邮件系统。",
+   "attack_chain": "SSRF→编码绕过→gopher重定向→SMTP命令→发送邮件。",
+   "bypass_technique": "使用gopher协议和302重定向，绕过字符串黑名单。",
+   "defensive_insight": "限制SSRF目标协议和IP，禁止重定向到非HTTP协议。"
+  },
+  {
+   "id": 1257586,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "认证绕过 / 业务逻辑",
+   "reasoning": "部分。通过修改设备时间绕过PIN重试限制，思路有趣但依赖客户端控制，且无详细PoC，属于常见客户端信任问题。",
+   "attack_chain": "修改设备时间→重置速率限制→暴力破解PIN。",
+   "bypass_technique": "利用客户端时间校验缺陷。",
+   "defensive_insight": "服务端应独立计时，不信任客户端时间。"
+  },
+  {
+   "id": 1161401,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 授权绕过",
+   "reasoning": "是。利用隐式PendingIntent和通知监听权限，恶意应用劫持Intent继承Nextcloud权限读取联系人，跨应用组件攻击，思路新颖。",
+   "attack_chain": "恶意应用监听通知→获取隐式PendingIntent→设置包名和clipdata→继承权限读取联系人。",
+   "bypass_technique": "利用隐式PendingIntent的权限继承。",
+   "defensive_insight": "PendingIntent应设为FLAG_IMMUTABLE，避免隐式Intent。"
+  },
+  {
+   "id": 266449,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "认证绕过 / 配置错误",
+   "reasoning": "否。通过修改参数绕过邮箱验证，属于常见参数篡改，无新意。",
+   "attack_chain": "修改verify_email参数为false→获取API密钥。",
+   "bypass_technique": "参数篡改。",
+   "defensive_insight": "服务端强制验证邮箱，不信任客户端参数。"
+  },
+  {
+   "id": 359290,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "LDAP注入",
+   "reasoning": "否。经典LDAP注入，通过双引号触发错误，无绕过或链。",
+   "attack_chain": "注册时注入特殊字符→LDAP查询异常。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对LDAP查询参数进行转义和过滤。"
+  },
+  {
+   "id": 796808,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 认证绕过",
+   "reasoning": "部分。通过更改邮箱绕过验证，属于业务逻辑缺陷，但描述简略，缺少具体步骤。",
+   "attack_chain": "注册后更改邮箱→绕过验证→提权。",
+   "bypass_technique": "利用邮箱更改功能绕过验证流程。",
+   "defensive_insight": "邮箱更改需重新验证，且验证状态应绑定原始邮箱。"
+  },
+  {
+   "id": 895778,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 业务逻辑 / 框架行为利用",
+   "reasoning": "是。CTF writeup展示了多步攻击链：从.git泄露到SSRF、Android逆向、社交工程、CSS注入，最终提权。利用PHP数组参数合并模板、jQuery选择器宽松等框架行为，极具启发性。",
+   "attack_chain": "子域枚举→.git泄露→日志获取凭据→2FA绕过→SSRF→APK逆向→API调用→社交获取staff_id→提权→CSS注入获取2FA。",
+   "bypass_technique": "利用PHP数组参数合并模板、jQuery类选择器触发点击、CSS属性选择器逐字符窃取。",
+   "defensive_insight": "严格输入验证、最小权限、避免敏感信息泄露、使用CSP等。"
+  },
+  {
+   "id": 1164853,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型XSS，无认证访问管理页面，属于常见漏洞，无绕过。",
+   "attack_chain": "直接访问管理页面→编辑促销码→注入XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "输出编码和访问控制。"
+  },
+  {
+   "id": 2274981,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 配置错误",
+   "reasoning": "是。利用curl对PSL域名大小写处理不一致，设置超级cookie，绕过公共后缀列表限制，属于协议实现缺陷，可跨站点影响。",
+   "attack_chain": "恶意服务器设置domain=co.UK→curl接受→后续请求发送到其他co.uk子域。",
+   "bypass_technique": "利用大小写混合绕过PSL检查。",
+   "defensive_insight": "curl应规范化域名后再进行PSL匹配。"
+  },
+  {
+   "id": 186862,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF / 业务逻辑",
+   "reasoning": "否。将POST改为GET导致CSRF，属于常见方法混淆，无新意。",
+   "attack_chain": "构造GET链接诱导用户点击→支付订单。",
+   "bypass_technique": "HTTP方法篡改。",
+   "defensive_insight": "严格限制HTTP方法，并实施CSRF令牌。"
+  },
+  {
+   "id": 2337427,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 配置错误",
+   "reasoning": "是。PreSignedURL过期后未检查签名，直接放行，属于逻辑错误，可未授权访问任意文件，且复现步骤清晰。",
+   "attack_chain": "构造带过期日期的URL→签名未检查→下载文件。",
+   "bypass_technique": "利用过期日期触发错误分支，跳过签名验证。",
+   "defensive_insight": "过期后应拒绝请求，并始终验证签名。"
+  },
+  {
+   "id": 257384,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少验证码和速率限制，属于常见配置缺失，无技术含量。",
+   "attack_chain": "直接提交表单进行垃圾信息轰炸。",
+   "bypass_technique": "无。",
+   "defensive_insight": "添加验证码和速率限制。"
+  },
+  {
+   "id": 15476,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。经典CSRF，无令牌验证，常见漏洞。",
+   "attack_chain": "诱导用户点击恶意链接→修改邮箱→账户接管。",
+   "bypass_technique": "无。",
+   "defensive_insight": "实施CSRF令牌和SameSite Cookie。"
+  },
+  {
+   "id": 903521,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / DoS",
+   "reasoning": "是。利用Fastify默认allErrors:true导致即使有maxItems限制的schema也会被DoS，属于框架默认配置缺陷，可抽象为通用问题。",
+   "attack_chain": "发送超大数组→触发uniqueItems检查→CPU耗尽。",
+   "bypass_technique": "利用allErrors:true使校验继续执行。",
+   "defensive_insight": "设置allErrors:false，或对输入大小进行前置限制。"
+  },
+  {
+   "id": 1720822,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 命令注入",
+   "reasoning": "部分。依赖旧版flysystem存在CVE，属于供应链风险，但利用条件苛刻，且报告未提供具体利用。",
+   "attack_chain": "上传含unicode空格的文件名→绕过扩展名黑名单→执行代码。",
+   "bypass_technique": "利用unicode空格绕过扩展名过滤。",
+   "defensive_insight": "更新依赖，使用白名单校验文件名。"
+  },
+  {
+   "id": 507159,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。文件名未过滤导致存储XSS，常见漏洞，无绕过。",
+   "attack_chain": "创建恶意文件名→浏览时执行。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对文件名进行输出编码。"
+  },
+  {
+   "id": 727870,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。WordPress用户枚举，常见配置问题，无技术含量。",
+   "attack_chain": "访问/wp-json/wp/v2/users获取用户名。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁用REST API用户枚举。"
+  }
+ ]
+}

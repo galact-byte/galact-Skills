@@ -1,0 +1,335 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 3,
+  "dropped": 17,
+  "avg_score": 4.1,
+  "top_n": [
+   207042,
+   514224,
+   1238099
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 316346,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。public 静态服务器文件名 iframe 注入目录列表——文件名存储 XSS 经典（同 serve/anywhere 系列），PoC 完整但机制零变形。",
+   "attack_chain": "文件名存 iframe→目录列表渲染→加载恶意 frame。",
+   "bypass_technique": "无绕过，直接利用未转义文件名。",
+   "defensive_insight": "目录列表文件名转义。"
+  },
+  {
+   "id": 244434,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露 / 认证绕过",
+   "reasoning": "否。WakaTime 重置 token 经 Referer 泄露给第三方（Twitter 分享按钮）+token 可多次使用——Referer 泄露经典+token 复用细节，影响重置凭证安全，机制成熟。",
+   "attack_chain": "打开重置页点分享→token 进 Referer→第三方获取→复用重置密码。",
+   "bypass_technique": "无绕过，利用 Referer 泄露与 token 复用。",
+   "defensive_insight": "重置页 Referrer-Policy: no-referrer；token 一次性+短时效。"
+  },
+  {
+   "id": 1351338,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。MTN 的 WordPress Redux 框架已知 CVE-2021-38314（AUTH_KEY 泄露）——标准 CVE 复现，无新技巧。",
+   "attack_chain": "单点：调可预测 AJAX action→获插件列表/AUTH_KEY 哈希。",
+   "bypass_technique": "无绕过，直接利用已知 CVE。",
+   "defensive_insight": "升级 Redux 框架；WordPress 密钥轮换。"
+  },
+  {
+   "id": 988103,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "部分。Node TLSWrap::DoWrite 的 EncOut 失败路径释放 WriteWrap 但返回 0，StreamBase 返回已释放对象致 UAF（Project Zero Felix Wilhelm）——'错误路径释放与返回状态不一致'的 UAF，分析+ASAN 极深入但机制是 UAF 经典，PoC 需 ASAN 才崩溃。",
+   "attack_chain": "写 TLS socket 时对端关闭→EncOut 失败路径释放→返回已释放对象→UAF。",
+   "bypass_technique": "无绕过，利用错误路径的状态不一致。",
+   "defensive_insight": "错误路径释放后必须置空并返回错误码；升级 Node。"
+  },
+  {
+   "id": 1287686,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "子域名接管 / 配置错误",
+   "reasoning": "否。ii.worki.ru CNAME 到 emarsys 可认领——SaaS 委派子域接管经典，机制零变形。",
+   "attack_chain": "单点：认领 emarsys 域→控制子域。",
+   "bypass_technique": "无绕过，直接认领。",
+   "defensive_insight": "第三方服务弃用即删 CNAME。"
+  },
+  {
+   "id": 514224,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "SSRF / 协议行为利用",
+   "reasoning": "是。Search.gov 的 help_docs?url 有白名单防护，但 LF（%0A）拼接使校验与请求目标分歧——'换行符绕过 URL 白名单'的反直觉点明确（肉眼含合法前缀+换行后才是内网目标），可抽象为通用判据（URL 校验必须在解析后最终目标执行）；gov 站点内网端口扫描+metadata 探测（169.254.169.254 响应差异）证据完整。",
+   "attack_chain": "url=http://127.0.0.1:22/?%0A+合法前缀→校验通过但实际请求内网→扫描/读 metadata。",
+   "bypass_technique": "用 %0A 换行拼接使白名单校验失效。",
+   "defensive_insight": "SSRF 防护对解码后最终 URL 校验；拒绝换行/控制字符。"
+  },
+  {
+   "id": 449671,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "认证绕过",
+   "reasoning": "否。LiberaPay 登出后 cookie 仍可用——会话不失效经典（同 284 类），not-applicable，机制零变形。",
+   "attack_chain": "登出→旧 cookie 仍可登录。",
+   "bypass_technique": "无绕过，直接利用未失效会话。",
+   "defensive_insight": "登出服务端销毁会话并轮换 session id。"
+  },
+  {
+   "id": 878339,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。extend-merge 深合并 __proto__ 原型污染——npm 原型污染经典套路，PoC 标准，影响视调用方而定。",
+   "attack_chain": "单点：merge 注入 __proto__→污染原型。",
+   "bypass_technique": "无绕过，直接利用深合并未过滤特殊键。",
+   "defensive_insight": "深合并拒绝 __proto__/constructor 键。"
+  },
+  {
+   "id": 207042,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 跨组件攻击链 / 协议行为利用",
+   "reasoning": "是。Marketo 表单 iframe 的 postMessage 无 origin 校验且 ajaxParams 全控（jsonp 模式）→JSONP XSS；再用 frame-jumping（window.open 新页+frames[0] 索引绕过随机 frame 名）把 XSS 投递到 HackerOne 联系表单的 Marketo iframe，注册监听窃取提交数据——'第三方表单 iframe 的信任链'三层组合（postMessage 无校验+JSONP 加载+跨窗口投递）极具反直觉性，可抽象为通用判据（postMessage 必须校验 origin+ajax 参数白名单）；攻击者无需 HackerOne 侧漏洞，跨组件完整链，PoC 详尽。",
+   "attack_chain": "攻击页 iframe Marketo→postMessage 触发 JSONP XSS→生成链接开 H1 新页（#contact）→frames[0] 投递 postMessage→H1 表单 iframe 内 XSS→窃取提交数据。",
+   "bypass_technique": "postMessage 无 origin 校验 + jQuery jsonp 模式加载任意端点 + frames[0] 索引绕过随机帧名。",
+   "defensive_insight": "postMessage 接收校验 event.origin；ajax 参数白名单禁用 jsonp；第三方表单组件审计消息面。"
+  },
+  {
+   "id": 1791558,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 跨组件攻击链",
+   "reasoning": "否。brave-apt S3 bucket 未认领用于 Linux 安装——S3 接管经典，但'安装源即供应链投毒面'的视角有价值；已实际认领，链路由接管→恶意包→安装感染完整，机制成熟。",
+   "attack_chain": "认领 brave-apt 桶→替换安装包→Linux 用户安装→感染。",
+   "bypass_technique": "无绕过，直接认领未认领桶。",
+   "defensive_insight": "安装源 bucket 归属确认与签名校验；关键发布资产监控认领状态。"
+  },
+  {
+   "id": 380354,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。Roblox Jira issue collector 反射 XSS（CVE-2018-5230），单引号 payload 绕过双引号过滤器——已知 CVE+引号变体绕过，多输入点枚举完整但机制成熟。",
+   "attack_chain": "单点：单引号 payload 注入 issue collector 输入→反射执行。",
+   "bypass_technique": "用单引号绕过只过滤双引号的 sanitizer。",
+   "defensive_insight": "升级 Jira；过滤器覆盖全部引号类型。"
+  },
+  {
+   "id": 361054,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。LiberaPay target=_blank 无 noopener（tabnabbing）——经典缺陷，informative，附 PR 修复，机制零变形。",
+   "attack_chain": "单点：外链新标签→opener 替换原页→钓鱼。",
+   "bypass_technique": "无绕过，直接利用缺失 rel。",
+   "defensive_insight": "外链统一 rel=noopener noreferrer。"
+  },
+  {
+   "id": 1238099,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链 / 其他",
+   "reasoning": "是。Node llhttp 忽略 chunk extension 内容（违反 ABNF 允许 \n），与 Apache Traffic Server 的'\n 即扩展结束'解析分歧组合成 HRS——'双解析器对 chunk extension 的不同处理'（llhttp 宽容+ATS 宽容）实现绕过代理 ACL 访问 /admin；可抽象为通用判据（走私=任何解析分歧），docker PoC 完整演示 ATS 访问控制被绕过。",
+   "attack_chain": "chunk extension 内放 \n→llhttp 忽略、ATS 截断→请求分段分歧→走私 /admin 绕过代理 ACL。",
+   "bypass_technique": "在 chunk extension 中注入 LF 制造 llhttp 与 ATS 的解析分歧。",
+   "defensive_insight": "chunk extension 严格按 ABNF 校验；反代与后端解析规范统一。"
+  },
+  {
+   "id": 2058337,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 其他",
+   "reasoning": "否。Nextcloud 日历邀请邮箱无长度限制，50MB 邮箱致响应 10s——输入长度缺失的 DoS 经典，PoC 完整但机制零变形。",
+   "attack_chain": "单点：邀请超长邮箱→邮件处理耗时→服务迟缓。",
+   "bypass_technique": "无绕过，直接利用缺失长度限制。",
+   "defensive_insight": "邮箱字段长度上限；邮件发送队列隔离。"
+  },
+  {
+   "id": 207431,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。Yelp biz_redir 重定向到未购买域名（商户站过期）——重定向目标失控变体，informative，机制成熟。",
+   "attack_chain": "单点：打开商户重定向→落到攻击者可购域名。",
+   "bypass_technique": "无绕过，利用商户域名过期。",
+   "defensive_insight": "重定向目标域名活跃度监控；过期的商户链接降级处理。"
+  },
+  {
+   "id": 344069,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。react-marked-markdown 覆写 link 方法不转义 href，sanitize:true 仍可 javascript: XSS——库 sanitize 失效经典，PoC 完整但机制成熟。",
+   "attack_chain": "单点：Markdown 写 javascript: 链接→渲染执行。",
+   "bypass_technique": "无绕过，利用覆写 renderer 未转义。",
+   "defensive_insight": "Markdown 渲染链接 scheme 白名单；sanitize 覆盖自定义 renderer。"
+  },
+  {
+   "id": 803028,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。Monero 钱包改密确认框不匹配也成功——本地 UI 校验缺陷，影响为误操作锁死钱包，机制零变形。",
+   "attack_chain": "单点：改密不填确认→仍成功→可能锁死。",
+   "bypass_technique": "无绕过，利用确认校验缺失。",
+   "defensive_insight": "改密确认必须匹配；本地校验服务端同样执行。"
+  },
+  {
+   "id": 877515,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。keyd set 路径可写 __proto__——npm 原型污染经典，PoC 标准，影响视调用方而定。",
+   "attack_chain": "单点：set('__proto__.polluted')→污染原型。",
+   "bypass_technique": "无绕过，直接利用路径未过滤。",
+   "defensive_insight": "路径写入拒绝 __proto__ 段。"
+  },
+  {
+   "id": 179328,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。Lahitapiola //blackfan.ru/%2f../ 路径技巧跳外域——open redirect 经典（双斜杠+编码路径），JS location.replace 根因，机制成熟。",
+   "attack_chain": "单点：构造路径→location.replace 跳外域。",
+   "bypass_technique": "无绕过，利用路径规范化跳转。",
+   "defensive_insight": "重定向目标同源校验；路径规范化。"
+  },
+  {
+   "id": 902733,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。Curve 等待列表\"Track my position\"仅凭邮箱即返回全部用户 PII（手机/地址）——查询接口返回冗余敏感字段的经典信息泄露（可枚举），影响面大但机制零变形。",
+   "attack_chain": "单点：输邮箱查询位置→响应含手机/地址等 PII→批量枚举。",
+   "bypass_technique": "无绕过，直接利用响应冗余字段。",
+   "defensive_insight": "查询接口响应字段级最小化；PII 仅本人可见。"
+  }
+ ]
+}

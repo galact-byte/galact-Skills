@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1249583,
+   162955,
+   227522,
+   654888,
+   388254
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 17252,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 认证绕过",
+   "reasoning": "部分。密码修改后旧会话未失效，这是常见的会话管理缺陷，但报告清晰描述了攻击场景（攻击者已获取密码后，受害者改密仍无法踢掉攻击者），属于业务逻辑上的非预期行为，但技术点并不新颖。",
+   "attack_chain": "攻击者获取密码登录→受害者修改密码→旧会话仍有效→攻击者持续访问账户。",
+   "bypass_technique": "无绕过，利用密码修改后未销毁旧会话的逻辑缺陷。",
+   "defensive_insight": "密码修改后应销毁所有旧会话，或提供用户选择是否终止其他会话的选项。"
+  },
+  {
+   "id": 77081,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少 X-Content-Type-Options 头是常见的配置缺失，属于成熟套路，无绕过或攻击链，仅作为安全加固建议。",
+   "attack_chain": "无攻击链，仅指出响应头缺失。",
+   "bypass_technique": "无。",
+   "defensive_insight": "在所有响应中设置 X-Content-Type-Options: nosniff。"
+  },
+  {
+   "id": 1331281,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型 XSS 在多个输入点，但均为直接注入，无绕过或变形，属于常见漏洞类型，PoC 完整但启发性低。",
+   "attack_chain": "单点：输入框注入 payload→存储→触发执行。",
+   "bypass_technique": "无绕过，直接注入。",
+   "defensive_insight": "输入过滤和输出编码。"
+  },
+  {
+   "id": 1200583,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。Prometheus 实例暴露是常见的配置错误，无绕过或攻击链，信息量少。",
+   "attack_chain": "直接访问暴露的 Prometheus 实例。",
+   "bypass_technique": "无。",
+   "defensive_insight": "限制 Prometheus 的访问，使用认证和网络策略。"
+  },
+  {
+   "id": 227522,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / IDOR",
+   "reasoning": "是。通过修改 id 参数实现跨账户编辑课程，且课程从原账户删除并转移到攻击者账户，这种数据转移的 IDOR 具有非预期性，且可批量利用。",
+   "attack_chain": "创建两个账户→添加课程获取 id→修改 id 为他人课程→编辑请求→课程被转移。",
+   "bypass_technique": "直接修改 id 参数，未校验所有权。",
+   "defensive_insight": "服务端校验资源所有权，使用不可预测的 ID 或进行访问控制。"
+  },
+  {
+   "id": 1192159,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。WebDAV 端点未受暴力破解保护，属于配置缺失，无绕过或攻击链，且报告信息不足。",
+   "attack_chain": "无攻击链，仅指出缺少暴力破解保护。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对 WebDAV 端点实施速率限制和暴力破解防护。"
+  },
+  {
+   "id": 162955,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "命令注入 / 跨组件攻击链",
+   "reasoning": "是。利用 Windows 系统盘根目录可写，创建 OpenSSL 配置文件，使 Slack 加载恶意配置导致代码执行。这是对系统路径信任的巧妙利用，且可跨用户提权，攻击链完整。",
+   "attack_chain": "创建 C:\\usr\\local\\ssl\\openssl.cnf→Slack 启动时加载→OpenSSL 加载恶意库→任意代码执行。",
+   "bypass_technique": "利用系统盘根目录可写，预置恶意配置文件。",
+   "defensive_insight": "OpenSSL 配置应仅从安全位置加载，并验证文件完整性。"
+  },
+  {
+   "id": 654888,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "命令注入",
+   "reasoning": "是。通过配置 Yum 插件的 createrepo 路径为任意命令，导致 RCE。这是配置项未过滤导致的命令注入，思路清晰，可复用。",
+   "attack_chain": "编辑 Yum 配置→设置 createrepoPath 为恶意命令→触发执行。",
+   "bypass_technique": "利用配置项直接注入命令。",
+   "defensive_insight": "对配置项进行白名单校验，避免将用户输入直接作为命令执行。"
+  },
+  {
+   "id": 55506,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 授权绕过",
+   "reasoning": "部分。被屏蔽的用户仍能通过直接 URL 访问受保护推文，这是隐私设置的逻辑缺陷，非预期但技术点简单。",
+   "attack_chain": "用户屏蔽另一用户→被屏蔽者直接访问推文 URL→看到内容。",
+   "bypass_technique": "直接构造 URL 绕过屏蔽检查。",
+   "defensive_insight": "在服务端对推文访问进行权限校验，包括屏蔽关系。"
+  },
+  {
+   "id": 1298809,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。GitHub 上泄露敏感信息是常见问题，无技术绕过，但涉及跨组件（GitHub 与 Zendesk），信息量较大。",
+   "attack_chain": "搜索 GitHub 仓库→发现泄露的凭据→可能访问相关服务。",
+   "bypass_technique": "无。",
+   "defensive_insight": "使用密钥扫描工具，及时撤销泄露的凭据。"
+  },
+  {
+   "id": 187025,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。公开可访问的 IDRAC 实例，但默认凭据无效，无实际风险，属于配置错误。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "限制管理接口的访问。"
+  },
+  {
+   "id": 1185903,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。邮件发送无速率限制，可导致邮件轰炸，属于常见业务逻辑缺陷，无绕过。",
+   "attack_chain": "拦截请求→重放多次→大量邮件。",
+   "bypass_technique": "无。",
+   "defensive_insight": "实施速率限制和验证码。"
+  },
+  {
+   "id": 272839,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 认证绕过",
+   "reasoning": "部分。密码修改后会话 ID 不变，与 17252 类似，但报告更简洁，技术点相同。",
+   "attack_chain": "攻击者获取密码→受害者改密→会话仍有效。",
+   "bypass_technique": "无。",
+   "defensive_insight": "密码修改后应重新生成会话 ID。"
+  },
+  {
+   "id": 7919,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。邮件主题中的 XSS，直接注入，无绕过，常见。",
+   "attack_chain": "发送恶意邮件→主题触发 XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对邮件内容进行过滤和编码。"
+  },
+  {
+   "id": 1249583,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 框架行为利用",
+   "reasoning": "是。利用 ingress-nginx 的配置片段功能，注入 Lua 代码读取 serviceaccount token，进而获取集群 secrets 和提权。这是对 Kubernetes 组件信任边界的巧妙绕过，攻击链完整，可抽象为通用模式。",
+   "attack_chain": "创建恶意 ingress→注入 Lua 代码→读取 token→访问 kube-apiserver→获取 secrets→提权。",
+   "bypass_technique": "利用 ingress-nginx 的 server-snippet 注入 Lua 代码。",
+   "defensive_insight": "限制 ingress-nginx 的配置片段权限，使用最小权限的 serviceaccount，并监控异常访问。"
+  },
+  {
+   "id": 221262,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "其他",
+   "reasoning": "部分。通过特定输入触发 libsass 栈溢出，属于解析器递归深度问题，非预期但技术点较具体，PoC 完整。",
+   "attack_chain": "输入恶意 SCSS→解析器递归→栈溢出。",
+   "bypass_technique": "利用深层嵌套表达式。",
+   "defensive_insight": "限制解析器递归深度，使用迭代解析。"
+  },
+  {
+   "id": 949823,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "XSS",
+   "reasoning": "否。报告信息不足，仅提到注入 payload，无具体步骤和细节，无法判断真实性。",
+   "attack_chain": "未知。",
+   "bypass_technique": "未知。",
+   "defensive_insight": "输入过滤和输出编码。"
+  },
+  {
+   "id": 223339,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 认证绕过",
+   "reasoning": "部分。密码重置链接点击后自动登录，导致受害者登录到攻击者账户，这是业务逻辑缺陷，非预期但技术点简单。",
+   "attack_chain": "攻击者生成重置链接→受害者点击→自动登录攻击者账户。",
+   "bypass_technique": "利用重置链接自动登录行为。",
+   "defensive_insight": "重置密码后不应自动登录，应要求用户输入新密码。"
+  },
+  {
+   "id": 388254,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 点击劫持",
+   "reasoning": "是。利用编辑器角色可注入 iframe 的权限，结合点击劫持绕过 CSRF 防护，实现账户接管。这是权限组合和 CSRF 绕过的优雅利用，攻击链完整。",
+   "attack_chain": "编辑器创建恶意帖子→受害者点击→iframe 加载 profile 页→自动提交表单→修改邮箱/密码→接管。",
+   "bypass_technique": "利用 iframe 内生成有效 nonce 绕过 CSRF。",
+   "defensive_insight": "限制编辑器角色的 HTML 权限，设置 X-Frame-Options: DENY，并加强 CSRF 防护。"
+  },
+  {
+   "id": 982202,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "SQL注入",
+   "reasoning": "部分。在受限字符集下使用注释符绕过空格限制，进行盲注，思路巧妙但属于常见 SQLi 变体。",
+   "attack_chain": "注入点→使用 /**/ 绕过空格→盲注获取数据。",
+   "bypass_technique": "使用 /**/ 代替空格。",
+   "defensive_insight": "使用参数化查询，严格过滤输入。"
+  }
+ ]
+}

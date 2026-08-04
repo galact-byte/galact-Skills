@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   378148,
+   1592596,
+   205497,
+   226659,
+   88105
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1592596,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。IDOR 常见，但此处通过修改线程 ID 即可回复任意师生私密会话，属于典型的水平越权，且影响隐私。技术点在于对线程 ID 的访问控制缺失，简单但有效。",
+   "attack_chain": "学生A获取自己的消息线程ID→修改ID为其他学生的线程ID→发送回复→成功介入私密对话。",
+   "bypass_technique": "直接枚举或猜测线程ID，未验证当前用户是否属于该线程。",
+   "defensive_insight": "对线程ID的访问必须校验当前用户是否为参与者；使用不可预测的UUID替代自增ID。"
+  },
+  {
+   "id": 1455257,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "路径遍历",
+   "reasoning": "否。CVE-2020-3452 是公开已知漏洞，直接利用公开PoC，无新意，无绕过，无攻击链。",
+   "attack_chain": "单点：发送特制GET请求→读取WebVPN文件。",
+   "bypass_technique": "无，直接利用已知CVE。",
+   "defensive_insight": "升级到已修复版本，或禁用WebVPN/AnyConnect功能。"
+  },
+  {
+   "id": 378148,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 框架行为利用",
+   "reasoning": "是。利用正则表达式对换行符的匹配缺陷，构造包含换行的符号链接名绕过过滤，再结合项目删除后上传目录不清理的行为，实现任意文件上传并最终RCE。技术点在于正则表达式对`\\n`的意外匹配，以及文件系统对换行符的处理，极具启发性。",
+   "attack_chain": "构造恶意tar包→导入项目→符号链接`.\nevil`绕过过滤→删除项目→再次导入包含恶意文件的tar包→利用符号链接写入authorized_keys→SSH登录。",
+   "bypass_technique": "利用正则`%r{.*/\\.{1,2}$}`不匹配包含换行的路径，创建名为`.\nevil`的符号链接。",
+   "defensive_insight": "严格校验文件名，禁止控制字符；清理项目时彻底删除上传目录；对符号链接进行规范化处理。"
+  },
+  {
+   "id": 1463013,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "竞争条件 / 其他",
+   "reasoning": "部分。这是一个并发问题，在`multi_done()`中连接被释放后仍被使用，属于典型的use-after-free，但需要特定线程调度才能触发，且报告为informative，复现条件不明确。技术点在于对连接缓存的生命周期管理不当。",
+   "attack_chain": "多线程使用libcurl→连接被返回缓存→另一线程复用并释放→原线程继续使用导致UAF。",
+   "bypass_technique": "无绕过，是并发竞争。",
+   "defensive_insight": "确保连接在释放后不再被引用，使用引用计数或同步机制。"
+  },
+  {
+   "id": 2298307,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告声称存在缓冲区溢出，但未提供具体PoC，且`strcpy`的使用可能已被验证安全，状态为not-applicable，信息不足。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "使用安全的字符串复制函数，并验证输入长度。"
+  },
+  {
+   "id": 244813,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少速率限制是常见问题，无绕过，无攻击链，属于成熟套路。",
+   "attack_chain": "单点：重复POST创建目标→服务器资源耗尽。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对创建操作实施速率限制。"
+  },
+  {
+   "id": 205497,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "是。利用reStructuredText的链接语法，通过`javascript:`协议实现存储型XSS，绕过常见的HTML过滤。技术点在于对reST解析器的行为利用，非典型XSS。",
+   "attack_chain": "创建README.rst→写入恶意reST链接→用户访问项目页面→触发XSS。",
+   "bypass_technique": "使用reST的`__`链接语法，配合`javascript:`协议。",
+   "defensive_insight": "对reST渲染进行白名单过滤，禁止`javascript:`等危险协议。"
+  },
+  {
+   "id": 226659,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 协议行为利用",
+   "reasoning": "是。利用Host头注入密码重置链接，导致令牌泄露，实现账户接管。技术点在于对Host头的信任，是经典的Host头攻击，但影响严重。",
+   "attack_chain": "受害者请求忘记密码→攻击者篡改Host头→受害者收到恶意链接→点击后令牌泄露→攻击者重置密码。",
+   "bypass_technique": "修改Host头为攻击者控制的域名。",
+   "defensive_insight": "使用SERVER_NAME而非HTTP_HOST，或验证Host头是否在允许列表中。"
+  },
+  {
+   "id": 2125679,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。这是已知CVE的复述，无新意，无绕过，无攻击链。",
+   "attack_chain": "单点：恶意剪贴板内容→contenteditable元素→执行JS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "升级rails-ujs到修复版本。"
+  },
+  {
+   "id": 88105,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "是。利用URL路径中的未转义属性注入，通过视频标题构造payload，实现存储型XSS。技术点在于对URL路径的反射未转义，且需要用户交互，但思路巧妙。",
+   "attack_chain": "上传视频→设置恶意标题→搜索该标题→URL反射未转义→鼠标悬停触发XSS。",
+   "bypass_technique": "在标题中注入`\"onmouseover=\"`，利用URL编码绕过过滤。",
+   "defensive_insight": "对URL参数进行HTML实体编码，或使用安全的模板渲染。"
+  },
+  {
+   "id": 223694,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少速率限制是常见问题，且场景依赖物理访问，无绕过，无攻击链。",
+   "attack_chain": "单点：暴力破解密码。",
+   "bypass_technique": "无。",
+   "defensive_insight": "实施速率限制和账户锁定。"
+  },
+  {
+   "id": 275303,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "业务逻辑",
+   "reasoning": "否。报告内容模糊，仅提到旧重置链接可重新激活账户，但缺少具体步骤和影响，信息不足。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "确保重置链接一次性有效，并设置过期时间。"
+  },
+  {
+   "id": 1188982,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。在GitHub历史中发现密钥是常见的信息泄露，无绕过，无攻击链。",
+   "attack_chain": "单点：搜索GitHub历史→获取密钥。",
+   "bypass_technique": "无。",
+   "defensive_insight": "使用密钥管理工具，避免提交到代码仓库。"
+  },
+  {
+   "id": 569966,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "路径遍历",
+   "reasoning": "否。路径遍历是常见漏洞，无绕过，无攻击链。",
+   "attack_chain": "单点：发送包含../的请求→列出目录。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对路径进行规范化，过滤../。"
+  },
+  {
+   "id": 2213366,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。验证码重用是常见问题，无绕过，无攻击链。",
+   "attack_chain": "单点：获取有效验证码→重复使用注册多个账户。",
+   "bypass_technique": "无。",
+   "defensive_insight": "验证码应一次性使用，并绑定会话。"
+  },
+  {
+   "id": 504984,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。XSS注入到`<link>`标签，需要用户交互（ALT+SHIFT+X），但利用accesskey属性，思路略有新意。",
+   "attack_chain": "单点：构造恶意URL→反射到link标签→用户按下快捷键触发。",
+   "bypass_technique": "利用accesskey属性，在link标签中注入事件。",
+   "defensive_insight": "对URL参数进行编码，避免反射到HTML属性中。"
+  },
+  {
+   "id": 415398,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。未检查账户状态是常见的业务逻辑缺陷，无绕过，无攻击链。",
+   "attack_chain": "单点：POST忽略列表→添加已禁用账户。",
+   "bypass_technique": "无。",
+   "defensive_insight": "在端点中检查账户状态。"
+  },
+  {
+   "id": 28449,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "SQL注入",
+   "reasoning": "否。报告仅引用外部链接，无具体细节，信息不足。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "升级Rails到修复版本。"
+  },
+  {
+   "id": 6369,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型XSS是常见漏洞，无绕过，无攻击链。",
+   "attack_chain": "单点：创建班级名称→注入XSS→持久化。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对用户输入进行HTML编码。"
+  },
+  {
+   "id": 575,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "配置错误",
+   "reasoning": "否。邮件伪造是常见问题，但报告内容模糊，未提供具体技术细节，信息不足。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "配置SPF、DKIM、DMARC。"
+  }
+ ]
+}

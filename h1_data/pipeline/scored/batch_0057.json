@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   781281,
+   746733,
+   1101882,
+   330650,
+   143240
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 781281,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 业务逻辑 / 认证绕过",
+   "reasoning": "是。该报告展示了从账户接管到内部资源访问的完整攻击链，每一步都利用了看似合理的业务逻辑缺陷（如QR码生成时对特殊字符的修剪、CSP绕过、内部主机名泄露、不充分的授权控制），最终通过存储XSS和SSRF实现内网渗透。技术点在于将多个低危漏洞组合成高危攻击链，体现了攻击者思维和漏洞组合的艺术。",
+   "attack_chain": "1. 利用QR码生成时对<>字符的修剪，注册与受害者相同邮箱的账户，实现账户接管。2. 通过CSP绕过在支持门户执行脚本，窃取内部URL。3. 利用内部URL访问支持页面，通过不充分的授权控制更新其他用户信息，注入存储XSS。4. 利用存储XSS触发SSRF，扫描内部端口并访问内部资源。",
+   "bypass_technique": "利用QR码生成时对特殊字符的修剪绕过邮箱唯一性校验；利用CSP白名单中的JSONP接口绕过CSP；利用内部主机名泄露和授权缺失进行横向操作。",
+   "defensive_insight": "对用户输入进行严格的规范化处理，避免在生成二维码等过程中意外修改；实施严格的CSP策略，避免使用不安全的JSONP接口；对所有内部接口实施严格的访问控制，防止未授权访问；对用户可控的输入进行输出编码，防止存储XSS。"
+  },
+  {
+   "id": 145266,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "内存破坏",
+   "reasoning": "否。这是一个典型的Flash Player内存破坏漏洞，属于已知CVE，没有展示出非预期的利用方式或绕过技巧。虽然漏洞本身严重，但报告内容简略，缺乏详细分析，且属于成熟漏洞类型。",
+   "attack_chain": "单点：调用retrieveResolvers()函数传入无效参数导致内存崩溃。",
+   "bypass_technique": "无实质绕过，直接利用函数参数验证缺陷。",
+   "defensive_insight": "对函数参数进行严格验证，确保内部类实例正确初始化。"
+  },
+  {
+   "id": 155228,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。这是WordPress旧版本中已知的Flash XSS漏洞，属于公开的CVE，利用方式成熟，没有新的绕过技巧或非预期组合。",
+   "attack_chain": "单点：访问恶意URL触发Flash XSS。",
+   "bypass_technique": "无实质绕过，直接利用已知漏洞。",
+   "defensive_insight": "及时更新WordPress及插件，移除不必要的Flash组件。"
+  },
+  {
+   "id": 330650,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 配置错误",
+   "reasoning": "是。该漏洞利用了macOS文件系统大小写不敏感的特性，通过改变文件名的字母大小写来绕过serve模块的ignore配置，实现了对忽略文件的访问。这种利用方式体现了对操作系统行为差异的深入理解，且绕过方法简单通用。",
+   "attack_chain": "单点：利用macOS大小写不敏感特性，将文件名中的字母改为大写，绕过ignore列表。",
+   "bypass_technique": "利用macOS文件系统大小写不敏感，将文件名中的字母改为大写，绕过基于字符串匹配的ignore配置。",
+   "defensive_insight": "在实现ignore功能时，应使用文件系统规范化后的路径进行匹配，并考虑操作系统的大小写敏感性差异。"
+  },
+  {
+   "id": 1044716,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "SQL注入",
+   "reasoning": "部分。该报告展示了在PUT请求的salesLeadId参数中存在SQL注入，通过AND/OR条件验证了注入点，但利用方式较为常规，没有展示出非预期的绕过或组合。",
+   "attack_chain": "单点：在PUT请求的salesLeadId参数中注入SQL语句，影响数据库操作。",
+   "bypass_technique": "无实质绕过，直接利用参数拼接。",
+   "defensive_insight": "对用户输入进行参数化查询，避免SQL拼接。"
+  },
+  {
+   "id": 1680241,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 资源消耗",
+   "reasoning": "部分。该漏洞利用了自动回复消息字段缺少大小限制，通过发送超大payload导致服务器资源耗尽，属于典型的资源消耗攻击，但利用方式直接，没有绕过技巧。",
+   "attack_chain": "单点：通过API设置超大自动回复消息，导致服务器处理时资源耗尽。",
+   "bypass_technique": "无实质绕过，直接利用缺少大小限制的字段。",
+   "defensive_insight": "对用户输入字段设置合理的长度限制，并实施资源使用监控。"
+  },
+  {
+   "id": 1101882,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 信息泄露",
+   "reasoning": "是。该漏洞揭示了curl的--referer ';auto'功能在自动设置Referer头时，未剥离URL中的凭据和片段，导致凭据泄露。这利用了HTTP协议中Referer头的标准行为，但curl的实现未遵循安全建议，属于协议行为利用。",
+   "attack_chain": "单点：使用curl的--referer ';auto'功能访问带凭据的URL，凭据被泄露到Referer头。",
+   "bypass_technique": "利用curl自动Referer功能未剥离凭据的缺陷，导致凭据泄露。",
+   "defensive_insight": "在实现自动Referer功能时，应遵循安全建议，剥离URL中的凭据和片段。"
+  },
+  {
+   "id": 905688,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "否。该漏洞是ServiceNow中未授权访问邮件通知模块，导致PII泄露，属于典型的配置错误，没有展示出非预期的绕过或组合。",
+   "attack_chain": "单点：直接访问未授权端点，查看用户PII。",
+   "bypass_technique": "无实质绕过，直接利用未授权访问。",
+   "defensive_insight": "对敏感模块实施严格的访问控制，定期审计权限配置。"
+  },
+  {
+   "id": 746733,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 拒绝服务",
+   "reasoning": "是。该漏洞利用了TLS协议中证书subjectAltName字段的畸形内容，导致Node.js TLS服务器在读取对端证书时触发断言崩溃。这利用了TLS协议对证书内容的宽松解析，以及Node.js实现中的缺陷，属于协议行为利用。",
+   "attack_chain": "单点：构造畸形证书，连接TLS服务器，触发断言崩溃。",
+   "bypass_technique": "利用TLS协议允许任意subjectAltName内容，构造畸形证书触发服务器崩溃。",
+   "defensive_insight": "对证书内容进行严格验证，避免对畸形输入触发断言。"
+  },
+  {
+   "id": 83373,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。该漏洞是服务器启用了TRACE方法，导致XST攻击，属于常见的配置错误，没有展示出非预期的绕过或组合。",
+   "attack_chain": "单点：发送TRACE请求，获取包含Cookie的响应。",
+   "bypass_technique": "无实质绕过，直接利用服务器配置错误。",
+   "defensive_insight": "禁用不必要的HTTP方法，如TRACE。"
+  },
+  {
+   "id": 639876,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SQL注入",
+   "reasoning": "否。该漏洞是典型的POST参数SQL注入，使用sleep函数进行时间盲注，属于成熟套路，没有展示出非预期的绕过或组合。",
+   "attack_chain": "单点：在location参数中注入SQL语句，通过时间延迟确认注入。",
+   "bypass_technique": "无实质绕过，直接利用参数拼接。",
+   "defensive_insight": "对用户输入进行参数化查询，避免SQL拼接。"
+  },
+  {
+   "id": 227102,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SQL注入",
+   "reasoning": "否。该漏洞是典型的错误型SQL注入，通过触发异常泄露代码和数据库信息，属于成熟套路，没有展示出非预期的绕过或组合。",
+   "attack_chain": "单点：在crs_id参数中注入特殊字符，触发异常泄露信息。",
+   "bypass_technique": "无实质绕过，直接利用参数拼接。",
+   "defensive_insight": "对用户输入进行参数化查询，并配置自定义错误页面。"
+  },
+  {
+   "id": 205529,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 认证绕过",
+   "reasoning": "部分。该漏洞利用了密码重置流程中的逻辑缺陷，结合内容注入漏洞，实现了账户接管。虽然每个环节都是已知问题，但组合起来形成攻击链，具有一定的启发性。",
+   "attack_chain": "1. 攻击者使用受害者邮箱注册，触发密码重置链接。2. 利用内容注入漏洞构造恶意链接，诱导受害者点击。3. 受害者点击链接后密码被修改，攻击者接管账户。",
+   "bypass_technique": "利用密码重置流程未验证用户身份，结合内容注入诱导受害者点击恶意链接。",
+   "defensive_insight": "在密码重置流程中增加身份验证步骤，对用户输入进行严格过滤和编码。"
+  },
+  {
+   "id": 2857,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 会话管理",
+   "reasoning": "否。该漏洞是CSRF令牌在会话注销后仍然有效，属于会话管理缺陷，但利用方式直接，没有展示出非预期的绕过或组合。",
+   "attack_chain": "单点：获取旧CSRF令牌，在注销后仍可使用。",
+   "bypass_technique": "无实质绕过，直接利用令牌未失效。",
+   "defensive_insight": "在会话注销时使CSRF令牌失效。"
+  },
+  {
+   "id": 143240,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 开放重定向",
+   "reasoning": "是。该漏洞利用了开放重定向将用户引导至攻击者控制的JSON文件，再通过JSONP回调将恶意内容注入页面，实现了XSS。这种组合利用了重定向和JSONP的信任关系，体现了跨组件攻击链。",
+   "attack_chain": "1. 攻击者构造恶意redirect_uri，指向攻击者控制的JSON文件。2. 服务器重定向到该文件，并加载JSON内容。3. JSON中的authorize_url未转义，注入HTML和JavaScript，执行XSS。",
+   "bypass_technique": "利用开放重定向和JSONP回调，将恶意内容注入页面。",
+   "defensive_insight": "对重定向URL进行白名单校验，对JSON内容进行严格转义。"
+  },
+  {
+   "id": 876708,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "反序列化 / 命令注入",
+   "reasoning": "部分。该漏洞是DotNetNuke中已知的反序列化漏洞，利用ysoserial.net生成payload实现RCE，属于成熟套路，但报告提供了详细的利用步骤和payload，具有一定的参考价值。",
+   "attack_chain": "单点：构造恶意DNNPersonalization cookie，触发反序列化，执行任意命令。",
+   "bypass_technique": "无实质绕过，直接利用已知反序列化漏洞。",
+   "defensive_insight": "升级DotNetNuke到安全版本，对cookie进行签名和加密。"
+  },
+  {
+   "id": 310133,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。该漏洞利用了文件名未过滤，在目录列表页面触发存储XSS，属于常见的XSS类型，但利用文件名作为攻击向量具有一定的非预期性。",
+   "attack_chain": "单点：创建恶意文件名，用户访问目录列表时触发XSS。",
+   "bypass_technique": "利用文件名中的HTML/JavaScript代码，在目录列表页面执行。",
+   "defensive_insight": "对文件名进行严格过滤和编码，避免在HTML中直接输出。"
+  },
+  {
+   "id": 31187,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。该漏洞利用了GET和POST请求处理不一致，导致POST请求中的参数未过滤，触发XSS，属于逻辑缺陷，具有一定的非预期性。",
+   "attack_chain": "单点：通过POST请求提交恶意bk参数，触发XSS。",
+   "bypass_technique": "利用GET和POST处理不一致，绕过过滤。",
+   "defensive_insight": "对所有请求方法进行统一的输入过滤和输出编码。"
+  },
+  {
+   "id": 138181,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 加密问题",
+   "reasoning": "部分。该漏洞是SSLv2中的Bleichenbacher oracle，属于已知CVE，但报告提到了DROWN攻击的变体，具有一定的启发性。",
+   "attack_chain": "单点：利用SSLv2的Bleichenbacher oracle，恢复会话密钥。",
+   "bypass_technique": "利用SSLv2协议缺陷，进行Bleichenbacher攻击。",
+   "defensive_insight": "禁用SSLv2，升级到安全的TLS版本。"
+  },
+  {
+   "id": 2295098,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 会话管理",
+   "reasoning": "否。该漏洞是密码修改后未使旧会话失效，属于常见的会话管理缺陷，没有展示出非预期的绕过或组合。",
+   "attack_chain": "单点：修改密码后，旧会话仍然有效。",
+   "bypass_technique": "无实质绕过，直接利用会话未失效。",
+   "defensive_insight": "在密码修改后使所有旧会话失效。"
+  }
+ ]
+}

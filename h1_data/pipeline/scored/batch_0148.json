@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 10,
+  "dropped": 10,
+  "avg_score": 5.1,
+  "top_n": [
+   1104874,
+   409518,
+   209520,
+   542180,
+   498351
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 894165,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告仅包含 CTF 的 flag 和指向未发布 writeup 的链接，没有实际漏洞细节。无法判断漏洞类型或攻击链，信息严重不足。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "无"
+  },
+  {
+   "id": 386112,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。利用 Request-URI 中的引号和路径遍历触发反射型 XSS，但仅影响 IE，且需要借助重定向脚本绕过编码。属于常见 XSS 的轻微变形，PoC 完整但启发性一般。",
+   "attack_chain": "构造恶意 URL → 重定向脚本发送未编码路径 → 服务器反射到响应 → IE 执行脚本。",
+   "bypass_technique": "利用 IE 对 Request-URI 的解析差异，通过重定向脚本传递未编码的引号和路径。",
+   "defensive_insight": "对所有输入进行上下文感知编码，避免在脚本中直接拼接请求 URI。"
+  },
+  {
+   "id": 376004,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "信息泄露 / 协议行为利用",
+   "reasoning": "部分。利用 Windows 文件选择器中的 UNC 路径绕过 Tor 代理泄露真实 IP，属于协议行为利用，但报告为 informative 状态，且缺少实际复现步骤和验证，可复现性低。",
+   "attack_chain": "诱导用户点击文件上传 → 在文件选择器中输入 UNC 路径 → 请求绕过 Tor 代理 → 泄露真实 IP。",
+   "bypass_technique": "利用 Windows 文件选择器对 UNC 路径的处理，绕过 Tor 代理。",
+   "defensive_insight": "在 Tor 浏览器中禁用或警告 UNC 路径，或限制文件选择器的网络访问。"
+  },
+  {
+   "id": 85291,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。signup_type 参数直接反射，使用管道符和引号闭合，属于经典反射型 XSS，无绕过或变形，成熟套路。",
+   "attack_chain": "单点：构造恶意 URL → 参数反射 → 执行脚本。",
+   "bypass_technique": "无实质绕过，直接利用未过滤参数。",
+   "defensive_insight": "对输出进行 HTML 编码，使用 CSP 等防御。"
+  },
+  {
+   "id": 115219,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。错误页面泄露服务器版本，属于常见的信息泄露，无绕过或攻击链，价值低。",
+   "attack_chain": "单点：构造畸形 URL → 触发未处理错误 → 泄露服务器信息。",
+   "bypass_technique": "无。",
+   "defensive_insight": "统一错误处理，隐藏服务器版本信息。"
+  },
+  {
+   "id": 1104874,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 配置错误",
+   "reasoning": "是。利用 Bundler 的源优先级缺陷，通过发布同名 gem 到公共源，实现供应链攻击。攻击者无需直接访问内部网络，只需等待受害者安装依赖即可 RCE。这种攻击链跨组件（公共源、依赖管理、执行环境），且可抽象为通用供应链攻击模式。",
+   "attack_chain": "攻击者发布恶意 gem 到 Rubygems → 受害者 Bundler 配置不当从公共源拉取 → 安装时执行恶意代码 → RCE。",
+   "bypass_technique": "利用 Bundler 源优先级配置错误，通过版本号更高的同名 gem 覆盖内部 gem。",
+   "defensive_insight": "严格配置 Bundler 源，锁定内部源，使用 Bundler 2.2.10+，并验证 gem 完整性。"
+  },
+  {
+   "id": 44578,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "子域名接管",
+   "reasoning": "部分。经典的子域名接管，通过 Zendesk 未配置的别名实现。虽然思路常见，但报告提供了完整的步骤和截图，可复现性强，且涉及收购域名的场景，有一定启发性。",
+   "attack_chain": "发现未配置的 Zendesk 别名 → 在 Zendesk 注册该域名 → 完全控制子域。",
+   "bypass_technique": "利用 SaaS 服务未配置的域名接管。",
+   "defensive_insight": "定期检查 DNS 记录，删除不再使用的 CNAME，监控子域名接管风险。"
+  },
+  {
+   "id": 409518,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用 HTTP 链接泄露 Referrer 和 window.opener，结合 MITM 攻击，可影响所有网站，无视目标防御。这种攻击链跨组件（浏览器、扩展、网络），且可抽象为通用攻击模式，启发性强。",
+   "attack_chain": "用户点击扩展中的 HTTP 链接 → MITM 截获 Referrer 和 opener → 利用 opener 劫持或泄露敏感信息。",
+   "bypass_technique": "利用 HTTP 明文传输和 window.opener 的默认行为，结合 MITM 实现跨域攻击。",
+   "defensive_insight": "使用 HTTPS 链接，设置 rel=noopener，限制 Referrer 策略。"
+  },
+  {
+   "id": 192667,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "CRLF注入 / XSS",
+   "reasoning": "部分。通过 CRLF 注入设置 Location 和 Content-Type 头，实现反射型 XSS，并绕过 X-XSS-Protection。虽然 CRLF 注入是已知技术，但结合响应头注入实现 XSS 的绕过方式有一定启发性，且 PoC 完整。",
+   "attack_chain": "构造含 CRLF 的 URL → 服务器注入响应头 → 设置 Content-Type 为 text/html → 执行脚本。",
+   "bypass_technique": "利用 CRLF 注入修改响应头，绕过 XSS 过滤器。",
+   "defensive_insight": "对用户输入进行过滤，禁止在响应头中注入 CRLF 字符。"
+  },
+  {
+   "id": 244432,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。SPF 记录使用 ~all 而非 -all，属于常见配置错误，无绕过或攻击链，价值低。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "使用 -all 严格 SPF 策略，并配合 DMARC。"
+  },
+  {
+   "id": 980856,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。直接使用已知 CVE-2017-7529 的公开 PoC，属于成熟漏洞利用，无新意。",
+   "attack_chain": "单点：发送恶意 Range 请求 → 触发整数溢出 → 泄露内存。",
+   "bypass_technique": "无。",
+   "defensive_insight": "升级 Nginx 到修复版本。"
+  },
+  {
+   "id": 1081656,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。search.html 参数直接反射，HTML 注入，属于常见漏洞，无绕过或攻击链。",
+   "attack_chain": "单点：构造恶意 URL → 参数反射 → 注入 HTML。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对输出进行 HTML 编码。"
+  },
+  {
+   "id": 209520,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 其他",
+   "reasoning": "是。利用 Flash 对 URL 编码的宽松解析，通过无效的 %x 序列绕过参数过滤，实现 open redirect 和网站篡改。这种对 Flash 解析器的利用具有反直觉性，且可抽象为通用绕过模式，启发性强。",
+   "attack_chain": "构造恶意 SWF URL → Flash 解析参数 → 绕过过滤 → 加载外部 SWF → 重定向或篡改。",
+   "bypass_technique": "利用 Flash 对无效 URL 编码的宽容处理，绕过参数过滤。",
+   "defensive_insight": "移除或升级 Flash 组件，对参数进行严格验证。"
+  },
+  {
+   "id": 2097377,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。通过公开视频泄露内部信息，属于人为失误，无技术含量。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "加强内部信息管理，审查公开内容。"
+  },
+  {
+   "id": 86069,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型 XSS，通过编辑器切换触发，属于常见漏洞，无绕过或攻击链。",
+   "attack_chain": "单点：提交恶意代码 → 切换编辑器 → 执行脚本。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对用户输入进行过滤和编码。"
+  },
+  {
+   "id": 411920,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。通过 VirusTotal 泄露的 URL 中包含凭据，属于信息泄露，但无技术绕过，且依赖第三方服务。",
+   "attack_chain": "第三方扫描 → 泄露 URL → 获取凭据 → 账户接管。",
+   "bypass_technique": "无。",
+   "defensive_insight": "避免在 URL 中传递敏感信息，使用 POST 或加密。"
+  },
+  {
+   "id": 891093,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。仅包含 CTF flag，无漏洞细节，信息不足。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "无"
+  },
+  {
+   "id": 542180,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 其他",
+   "reasoning": "是。通过恶意 NAV 文件触发缓冲区溢出，且利用 Source 引擎的文件传输功能实现远程代码执行。攻击链跨组件（文件解析、网络传输、执行环境），且利用非 ASLR 模块绕过缓解，启发性强。",
+   "attack_chain": "构造恶意 NAV 文件 → 受害者加载地图 → 触发溢出 → 控制 EIP → RCE。",
+   "bypass_technique": "利用非 ASLR 模块进行 ROP，绕过 ASLR。",
+   "defensive_insight": "修复缓冲区溢出，启用 ASLR，对下载文件进行验证。"
+  },
+  {
+   "id": 498351,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。通过枚举 PID 和暴力破解 4 位 RNo，绕过访问控制获取所有工单数据。这种将 IDOR 与弱随机数结合的攻击方式具有启发性，且可抽象为通用模式。",
+   "attack_chain": "注册获取 PID 和 RNo → 枚举 PID → 暴力破解 RNo → 访问任意工单。",
+   "bypass_technique": "利用弱随机数和可枚举 ID，绕过访问控制。",
+   "defensive_insight": "使用不可预测的令牌，实施服务端访问控制，限制请求速率。"
+  },
+  {
+   "id": 327200,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。通过 JSON 格式泄露用户邮箱，属于常见信息泄露，无绕过或攻击链。",
+   "attack_chain": "单点：发送消息 → 响应中泄露邮箱。",
+   "bypass_technique": "无。",
+   "defensive_insight": "在响应中过滤敏感字段。"
+  }
+ ]
+}

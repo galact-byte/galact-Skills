@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 8,
+  "dropped": 12,
+  "avg_score": 4.6,
+  "top_n": [
+   1516377,
+   948876,
+   1555796,
+   1050656,
+   374748
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 181088,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。window.opener 漏洞是已知的浏览器行为，利用方式简单，且报告者自述影响有限。没有产生'原来还能这样'的感受，技术点在于未设置 rel=noopener 的 target=_blank 链接，但这是常见问题。",
+   "attack_chain": "用户点击恶意链接→新页面通过 window.opener 修改原页面 location→钓鱼。",
+   "bypass_technique": "无实质绕过，利用浏览器默认行为。",
+   "defensive_insight": "为所有 target=_blank 链接添加 rel=noopener noreferrer。"
+  },
+  {
+   "id": 1516377,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。通过 iCalendar 附件中的 ORGANIZER 字段注入换行符，进而注入 SMTP 命令，利用邮件服务器对 SMTP 命令的解析差异。技术点在于未对邮件地址中的换行符进行过滤，导致 SMTP 会话被劫持。区别于普通 CRLF 注入，此攻击链跨邮件客户端、日历应用和 SMTP 服务器多个组件，且可非盲注。",
+   "attack_chain": "攻击者发送恶意 iCalendar 附件→受害者导入日历→触发 PUT 请求和 SMTP 命令→注入换行符和任意 SMTP 命令→劫持 SMTP 会话。",
+   "bypass_technique": "在 ORGANIZER 字段的 mailto 地址中插入换行符，绕过输入验证，注入 SMTP 命令。",
+   "defensive_insight": "对 iCalendar 中的 email 字段进行严格验证，禁止换行符；对 SMTP 命令进行参数化处理。"
+  },
+  {
+   "id": 1214158,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "部分。OCS DataResponse 未正确传播 throttle 设置，导致速率限制失效。这属于框架行为利用，但影响有限，且没有绕过技巧，只是配置错误。",
+   "attack_chain": "单点：OCS 接口未应用速率限制→暴力破解。",
+   "bypass_technique": "无实质绕过，利用框架对 DataResponse 的处理差异。",
+   "defensive_insight": "确保所有响应类型都正确应用速率限制。"
+  },
+  {
+   "id": 1502099,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。OAuth 回调中 state 参数未正确转义导致反射型 XSS，属于常见漏洞，但攻击链涉及 OAuth 流程，且 PoC 清晰。技术点在于 state 参数中的 redirect_to 字段未过滤。",
+   "attack_chain": "构造恶意链接→用户点击→OAuth 回调→state 参数中的 payload 执行→XSS。",
+   "bypass_technique": "利用 base64 编码的 state 参数注入 HTML/JS。",
+   "defensive_insight": "对 state 参数进行严格验证和输出编码。"
+  },
+  {
+   "id": 218567,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。mruby 数组复制时的段错误，属于内存破坏漏洞，但报告信息不足，没有提供触发细节，且是已知的崩溃类型。",
+   "attack_chain": "单点：输入文件导致数组越界访问→崩溃。",
+   "bypass_technique": "无绕过，直接利用未检查的数组索引。",
+   "defensive_insight": "修复数组边界检查。"
+  },
+  {
+   "id": 636278,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。ad_type 参数反射型 XSS，经典漏洞，无绕过，无攻击链。",
+   "attack_chain": "单点：URL 参数注入→XSS。",
+   "bypass_technique": "无实质绕过，直接注入。",
+   "defensive_insight": "对参数进行输出编码。"
+  },
+  {
+   "id": 374748,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "SQL注入",
+   "reasoning": "部分。通过配置项注入 SQL，属于业务逻辑组合，但需要管理员权限，且是经典 SQL 注入。技术点在于配置值未转义直接拼接查询。",
+   "attack_chain": "管理员修改配置→注入 SQL→提取数据。",
+   "bypass_technique": "利用配置项中的非数字字符破坏查询。",
+   "defensive_insight": "对配置值进行参数化查询。"
+  },
+  {
+   "id": 924650,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。i 参数反射型 XSS，经典漏洞，无绕过。",
+   "attack_chain": "单点：URL 参数注入→XSS。",
+   "bypass_technique": "无实质绕过，直接注入。",
+   "defensive_insight": "对参数进行输出编码。"
+  },
+  {
+   "id": 8053,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少 X-Content-Type-Options 头，属于配置错误，无技术含量。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "设置安全响应头。"
+  },
+  {
+   "id": 1050656,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 其他",
+   "reasoning": "是。通过 `\\/\\` 绕过图片重写保护，利用浏览器对 URL 解析的宽容性。技术点在于黑名单只检查前两个字符，插入额外斜杠即可绕过。",
+   "attack_chain": "构造恶意图片标签→绕过重写→浏览器请求外部 URL→信息泄露。",
+   "bypass_technique": "使用 `\\/\\` 代替 `//` 绕过黑名单。",
+   "defensive_insight": "使用白名单或更严格的 URL 解析。"
+  },
+  {
+   "id": 39198,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。开放重定向，经典漏洞，无绕过。",
+   "attack_chain": "单点：URL 参数→重定向。",
+   "bypass_technique": "无实质绕过，直接利用。",
+   "defensive_insight": "白名单校验重定向目标。"
+  },
+  {
+   "id": 343095,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。会话 Cookie 缺少 Secure 标志，配置错误，无技术含量。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "设置 Secure 标志。"
+  },
+  {
+   "id": 1691195,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。密码重置功能缺少速率限制，通过 IP 轮换绕过，常见问题。",
+   "attack_chain": "单点：暴力请求→大量邮件。",
+   "bypass_technique": "IP 轮换绕过速率限制。",
+   "defensive_insight": "增加验证码和更严格的速率限制。"
+  },
+  {
+   "id": 263728,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。密码复杂度不足，属于策略问题，无技术含量。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "实施强密码策略。"
+  },
+  {
+   "id": 948876,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。curl 连接复用导致数据发送到错误服务器，利用内存分配器行为。技术点在于连接超时后内存重用，导致连接句柄指向新连接。",
+   "attack_chain": "创建连接→超时→新连接复用内存→数据发送到错误服务器。",
+   "bypass_technique": "利用内存分配器重用地址。",
+   "defensive_insight": "确保连接句柄在超时后失效。"
+  },
+  {
+   "id": 178144,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "其他",
+   "reasoning": "部分。imagecropauto 越界访问，属于内存破坏，但报告详细，有 GDB 输出。技术点在于颜色值未检查范围。",
+   "attack_chain": "单点：输入颜色值→越界读取。",
+   "bypass_technique": "无绕过，直接利用未检查的索引。",
+   "defensive_insight": "检查颜色值范围。"
+  },
+  {
+   "id": 505007,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 跨组件攻击链",
+   "reasoning": "部分。构建依赖通过 HTTP 下载，可能被 MITM，属于供应链攻击。技术点在于未使用 HTTPS 和完整性校验。",
+   "attack_chain": "MITM 攻击→替换依赖→恶意代码执行。",
+   "bypass_technique": "无绕过，利用不安全的下载。",
+   "defensive_insight": "使用 HTTPS 和校验和。"
+  },
+  {
+   "id": 413426,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。开放重定向，经典漏洞，无绕过。",
+   "attack_chain": "单点：URL 参数→重定向。",
+   "bypass_technique": "无实质绕过，直接利用。",
+   "defensive_insight": "白名单校验重定向目标。"
+  },
+  {
+   "id": 1962645,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。dest 参数允许 javascript: 协议，导致登录后 XSS。技术点在于未过滤协议。",
+   "attack_chain": "构造链接→用户登录→XSS。",
+   "bypass_technique": "利用 javascript: 协议。",
+   "defensive_insight": "限制重定向协议。"
+  },
+  {
+   "id": 1555796,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。curl 连接复用未考虑安全选项，导致 TLS 连接被错误复用。技术点在于连接复用逻辑未检查安全参数。",
+   "attack_chain": "创建连接→修改安全选项→复用旧连接→安全降级。",
+   "bypass_technique": "利用连接复用机制。",
+   "defensive_insight": "在复用连接时检查所有安全选项。"
+  }
+ ]
+}

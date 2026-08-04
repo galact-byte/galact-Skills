@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1685822,
+   953083,
+   384962,
+   717716,
+   1485501
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1685822,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用 Git 的 file:// 协议和 GitLab 的 BulkImports 功能，通过构造 file:// URL 读取服务器本地任意仓库。绕过 URL 验证器（未限制协议），且通过计算项目 ID 的 SHA2 哈希预测存储路径，实现任意仓库克隆。区别于普通 SSRF：利用 Git 协议行为，且可规模化攻击。",
+   "attack_chain": "构造 file:// URL → 绕过 URL 验证 → 触发 git fetch 读取本地仓库 → 克隆任意项目。",
+   "bypass_technique": "利用 Git 的 file:// 协议，绕过 URL 验证器未限制协议的问题。",
+   "defensive_insight": "限制允许的 URL 协议（仅 https/git/ssh），并验证 URL 的 host 部分，防止访问本地文件系统。"
+  },
+  {
+   "id": 717716,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。通过 GraphQL 突变直接操作任意团队的 VPN 状态，绕过授权检查。利用 IDOR 和缺失的授权检查，可影响任何使用 Gateway 产品的程序。区别于普通 IDOR：影响面广，且可导致服务中断。",
+   "attack_chain": "构造 GraphQL 请求 → 指定任意 team_id → 绕过授权 → 挂起/恢复 VPN。",
+   "bypass_technique": "利用 IDOR 和缺失的授权检查，直接操作任意团队的 VPN 状态。",
+   "defensive_insight": "在交互器中实施严格的授权检查，确保用户只能操作自己有权限的团队。"
+  },
+  {
+   "id": 953083,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 竞争条件",
+   "reasoning": "是。利用主题安装过程中的时间窗口，发送 ThemePublishLegacy 请求，在安装完成前发布付费主题，绕过购买。需要精确计时，但展示了业务逻辑漏洞的优雅利用。区别于普通逻辑漏洞：需要竞争条件，且影响付费内容。",
+   "attack_chain": "安装付费主题 → 在安装完成前发送发布请求 → 成功发布付费主题。",
+   "bypass_technique": "利用安装过程中的时间窗口，发送发布请求，绕过购买检查。",
+   "defensive_insight": "在主题安装完成前禁止发布操作，或对发布操作进行更严格的权限验证。"
+  },
+  {
+   "id": 182140,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "内存破坏",
+   "reasoning": "否。libtiff 的经典缓冲区溢出，已分配 CVE，修复方案明确。属于已知漏洞的复现，无新意。",
+   "attack_chain": "构造恶意 TIFF 文件 → 触发 strlen 越界读取 → 崩溃。",
+   "bypass_technique": "无绕过，直接利用未检查的字符串长度。",
+   "defensive_insight": "确保标签值以 null 结尾，使用安全字符串函数。"
+  },
+  {
+   "id": 52176,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "IDOR / 业务逻辑",
+   "reasoning": "部分。通过修改评论 ID 实现以他人身份发帖，属于 IDOR 的典型应用，但展示了如何利用编辑功能进行身份冒充。思路清晰，但技术点常见。",
+   "attack_chain": "创建评论 → 编辑时修改评论 ID → 以他人身份发布。",
+   "bypass_technique": "直接修改评论 ID，绕过所有权检查。",
+   "defensive_insight": "在编辑操作中验证当前用户对评论的所有权。"
+  },
+  {
+   "id": 2170,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "内存破坏",
+   "reasoning": "否。报告仅提及 CVE-2014-0502，无技术细节，无法评估。",
+   "attack_chain": "未知。",
+   "bypass_technique": "未知。",
+   "defensive_insight": "及时更新 Flash Player。"
+  },
+  {
+   "id": 1072277,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "部分。利用 X-Forwarded-Host 头进行主机头注入，导致邮件欺骗。属于常见的主机头注入，但展示了如何绕过 Host 头限制。",
+   "attack_chain": "构造 X-Forwarded-Host 头 → 影响邮件链接 → 钓鱼。",
+   "bypass_technique": "使用 X-Forwarded-Host 绕过 Host 头验证。",
+   "defensive_insight": "验证所有转发头，并基于可信配置生成链接。"
+  },
+  {
+   "id": 5314,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "部分。Android 应用日志泄露 OAuth 响应码，结合硬编码的 client secret 可获取 access_token。展示了移动端日志泄露的风险，但技术点常见。",
+   "attack_chain": "读取日志 → 获取 OAuth 响应码 → 结合 client secret 获取 access_token。",
+   "bypass_technique": "利用日志泄露和硬编码密钥。",
+   "defensive_insight": "避免在日志中记录敏感信息，不要硬编码密钥。"
+  },
+  {
+   "id": 384962,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 跨组件攻击链",
+   "reasoning": "是。通过 SSO 注册同名用户，结合 CSRF 让管理员连接账户，最终接管管理员账户。利用了 SSO 与本地账户的关联逻辑缺陷，攻击链完整且可复用。区别于普通 CSRF：结合了 SSO 逻辑漏洞，实现账户接管。",
+   "attack_chain": "注册同名用户 → 触发 CSRF 让管理员连接 → 接管管理员账户。",
+   "bypass_technique": "利用 SSO 账户关联逻辑缺陷，通过 CSRF 强制连接。",
+   "defensive_insight": "在账户关联时验证用户身份，并防止 CSRF。"
+  },
+  {
+   "id": 197719,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "内存破坏 / 类型混淆",
+   "reasoning": "部分。mruby 数组拼接的堆溢出，通过构造特定 head 值绕过修复。展示了不完整修复的绕过，但技术点较专业。",
+   "attack_chain": "构造特定数组操作 → 触发堆溢出 → 崩溃。",
+   "bypass_technique": "利用不完整的修复，通过特定 head 值绕过检查。",
+   "defensive_insight": "修复漏洞时需全面考虑边界条件。"
+  },
+  {
+   "id": 1485501,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 其他",
+   "reasoning": "是。利用 Ruby 标准库 Time.rfc2822 的正则表达式 ReDoS，通过构造特定输入导致服务不可用。展示了标准库的漏洞，且可影响 Rack 中间件。区别于普通 ReDoS：影响面广，且 PoC 清晰。",
+   "attack_chain": "构造恶意请求头 → 触发 ReDoS → 服务不可用。",
+   "bypass_technique": "利用正则表达式的回溯，构造超长输入。",
+   "defensive_insight": "使用安全的正则表达式，限制输入长度。"
+  },
+  {
+   "id": 678050,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 其他",
+   "reasoning": "否。密码重置后未失效会话，属于常见的安全设计缺陷，无新意。",
+   "attack_chain": "重置密码 → 旧会话仍有效。",
+   "bypass_technique": "无绕过，直接利用设计缺陷。",
+   "defensive_insight": "密码重置后应使所有会话失效。"
+  },
+  {
+   "id": 208734,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "CSRF / 配置错误",
+   "reasoning": "部分。通过将 authenticity_token 置空绕过 CSRF 保护，展示了 token 验证的缺陷。技术点简单，但展示了绕过方法。",
+   "attack_chain": "构造 CSRF 表单 → 置空 token → 成功提交。",
+   "bypass_technique": "利用 token 验证缺陷，置空 token。",
+   "defensive_insight": "确保 CSRF token 验证严格，不接受空值。"
+  },
+  {
+   "id": 1010858,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 其他",
+   "reasoning": "部分。利用 x-forwarded-port 头进行缓存投毒，展示了缓存键不完整的问题。技术点常见，但影响面广。",
+   "attack_chain": "构造恶意请求 → 污染缓存 → 影响其他用户。",
+   "bypass_technique": "利用缓存键不完整，注入恶意头。",
+   "defensive_insight": "缓存键应包含所有影响响应的头。"
+  },
+  {
+   "id": 181816,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。文档标题未转义导致存储型 XSS，展示了输出编码的重要性。技术点常见，但 PoC 完整。",
+   "attack_chain": "创建文档 → 标题注入 XSS → 执行。",
+   "bypass_technique": "利用未转义的标题，注入脚本。",
+   "defensive_insight": "对输出进行正确的编码。"
+  },
+  {
+   "id": 1061292,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "IDOR / 信息泄露",
+   "reasoning": "部分。未授权访问管理员 API，泄露用户详细信息。展示了 IDOR 的典型应用，但影响面广。",
+   "attack_chain": "直接访问 API → 获取用户信息。",
+   "bypass_technique": "利用未授权端点，直接访问。",
+   "defensive_insight": "对 API 进行身份验证和授权。"
+  },
+  {
+   "id": 104359,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。通过货币格式化注入 XSS，展示了输入验证的重要性。技术点常见，但影响多个渠道。",
+   "attack_chain": "修改货币格式 → 注入 XSS → 执行。",
+   "bypass_technique": "利用未过滤的货币格式。",
+   "defensive_insight": "对用户输入进行严格过滤和输出编码。"
+  },
+  {
+   "id": 1087489,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "部分。员工 GitHub PAT 泄露，展示了密钥管理的重要性。技术点简单，但影响严重。",
+   "attack_chain": "发现 PAT → 访问私有仓库。",
+   "bypass_technique": "利用泄露的密钥。",
+   "defensive_insight": "定期轮换密钥，避免泄露。"
+  },
+  {
+   "id": 223362,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 其他",
+   "reasoning": "否。密码重置策略不严格，属于常见的安全建议，无新意。",
+   "attack_chain": "重置密码 → 设置旧密码。",
+   "bypass_technique": "无绕过，直接利用策略缺陷。",
+   "defensive_insight": "实施密码历史检查。"
+  },
+  {
+   "id": 57918,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。Android 应用本地存储未加密，属于常见的安全问题，无新意。",
+   "attack_chain": "读取本地数据库 → 获取敏感数据。",
+   "bypass_technique": "无绕过，直接利用未加密存储。",
+   "defensive_insight": "对敏感数据加密存储。"
+  }
+ ]
+}

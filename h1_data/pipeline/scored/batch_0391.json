@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1139535,
+   806577,
+   662083,
+   453820,
+   1472721
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 221251,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。这是典型的模糊测试发现的堆缓冲区溢出，虽然提供了ASAN堆栈，但属于常见的内存破坏漏洞，没有展示出特别的非预期性。技术点在于mrb_vm_exec中的越界读取，但缺乏对触发条件的深入分析，且没有绕过或攻击链。",
+   "attack_chain": "单点：模糊测试输入触发mrb_vm_exec越界读。",
+   "bypass_technique": "无实质绕过，直接利用内存管理缺陷。",
+   "defensive_insight": "修复mrb_vm_exec中的边界检查，加强模糊测试覆盖。"
+  },
+  {
+   "id": 1472721,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。通过直接访问其他用户的scorecard URL，实现了越权访问和修改，这是典型的IDOR，但展示了业务逻辑中对象级授权缺失的普遍性。技术点在于URL中的scorecard名称作为唯一标识，未进行所有权验证。",
+   "attack_chain": "创建scorecard→获取URL→切换账户→直接访问URL→读取/编辑/下载/分配权限。",
+   "bypass_technique": "直接使用其他用户的资源标识符，绕过授权检查。",
+   "defensive_insight": "在服务端对每个资源请求进行所有权验证，使用不可预测的标识符。"
+  },
+  {
+   "id": 209821,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。这是设计问题，依赖用户点击恶意链接，属于社会工程学，没有技术上的非预期性。技术点在于允许用户提供链接，但这是常见功能，且报告自认依赖用户行为，价值低。",
+   "attack_chain": "无攻击链，依赖用户点击。",
+   "bypass_technique": "无实质绕过。",
+   "defensive_insight": "限制用户生成内容中的链接或增加警告。"
+  },
+  {
+   "id": 66262,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 业务逻辑",
+   "reasoning": "是。通过URL参数注入mailto链接的subject和body，实现邮件欺骗，利用了mailto协议对参数的处理。技术点在于未对用户输入进行过滤，直接拼接到mailto链接中，导致可以控制邮件内容。",
+   "attack_chain": "构造恶意URL→用户点击→触发mailto链接→发送欺骗邮件。",
+   "bypass_technique": "利用URL参数注入mailto的subject和body字段。",
+   "defensive_insight": "对mailto链接的参数进行编码和过滤，限制用户输入。"
+  },
+  {
+   "id": 453820,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 配置错误",
+   "reasoning": "是。通过URL编码下划线绕过harp服务器的忽略规则，访问本应被忽略的文件。技术点在于服务器对URL解码后的路径进行匹配，但未对编码字符进行二次解码，导致绕过。",
+   "attack_chain": "构造编码URL→服务器解码→访问被忽略文件。",
+   "bypass_technique": "使用%5f代替下划线，绕过基于前缀的忽略规则。",
+   "defensive_insight": "在路径匹配前进行规范化解码，并拒绝包含编码字符的路径。"
+  },
+  {
+   "id": 142540,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。这是存储型XSS，通过上传zip文件包含恶意脚本，属于常见漏洞类型，没有展示出特别的非预期性。技术点在于上传文件未进行内容过滤，但这是成熟套路。",
+   "attack_chain": "上传恶意zip→服务器解压→页面加载执行脚本。",
+   "bypass_technique": "无实质绕过，直接利用上传功能。",
+   "defensive_insight": "对上传文件进行内容安全扫描，并设置正确的Content-Type。"
+  },
+  {
+   "id": 3991,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。接受空字节作为邮箱地址的一部分，属于输入验证缺失，常见于旧系统。技术点在于未过滤空字节，但这是已知问题，没有新意。",
+   "attack_chain": "单点：提交包含空字节的邮箱地址。",
+   "bypass_technique": "无实质绕过，直接利用输入验证缺失。",
+   "defensive_insight": "严格验证邮箱格式，拒绝包含控制字符的输入。"
+  },
+  {
+   "id": 106084,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。通过删除is_internal参数，使低权限用户能够发布公开评论，绕过权限检查。技术点在于服务端未对参数进行严格校验，导致权限绕过。",
+   "attack_chain": "拦截请求→删除is_internal参数→提交评论→服务器接受。",
+   "bypass_technique": "删除布尔参数，使权限检查失效。",
+   "defensive_insight": "服务端应基于会话和角色决定权限，而非依赖客户端参数。"
+  },
+  {
+   "id": 283361,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。通过JS文件泄露内部服务器地址，属于信息泄露，但常见且缺乏深入利用。技术点在于前端代码暴露了内部基础设施，但未展示实际攻击。",
+   "attack_chain": "查看JS文件→发现内部地址→尝试访问。",
+   "bypass_technique": "无实质绕过，直接利用信息泄露。",
+   "defensive_insight": "避免在前端代码中暴露内部地址，对内部服务进行访问控制。"
+  },
+  {
+   "id": 288993,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。这是已知的OpenSSL漏洞，报告仅引用公告，没有提供新的技术细节。技术点在于SSL_peek挂起，但属于已知CVE，没有启发性。",
+   "attack_chain": "单点：利用已知CVE。",
+   "bypass_technique": "无实质绕过。",
+   "defensive_insight": "及时更新OpenSSL版本。"
+  },
+  {
+   "id": 534630,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "命令注入 / 反序列化",
+   "reasoning": "部分。这是已知CVE-2019-0604的利用，属于成熟套路，但报告提供了详细的复现步骤，包括编码payload和利用过程。技术点在于SharePoint反序列化漏洞，但无新意。",
+   "attack_chain": "构造恶意payload→发送到picker.aspx→反序列化→执行命令。",
+   "bypass_technique": "利用已知反序列化漏洞。",
+   "defensive_insight": "安装补丁，限制对picker.aspx的访问。"
+  },
+  {
+   "id": 1139535,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 业务逻辑",
+   "reasoning": "是。通过GraphQL API，攻击者可以在不知道当前2FA OTP的情况下更改2FA密钥和备份代码，完全绕过2FA保护。技术点在于API未验证旧OTP，仅验证新OTP，导致可以重置。",
+   "attack_chain": "获取受害者会话→构造GraphQL请求→提供新OTP和密钥→更改2FA→锁定受害者。",
+   "bypass_technique": "利用API参数缺失，仅验证新OTP，不验证旧OTP。",
+   "defensive_insight": "在更改2FA时，必须验证当前OTP或备份代码。"
+  },
+  {
+   "id": 244614,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。密码重置令牌未失效，属于常见设计缺陷，没有非预期性。技术点在于令牌管理不当，但这是已知问题。",
+   "attack_chain": "请求多个重置链接→使用旧链接→令牌仍有效。",
+   "bypass_technique": "无实质绕过，利用令牌未失效。",
+   "defensive_insight": "使旧令牌失效，或限制令牌使用次数。"
+  },
+  {
+   "id": 9137,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。通过错误消息泄露服务器路径，属于常见信息泄露，没有新意。技术点在于错误处理不当，但这是成熟套路。",
+   "attack_chain": "单点：触发错误→泄露路径。",
+   "bypass_technique": "无实质绕过。",
+   "defensive_insight": "自定义错误页面，避免泄露内部路径。"
+  },
+  {
+   "id": 662083,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "是。通过Shopify.API.pushState的路径遍历，将管理面板页面替换为恶意页面，实现DOM XSS。技术点在于利用路径遍历绕过admin路径限制，加载外部页面。",
+   "attack_chain": "创建恶意页面→诱导管理员点击→postMessage触发pushState→加载恶意页面→执行脚本。",
+   "bypass_technique": "使用/../路径遍历，绕过admin路径前缀。",
+   "defensive_insight": "对pushState的路径进行规范化，禁止包含..的路径。"
+  },
+  {
+   "id": 688546,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。这是典型的点击劫持，缺少X-Frame-Options头，属于常见配置错误，没有非预期性。技术点在于缺少安全头，但这是成熟套路。",
+   "attack_chain": "单点：iframe嵌入目标页面。",
+   "bypass_technique": "无实质绕过。",
+   "defensive_insight": "添加X-Frame-Options或CSP frame-ancestors。"
+  },
+  {
+   "id": 163949,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。用户名未限制保留字，导致用户可创建与系统路径冲突的用户名，属于常见设计缺陷。技术点在于用户名黑名单不完整，但这是已知问题。",
+   "attack_chain": "单点：注册保留用户名→访问冲突路径。",
+   "bypass_technique": "无实质绕过，利用黑名单不完整。",
+   "defensive_insight": "使用完整保留字列表，或禁止与路径冲突的用户名。"
+  },
+  {
+   "id": 187714,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "认证绕过 / 业务逻辑",
+   "reasoning": "是。通过大小写不同的邮箱地址创建新账户，覆盖原账户的密码，导致原用户无法登录。技术点在于邮箱比较未区分大小写，但账户创建未检查大小写变体。",
+   "attack_chain": "创建账户A→创建账户B（邮箱大小写不同）→覆盖密码→原用户无法登录。",
+   "bypass_technique": "利用邮箱大小写不敏感，创建变体账户。",
+   "defensive_insight": "在创建账户时，对邮箱进行规范化处理，并检查是否已存在。"
+  },
+  {
+   "id": 806577,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 业务逻辑",
+   "reasoning": "是。通过URL参数中的分号注入Set-Cookie头，实现任意Cookie设置，利用了HTTP头解析对分号的处理。技术点在于未对分号进行编码，导致可以注入多个Cookie。",
+   "attack_chain": "构造恶意URL→服务器响应Set-Cookie→注入任意Cookie→会话固定或Cookie轰炸。",
+   "bypass_technique": "利用分号作为Cookie分隔符，注入额外Cookie。",
+   "defensive_insight": "对用户输入进行编码，禁止在Cookie值中出现分号。"
+  },
+  {
+   "id": 419891,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "CSRF / 业务逻辑",
+   "reasoning": "是。通过CSRF攻击更改未确认邮箱，进而接管账户，利用了邮箱确认流程的缺陷。技术点在于API端点缺少CSRF保护，且允许更改未确认邮箱。",
+   "attack_chain": "诱导用户访问恶意页面→发送CSRF请求→更改邮箱→重置密码→接管账户。",
+   "bypass_technique": "利用CSRF，无token验证。",
+   "defensive_insight": "在敏感操作中添加CSRF token，并验证邮箱确认状态。"
+  }
+ ]
+}

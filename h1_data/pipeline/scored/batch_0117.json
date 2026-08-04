@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1436558,
+   260005,
+   1356845,
+   1722065,
+   198452
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 463604,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。通过修改gravatar的url参数实现任意文件上传，但未利用任何特殊机制，且无法执行代码，属于常见配置缺陷。",
+   "attack_chain": "单点：修改url参数→上传任意文件。",
+   "bypass_technique": "无实质绕过，直接利用未校验的url参数。",
+   "defensive_insight": "对url参数进行白名单校验，限制协议和域名。"
+  },
+  {
+   "id": 1186926,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。404页面社交图标链接失效，属于低危配置问题，无安全影响。",
+   "attack_chain": "单点：访问404页面→发现链接失效。",
+   "bypass_technique": "无。",
+   "defensive_insight": "定期检查页面链接有效性。"
+  },
+  {
+   "id": 474798,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "子域名接管",
+   "reasoning": "部分。S3桶不存在导致子域名接管，经典但可自动化检测，PoC清晰。",
+   "attack_chain": "发现CNAME指向不存在S3桶→注册桶→控制子域名。",
+   "bypass_technique": "利用云服务资源释放后的可注册性。",
+   "defensive_insight": "定期检查DNS记录，删除未使用的CNAME。"
+  },
+  {
+   "id": 319465,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "SQL注入 / 框架行为利用",
+   "reasoning": "是。sql库未转义limit/offset参数，导致SQL注入，属于库设计缺陷，可影响大量使用该库的应用。",
+   "attack_chain": "用户输入→limit/offset参数→拼接SQL→注入。",
+   "bypass_technique": "利用库对limit/offset参数的不当处理。",
+   "defensive_insight": "库应强制参数化，应用层需额外校验。"
+  },
+  {
+   "id": 198452,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "内存破坏 / 框架行为利用",
+   "reasoning": "是。mruby的Hash默认块导致栈扩展异常，触发realloc错误，属于解释器内部状态混淆，PoC极简。",
+   "attack_chain": "构造特殊Hash默认块→触发栈扩展→内存破坏。",
+   "bypass_technique": "利用解释器对默认块处理不当。",
+   "defensive_insight": "修复解释器内存管理逻辑，增加边界检查。"
+  },
+  {
+   "id": 5200,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 业务逻辑",
+   "reasoning": "部分。通过请求金钱接口枚举用户，泄露姓名，属于业务逻辑缺陷，但思路常见。",
+   "attack_chain": "构造请求→枚举邮箱→区分用户→泄露姓名。",
+   "bypass_technique": "利用接口响应差异。",
+   "defensive_insight": "统一响应，增加速率限制。"
+  },
+  {
+   "id": 847185,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "IDOR / 信息泄露",
+   "reasoning": "部分。通过枚举ID查看他人信息，属于IDOR，但需大量请求，且信息敏感。",
+   "attack_chain": "枚举ID→发送请求→获取个人信息。",
+   "bypass_technique": "利用IDOR和缺乏速率限制。",
+   "defensive_insight": "实施对象级授权，增加速率限制。"
+  },
+  {
+   "id": 25281,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 业务逻辑",
+   "reasoning": "是。通过伪造发件人邮箱绕过支持验证，属于社会工程学攻击，但技术含量低，依赖人工审核。",
+   "attack_chain": "伪造邮件→欺骗支持→修改用户名。",
+   "bypass_technique": "利用邮件头伪造。",
+   "defensive_insight": "使用DKIM/SPF验证，增加多因素验证。"
+  },
+  {
+   "id": 804364,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，未过滤路径参数，常见。",
+   "attack_chain": "构造URL→触发XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对路径参数进行编码。"
+  },
+  {
+   "id": 1722065,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "内存破坏 / 协议行为利用",
+   "reasoning": "是。curl的HTTP代理处理存在double-free，利用特定协议组合触发，属于协议行为利用。",
+   "attack_chain": "使用HTTP代理访问dict协议→触发double-free。",
+   "bypass_technique": "利用协议切换时的清理逻辑缺陷。",
+   "defensive_insight": "修复清理函数，增加内存管理测试。"
+  },
+  {
+   "id": 511381,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "ReDoS / 配置错误",
+   "reasoning": "部分。颜色校验正则存在ReDoS，属于常见正则问题，但影响面广。",
+   "attack_chain": "构造长颜色值→触发ReDoS→CPU耗尽。",
+   "bypass_technique": "利用正则回溯。",
+   "defensive_insight": "使用安全正则，限制输入长度。"
+  },
+  {
+   "id": 304240,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "部分。Eureka服务器未授权访问，可注册实例，属于配置错误，但影响有限。",
+   "attack_chain": "访问Eureka API→注册恶意实例。",
+   "bypass_technique": "无。",
+   "defensive_insight": "启用认证，限制网络访问。"
+  },
+  {
+   "id": 2247231,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。Argo dashboard未授权访问，属于配置错误，无绕过。",
+   "attack_chain": "访问dashboard→操作workflow。",
+   "bypass_technique": "无。",
+   "defensive_insight": "启用认证和RBAC。"
+  },
+  {
+   "id": 761000,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "认证绕过",
+   "reasoning": "否。报告仅提及OTP速率限制缺失，但无具体细节，无法评估。",
+   "attack_chain": "未知。",
+   "bypass_technique": "未知。",
+   "defensive_insight": "实施速率限制和验证码。"
+  },
+  {
+   "id": 1436558,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 框架行为利用",
+   "reasoning": "是。通过泄露安全令牌和拼接JS代码实现UXSS，跨多个组件，思路巧妙。",
+   "attack_chain": "泄露token→构造恶意nodeTag→执行JS→UXSS。",
+   "bypass_technique": "利用WebView的JS桥接和字符串拼接。",
+   "defensive_insight": "避免在JS中嵌入敏感信息，使用安全API。"
+  },
+  {
+   "id": 856981,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "CSRF / 配置错误",
+   "reasoning": "部分。CSRF缺少token，但需绕过Content-Type，利用Flash，属于经典绕过。",
+   "attack_chain": "构造恶意页面→触发CSRF→修改公司信息。",
+   "bypass_technique": "使用Flash伪造Content-Type。",
+   "defensive_insight": "添加CSRF token，验证Origin。"
+  },
+  {
+   "id": 1356845,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "命令注入 / 路径遍历",
+   "reasoning": "是。利用目录遍历上传PHP文件，实现RCE，属于已知CVE但利用清晰。",
+   "attack_chain": "构造路径→上传文件→访问执行。",
+   "bypass_technique": "利用路径遍历和未授权上传。",
+   "defensive_insight": "限制上传路径，禁止脚本执行。"
+  },
+  {
+   "id": 1723445,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。删除账户接口无速率限制，可导致邮件轰炸，常见。",
+   "attack_chain": "重复请求→发送大量邮件。",
+   "bypass_technique": "无。",
+   "defensive_insight": "添加速率限制和验证码。"
+  },
+  {
+   "id": 260005,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "命令注入 / 跨组件攻击链",
+   "reasoning": "是。多个VCS工具对ssh:// URI处理不当导致RCE，属于协议行为利用，影响广泛。",
+   "attack_chain": "构造恶意URI→触发命令执行。",
+   "bypass_technique": "利用ssh:// URI的解析差异。",
+   "defensive_insight": "严格校验URI，使用白名单协议。"
+  },
+  {
+   "id": 1969141,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "IDOR / 授权绕过",
+   "reasoning": "是。通过修改campaign_id可删除任意活动，属于IDOR，但需GraphQL知识。",
+   "attack_chain": "构造请求→修改ID→删除活动。",
+   "bypass_technique": "利用IDOR和base64编码。",
+   "defensive_insight": "实施对象级授权，验证用户权限。"
+  }
+ ]
+}

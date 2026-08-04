@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   895780,
+   470637,
+   170548,
+   758002,
+   271324
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 470637,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用 macOS 的 quarantine 属性缺失，使得下载的 .terminal 文件绕过 Gatekeeper 直接执行，且无任何警告。技术点在于 Slack 直接下载未设置 quarantine 属性，而 App Store 版本正确设置，导致同一应用不同分发渠道的安全差异。这种利用系统机制而非应用漏洞的方式具有启发性，且可抽象为通用判断条件：检查下载文件是否带有 quarantine 属性。",
+   "attack_chain": "攻击者发送 .terminal 文件 → 受害者通过 Slack 下载（无 quarantine 属性）→ 受害者打开文件 → 无 Gatekeeper 警告 → 执行恶意命令。",
+   "bypass_technique": "利用 Slack 直接下载未设置 quarantine 属性，绕过 macOS Gatekeeper 对下载文件的检查。",
+   "defensive_insight": "应用在下载文件时应正确设置 quarantine 属性；用户应避免打开来源不明的 .terminal 文件；macOS 应加强 quarantine 属性的强制设置。"
+  },
+  {
+   "id": 170548,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 协议行为利用",
+   "reasoning": "是。Ruby OpenSSL 库中设置 IV 和 key 的顺序导致 IV 重用，即使调用 random_iv 也无效。这属于框架行为利用，开发者容易误用，且可导致 GCM 模式下的严重安全问题。技术点在于 API 设计缺陷，文档未明确顺序要求，导致开发者写出看似安全实则脆弱的代码。这种问题具有通用性，可抽象为通用判断条件：检查加密操作中 key 和 IV 的设置顺序。",
+   "attack_chain": "开发者使用 aes-gcm 加密，先设置 IV 再设置 key → 实际使用静态 IV → 相同明文产生相同密文 → 攻击者可通过两次加密结果恢复明文。",
+   "bypass_technique": "利用 API 设计缺陷，通过设置顺序导致 IV 重用，绕过加密安全性。",
+   "defensive_insight": "库应强制要求先设置 key 再设置 IV，或自动处理顺序；开发者应遵循安全编码规范，确保 key 和 IV 的正确设置顺序。"
+  },
+  {
+   "id": 1509,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。DNS 配置错误导致 localhost.hackerone.com 解析到 127.0.0.1，可能引发同源脚本攻击。这是常见的配置错误，没有绕过或攻击链，信息量少，且 substate 为 resolved，但描述简单，无详细步骤。",
+   "attack_chain": "无攻击链，单点配置错误。",
+   "bypass_technique": "无实质绕过，直接利用配置错误。",
+   "defensive_insight": "避免将域名解析到本地回环地址，应正确配置 DNS 记录。"
+  },
+  {
+   "id": 309120,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "路径遍历",
+   "reasoning": "部分。angular-http-server 未正确清理路径，导致路径遍历漏洞。这是常见漏洞类型，但 PoC 完整，可复现。技术点在于未对路径进行规范化，直接拼接用户输入。虽然常见，但作为 npm 包漏洞，对生态有影响，且步骤清晰。",
+   "attack_chain": "单点：curl 请求包含 ../ 的路径 → 服务器读取任意文件。",
+   "bypass_technique": "直接利用未过滤的路径参数进行目录穿越。",
+   "defensive_insight": "对用户输入进行路径规范化，限制访问目录，使用白名单。"
+  },
+  {
+   "id": 260420,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "路径遍历",
+   "reasoning": "否。使用反斜杠进行路径遍历，是常见技巧，无新意。PoC 简单，但无绕过或攻击链，属于成熟套路。",
+   "attack_chain": "单点：GET 请求包含 ..\\ 路径 → 读取任意文件。",
+   "bypass_technique": "使用反斜杠绕过路径过滤。",
+   "defensive_insight": "统一路径分隔符，进行规范化处理。"
+  },
+  {
+   "id": 390663,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "开放重定向",
+   "reasoning": "否。开放重定向是常见漏洞，无新意。参数未过滤，直接重定向到任意 URL。无绕过或攻击链，属于成熟套路。",
+   "attack_chain": "单点：构造 URL 参数 → 重定向到恶意站点。",
+   "bypass_technique": "无实质绕过，直接利用未过滤参数。",
+   "defensive_insight": "对重定向 URL 进行白名单校验。"
+  },
+  {
+   "id": 1392935,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。X-Forwarded-Host 头反射 XSS，是常见漏洞，无新意。无绕过或攻击链，属于成熟套路。",
+   "attack_chain": "单点：构造 X-Forwarded-Host 头 → 反射 XSS。",
+   "bypass_technique": "无实质绕过，直接利用未过滤头部。",
+   "defensive_insight": "过滤或忽略不可信头部，对输出进行编码。"
+  },
+  {
+   "id": 505595,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。CSRF 是常见漏洞，无新意。无绕过或攻击链，属于成熟套路。",
+   "attack_chain": "单点：构造恶意表单 → 用户点击 → 修改信息。",
+   "bypass_technique": "无实质绕过，直接利用缺少 CSRF 防护。",
+   "defensive_insight": "使用 CSRF Token，验证来源。"
+  },
+  {
+   "id": 247700,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "DoS",
+   "reasoning": "否。通过超长参数导致 DoS，是常见漏洞，无新意。无绕过或攻击链，属于成熟套路。",
+   "attack_chain": "单点：发送超长 size 参数 → 服务器资源耗尽。",
+   "bypass_technique": "无实质绕过，直接利用未限制参数长度。",
+   "defensive_insight": "限制参数长度，进行输入验证。"
+  },
+  {
+   "id": 47779,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "内存破坏 / 跨组件攻击链",
+   "reasoning": "是。在 H. Spencer 的正则库中发现堆溢出，影响多个系统，包括 PHP、BSD libc 等。技术点在于正则库的边界条件处理不当，导致 32 位系统上的堆溢出。这种跨组件影响具有启发性，且可复现。",
+   "attack_chain": "构造恶意正则表达式 → 触发堆溢出 → 可能执行任意代码。",
+   "bypass_technique": "利用正则库的边界条件缺陷，触发堆溢出。",
+   "defensive_insight": "修复正则库的边界检查，进行内存安全加固。"
+  },
+  {
+   "id": 282772,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "业务逻辑",
+   "reasoning": "否。缺少通知机制是业务逻辑问题，但无具体攻击链，且信息不足，无法判断真实性。",
+   "attack_chain": "无攻击链。",
+   "bypass_technique": "无。",
+   "defensive_insight": "增加账户异常通知机制。"
+  },
+  {
+   "id": 7888,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "类型混淆 / 信息泄露",
+   "reasoning": "部分。通过将字符串参数改为数组，触发类型错误，泄露服务器路径和函数信息。技术点在于类型混淆导致错误信息泄露，思路值得借鉴。但信息量有限，且 substate 为 resolved，但步骤简单。",
+   "attack_chain": "单点：修改参数类型 → 触发错误 → 泄露信息。",
+   "bypass_technique": "利用类型混淆触发错误信息泄露。",
+   "defensive_insight": "对输入进行类型验证，避免错误信息泄露。"
+  },
+  {
+   "id": 2300358,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "SSRF",
+   "reasoning": "部分。SSRF 是常见漏洞，但 PoC 完整，可复现。技术点在于 url 参数未过滤，直接请求任意 URL。虽然常见，但作为云服务漏洞，影响较大。",
+   "attack_chain": "单点：构造 url 参数 → 服务器发起请求 → 泄露响应。",
+   "bypass_technique": "无实质绕过，直接利用未过滤参数。",
+   "defensive_insight": "对 url 参数进行白名单校验，禁止内网地址。"
+  },
+  {
+   "id": 265284,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "IDOR",
+   "reasoning": "否。IDOR 是常见漏洞，无新意。无绕过或攻击链，属于成熟套路。",
+   "attack_chain": "单点：枚举 cnvID → 访问未授权评论。",
+   "bypass_technique": "无实质绕过，直接利用未授权访问。",
+   "defensive_insight": "实施访问控制，使用随机 ID。"
+  },
+  {
+   "id": 881115,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。通过 URL 路径注入 XSS，技术点在于路径未转义，且影响登录页面，可窃取凭据。虽然 XSS 常见，但利用路径注入且影响登录页，具有一定启发性。",
+   "attack_chain": "单点：构造恶意 URL → 触发 XSS → 窃取凭据。",
+   "bypass_technique": "利用路径未转义，注入事件处理器。",
+   "defensive_insight": "对路径进行编码，实施 CSP。"
+  },
+  {
+   "id": 758002,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "是。利用 Markdown 解析漏洞，在 URL 中注入标签，绕过 CSP 限制，实现 tab nabbing 或 XSS。技术点在于 Markdown 解析器未正确转义 URL，导致属性注入。这种绕过现代防御（CSP）的方式具有启发性，且可跨场景复用。",
+   "attack_chain": "构造恶意 Markdown 链接 → 注入属性 → 绕过 CSP → 执行脚本或 tab nabbing。",
+   "bypass_technique": "利用 Markdown 解析漏洞，注入属性绕过 CSP。",
+   "defensive_insight": "加强 Markdown 解析器的输入过滤，实施严格的 CSP。"
+  },
+  {
+   "id": 174645,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。通过响应差异判断文件夹存在，是常见的信息泄露，无新意。无绕过或攻击链，属于成熟套路。",
+   "attack_chain": "单点：猜测文件夹名 → 响应差异 → 确认存在。",
+   "bypass_technique": "无实质绕过，直接利用响应差异。",
+   "defensive_insight": "统一错误响应，避免信息泄露。"
+  },
+  {
+   "id": 271324,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 认证绕过",
+   "reasoning": "是。利用 IDN 同形字绕过 HackerOne 的 homograph 修复，通过修改 URL 参数中的 punycode 为原始 IDN，并添加额外斜杠，导致显示与实际重定向不一致。技术点在于 URL 解析差异，可绕过安全警告。这种绕过现代防御的方式具有启发性，且可跨场景复用。",
+   "attack_chain": "构造 IDN 同形字 URL → 修改参数 → 绕过签名验证 → 重定向到恶意站点。",
+   "bypass_technique": "利用 URL 解析差异，修改参数绕过签名验证。",
+   "defensive_insight": "对 URL 参数进行规范化，统一解析规则。"
+  },
+  {
+   "id": 151847,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "配置错误",
+   "reasoning": "否。使用基本认证是配置问题，但无具体攻击链，且 substate 为 informative，信息不足。",
+   "attack_chain": "无攻击链。",
+   "bypass_technique": "无。",
+   "defensive_insight": "使用更安全的认证方式。"
+  },
+  {
+   "id": 895780,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 业务逻辑",
+   "reasoning": "是。这是一个完整的 CTF 解题过程，涉及多个组件：信息泄露、SSRF、Android 应用逆向、业务逻辑漏洞、CSS 注入等。技术点在于利用 .git 泄露源码，通过 SSRF 访问内部服务，逆向 APK 获取 API 认证，利用业务逻辑漏洞提升权限，最终通过 CSS 注入窃取 2FA 代码。这种跨组件攻击链具有极高的启发性，且步骤完整，可复现。",
+   "attack_chain": "发现 .git 泄露 → 获取源码 → 利用日志泄露凭据 → 绕过 2FA → SSRF 访问内部服务 → 逆向 APK → 获取 API 认证 → 创建员工账户 → 利用业务逻辑提升权限 → CSS 注入窃取 2FA → 完成攻击。",
+   "bypass_technique": "利用 .git 泄露、SSRF、业务逻辑漏洞、CSS 注入等多种技术绕过安全措施。",
+   "defensive_insight": "加强源码保护，防止 .git 泄露；实施严格的 SSRF 防护；对业务逻辑进行安全审查；加强 2FA 实现。"
+  }
+ ]
+}

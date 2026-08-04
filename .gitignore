@@ -1,0 +1,36 @@
+# ===== Python =====
+__pycache__/
+*.pyc
+*.pyo
+
+# ===== Pi 本地会话/配置目录 =====
+.pi/
+
+# ===== 仅本地使用的 AI 配置（按项目规范忽略） =====
+CLAUDE.md
+GEMINI.md
+AGENTS.md
+.omc/
+
+# ===== H1 数据管线：忽略大体积/可再生成产物 =====
+# 原始数据集（可从 HuggingFace 重新下载）
+h1_data/raw/
+
+# 清洗输出（clean.py 可再生成；保留 out/report.md）
+h1_data/out/*.parquet
+h1_data/out/*.jsonl
+
+# LLM 输入批次（build_batches.py 可再生成）
+h1_data/pipeline/batches/
+
+# 瞬时/诊断产物
+h1_data/pipeline/failed/
+h1_data/pipeline/.tmp/
+h1_data/pipeline/probe_response.json
+h1_data/pipeline/*.tmp.*
+
+# 由 scored/ 派生（aggregate.py / extract_skill.py 可再生成）
+h1_data/pipeline/scored_all.parquet
+h1_data/pipeline/scored_all.jsonl
+h1_data/pipeline/skill_material.jsonl
+h1_data/pipeline/skill_source.md

@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   895650,
+   859962,
+   1098793,
+   411519,
+   1010340
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 119453,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。DOM-based XSS，通过URL fragment注入，常见于WordPress插件，无特殊绕过，PoC简单，启发性低。",
+   "attack_chain": "单点：URL fragment → 插件JS解析 → 执行任意JS。",
+   "bypass_technique": "无实质绕过，直接利用插件对location.hash的不安全处理。",
+   "defensive_insight": "对location.hash等DOM输入进行编码或使用安全API，避免直接插入HTML。"
+  },
+  {
+   "id": 1265390,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。反射型XSS，但利用SVG onload和HTML实体编码绕过过滤，且能窃取cookie，有一定技巧性，但属于常见XSS变种。",
+   "attack_chain": "构造恶意URL → 参数callback注入SVG → 触发onload → 外带cookie。",
+   "bypass_technique": "使用HTML实体编码和SVG标签绕过输入过滤。",
+   "defensive_insight": "对callback参数进行严格白名单校验，输出编码，禁用SVG等危险标签。"
+  },
+  {
+   "id": 269479,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "是。利用Google Analytics的自动收集功能，将私有报告中的链接泄露给第三方，属于隐私设计缺陷，思路新颖。",
+   "attack_chain": "点击私有报告中的链接 → 触发GA的POST请求 → 泄露链接和签名。",
+   "bypass_technique": "无绕过，利用默认的GA跟踪行为。",
+   "defensive_insight": "对第三方跟踪进行脱敏，或禁止在敏感页面加载外部脚本。"
+  },
+  {
+   "id": 859962,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "竞争条件 / 协议行为利用",
+   "reasoning": "是。利用DNS解析的TOCTOU竞态，通过自定义DNS服务器返回不同结果，绕过apiserver的代理过滤，属于协议行为利用，可通用化。",
+   "attack_chain": "创建恶意DNS服务器 → 设置节点地址为恶意域名 → 触发apiserver代理 → 两次DNS查询返回不同IP → 绕过过滤访问内网。",
+   "bypass_technique": "利用DNS TTL=0和自定义DNS服务器，在两次查询间切换IP。",
+   "defensive_insight": "apiserver应缓存DNS解析结果，或对代理目标进行一致性校验。"
+  },
+  {
+   "id": 1072832,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "命令注入 / 配置错误",
+   "reasoning": "部分。通过导出功能写入webshell，属于常见RCE路径，但利用参数控制文件名和内容，步骤清晰，有一定参考价值。",
+   "attack_chain": "登录 → 运行报告 → 导出Excel → 修改参数写入aspx → 访问webshell执行命令。",
+   "bypass_technique": "利用导出功能未过滤文件名和内容，直接写入webshell。",
+   "defensive_insight": "对导出文件名进行白名单校验，禁止写入可执行文件，限制导出目录权限。"
+  },
+  {
+   "id": 196380,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "内存破坏",
+   "reasoning": "部分。利用instance_eval中的super调用触发空指针解引用，属于语言边界情况，但PoC极简，无绕过，影响有限。",
+   "attack_chain": "单点：instance_eval中调用super → 空指针 → 崩溃。",
+   "bypass_technique": "无绕过，直接触发未处理异常。",
+   "defensive_insight": "修复mruby VM对super调用的边界检查。"
+  },
+  {
+   "id": 518837,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 权限提升",
+   "reasoning": "部分。利用安装程序临时目录ACL缺陷进行DLL劫持，属于常见本地提权手法，但利用条件苛刻，需本地攻击者。",
+   "attack_chain": "监控安装进程 → 找到临时目录 → 注入恶意DLL → 以管理员权限执行。",
+   "bypass_technique": "利用临时目录可写，替换DLL。",
+   "defensive_insight": "安装程序应使用安全目录并设置严格ACL，验证DLL签名。"
+  },
+  {
+   "id": 895650,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 业务逻辑",
+   "reasoning": "是。从日志泄露凭据到2FA绕过，再到API路径穿越和SSRF，最终利用CSS注入窃取2FA代码，整个攻击链跨多个组件，每一步都巧妙，极具启发性。",
+   "attack_chain": "发现.git泄露 → 获取日志 → 登录并绕过2FA → 利用API路径穿越访问内部服务 → 下载APK提取token → 创建员工账号 → 利用SSRF提权 → 利用CSS注入窃取2FA代码 → 接管账户。",
+   "bypass_technique": "2FA挑战答案可预测；API路径穿越；CSS属性选择器窃取输入值。",
+   "defensive_insight": "加强日志保护，2FA使用不可预测挑战，API路径校验，SSRF防护，对CSS输入进行限制。"
+  },
+  {
+   "id": 1010340,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 权限提升",
+   "reasoning": "是。eBPF验证器对OR操作的范围跟踪错误，导致越界读写，属于内核漏洞，利用思路清晰，影响广泛。",
+   "attack_chain": "构造BPF程序 → 利用OR操作范围错误 → 越界读写 → 提权。",
+   "bypass_technique": "利用验证器对32位子寄存器跟踪的缺陷。",
+   "defensive_insight": "修复eBPF验证器的范围跟踪逻辑，加强测试。"
+  },
+  {
+   "id": 152782,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "内存破坏",
+   "reasoning": "否。仅提供bug链接和补丁信息，无具体PoC或细节，无法判断漏洞利用价值。",
+   "attack_chain": "未知。",
+   "bypass_technique": "未知。",
+   "defensive_insight": "升级PHP版本。"
+  },
+  {
+   "id": 411519,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 路径遍历",
+   "reasoning": "是。利用DNS SRV响应覆盖file://源路径，实现本地gem劫持，属于协议行为利用，可通用化，攻击链完整。",
+   "attack_chain": "攻击者控制DNS → 响应SRV记录 → 修改file://路径前缀 → 受害者下载恶意gem。",
+   "bypass_technique": "利用SRV响应中的路径前缀覆盖，绕过源URL校验。",
+   "defensive_insight": "对file://和s3://源不进行SRV查询，严格验证SRV响应。"
+  },
+  {
+   "id": 113070,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告内容混乱，涉及Markdown解析问题，但无明确漏洞利用，信息不足。",
+   "attack_chain": "未知。",
+   "bypass_technique": "未知。",
+   "defensive_insight": "修复Markdown解析器的URL处理。"
+  },
+  {
+   "id": 205498,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。利用Textile标记的javascript:协议注入，绕过过滤，属于常见但有效的XSS变种。",
+   "attack_chain": "创建README.textile → 插入javascript:链接 → 存储XSS。",
+   "bypass_technique": "利用Textile的链接语法，使用javascript:协议。",
+   "defensive_insight": "对Textile渲染的输出进行协议白名单过滤。"
+  },
+  {
+   "id": 214028,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "竞争条件 / 信息泄露",
+   "reasoning": "是。利用文件名碰撞和异步处理，导致用户导入文件被覆盖，属于竞态条件，思路新颖。",
+   "attack_chain": "上传同名文件 → 覆盖他人导入文件 → 异步处理时泄露内容。",
+   "bypass_technique": "利用文件名碰撞和延迟处理。",
+   "defensive_insight": "生成随机文件名，避免使用原始文件名。"
+  },
+  {
+   "id": 1139541,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。通过API响应差异枚举pentest别名，属于常见枚举漏洞，无特殊技巧。",
+   "attack_chain": "构造PATCH请求 → 根据响应判断pentest是否存在。",
+   "bypass_technique": "无绕过，直接利用API行为差异。",
+   "defensive_insight": "统一错误响应，增加随机别名。"
+  },
+  {
+   "id": 1098793,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 路径遍历",
+   "reasoning": "是。利用asciidoctor的counter属性绕过kroki-plantuml-include禁用，实现任意文件读写，属于框架行为利用，攻击链完整。",
+   "attack_chain": "构造counter属性 → 绕过禁用 → 读取文件或写入文件。",
+   "bypass_technique": "利用counter属性覆盖被禁用的属性。",
+   "defensive_insight": "对asciidoctor属性进行严格过滤，禁用危险属性。"
+  },
+  {
+   "id": 246897,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "开放重定向",
+   "reasoning": "否。通过修改noredirect参数实现开放重定向，常见套路，无特殊技巧。",
+   "attack_chain": "构造URL → 修改noredirect=false → 重定向到任意网站。",
+   "bypass_technique": "无绕过，直接利用参数控制。",
+   "defensive_insight": "对重定向URL进行白名单校验。"
+  },
+  {
+   "id": 864701,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "原型污染",
+   "reasoning": "部分。lodash原型污染，已知漏洞，但PoC清晰，影响广泛，有一定参考价值。",
+   "attack_chain": "调用setWith → 污染Object.prototype → 导致DoS或属性覆盖。",
+   "bypass_technique": "利用lodash的setWith函数。",
+   "defensive_insight": "升级lodash版本，避免使用危险函数。"
+  },
+  {
+   "id": 1441988,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。存储型XSS，通过篡改请求绕过客户端过滤，属于常见但完整的利用。",
+   "attack_chain": "登录 → 创建模板 → 修改url参数为javascript: → 存储XSS。",
+   "bypass_technique": "绕过客户端校验，直接发送恶意请求。",
+   "defensive_insight": "服务端进行输入验证和输出编码。"
+  },
+  {
+   "id": 775504,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。暴露debug.log文件，常见配置错误，无技巧。",
+   "attack_chain": "直接访问debug.log → 获取路径和数据库用户名。",
+   "bypass_technique": "无绕过，直接利用配置错误。",
+   "defensive_insight": "禁止web目录存放日志文件，限制访问。"
+  }
+ ]
+}

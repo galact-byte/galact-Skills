@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 7,
+  "dropped": 13,
+  "avg_score": 3.5,
+  "top_n": [
+   602767,
+   1954535,
+   2258758,
+   955286,
+   308721
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 530289,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "路径遍历 / 配置错误",
+   "reasoning": "否。静态服务器未禁用 symlink 跟随，项目目录内创建指向 /etc/passwd 的软链即可越权读文件——利用文件系统语义而非解析器缺陷，属'服务器未禁用 symlink'的经典配置缺陷，轻微变形；且前置条件需在 web 根目录创建 symlink，攻击者需先具备目录写权限，条件受限。",
+   "attack_chain": "单点：项目目录建 symlink 指向 /etc/passwd→curl 请求软链路径→读取 web 根外文件。",
+   "bypass_technique": "无绕过，利用服务器默认跟随 symlink 的行为。",
+   "defensive_insight": "静态服务器默认禁用 symlink 跟随或限制在根目录内；对规范化后的真实路径再做一次根目录包含校验。"
+  },
+  {
+   "id": 602767,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "是。攻击者页面 window.open 打开管理后台新窗口，再通过 postMessage 向 Shopify.API.Modal.initialize 注入 javascript: scheme 的 src——跨窗口消息通道把'新窗口中的管理后台'变成 XSS 执行环境，任何嵌入式 app 的管理员一旦点击即被接管。区别于普通 DOM XSS：攻击面在 postMessage 消息处理对 origin/src 的信任缺失，链路跨攻击者页面与管理后台两个上下文，payload 可复用。",
+   "attack_chain": "诱导管理员点击→window.open 打开 /admin/themes→循环 postMessage 注入 Modal.initialize(src=javascript:...)→管理后台上下文执行任意 JS。",
+   "bypass_technique": "用 postMessage 跨窗口投递 javascript: scheme 到未校验 origin 的 Modal API，绕过同源限制。",
+   "defensive_insight": "postMessage 接收方必须校验 event.origin 白名单；Modal/对话框类 API 的 src 参数禁止 javascript: 等危险 scheme，统一走 allowlist。"
+  },
+  {
+   "id": 1954535,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 认证绕过",
+   "reasoning": "是。Node.js 20 权限模型明令禁止加载原生 addon，却仍允许通过 crypto.setEngine() 加载任意 OpenSSL 引擎（本质是原生代码），不仅绕过还能直接禁用权限模型实现自提权——'强制策略的官方旁路'，属框架行为利用的典型。可抽象为通用判据：任何'禁止原生代码'的安全边界都必须枚举所有能触达原生代码的官方 API。缺点是可复现细节少（无 engine 构造代码），仅步骤概述。",
+   "attack_chain": "单点：启用权限模型→crypto.setEngine() 加载恶意 OpenSSL 引擎→任意代码执行并关闭权限模型。",
+   "bypass_technique": "借官方 crypto.setEngine 通道加载原生引擎，规避'禁止 native addons'的权限模型限制。",
+   "defensive_insight": "安全边界审计须覆盖全部官方原生接口（engine、addon、FFI 等），与 addon 禁止策略同源管控；文档明确 engine 属受限能力。"
+  },
+  {
+   "id": 107296,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。XML-RPC 验证使用非恒定时间比较，经典 timing attack 理论描述，无 PoC 无实际利用证明，仅指出代码位置与修复建议，信息量停留在教科书层面。",
+   "attack_chain": "单点：对验证函数逐字符测时→推断正确签名。",
+   "bypass_technique": "无绕过，理论上的时序侧信道。",
+   "defensive_insight": "密钥/签名比对一律用恒定时间比较（hash_equals/hmac.compare_digest）。"
+  },
+  {
+   "id": 2258758,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 配置错误",
+   "reasoning": "部分。利用 unicode NFC 规范化对畸形字符序列的算法复杂度陷阱，单请求 100 万非法字符即拖垮 Django 表单校验（4.4s/请求，20 并发 504）——'框架内置规范化算法的二次复杂度'作为 DoS 向量有反直觉性，且可跨场景复用（任何对用户输入做 NFC 规范化的校验点）。CVE-2023-46695 佐证真实性。",
+   "attack_chain": "单点：向含 UsernameField 的表单 POST 百万级非法 unicode 字符→NFC 规范化 CPU 耗尽→并发放大至服务不可用。",
+   "bypass_technique": "构造畸形 unicode（如重复 '¾'）触发规范化器的最坏时间复杂度，无账号即可打。",
+   "defensive_insight": "对用户输入先做长度限制再规范化；规范化的算法复杂度需纳入 DoS 评估，限制单请求输入规模。"
+  },
+  {
+   "id": 7883,
+   "value_score": 0,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "配置错误",
+   "reasoning": "无法判断。正文仅一句话'无密码策略可暴力破解'，无目标、无测试、无证据，属通用建议。",
+   "attack_chain": "无法确认。",
+   "bypass_technique": "无法确认。",
+   "defensive_insight": "实施密码复杂度与登录限速策略。"
+  },
+  {
+   "id": 198622,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 协议行为利用",
+   "reasoning": "部分。服务端返回 X-Frame-Options: ALLOW-FROM 而 Chrome 不识别该值，导致'看似已设置的防点击劫持头'在该浏览器下完全失效——利用浏览器对 header 值的实现差异使防御形同虚设，属跨浏览器兼容性盲区的实战案例，有启发；但无绕过技巧（直接 iframe），依赖特定浏览器。",
+   "attack_chain": "单点：Chrome 下 iframe 嵌套 Periscope 页面→透明遮罩诱导点击→操纵用户执行关注等操作。",
+   "bypass_technique": "无绕过，利用 Chrome 不支持 ALLOW-FROM 值导致头部无效。",
+   "defensive_insight": "clickjacking 防护用 CSP frame-ancestors 替代已废弃的 XFO ALLOW-FROM，并跨主流浏览器验证头部生效性。"
+  },
+  {
+   "id": 4792,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。cookie 缺 HttpOnly 标志的教科书配置缺陷，无 PoC 无实际利用，信息量极少。",
+   "attack_chain": "单点：XSS 存在时可读取未设 HttpOnly 的会话 cookie。",
+   "bypass_technique": "无绕过，直接利用标志缺失。",
+   "defensive_insight": "所有会话 cookie 统一 HttpOnly + Secure + SameSite。"
+  },
+  {
+   "id": 141676,
+   "value_score": 0,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "无法判断。报告描述大量数据源导致页面报错的功能缺陷（not-applicable），无任何安全影响论证；且正文直接附带了账号密码明文，属于信息管理不当而非漏洞证据。",
+   "attack_chain": "无法确认。",
+   "bypass_technique": "无法确认。",
+   "defensive_insight": "功能缺陷与安全漏洞区分申报；报告内不应明文附凭据。"
+  },
+  {
+   "id": 1132803,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。GraphQL introspection 未在生产禁用，标准 introspection 查询即可拉取全 schema——成熟的配置检查项，无变形无绕过；附带 userExists 用户枚举只是 introspection 的常规后果。",
+   "attack_chain": "单点：对 /graphql 发 introspection 查询→获取全部类型/变更→按图索骥调用未授权接口/枚举用户。",
+   "bypass_technique": "无绕过，直接利用未禁用的 introspection 能力。",
+   "defensive_insight": "生产环境禁用 introspection 与调试字段；GraphQL 接口按角色做查询白名单与字段级授权。"
+  },
+  {
+   "id": 60201,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。URL 内 </script><script>alert(0)</script> 闭合脚本标签触发反射型 XSS——最经典的 script 标签闭合注入，变形轻微（注入点在 script 上下文），无绕过无链。",
+   "attack_chain": "单点：构造恶意 URL→服务端原样嵌入 script 块→浏览器执行。",
+   "bypass_technique": "无绕过，直接闭合既有 script 标签注入新标签。",
+   "defensive_insight": "输出上下文感知编码；脚本块内禁止拼接任何用户输入。"
+  },
+  {
+   "id": 180538,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。芬兰域名证书配置问题导致浏览器报错，报告者自述'非漏洞'，属常规 TLS 配置缺陷，无安全利用价值。",
+   "attack_chain": "单点：访问 .fi 域名→证书校验失败→用户无法访问。",
+   "bypass_technique": "无。",
+   "defensive_insight": "多区域域名证书统一由自动化签发管理，定期批量校验。"
+  },
+  {
+   "id": 2257374,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 认证绕过",
+   "reasoning": "部分。利用订阅计划升降级的时间窗口绕过头像审核：升级 premium+ 后立即更换头像可跳过人工审核，再降级循环——'计划切换重置审核状态'是业务逻辑状态机缺陷，可抽象为'用付费状态切换绕过一次性审查'的通用判据；但复现细节全部在外部 thread 链接中，报告正文只有思路。",
+   "attack_chain": "单点：升级 premium+→更换恶意头像→审核被跳过→降级循环重复。",
+   "bypass_technique": "利用升级/降级切换使审核流程失效，规避头像审核的强制策略。",
+   "defensive_insight": "审核状态与订阅状态解耦；已提交的变更在计划切换后仍需完成审查队列，不允许静默放行。"
+  },
+  {
+   "id": 127620,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "信息泄露",
+   "reasoning": "无法判断。正文仅一句话称 hacktivity.json 泄露非公开报告 ID，无请求、无响应样例、无证明，无法验证。",
+   "attack_chain": "无法确认。",
+   "bypass_technique": "无法确认。",
+   "defensive_insight": "公开 JSON 端点须做字段级过滤，非公开资源 ID 不得混入聚合响应。"
+  },
+  {
+   "id": 396467,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "否。员工把内网 GitHub token 硬编码进公开 repo——公开仓库凭据泄露的经典案例，无技巧无链，价值仅在'及时发现'。",
+   "attack_chain": "单点：搜索公开仓库→发现硬编码 token→尝试访问内网服务。",
+   "bypass_technique": "无绕过，直接利用已公开的凭据。",
+   "defensive_insight": "代码托管平台启用密钥扫描与硬编码检测；凭据一律走密钥管理，禁止进代码库。"
+  },
+  {
+   "id": 169759,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。批量编辑的 return_to 参数用 /..// 前缀技巧绕过同源校验实现 open redirect——open redirect 的常见变形（双斜杠+点段），技巧可复用但成熟，无链无高影响论证。",
+   "attack_chain": "单点：构造 return_to=/..//evil.com→点击 Close→跳转外域。",
+   "bypass_technique": "/..// 组合使路径规范化后落在白名单校验之外。",
+   "defensive_insight": "redirect 目标必须基于规范化后的完整 URL 校验同源，拒绝含 // 或 .. 的宽松匹配。"
+  },
+  {
+   "id": 955286,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 授权绕过",
+   "reasoning": "部分。HackerOne 自己的 GraphQL 中，无 jira 权限的用户虽看不到 jira_escalation_state 字段值，但把 order_by 设为 jira_status 后 total_count 出现差异——'排序/过滤维度成为授权字段的旁路侧信道'，用行为差异推断不可见数据，手法有反直觉性且可抽象为通用判据（排序字段与授权字段必须同权限面）。",
+   "attack_chain": "单点：构造 order_by=jira_status 查询→对比 total_count 差异→推断报告是否经 jira 流转。",
+   "bypass_technique": "借排序行为的可观测差异绕过字段级授权，读取被置 null 的字段语义。",
+   "defensive_insight": "GraphQL 排序/过滤字段与返回字段必须同权限面；对无权限字段的引用（含排序）应整体拒绝而非仅置空返回值。"
+  },
+  {
+   "id": 753725,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "否。WordPress REST API /wp/v2/users 未禁用，匿名枚举注册用户——WP 用户枚举的经典配置项，无变形无绕过，可复现完整。",
+   "attack_chain": "单点：匿名请求 wp-json/wp/v2/users→枚举用户 id/slug→定向爆破。",
+   "bypass_technique": "无绕过，直接利用默认开放的 REST 端点。",
+   "defensive_insight": "禁用/限制 users REST 端点匿名访问；用户列表接口仅对授权角色开放。"
+  },
+  {
+   "id": 149028,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。密码重置邮件以明文（无 TLS）发送，MITM 截获重置链接——传输层配置缺陷的经典问题，无绕过无链；substate 为 informative，证据仅截图，复现细节缺失。",
+   "attack_chain": "单点：监听网络→截获明文密码重置邮件→利用重置链接接管账户。",
+   "bypass_technique": "无绕过，直接利用明文传输。",
+   "defensive_insight": "所有邮件传输强制 STARTTLS/TLS；重置链接用一次性短时效 token 并绑定会话。"
+  },
+  {
+   "id": 308721,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "路径遍历 / 配置错误",
+   "reasoning": "部分。serve 模块的 ignore 黑名单用未解码的 pathname 校验、却用 decodeURIComponent 后的路径服务——校验与使用路径的解码不一致，%65 替换一个字符即绕过整份黑名单，根因定位精确（lib/server.js 91 行）。'检查路径与使用路径必须同一规范化结果'是可迁移到任意过滤器的通用判据；但 URL 编码绕过黑名单本身是成熟手法。",
+   "attack_chain": "单点：请求 t%65st.txt→校验命中未解码串→服务端解码后实际提供被禁文件/目录列表。",
+   "bypass_technique": "对黑名单命中的字符做 URL 编码，利用校验与文件服务的解码时机差异。",
+   "defensive_insight": "黑名单/白名单校验必须在解码并规范化后的最终路径上执行，且校验与服务的路径来源必须唯一。"
+  }
+ ]
+}

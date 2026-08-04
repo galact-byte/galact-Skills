@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1032610,
+   633266,
+   258084,
+   51817,
+   74595
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 968232,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 业务逻辑",
+   "reasoning": "部分。利用用户名作为XSS载体，在协作编辑场景中触发，属于存储型XSS的常见变体，但触发条件需要受害者同时打开文档，有一定交互性。技术点在于用户名未过滤直接输出到页面，但思路不算新颖。",
+   "attack_chain": "设置恶意用户名→创建文档并分享→受害者打开文档→执行XSS",
+   "bypass_technique": "无特殊绕过，直接利用未过滤的用户名输入。",
+   "defensive_insight": "对用户名等用户可控输入进行输出编码，尤其是在协作编辑等动态渲染场景。"
+  },
+  {
+   "id": 998935,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS / CSRF",
+   "reasoning": "否。POST型反射XSS，通过CSRF触发，属于常见套路，无特殊绕过或新颖技术点。",
+   "attack_chain": "构造恶意表单→诱导受害者提交→执行XSS",
+   "bypass_technique": "无实质绕过，直接利用未过滤参数。",
+   "defensive_insight": "对所有输入进行输出编码，并实施CSRF防护。"
+  },
+  {
+   "id": 633266,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 代码注入",
+   "reasoning": "是。利用macOS的DYLD环境变量注入dylib，绕过应用签名和沙箱，实现代码执行。技术点在于对系统动态链接器行为的利用，属于框架行为利用，且可通用化。",
+   "attack_chain": "恶意应用→设置DYLD_INSERT_LIBRARIES→启动Nextcloud→执行恶意代码",
+   "bypass_technique": "利用DYLD_INSERT_LIBRARIES注入恶意dylib，绕过应用完整性检查。",
+   "defensive_insight": "启用Hardened Runtime并禁用DYLD环境变量，或添加__RESTRICTED段。"
+  },
+  {
+   "id": 258084,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 授权绕过",
+   "reasoning": "是。通过WebDAV复制共享文件时，文件名冲突导致创建包含所有用户数据的文件夹，绕过共享权限限制。技术点在于对文件系统命名冲突处理逻辑的利用，属于非预期行为。",
+   "attack_chain": "共享文件→WebDAV复制→文件名冲突→生成包含所有文件的文件夹→信息泄露",
+   "bypass_technique": "利用文件名冲突时自动重命名机制，导致目录遍历。",
+   "defensive_insight": "在WebDAV复制操作中严格校验文件路径，防止目录穿越。"
+  },
+  {
+   "id": 1032610,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用两个开放重定向和Unicode字符（表意句号）绕过Twitter的链接黑名单。技术点在于对URL解析差异和Unicode规范化行为的利用，属于协议行为利用，且可通用化。",
+   "attack_chain": "构造恶意URL→利用开放重定向链→绕过链接验证→诱导用户访问恶意站点",
+   "bypass_technique": "使用表意句号替代ASCII句号，结合开放重定向链绕过域名黑名单。",
+   "defensive_insight": "统一URL解析和规范化，对Unicode字符进行严格处理，并限制重定向目标。"
+  },
+  {
+   "id": 146939,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 业务逻辑",
+   "reasoning": "部分。DOM XSS，通过return参数注入javascript:协议，需要用户输入验证码触发，有一定交互性。技术点在于对javascript:协议的处理，但属于常见XSS变体。",
+   "attack_chain": "构造恶意链接→用户点击并输入验证码→执行XSS",
+   "bypass_technique": "利用javascript:协议绕过URL过滤。",
+   "defensive_insight": "对return参数进行白名单校验，禁止javascript:等危险协议。"
+  },
+  {
+   "id": 271765,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 配置错误",
+   "reasoning": "部分。存储型XSS通过修改账户姓名触发，同时页面缺少X-Frame-Options导致点击劫持风险。技术点在于对姓名输入未过滤，但属于常见XSS，点击劫持是附加问题。",
+   "attack_chain": "修改姓名→触发存储XSS→结合点击劫持",
+   "bypass_technique": "无特殊绕过，直接利用未过滤输入。",
+   "defensive_insight": "对姓名等输入进行输出编码，并添加X-Frame-Options头。"
+  },
+  {
+   "id": 870703,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型XSS通过表单元素触发，需要受害者点击按钮，属于常见套路，无特殊绕过。",
+   "attack_chain": "创建恶意帖子→受害者转发→编辑时点击按钮→执行XSS",
+   "bypass_technique": "无实质绕过，利用表单的formaction属性。",
+   "defensive_insight": "对帖子内容进行HTML过滤，禁止javascript:协议。"
+  },
+  {
+   "id": 1036877,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 信息泄露",
+   "reasoning": "部分。盲存储XSS通过联系表单提交，在管理后台触发，泄露管理员会话。技术点在于对表单输入未过滤，但属于常见XSS，盲打是常见手法。",
+   "attack_chain": "提交恶意表单→管理员查看→触发XSS→窃取会话",
+   "bypass_technique": "无特殊绕过，直接利用未过滤输入。",
+   "defensive_insight": "对表单输入进行严格过滤和输出编码，后台会话使用HttpOnly和Secure属性。"
+  },
+  {
+   "id": 31418,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "认证绕过 / 业务逻辑",
+   "reasoning": "部分。通过刷新页面和查看照片/资料，将作者信息写入cookie，实现任意用户身份登录。技术点在于对cookie设置逻辑的利用，属于业务逻辑漏洞，但复现依赖特定操作。",
+   "attack_chain": "清除cookie→访问照片/资料→刷新→自动登录为作者",
+   "bypass_technique": "利用cookie设置逻辑缺陷，将作者信息写入cookie。",
+   "defensive_insight": "确保cookie设置基于服务端会话，不信任客户端输入。"
+  },
+  {
+   "id": 394294,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "命令注入",
+   "reasoning": "部分。npm模块samsung-remote未过滤IP参数，直接拼接到exec命令，导致命令注入。技术点在于对child_process.exec的误用，属于常见漏洞类型，但模块化攻击链有一定价值。",
+   "attack_chain": "构造恶意IP→调用isAlive→执行任意命令",
+   "bypass_technique": "无特殊绕过，直接利用未过滤参数。",
+   "defensive_insight": "使用execFile替代exec，或对参数进行严格校验。"
+  },
+  {
+   "id": 482707,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。错误信息泄露，属于配置错误，无技术含量。",
+   "attack_chain": "访问特定URL→泄露错误信息",
+   "bypass_technique": "无。",
+   "defensive_insight": "配置服务器隐藏详细错误信息。"
+  },
+  {
+   "id": 1570651,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 拒绝服务",
+   "reasoning": "是。利用HTTP压缩编码的重复声明导致资源耗尽，属于协议行为利用，可导致系统崩溃。技术点在于对HTTP头解析的资源消耗未限制。",
+   "attack_chain": "发送大量重复Transfer-Encoding头→curl内存耗尽→系统崩溃",
+   "bypass_technique": "利用HTTP协议允许重复头字段的特性。",
+   "defensive_insight": "限制HTTP头大小和数量，对压缩编码进行去重和限制。"
+  },
+  {
+   "id": 1049402,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。PHP Info页面暴露环境变量，属于配置错误，无技术含量。",
+   "attack_chain": "访问/info→泄露敏感信息",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁用PHP Info页面，限制环境变量暴露。"
+  },
+  {
+   "id": 51817,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。被移出群组后，通过重放之前的请求仍可评论，说明权限检查缺失。技术点在于对请求重放的利用，属于业务逻辑漏洞，可抽象为通用判断条件。",
+   "attack_chain": "捕获评论请求→被移出群组→重放请求→成功评论",
+   "bypass_technique": "利用服务端未验证当前用户权限，重放旧请求。",
+   "defensive_insight": "在每次请求中验证用户当前权限，不信任客户端状态。"
+  },
+  {
+   "id": 472391,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 配置错误",
+   "reasoning": "部分。存储型XSS通过项目名称注入，但受限于长度和CSP，需要绕过。技术点在于对项目名称未过滤，但利用条件较多，价值中等。",
+   "attack_chain": "修改项目名→访问/engage页面→执行外部脚本→提权",
+   "bypass_technique": "利用外部脚本加载绕过长度限制，CSP允许unsafe-inline。",
+   "defensive_insight": "对项目名称进行输出编码，收紧CSP策略。"
+  },
+  {
+   "id": 642281,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型XSS通过参数注入，属于常见套路，无特殊绕过。",
+   "attack_chain": "提交恶意参数→存储→触发XSS",
+   "bypass_technique": "无实质绕过，直接利用未过滤参数。",
+   "defensive_insight": "对所有输入进行输出编码。"
+  },
+  {
+   "id": 74595,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 授权绕过",
+   "reasoning": "是。通过Base64编码的ID可被篡改，导致CSRF攻击可修改任意产品状态。技术点在于对ID编码的逆向和篡改，属于业务逻辑漏洞，可抽象为通用判断条件。",
+   "attack_chain": "获取产品key→解码→构造ID→CSRF修改状态",
+   "bypass_technique": "利用ID编码可预测性，构造有效ID。",
+   "defensive_insight": "使用不可预测的ID，并添加CSRF令牌。"
+  },
+  {
+   "id": 994504,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。CSRF令牌未验证，导致可修改业务名称，属于常见CSRF漏洞，无特殊绕过。",
+   "attack_chain": "构造CSRF请求→修改业务名称",
+   "bypass_technique": "无实质绕过，直接利用缺失的CSRF验证。",
+   "defensive_insight": "正确验证CSRF令牌。"
+  },
+  {
+   "id": 43807,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。密码重置页面被搜索引擎索引，属于配置错误，无技术含量。",
+   "attack_chain": "搜索引擎索引→泄露重置链接",
+   "bypass_technique": "无。",
+   "defensive_insight": "在敏感页面添加noindex标签。"
+  }
+ ]
+}

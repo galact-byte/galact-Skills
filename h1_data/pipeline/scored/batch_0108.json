@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1102591,
+   1108874,
+   1103258,
+   2207248,
+   202425
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 153093,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑 / 配置错误",
+   "reasoning": "否。CSRF 导致 DoS 是常见漏洞类型，报告缺少具体技术细节，未展示非预期绕过或攻击链，信息不足。",
+   "attack_chain": "攻击者诱导用户发起请求，触发资源消耗。",
+   "bypass_technique": "无实质绕过，利用 CSRF 触发 DoS。",
+   "defensive_insight": "实施 CSRF 令牌验证，限制资源消耗。"
+  },
+  {
+   "id": 1102591,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 3
+   },
+   "verdict": "保留，高优先级",
+   "category": "SQL注入",
+   "reasoning": "是。虽然 SQL 注入是常见类型，但该报告提供了完整的布尔盲注测试步骤，包括真/假条件验证，可复现性强，且注入点可能绕过过滤，具有教学价值。",
+   "attack_chain": "构造恶意 POST 参数 → 触发 SQL 注入 → 通过布尔条件判断数据库信息。",
+   "bypass_technique": "使用 OR 1=1 和算术表达式绕过简单过滤。",
+   "defensive_insight": "使用参数化查询，对输入进行严格过滤。"
+  },
+  {
+   "id": 518097,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 内存破坏",
+   "reasoning": "是。利用 strtol 在非 NUL 终止缓冲区上的越界读取，属于协议解析中的边界条件问题，但报告缺少完整利用链，且为已知 CVE。",
+   "attack_chain": "构造特定 SMTP 响应 → 触发 strtol 越界读取 → 信息泄露或崩溃。",
+   "bypass_technique": "利用缓冲区未 NUL 终止和 len=5 的条件。",
+   "defensive_insight": "确保缓冲区 NUL 终止，使用安全字符串函数。"
+  },
+  {
+   "id": 1108874,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 跨组件攻击链",
+   "reasoning": "是。通过 Host 头注入污染密码重置链接，结合邮件和日志泄露实现账户接管，攻击链完整，且可抽象为通用判断条件。",
+   "attack_chain": "修改 Host 头 → 生成恶意重置链接 → 受害者点击 → 令牌泄露 → 账户接管。",
+   "bypass_technique": "利用 Host 头未验证，注入恶意域名。",
+   "defensive_insight": "使用 SERVER_NAME 而非 HTTP_HOST，验证 Host 头白名单。"
+  },
+  {
+   "id": 1103258,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "是。利用 Mermaid 指令注入 CSS 到 style 标签，绕过常规 XSS 过滤，属于框架行为利用，且 PoC 清晰。",
+   "attack_chain": "构造恶意 Mermaid 指令 → 注入 CSS → 触发 XSS。",
+   "bypass_technique": "利用 Mermaid 指令的 themeCSS 属性注入未过滤的 CSS。",
+   "defensive_insight": "对 Mermaid 指令输入进行严格过滤，使用 CSP 等防御。"
+  },
+  {
+   "id": 778414,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "原型污染 / 类型混淆",
+   "reasoning": "是。深拷贝函数未正确处理 __proto__ 导致原型污染，属于框架行为利用，但报告缺少详细 PoC，且为已知漏洞。",
+   "attack_chain": "构造恶意对象 → 触发深拷贝 → 污染原型 → 影响应用行为。",
+   "bypass_technique": "利用 klona 深拷贝时未过滤 __proto__ 键。",
+   "defensive_insight": "在深拷贝时过滤危险键，使用安全库。"
+  },
+  {
+   "id": 694141,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 跨组件攻击链",
+   "reasoning": "是。通过 FTP 命令绕过 chroot 实现任意文件读写，进而可能 RCE，攻击链完整，且利用方式非预期。",
+   "attack_chain": "发送 MKD 命令 → 路径遍历 → 逃逸 chroot → 任意文件读写 → 可能 RCE。",
+   "bypass_technique": "利用 compose_abspath 未正确规范化路径。",
+   "defensive_insight": "严格验证路径，使用 chroot 后限制权限。"
+  },
+  {
+   "id": 260941,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少 href 的链接是前端小问题，无安全影响，无攻击链。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "确保所有链接有有效 href。"
+  },
+  {
+   "id": 601287,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "开放重定向",
+   "reasoning": "否。X-Forwarded-Host 导致重定向是常见配置错误，无绕过，无攻击链。",
+   "attack_chain": "修改 X-Forwarded-Host → 重定向到恶意站点。",
+   "bypass_technique": "利用未验证的 X-Forwarded-Host 头。",
+   "defensive_insight": "忽略或验证 X-Forwarded-Host，使用白名单。"
+  },
+  {
+   "id": 2207248,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "IDOR / 授权绕过",
+   "reasoning": "是。GraphQL 查询未校验对象所有权，导致任意商家发票泄露，攻击链完整，且可批量利用。",
+   "attack_chain": "构造 GraphQL 请求 → 修改 ID → 获取其他商家发票信息。",
+   "bypass_technique": "直接修改 ID 参数，未授权访问。",
+   "defensive_insight": "在 GraphQL 解析器中实施对象级授权检查。"
+  },
+  {
+   "id": 126598,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "内存破坏 / 协议行为利用",
+   "reasoning": "是。torsocks 中 memcpy 大小错误导致越界读写，属于协议行为利用，但报告未验证实际利用，且为已知问题。",
+   "attack_chain": "构造恶意 DNS 响应 → 触发越界读写 → 信息泄露或崩溃。",
+   "bypass_technique": "利用 memcpy 大小参数错误。",
+   "defensive_insight": "使用安全的内存复制函数，检查缓冲区大小。"
+  },
+  {
+   "id": 1029243,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS 是常见类型，无绕过，无攻击链。",
+   "attack_chain": "构造恶意 URL → 触发 XSS。",
+   "bypass_technique": "无实质绕过，直接注入。",
+   "defensive_insight": "对输出进行编码，过滤输入。"
+  },
+  {
+   "id": 979110,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。路径泄露是常见配置错误，无绕过，无攻击链。",
+   "attack_chain": "构造恶意文件名 → 触发 500 错误 → 泄露路径。",
+   "bypass_technique": "无实质绕过，利用错误处理。",
+   "defensive_insight": "隐藏错误详细信息，限制文件上传。"
+  },
+  {
+   "id": 799593,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "子域名接管 / 配置错误",
+   "reasoning": "是。利用未注册的社交账号接管品牌形象，属于子域名接管变体，但影响有限。",
+   "attack_chain": "发现未注册的 vk.com 账号 → 注册 → 接管品牌形象。",
+   "bypass_technique": "利用未验证的社交账号链接。",
+   "defensive_insight": "定期检查外部链接有效性，及时更新。"
+  },
+  {
+   "id": 735748,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "HTTP请求走私 / 协议行为利用",
+   "reasoning": "是。利用畸形 Transfer-Encoding 头导致请求走私，属于协议行为利用，但报告缺少细节，无法评估完整性。",
+   "attack_chain": "构造畸形 TE 头 → 前后端解析差异 → 请求走私。",
+   "bypass_technique": "利用 TE 头中的空格绕过过滤。",
+   "defensive_insight": "统一前后端 HTTP 解析，拒绝畸形 TE 头。"
+  },
+  {
+   "id": 1294767,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "点击劫持",
+   "reasoning": "否。点击劫持是常见类型，无绕过，无攻击链。",
+   "attack_chain": "嵌入 iframe → 诱导用户点击。",
+   "bypass_technique": "无实质绕过，利用缺少 X-Frame-Options。",
+   "defensive_insight": "设置 X-Frame-Options 或 CSP frame-ancestors。"
+  },
+  {
+   "id": 710006,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 信息泄露",
+   "reasoning": "是。Elasticsearch 搜索未正确授权，导致私有数据泄露，攻击链完整，且可批量利用。",
+   "attack_chain": "构造搜索请求 → 绕过授权 → 泄露私有笔记。",
+   "bypass_technique": "利用搜索 API 未校验对象权限。",
+   "defensive_insight": "在搜索索引中实施权限过滤。"
+  },
+  {
+   "id": 503922,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "开放重定向",
+   "reasoning": "否。开放重定向是常见类型，无绕过，无攻击链。",
+   "attack_chain": "构造恶意 return 参数 → 重定向到恶意站点。",
+   "bypass_technique": "无实质绕过，直接利用参数。",
+   "defensive_insight": "验证重定向目标，使用白名单。"
+  },
+  {
+   "id": 202425,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 竞争条件",
+   "reasoning": "是。2FA 代码无速率限制和过期，可暴力破解，属于认证绕过，攻击链完整。",
+   "attack_chain": "获取会话 ID → 暴力破解 4 位代码 → 绕过 2FA → 账户接管。",
+   "bypass_technique": "利用无速率限制和代码不失效。",
+   "defensive_insight": "实施速率限制和代码过期机制。"
+  },
+  {
+   "id": 214800,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。DWR 默认页面暴露信息是常见配置错误，无绕过，无攻击链。",
+   "attack_chain": "访问默认页面 → 发现敏感方法 → 可能利用。",
+   "bypass_technique": "无实质绕过，直接访问。",
+   "defensive_insight": "删除或限制默认页面访问。"
+  }
+ ]
+}

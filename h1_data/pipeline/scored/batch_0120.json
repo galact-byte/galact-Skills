@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   236552,
+   2101076,
+   608656,
+   492512,
+   1068505
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 280495,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 业务逻辑",
+   "reasoning": "部分。通过拦截请求修改链接为javascript:协议实现存储型XSS，属于常见的协议绕过，但需要用户点击链接触发，且利用方式较为直接。技术点在于服务端未校验链接协议，但思路不新颖。",
+   "attack_chain": "创建信息图→添加媒体链接→拦截请求改为javascript:→发布→用户点击触发XSS。",
+   "bypass_technique": "利用javascript:协议绕过http(s)限制。",
+   "defensive_insight": "服务端严格校验链接协议，仅允许http/https，并过滤危险协议。"
+  },
+  {
+   "id": 608656,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 跨组件攻击链",
+   "reasoning": "是。禁用账户后，GraphQL端点未强制重新激活流程，导致攻击者可以绕过UI限制直接操作账户数据。技术点在于业务逻辑与API层分离，未同步状态检查。",
+   "attack_chain": "登录禁用账户→直接调用GraphQL端点→读取/修改账户数据。",
+   "bypass_technique": "绕过UI重定向，直接构造GraphQL请求。",
+   "defensive_insight": "在API层统一检查账户状态，禁用账户应拒绝所有敏感操作。"
+  },
+  {
+   "id": 2213337,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。未认证访问内部页面和API，属于典型的配置错误，无绕过技巧，攻击链简单。",
+   "attack_chain": "直接访问未授权页面/API。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对敏感页面和API实施认证和授权检查。"
+  },
+  {
+   "id": 274868,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，参数直接输出未过滤，经典套路，无绕过。",
+   "attack_chain": "构造恶意URL→触发XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对输出进行编码，使用CSP。"
+  },
+  {
+   "id": 236552,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 认证绕过",
+   "reasoning": "是。利用openssl_verify函数返回-1时被当作真值，绕过签名验证，实现未认证RCE。技术点在于PHP弱类型比较和函数返回值误用，极具启发性。",
+   "attack_chain": "构造恶意请求→触发openssl_verify返回-1→绕过验证→执行任意代码。",
+   "bypass_technique": "利用openssl_verify返回-1时if(-1)为真，绕过签名检查。",
+   "defensive_insight": "严格使用===1比较函数返回值，避免弱类型比较。"
+  },
+  {
+   "id": 492512,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 跨组件攻击链",
+   "reasoning": "是。通过zip包中的符号链接实现任意文件写入，属于解压时的符号链接攻击，技术点在于未校验符号链接目标，可导致RCE。",
+   "attack_chain": "构造恶意zip→解压时符号链接指向任意路径→写入文件。",
+   "bypass_technique": "利用符号链接绕过路径检查。",
+   "defensive_insight": "解压时校验符号链接目标，禁止绝对路径和..。"
+  },
+  {
+   "id": 90308,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。通过联系人导入功能枚举用户邮箱，属于业务逻辑滥用，但思路常见，无技术难度。",
+   "attack_chain": "生成邮箱列表→导入联系人→观察哪些已注册。",
+   "bypass_technique": "利用导入功能返回差异。",
+   "defensive_insight": "对导入功能统一返回相同结果，不泄露注册状态。"
+  },
+  {
+   "id": 1068505,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用",
+   "reasoning": "是。利用主机名末尾的点绕过安全浏览拦截，属于DNS解析行为差异，技术点在于未规范化主机名，可通用。",
+   "attack_chain": "构造带尾点的恶意域名→绕过拦截。",
+   "bypass_technique": "利用尾点使域名解析为同一地址但绕过黑名单。",
+   "defensive_insight": "对主机名进行规范化处理，去除尾点。"
+  },
+  {
+   "id": 143975,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。同形异义词攻击，在特定页面缺少警告，属于设计缺陷，但无技术绕过。",
+   "attack_chain": "构造同形异义域名→诱导点击。",
+   "bypass_technique": "无。",
+   "defensive_insight": "在所有外部链接处显示警告。"
+  },
+  {
+   "id": 627245,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "整数溢出",
+   "reasoning": "部分。整数溢出导致长度检查绕过，可能引发堆溢出，但无PoC，可复现性低。技术点在于整数溢出，但未验证。",
+   "attack_chain": "构造超长头部→整数溢出→绕过检查→堆溢出。",
+   "bypass_technique": "利用整数溢出使newsize变小。",
+   "defensive_insight": "使用安全整数运算，检查溢出。"
+  },
+  {
+   "id": 1511843,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误",
+   "reasoning": "部分。未限制Content-Length导致内存耗尽，属于资源管理缺陷，但无绕过，攻击简单。",
+   "attack_chain": "发送大Content-Length请求→内存耗尽。",
+   "bypass_technique": "无。",
+   "defensive_insight": "限制请求体大小，实施资源配额。"
+  },
+  {
+   "id": 1149144,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "部分。通过SSRF渲染路径导致XSS，并利用点击劫持绕过CSRF限制，组合攻击链，但技术点常见。",
+   "attack_chain": "构造恶意URL→服务端请求→渲染路径→XSS→点击劫持触发。",
+   "bypass_technique": "利用SSRF和点击劫持组合。",
+   "defensive_insight": "对SSRF响应进行过滤，实施CSP和X-Frame-Options。"
+  },
+  {
+   "id": 464426,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "会话固定",
+   "reasoning": "部分。会话固定导致账户接管，但复现条件苛刻，依赖时间窗口，技术点在于会话管理缺陷。",
+   "attack_chain": "预置会话→受害者登录→会话固定→接管。",
+   "bypass_technique": "利用会话固定。",
+   "defensive_insight": "登录后重新生成会话ID。"
+  },
+  {
+   "id": 2617,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。存储型XSS，但利用方式直接，无绕过。",
+   "attack_chain": "创建帖子→注入XSS→分享链接触发。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对输入进行过滤和输出编码。"
+  },
+  {
+   "id": 83803,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。SSL允许匿名认证，属于配置错误，无技术含量。",
+   "attack_chain": "利用匿名SSL进行中间人攻击。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁用匿名SSL密码套件。"
+  },
+  {
+   "id": 496113,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。长字符串导致崩溃，属于简单的输入验证缺失，无绕过。",
+   "attack_chain": "输入超长字符串→崩溃。",
+   "bypass_technique": "无。",
+   "defensive_insight": "限制输入长度。"
+  },
+  {
+   "id": 2101076,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 协议行为利用",
+   "reasoning": "是。利用CRLF注入绕过SAML域名强制，创建账户并访问组织资源，技术点在于输入规范化缺陷，可通用。",
+   "attack_chain": "注册时注入CRLF→绕过SAML→验证邮箱→登录→访问PullRequest。",
+   "bypass_technique": "利用%0d%0a绕过域名检查。",
+   "defensive_insight": "规范化输入，去除控制字符。"
+  },
+  {
+   "id": 174721,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露",
+   "reasoning": "部分。通过第三方服务泄露私有账户点赞，属于业务逻辑缺陷，但技术点简单。",
+   "attack_chain": "构造URL→第三方服务返回私有数据。",
+   "bypass_technique": "利用第三方服务未校验权限。",
+   "defensive_insight": "第三方服务应校验资源权限。"
+  },
+  {
+   "id": 180393,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "子域名接管",
+   "reasoning": "否。子域名指向外部服务，属于配置错误，无技术含量。",
+   "attack_chain": "发现悬空DNS→注册外部服务。",
+   "bypass_technique": "无。",
+   "defensive_insight": "定期清理DNS记录。"
+  },
+  {
+   "id": 12457,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少X-Content-Type-Options头，属于安全头缺失，无技术含量。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "添加安全响应头。"
+  }
+ ]
+}

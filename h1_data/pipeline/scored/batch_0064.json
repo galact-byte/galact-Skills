@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   86504,
+   574962,
+   972561,
+   29835,
+   1566325
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 29835,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 配置错误",
+   "reasoning": "是。利用GZIP压缩破坏长度隐藏填充，使攻击者能通过响应长度推断用户访问的页面，绕过HTTPS的隐私保护。技术点在于压缩与填充的相互作用，非预期地抵消了安全措施。",
+   "attack_chain": "攻击者观察响应长度→推断用户访问的页面→泄露隐私。",
+   "bypass_technique": "启用GZIP压缩，使填充字节被压缩，响应长度不再固定，从而泄露信息。",
+   "defensive_insight": "确保安全措施（如长度填充）不被性能优化（如压缩）破坏；测试安全机制与优化措施的兼容性。"
+  },
+  {
+   "id": 243635,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告仅提及Unicode字符验证问题，但缺少具体细节和PoC，无法判断漏洞真实性和影响。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "无"
+  },
+  {
+   "id": 972561,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "是。kubeadm在删除token前记录完整token，若删除失败则token仍有效，日志泄露可导致集群接管。技术点在于日志记录敏感信息与失败处理不当的组合，非预期地暴露凭据。",
+   "attack_chain": "攻击者获取日志→提取token→认证kubeadm→创建或加入集群→滥用资源。",
+   "bypass_technique": "利用日志记录敏感信息，在删除失败时token仍有效。",
+   "defensive_insight": "避免在日志中记录敏感凭据；删除操作失败时确保token失效；限制日志访问权限。"
+  },
+  {
+   "id": 1566325,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 授权绕过",
+   "reasoning": "是。Conduit API允许用户伪造authorPHID和objectPHID，实现冒充他人或伪造访问受限对象。技术点在于API未验证操作者身份与数据一致性，非预期地允许伪造。",
+   "attack_chain": "攻击者调用feed.publish→伪造authorPHID和objectPHID→发布虚假故事→误导其他用户。",
+   "bypass_technique": "直接修改API参数，绕过身份验证和对象权限检查。",
+   "defensive_insight": "API应验证操作者身份与数据一致性；限制敏感API的调用权限。"
+  },
+  {
+   "id": 306733,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 业务逻辑",
+   "reasoning": "部分。通过高精度signal值反推报告状态分布，利用数学方程和暴力破解，非预期地泄露用户提交报告的具体状态。技术点在于高精度数值泄露信息。",
+   "attack_chain": "获取signal值→暴力破解报告状态组合→泄露用户报告日志。",
+   "bypass_technique": "利用高精度浮点数泄露信息，通过数学计算反推。",
+   "defensive_insight": "对敏感数值进行舍入或脱敏；限制API返回精度。"
+  },
+  {
+   "id": 1844674,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。install.php文件暴露是常见配置错误，无绕过或攻击链，属于成熟套路。",
+   "attack_chain": "访问install.php→可能重装网站→数据丢失。",
+   "bypass_technique": "无",
+   "defensive_insight": "安装后删除install.php；限制访问敏感文件。"
+  },
+  {
+   "id": 14199,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。CRIME攻击是已知漏洞，报告仅确认存在，无新意。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "禁用TLS压缩。"
+  },
+  {
+   "id": 335427,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。WordPress用户名枚举是常见问题，无绕过或攻击链。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "限制作者归档访问。"
+  },
+  {
+   "id": 86504,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 业务逻辑",
+   "reasoning": "是。通过构造特定URL和表单，仅凭邮箱即可登录任意关联Google+的账户，完全绕过密码验证。技术点在于认证逻辑缺陷，非预期地允许无密码登录。",
+   "attack_chain": "构造恶意表单→提交至API→利用URL参数绕过→登录受害者账户。",
+   "bypass_technique": "利用URL参数和表单字段，使认证逻辑误认为已通过Google+验证。",
+   "defensive_insight": "严格验证认证流程，确保密码或第三方验证不可绕过。"
+  },
+  {
+   "id": 574962,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 认证绕过",
+   "reasoning": "是。通过篡改响应和利用验证码发送逻辑，验证任意未使用的邮箱地址，无需访问该邮箱。技术点在于响应篡改和验证码重用，非预期地绕过邮箱验证。",
+   "attack_chain": "拦截注册响应→修改为已登录用户的验证码→输入验证码→验证任意邮箱。",
+   "bypass_technique": "利用Fiddler Autoresponder篡改响应，使验证码发送到攻击者控制的邮箱。",
+   "defensive_insight": "验证码应绑定到目标邮箱；防止响应篡改。"
+  },
+  {
+   "id": 7226,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。无暴力破解防护是常见问题，无绕过或攻击链。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "实施账户锁定或速率限制。"
+  },
+  {
+   "id": 775693,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。反射型XSS，但注入点在QUERY_STRING，利用方式略有变形，但整体是常见套路。",
+   "attack_chain": "构造恶意URL→触发XSS→窃取会话或执行操作。",
+   "bypass_technique": "无实质绕过，直接注入。",
+   "defensive_insight": "对输出进行编码或过滤。"
+  },
+  {
+   "id": 1172852,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "部分。通过枚举参数发现导出页面，泄露PII，但属于常见信息泄露，无绕过。",
+   "attack_chain": "枚举参数→发现导出页面→下载PII。",
+   "bypass_technique": "无",
+   "defensive_insight": "对导出页面进行访问控制。"
+  },
+  {
+   "id": 216453,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 业务逻辑",
+   "reasoning": "部分。利用未过滤的class属性触发DOM XSS，通过现有事件处理器执行操作，非预期地利用类名。",
+   "attack_chain": "注入恶意class→触发事件处理器→执行JS。",
+   "bypass_technique": "利用现有事件处理器，无需直接注入脚本。",
+   "defensive_insight": "过滤class属性；限制用户内容显示范围。"
+  },
+  {
+   "id": 858650,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "CRLF注入",
+   "reasoning": "部分。CRLF注入可设置任意头，但属于常见漏洞，无特殊绕过。",
+   "attack_chain": "注入CRLF→设置恶意头→响应拆分。",
+   "bypass_technique": "无",
+   "defensive_insight": "过滤或编码CRLF字符。"
+  },
+  {
+   "id": 925007,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SQL注入",
+   "reasoning": "否。经典SQL注入，无绕过或攻击链。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "参数化查询。"
+  },
+  {
+   "id": 951230,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 授权绕过",
+   "reasoning": "是。利用礼品功能，在未添加支付方式时发送请求，仍生成礼品链接，实现免费订阅。技术点在于业务逻辑缺陷，非预期地绕过支付。",
+   "attack_chain": "发送礼品请求→未支付但生成链接→免费获得订阅。",
+   "bypass_technique": "利用礼品功能未验证支付状态。",
+   "defensive_insight": "确保支付成功后才生成礼品。"
+  },
+  {
+   "id": 390847,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "原型污染",
+   "reasoning": "部分。原型污染漏洞，利用__proto__覆盖Object.prototype，但属于已知漏洞类型，无特殊绕过。",
+   "attack_chain": "控制参数→污染原型→影响所有对象。",
+   "bypass_technique": "利用__proto__键。",
+   "defensive_insight": "使用Object.create(null)或Map。"
+  },
+  {
+   "id": 893970,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。敏感文件暴露是常见配置错误，无绕过或攻击链。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "限制敏感文件访问。"
+  },
+  {
+   "id": 862836,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SQL注入",
+   "reasoning": "否。经典SQL注入，无绕过或攻击链。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "参数化查询。"
+  }
+ ]
+}

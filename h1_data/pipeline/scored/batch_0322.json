@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1374512,
+   863544,
+   49759,
+   287496,
+   144000
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 49759,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 认证绕过",
+   "reasoning": "是。利用开放重定向将包含CSRF令牌的POST请求发送到攻击者控制的域名，从而窃取令牌并实现账户接管。技术点在于将开放重定向与CSRF令牌泄露结合，形成完整的攻击链，且无需用户交互（仅需点击关注按钮）。",
+   "attack_chain": "构造恶意链接→用户点击关注→POST请求携带authenticity_token被重定向到攻击者域名→攻击者获取令牌→利用令牌执行任意操作（如添加手机号）→账户接管。",
+   "bypass_technique": "利用开放重定向将包含敏感令牌的请求发送到外部域，绕过同源策略。",
+   "defensive_insight": "对重定向目标进行白名单校验，确保POST请求不会发送到外部域；CSRF令牌应绑定会话且不可被第三方获取。"
+  },
+  {
+   "id": 1091118,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。盲XSS通过注入payload到聊天输入框，利用autofocus和onfocus事件触发，最终加载外部脚本。技术点在于利用Rocket.Chat的DOM特性，但整体是常见XSS变种，PoC完整但启发性一般。",
+   "attack_chain": "注入payload到聊天输入框→用户访问页面→autofocus触发onfocus→执行外部脚本→窃取会话或执行任意操作。",
+   "bypass_technique": "利用autofocus和onfocus事件绕过用户交互要求，实现自动触发。",
+   "defensive_insight": "对用户输入进行严格的输出编码，避免将未过滤的HTML注入DOM；实施CSP限制外部脚本加载。"
+  },
+  {
+   "id": 1145162,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，参数q未过滤，直接注入事件处理器，成熟套路，无绕过无链。",
+   "attack_chain": "单点：构造URL→参数q注入XSS→执行脚本。",
+   "bypass_technique": "无实质绕过，直接利用未过滤参数。",
+   "defensive_insight": "对查询参数进行输出编码，使用上下文感知的转义。"
+  },
+  {
+   "id": 798599,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型XSS，在客户备注字段注入恶意链接，利用onmouseover触发，常见于管理后台，无特殊绕过。",
+   "attack_chain": "单点：注入恶意HTML到备注→管理员查看时触发→窃取cookie。",
+   "bypass_technique": "无实质绕过，直接利用未过滤输入。",
+   "defensive_insight": "对用户输入进行HTML编码，限制富文本内容，实施CSP。"
+  },
+  {
+   "id": 45960,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / IDOR",
+   "reasoning": "是。通过构造特定的widget请求，绕过私有频道的访问控制，枚举badge_channel参数即可访问任意私有视频。技术点在于利用widget预览功能未正确校验权限，属于业务逻辑缺陷。",
+   "attack_chain": "构造widget请求→设置badge_channel为任意值→获取私有频道视频列表→枚举频道ID→访问所有私有视频。",
+   "bypass_technique": "利用widget预览接口未校验频道权限，直接指定频道ID获取内容。",
+   "defensive_insight": "所有API端点必须校验用户对资源的访问权限，包括widget预览功能。"
+  },
+  {
+   "id": 887993,
+   "value_score": 0,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告仅包含一个flag，无漏洞描述，无法判断真实性。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "无"
+  },
+  {
+   "id": 1374512,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 认证绕过",
+   "reasoning": "是。利用Rails Host Authorization中间件对X-Forwarded-Host头的大小写处理缺陷，绕过host白名单校验，实现开放重定向。技术点在于中间件未对forwarded_host进行downcase，导致匹配失败后nil?检查绕过，属于框架行为利用。",
+   "attack_chain": "构造请求→设置X-Forwarded-Host为Evil.com→中间件校验绕过→重定向到恶意域名。",
+   "bypass_technique": "利用大小写不一致导致正则匹配失败，进而绕过host白名单。",
+   "defensive_insight": "在中间件中对所有host头进行规范化处理（如downcase），并严格校验转发头。"
+  },
+  {
+   "id": 1392511,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。生产数据用于测试环境，属于常见配置错误，无技术绕过。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "确保测试环境使用脱敏数据，禁止生产数据复制到低环境。"
+  },
+  {
+   "id": 1166918,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，参数userPage未过滤，直接注入脚本，成熟套路。",
+   "attack_chain": "单点：构造URL→参数注入XSS→执行脚本。",
+   "bypass_technique": "无实质绕过。",
+   "defensive_insight": "对输出进行编码，使用安全框架。"
+  },
+  {
+   "id": 282909,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。存储型DOM XSS，在报告设计器的概览表中注入恶意链接，利用onmouseover触发。技术点在于DOM XSS，但整体是常见XSS变种。",
+   "attack_chain": "注入恶意HTML到报告数据→用户查看报告→触发XSS→执行脚本。",
+   "bypass_technique": "利用DOM XSS，未对用户输入进行安全处理。",
+   "defensive_insight": "对用户输入进行输出编码，使用安全的DOM操作。"
+  },
+  {
+   "id": 287496,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "SSRF / 协议行为利用",
+   "reasoning": "是。利用URL重定向服务（tinyurl）绕过SSRF过滤器，扫描内部端口。技术点在于利用重定向链绕过基于URL的过滤，属于协议行为利用。",
+   "attack_chain": "构造tinyurl链接→指向内部地址→请求web_resource API→跟随重定向→扫描内部端口。",
+   "bypass_technique": "利用URL重定向服务绕过SSRF过滤器，使最终请求指向内部地址。",
+   "defensive_insight": "SSRF防护应跟随所有重定向并检查最终URL，而非仅检查初始URL。"
+  },
+  {
+   "id": 144000,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / IDOR",
+   "reasoning": "是。通过修改订单ID，访问其他用户的聊天记录，属于IDOR。技术点在于API未校验资源所有权，简单但影响大。",
+   "attack_chain": "拦截请求→修改order_delivery_id→获取其他用户聊天记录。",
+   "bypass_technique": "直接修改ID，未校验权限。",
+   "defensive_insight": "所有API端点必须校验用户对资源的访问权限。"
+  },
+  {
+   "id": 53098,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。利用IE浏览器对URL编码的差异，绕过CSP，实现XSS。技术点在于浏览器差异，但仅影响IE，通用性有限。",
+   "attack_chain": "构造恶意URL→IE浏览器解析→绕过CSP→触发XSS。",
+   "bypass_technique": "利用IE对URL编码的解析差异，绕过CSP。",
+   "defensive_insight": "确保所有浏览器行为一致，对输出进行编码。"
+  },
+  {
+   "id": 178567,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。通过修改session cookie值，可能影响用户会话，但报告信息不足，未明确攻击链。",
+   "attack_chain": "修改cookie值→影响用户会话。",
+   "bypass_technique": "无明确绕过。",
+   "defensive_insight": "确保cookie值不可预测且绑定会话。"
+  },
+  {
+   "id": 281387,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告仅描述外部脚本加载风险，无具体漏洞点，信息不足。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "无"
+  },
+  {
+   "id": 388554,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "IDOR / 信息泄露",
+   "reasoning": "部分。IDOR导致敏感文档泄露，但属于常见IDOR，无特殊绕过。",
+   "attack_chain": "枚举文档ID→下载敏感文档。",
+   "bypass_technique": "直接枚举ID，未校验权限。",
+   "defensive_insight": "对文档访问进行权限校验，使用不可预测的ID。"
+  },
+  {
+   "id": 59663,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "命令注入",
+   "reasoning": "部分。通过发送者邮箱地址注入命令，但需要管理员权限，且依赖sendmail，条件较多。",
+   "attack_chain": "管理员配置邮箱→注入命令→执行系统命令。",
+   "bypass_technique": "利用未过滤的邮箱参数注入命令。",
+   "defensive_insight": "对邮箱地址进行严格校验，避免使用shell拼接。"
+  },
+  {
+   "id": 325040,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。xmlrpc.php启用，可被用于DDoS，属于常见配置问题，无技术绕过。",
+   "attack_chain": "利用xmlrpc.php进行pingback攻击。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁用不必要的xmlrpc功能。"
+  },
+  {
+   "id": 863544,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "命令注入 / 框架行为利用",
+   "reasoning": "是。devcert模块将用户输入的域名直接拼接到openssl命令中，导致命令注入。技术点在于未使用安全的命令执行方式，属于框架行为利用。",
+   "attack_chain": "调用certificateFor函数→传入恶意域名→拼接命令→执行任意命令。",
+   "bypass_technique": "利用未过滤的输入直接注入shell命令。",
+   "defensive_insight": "使用execFile或spawn代替execSync，对输入进行严格校验。"
+  },
+  {
+   "id": 66994,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用",
+   "reasoning": "部分。利用软连字符（%c2%ad）分割链接，导致用户误点击，属于协议行为利用，但影响有限。",
+   "attack_chain": "构造恶意链接→用户点击→跳转到钓鱼网站。",
+   "bypass_technique": "利用软连字符分割URL，使显示与真实地址不一致。",
+   "defensive_insight": "对URL进行规范化处理，移除不可见字符。"
+  }
+ ]
+}

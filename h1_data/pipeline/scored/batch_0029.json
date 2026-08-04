@@ -1,0 +1,334 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 2,
+  "dropped": 18,
+  "avg_score": 3.1,
+  "top_n": [
+   1609965,
+   423388
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 716292,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "否。公开 GitHub 仓库泄露 Starbucks JumpCloud API key——公开仓库凭据硬编码经典，影响链（key→系统/用户列表→AWS SAM 接管）真实但机制零变形，key REDACTED。",
+   "attack_chain": "搜公开仓库→取 JumpCloud API key→列系统/用户/SSO 应用→AWS 接管。",
+   "bypass_technique": "无绕过，直接复用已公开凭据。",
+   "defensive_insight": "API key 走密钥管理禁止入库；泄露即吊销并全链轮换。"
+  },
+  {
+   "id": 269705,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。nextcloud.com 的 WP 版本过旧（<4.8.2），列 9 个已修复项——版本过旧提示，无实际利用，无技术含量。",
+   "attack_chain": "单点：识别旧版→查对应 CVE。",
+   "bypass_technique": "无。",
+   "defensive_insight": "CMS 及时升级；版本指纹隐藏。"
+  },
+  {
+   "id": 1466855,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "授权绕过",
+   "reasoning": "否。无 Develop apps 权限的用户可调 UninstallCustomApp mutation 卸载应用——GraphQL mutation 权限缺失经典，请求完整但机制零变形。",
+   "attack_chain": "单点：低权 staff 调 appUninstall mutation→卸载自定义应用。",
+   "bypass_technique": "无绕过，直接调用未校验权限的 mutation。",
+   "defensive_insight": "mutation 按操作语义映射权限点校验；卸载类操作加确认与审计。"
+  },
+  {
+   "id": 235016,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 其他",
+   "reasoning": "否。rpcbind/libtirpc/glibc 的 rpcbomb（CVE-2017-8779/8804）——协议响应放大的 DoS 经典，正文为 CVE 摘要+外链，无 PoC 细节。",
+   "attack_chain": "单点：发特制 RPC 请求→rpcbind 放大响应→内存耗尽。",
+   "bypass_technique": "无绕过，直接利用协议放大。",
+   "defensive_insight": "rpcbind 仅限内网并限响应大小；升级 libtirpc/glibc。"
+  },
+  {
+   "id": 1198203,
+   "value_score": 0,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "配置错误",
+   "reasoning": "无法判断。bootstrap 4.0.0 旧版有 tooltip/popover XSS——库版本提示，无目标页面、无实际利用演示。",
+   "attack_chain": "无法确认。",
+   "bypass_technique": "无法确认。",
+   "defensive_insight": "前端库升级至修复版本。"
+  },
+  {
+   "id": 109815,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。S3 预签名 CSV 报告 URL 无认证直接下载——预签名 URL 泄露/长期有效的经典问题，URL 完整但可能已过期，机制零变形。",
+   "attack_chain": "单点：从历史/日志获预签名 URL→直接下载报告。",
+   "bypass_technique": "无绕过，直接复用泄露的 URL。",
+   "defensive_insight": "报告下载走认证+短时效签名；敏感文件 S3 桶私有。"
+  },
+  {
+   "id": 158434,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。path 参数防护被 %2F%2F 双斜杠编码绕过跳转外域——open redirect 的编码绕过细节，技巧可复用但机制成熟。",
+   "attack_chain": "单点：path=%2F%2Fevil.com→404 后跳转外域。",
+   "bypass_technique": "用双斜杠编码绕过路径校验。",
+   "defensive_insight": "重定向目标解码后规范化校验同源；拒绝双斜杠协议相对地址。"
+  },
+  {
+   "id": 9318,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。regionConfirm 参数注入首页 JS 上下文——反射 XSS 经典（JS 上下文闭合），老报告，机制零变形。",
+   "attack_chain": "单点：regionConfirm 注入 JS→首页执行。",
+   "bypass_technique": "无绕过，直接闭合脚本上下文。",
+   "defensive_insight": "JS 上下文输出严格转义；参数白名单。"
+  },
+  {
+   "id": 39139,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。特定报告页 JS 导致浏览器死循环崩溃——页面渲染/JS 缺陷，现象报告无根因确认，无法确定是漏洞还是环境问题。",
+   "attack_chain": "单点：访问特定报告页→JS 循环→浏览器崩溃。",
+   "bypass_technique": "无绕过，直接访问触发。",
+   "defensive_insight": "页面 JS 复杂度与循环上限审查；第三方库版本管理。"
+  },
+  {
+   "id": 1962951,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。Reddit 登录 dest 参数 sanitize 回归不检查 scheme，javascript: URL 登录后跳转执行——'sanitize 回归覆盖不全'的细节有启发，机制是 JS URL XSS 经典。",
+   "attack_chain": "单点：dest=javascript:alert→登录后跳转执行。",
+   "bypass_technique": "无绕过，利用未过滤的危险 scheme。",
+   "defensive_insight": "重定向/回调参数 scheme 白名单并纳入回归测试。"
+  },
+  {
+   "id": 341634,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "框架行为利用",
+   "reasoning": "部分。Ruby URI 双引号解析把 '#@' 当 userinfo 分隔符致 host 拼接异常（www.example.com.evil.com）——'URI 解析的 # 处理与 RFC3986 分歧'是框架行为缺陷，irb 复现完整；但无实际利用场景，informative。",
+   "attack_chain": "单点（理论）：URI 解析分歧→连接非预期 host。",
+   "bypass_technique": "无绕过，利用解析器对 # 的错误解释。",
+   "defensive_insight": "URI 解析统一入口并做规范化校验；host 提取后二次验证。"
+  },
+  {
+   "id": 105688,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。checkout-success 页 hash 注入 img onerror——DOM XSS 经典，URL 完整但机制零变形。",
+   "attack_chain": "单点：hash 注入 payload→结算页渲染执行。",
+   "bypass_technique": "无绕过，直接利用未校验 hash。",
+   "defensive_insight": "hash/URL 输出统一转义；DOM sink 加固。"
+  },
+  {
+   "id": 423388,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 信息泄露",
+   "reasoning": "是。Shopify 仅 Apps 权限的用户经 GraphQL 查询 locations/inventoryLevel/marketingActivities/publications(含 apiKey) 拿到商店其他模块数据——'GraphQL 查询层不实施模块权限边界'使低权角色可 pivot 到全部业务数据，权限模型与查询层解耦有反直觉性；条件极简（GraphiQL 直接查），可抽象为通用判据（GraphQL 解析器必须按操作者权限裁剪字段/对象）。",
+   "attack_chain": "Apps 权限→GraphQL 查 locations/marketingActivities/publications→跨模块泄露地址/库存/API key。",
+   "bypass_technique": "无绕过，直接查询未受权限边界约束的 GraphQL 对象。",
+   "defensive_insight": "GraphQL 每字段按角色权限解析；敏感对象（inventory/apiKey）强制模块级授权。"
+  },
+  {
+   "id": 1073363,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。gogo/protobuf 生成代码缺 (iNdEx+skippy)<0 检查，iNdEx 溢出负值→越界 panic——protobuf 反序列化溢出经典（K8s 节点崩溃），代码分析清晰但无 PoC，机制成熟。",
+   "attack_chain": "单点：构造特殊 protobuf→iNdEx 溢出→越界 panic。",
+   "bypass_technique": "无绕过，直接利用生成代码缺陷。",
+   "defensive_insight": "反序列化索引运算溢出检查；重新生成 protobuf 代码。"
+  },
+  {
+   "id": 803734,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。Nextcloud Mail TLS 连接不校验证书 CN——证书主机名校验缺失经典，引用 github issue，正文极简。",
+   "attack_chain": "单点：MITM 提供他域证书→邮件流量被截。",
+   "bypass_technique": "无绕过，利用缺失的 CN 校验。",
+   "defensive_insight": "IMAP/SMTP TLS 连接强制证书 CN/SAN 校验。"
+  },
+  {
+   "id": 145300,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "认证绕过",
+   "reasoning": "否。改密后另一浏览器旧会话仍有效——改密后会话未失效的经典会话管理缺陷，not-applicable，现象简单。",
+   "attack_chain": "改密→旧浏览器会话仍可用。",
+   "bypass_technique": "无绕过，利用会话未随改密失效。",
+   "defensive_insight": "改密/重置后全量注销其他会话（会话版本号机制）。"
+  },
+  {
+   "id": 1609965,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 1,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "命令注入 / 跨组件攻击链 / 框架行为利用",
+   "reasoning": "是。GitLab BulkImports 的 DecompressedArchiveSizeValidator 把 archive_path 直接拼进 shell 命令（'gzip -dc #{path} | wc -c' 字符串传 Open3.popen3），而 ProjectPipeline 参数过滤器不拦 import_source——'导入参数穿越多层转换（禁止键过滤→CreateService→模板路径→import_type 切换）最终进入 popen'的链式信任缺失，vakzz 把每层绕过逐一打通到 RCE；跨组件多步链完整，可抽象为通用判据（shell 命令必须数组传参+参数最终来源校验）；前置需 feature flag 开启。",
+   "attack_chain": "BulkImports 传恶意 import_source→模板创建切换 import_type→FileImporter 超时后 popen→shell 执行任意命令。",
+   "bypass_technique": "无绕过，利用字符串拼命令+参数过滤白名单外的字段穿透。",
+   "defensive_insight": "Open3 用参数数组禁 shell；导入字段全量白名单校验；validate 命令与解压路径分离。"
+  },
+  {
+   "id": 182274,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "部分。mrb_time_initialize 先置 data 为 NULL 再解析参数，类型转换回调重入访问 time 对象致空指针——'初始化顺序的 TOCTOU'（参数解析可回调）是反直觉细节，PoC 精巧（to_i 回调）；但机制是初始化顺序缺陷的经典变体。",
+   "attack_chain": "单点：构造 to_i 回调访问 time 对象→初始化中途空指针。",
+   "bypass_technique": "无绕过，利用参数解析回调的重入窗口。",
+   "defensive_insight": "初始化先完成再暴露对象；参数解析期间对象不可重入访问。"
+  },
+  {
+   "id": 1306942,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。revive-adserver 用 uniqid() 生成会话 token——弱随机会话 token 经典（可预测→ATO），代码位置明确但无 PoC 演示预测。",
+   "attack_chain": "单点（理论）：预测 uniqid 会话 token→随机接管账户。",
+   "bypass_technique": "无绕过，利用可预测的 PRNG 输出。",
+   "defensive_insight": "会话 token 用 CSPRNG；uniqid 禁止用于安全凭据。"
+  },
+  {
+   "id": 365271,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "命令注入 / 跨组件攻击链",
+   "reasoning": "否。Basecamp 头像上传 EPS 改名 .gif，ImageMagick delegate 调 Ghostscript（CVE-2017-8291）RCE——ImageTragick 家族经典链，机制成熟，PoC 仅说明无完整 payload。",
+   "attack_chain": "上传 PS/EPS 改名 .gif→ImageMagick 调 GS 处理→执行 PostScript→RCE。",
+   "bypass_technique": "无绕过，借图片转换 delegate 链执行任意代码。",
+   "defensive_insight": "上传校验 magic 而非扩展名；禁用 ImageMagick 的 GS/PS delegate 并升级。"
+  }
+ ]
+}

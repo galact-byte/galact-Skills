@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   73235,
+   1650273,
+   1070510,
+   321704,
+   331691
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 321704,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "类型混淆 / 框架行为利用",
+   "reasoning": "是。将数字直接传给 base64urlEncode 导致未初始化内存分配，属于类型混淆引发的内存安全问题，在 Node.js 6.x 上可泄露敏感数据，任意版本可 DoS。技术点在于库未对输入类型进行校验，直接使用 Buffer 分配，且该问题可抽象为通用判断条件（输入类型未验证）。",
+   "attack_chain": "传入数字→base64urlEncode 分配未初始化 Buffer→泄露内存或耗尽资源。",
+   "bypass_technique": "利用类型混淆，传入数字绕过字符串预期，触发未初始化内存分配。",
+   "defensive_insight": "对输入进行类型校验，使用安全的 Buffer 分配方式（如 Buffer.alloc），避免使用 Buffer.allocUnsafe。"
+  },
+  {
+   "id": 7121,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。换行后的 HTML 未正确过滤导致 XSS，属于常见的过滤绕过，但触发条件简单，PoC 明确。",
+   "attack_chain": "粘贴内容包含换行+脚本→服务端过滤不完整→浏览器执行。",
+   "bypass_technique": "利用换行符绕过过滤规则。",
+   "defensive_insight": "对用户输入进行上下文相关的输出编码，使用成熟的 HTML 净化库。"
+  },
+  {
+   "id": 812351,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。通过枚举参数获取 JSON 响应中的用户名，属于典型的信息泄露，无绕过，无攻击链。",
+   "attack_chain": "枚举参数→响应泄露用户名。",
+   "bypass_technique": "无实质绕过，直接利用未授权访问。",
+   "defensive_insight": "对敏感信息进行访问控制，避免在响应中泄露不必要的数据。"
+  },
+  {
+   "id": 230328,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 授权绕过",
+   "reasoning": "是。订阅需要多重验证，但退订却无需任何验证，仅需知道邮箱即可，形成不对称的业务逻辑漏洞。技术点在于退订流程缺少与订阅流程对等的安全控制。",
+   "attack_chain": "构造退订链接→输入目标邮箱→无需确认即退订。",
+   "bypass_technique": "利用订阅与退订流程的安全控制不对称。",
+   "defensive_insight": "退订流程应同样实施验证（如邮件确认、CAPTCHA），并实施速率限制。"
+  },
+  {
+   "id": 273726,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。敏感文件暴露（.travis.yml、.htaccess、.bash_history）属于常见配置错误，无绕过，无攻击链。",
+   "attack_chain": "直接访问敏感文件。",
+   "bypass_technique": "无实质绕过，直接利用配置错误。",
+   "defensive_insight": "禁止敏感文件被 Web 服务器访问，定期审计公开目录。"
+  },
+  {
+   "id": 65324,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型 XSS，通过创建相册名称注入，属于常见漏洞类型，无特殊绕过。",
+   "attack_chain": "创建相册→注入 XSS→触发执行。",
+   "bypass_technique": "无实质绕过，直接利用未过滤输入。",
+   "defensive_insight": "对用户输入进行输出编码，实施 CSP。"
+  },
+  {
+   "id": 331691,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 状态混淆",
+   "reasoning": "是。邀请链接在多次使用后仍然有效，导致未授权用户加入团队。技术点在于邀请链接的状态未在首次使用后失效，属于状态管理缺陷。",
+   "attack_chain": "获取邀请链接→多次使用→多个账户加入团队。",
+   "bypass_technique": "利用邀请链接未失效的状态混淆。",
+   "defensive_insight": "邀请链接应一次性使用，并在接受后立即失效。"
+  },
+  {
+   "id": 1650273,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 配置错误",
+   "reasoning": "是。Nginx 配置中的 off-by-slash 错误导致路径遍历，可访问上级目录文件。技术点在于 alias 指令的路径拼接差异，属于配置错误但可抽象为通用判断条件。",
+   "attack_chain": "构造 /metrics../ 路径→绕过 alias 限制→访问上级目录。",
+   "bypass_technique": "利用 off-by-slash 配置错误，通过 ../ 穿越目录。",
+   "defensive_insight": "确保 location 和 alias 路径的斜杠匹配，使用 try_files 或 root 指令。"
+  },
+  {
+   "id": 227880,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XXE",
+   "reasoning": "否。经典 XXE 漏洞，直接利用外部实体，无绕过，无攻击链。",
+   "attack_chain": "构造恶意 XML→解析器处理外部实体→读取文件。",
+   "bypass_technique": "无实质绕过，直接利用未禁用外部实体的解析器。",
+   "defensive_insight": "禁用 XML 外部实体，使用安全的解析配置。"
+  },
+  {
+   "id": 45243,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。通过输入号码获取用户名和姓名，属于信息泄露，无绕过，无攻击链。",
+   "attack_chain": "输入号码→响应泄露用户名。",
+   "bypass_technique": "无实质绕过，直接利用未授权访问。",
+   "defensive_insight": "对敏感信息进行访问控制，避免在响应中泄露不必要的数据。"
+  },
+  {
+   "id": 1446107,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 认证绕过",
+   "reasoning": "是。验证后仍可修改个人信息，且可用不匹配的证件验证，破坏了 KYC 流程的完整性。技术点在于验证状态与个人信息更新未绑定，属于业务逻辑缺陷。",
+   "attack_chain": "完成验证→通过 API 修改个人信息→使用不匹配证件。",
+   "bypass_technique": "利用验证后未锁定个人信息的逻辑缺陷。",
+   "defensive_insight": "验证后应锁定关键信息，并实施人脸识别等强验证。"
+  },
+  {
+   "id": 880089,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。登录后端点泄露员工邮箱，属于信息泄露，无绕过，无攻击链。",
+   "attack_chain": "登录后访问端点→响应泄露员工邮箱。",
+   "bypass_technique": "无实质绕过，直接利用未授权访问。",
+   "defensive_insight": "对敏感信息进行访问控制，避免在响应中泄露不必要的数据。"
+  },
+  {
+   "id": 1070510,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 授权绕过",
+   "reasoning": "是。通过修改响应中的布尔值即可获得付费功能，属于客户端信任导致的授权绕过。技术点在于服务端未验证订阅状态，仅依赖前端响应。",
+   "attack_chain": "拦截响应→替换 false 为 true→解锁付费功能。",
+   "bypass_technique": "利用客户端信任，修改响应绕过授权检查。",
+   "defensive_insight": "服务端必须验证所有权限，不信任客户端响应。"
+  },
+  {
+   "id": 73235,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "反序列化 / 内存破坏",
+   "reasoning": "是。通过 __wakeup 魔术方法触发 UAF，进而实现任意代码执行，属于经典的反序列化漏洞利用，但技术点在于对 ZVAL 生命周期的错误管理，可抽象为通用判断条件。",
+   "attack_chain": "构造恶意序列化数据→触发 __wakeup→UAF→内存破坏→RCE。",
+   "bypass_technique": "利用 __wakeup 中的 unset 导致引用失效，实现 UAF。",
+   "defensive_insight": "修复 PHP 内核的引用计数管理，对反序列化输入进行严格校验。"
+  },
+  {
+   "id": 1887996,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "DoS",
+   "reasoning": "否。利用已知 CVE-2018-6389 进行 DoS，属于成熟套路，无绕过，无攻击链。",
+   "attack_chain": "构造大量脚本加载请求→耗尽服务器资源。",
+   "bypass_technique": "无实质绕过，直接利用已知漏洞。",
+   "defensive_insight": "限制 load-scripts.php 的参数长度和数量，实施速率限制。"
+  },
+  {
+   "id": 570133,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "路径遍历",
+   "reasoning": "否。经典路径遍历，直接拼接 ../，无绕过，无攻击链。",
+   "attack_chain": "构造 ../ 路径→访问任意目录。",
+   "bypass_technique": "无实质绕过，直接利用未过滤的路径。",
+   "defensive_insight": "对用户输入进行规范化，过滤 ../ 等危险字符。"
+  },
+  {
+   "id": 1606957,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "文件上传 / 配置错误",
+   "reasoning": "部分。通过绕过前端限制上传恶意文件，但服务端未校验文件类型，属于常见配置错误，但可结合 Follina 漏洞形成攻击链。",
+   "attack_chain": "绕过前端限制→上传恶意 docx→触发 Follina→RCE。",
+   "bypass_technique": "利用前端限制与服务端校验不一致。",
+   "defensive_insight": "服务端必须校验文件类型和内容，实施白名单。"
+  },
+  {
+   "id": 837510,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "认证绕过 / 配置错误",
+   "reasoning": "是。通过注册 @elastic.co 邮箱即可访问内部应用，属于身份验证缺陷。技术点在于未验证邮箱域名所有权。",
+   "attack_chain": "注册 @elastic.co 邮箱→登录→访问内部应用。",
+   "bypass_technique": "利用未验证邮箱域名的漏洞。",
+   "defensive_insight": "验证邮箱域名所有权，实施额外的身份验证。"
+  },
+  {
+   "id": 453307,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS，直接注入 payload，无绕过，无攻击链。",
+   "attack_chain": "构造恶意 URL→反射执行。",
+   "bypass_technique": "无实质绕过，直接利用未过滤输入。",
+   "defensive_insight": "对用户输入进行输出编码，实施 CSP。"
+  },
+  {
+   "id": 335123,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露",
+   "reasoning": "是。错误消息中泄露 API token，属于信息泄露。技术点在于错误处理不当，将敏感信息包含在错误消息中。",
+   "attack_chain": "输入无效 token→错误消息泄露 token。",
+   "bypass_technique": "无实质绕过，直接利用错误处理缺陷。",
+   "defensive_insight": "错误消息中不应包含敏感信息，对 token 进行掩码处理。"
+  }
+ ]
+}

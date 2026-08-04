@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   344595,
+   473888,
+   204802,
+   1168765,
+   29360
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 344595,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 框架行为利用",
+   "reasoning": "是。利用 tar 硬链接与后续同名文件覆盖宿主文件，绕过默认安全假设。技术点在于 tar 库未正确处理硬链接目标路径，导致任意文件覆盖。与普通路径遍历不同，这是对 tar 格式语义的滥用，且影响广泛。",
+   "attack_chain": "构造含硬链接和同名文件的 tar 包→解压时硬链接指向外部文件→后续文件覆盖目标文件。",
+   "bypass_technique": "利用硬链接指向绝对路径或目录穿越，绕过解压时的路径检查。",
+   "defensive_insight": "解压时禁止硬链接指向外部路径，或对硬链接目标进行规范化校验。"
+  },
+  {
+   "id": 1164854,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。管理页面未认证即可访问，属于典型的访问控制缺失，无绕过技巧，攻击链简单。",
+   "attack_chain": "直接访问管理 URL。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对管理页面实施身份验证和授权检查。"
+  },
+  {
+   "id": 260689,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。使用弱哈希算法存储密码，属于常见密码存储问题，无绕过或攻击链。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "使用强密码哈希算法如 bcrypt。"
+  },
+  {
+   "id": 204802,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 协议行为利用",
+   "reasoning": "是。通过控制 SSH_AUTH_SOCK 环境变量，利用 sudo 的 SUID 权限访问其他用户的 ssh-agent，绕过 Unix 文件权限。技术点在于环境变量信任与权限提升的结合，设计缺陷明显。",
+   "attack_chain": "设置 SSH_AUTH_SOCK 指向目标用户 socket→sudo 调用 pam-ussh→使用目标证书认证。",
+   "bypass_technique": "利用环境变量覆盖 socket 路径，绕过文件权限。",
+   "defensive_insight": "PAM 模块应验证 socket 所有权，或使用更安全的认证方式。"
+  },
+  {
+   "id": 29360,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 协议行为利用",
+   "reasoning": "是。通过 RTMP 服务器返回的元数据注入 JavaScript，绕过 Flash 的 ExternalInterface 限制。技术点在于利用 RTMP 协议元数据作为 XSS 载体，非典型。",
+   "attack_chain": "构造恶意 RTMP 流→Flash 解析元数据→执行 JS。",
+   "bypass_technique": "利用 RTMP 元数据注入，绕过同源策略。",
+   "defensive_insight": "对 Flash 元数据进行严格转义，或禁用不必要的 ExternalInterface。"
+  },
+  {
+   "id": 150586,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "CSRF",
+   "reasoning": "部分。CSRF 导致账户接管，但属于常见漏洞类型，无特殊绕过。",
+   "attack_chain": "诱导用户访问恶意页面→修改邮箱→重置密码。",
+   "bypass_technique": "无。",
+   "defensive_insight": "添加 CSRF token 并验证。"
+  },
+  {
+   "id": 1297480,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。默认凭据登录，属于常见配置错误，无技术含量。",
+   "attack_chain": "使用默认凭据登录。",
+   "bypass_technique": "无。",
+   "defensive_insight": "强制修改默认凭据。"
+  },
+  {
+   "id": 473888,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "反序列化 / 跨组件攻击链",
+   "reasoning": "是。利用 Rails 默认 Marshal 序列化器，通过 ActiveStorage 的 URL 触发反序列化 RCE。技术点在于框架默认配置不安全，且攻击面广泛。",
+   "attack_chain": "构造恶意序列化 payload→生成签名 URL→访问触发反序列化→RCE。",
+   "bypass_technique": "利用 Marshal 反序列化，绕过签名验证。",
+   "defensive_insight": "使用安全序列化器，限制 ActiveStorage URL 访问。"
+  },
+  {
+   "id": 1971589,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。CSRF 导致登出，影响较小，常见漏洞。",
+   "attack_chain": "诱导用户点击链接→登出。",
+   "bypass_technique": "无。",
+   "defensive_insight": "为登出操作添加 CSRF 防护。"
+  },
+  {
+   "id": 17315,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。点击劫持，常见漏洞，无特殊之处。",
+   "attack_chain": "iframe 嵌入目标页面。",
+   "bypass_technique": "无。",
+   "defensive_insight": "设置 X-Frame-Options 或 CSP frame-ancestors。"
+  },
+  {
+   "id": 114151,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS，参数未过滤，常见套路。",
+   "attack_chain": "构造恶意 URL→执行脚本。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对输入进行编码和过滤。"
+  },
+  {
+   "id": 762883,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "业务逻辑",
+   "reasoning": "否。描述模糊，无具体技术细节，无法验证。",
+   "attack_chain": "未知。",
+   "bypass_technique": "未知。",
+   "defensive_insight": "确保支付流程参数不可篡改。"
+  },
+  {
+   "id": 1168765,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 配置错误",
+   "reasoning": "是。利用 Chromium 的 --no-sandbox 和已知 RCE，通过 HTML 注入或开放重定向触发。技术点在于组件配置不安全，且攻击链完整。",
+   "attack_chain": "HTML 注入→重定向到恶意页面→Chromium RCE。",
+   "bypass_technique": "利用 --no-sandbox 绕过沙箱。",
+   "defensive_insight": "启用沙箱，限制 Chromium 访问。"
+  },
+  {
+   "id": 1354368,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少验证机制，常见业务逻辑缺陷。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "添加 OTP 验证。"
+  },
+  {
+   "id": 392311,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "供应链攻击 / 命令注入",
+   "reasoning": "部分。恶意 gem 包，通过编译扩展执行任意代码，属于供应链攻击，但技术点在于恶意代码分发。",
+   "attack_chain": "安装恶意 gem→执行恶意代码。",
+   "bypass_technique": "利用 gem 安装机制。",
+   "defensive_insight": "验证 gem 来源，使用安全仓库。"
+  },
+  {
+   "id": 335533,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用",
+   "reasoning": "部分。HTTP/2 帧导致未初始化读取，属于协议实现缺陷，但攻击链简单。",
+   "attack_chain": "发送恶意帧→崩溃。",
+   "bypass_technique": "无。",
+   "defensive_insight": "修复 HTTP/2 实现。"
+  },
+  {
+   "id": 30238,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 状态混淆",
+   "reasoning": "部分。旧 token 未失效，导致可重用，属于状态管理缺陷。",
+   "attack_chain": "获取旧 token→新 token 生成后使用旧 token。",
+   "bypass_technique": "利用 token 未失效。",
+   "defensive_insight": "生成新 token 时使旧 token 失效。"
+  },
+  {
+   "id": 744692,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。暴力破解无速率限制，常见问题。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "实施速率限制。"
+  },
+  {
+   "id": 46736,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。CSRF token 泄露，但影响有限。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "避免在 URL 中传递 token。"
+  },
+  {
+   "id": 409701,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "SSRF / 跨组件攻击链",
+   "reasoning": "是。通过 SVG 文件注入 xlink:href 实现 SSRF，攻击链涉及多个组件。",
+   "attack_chain": "构造恶意 SVG→服务器转换→SSRF。",
+   "bypass_technique": "利用 SVG 外部实体。",
+   "defensive_insight": "禁用 SVG 外部实体，限制网络访问。"
+  }
+ ]
+}

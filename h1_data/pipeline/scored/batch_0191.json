@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 18,
+  "kept": 10,
+  "dropped": 8,
+  "avg_score": 5.4,
+  "top_n": [
+   1439552,
+   1223882,
+   168116,
+   713321,
+   670924
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 670924,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "CSRF / 认证绕过",
+   "reasoning": "是。CSRF 导致账户接管，但关键在于攻击者通过 CSRF 修改密码字段，实现完全接管，而不仅仅是状态改变。这种将 CSRF 升级为账户接管的手法具有启发性，且 PoC 完整。",
+   "attack_chain": "诱导受害者访问恶意页面→自动提交表单修改密码→攻击者使用新密码登录。",
+   "bypass_technique": "利用 CSRF 修改密码字段，绕过原有认证。",
+   "defensive_insight": "对敏感操作实施 CSRF 令牌验证，并确保密码修改需要当前密码确认。"
+  },
+  {
+   "id": 713321,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 侧信道攻击",
+   "reasoning": "是。利用网络通信模式和时序侧信道泄露 Monero 接收者匿名性，属于协议行为利用，非传统 Web 漏洞。攻击链跨钱包、节点、网络多个组件，思路新颖。",
+   "attack_chain": "被动监控钱包与节点通信→分析模式和时间→推断支付接收者→破坏隐私。",
+   "bypass_technique": "利用通信模式和时间侧信道，无需主动攻击。",
+   "defensive_insight": "在协议层添加填充和随机延迟，减少可观察的通信模式。"
+  },
+  {
+   "id": 293126,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 反序列化",
+   "reasoning": "部分。Libxml2 多个漏洞，但属于已知 CVE 的汇总，非新发现。虽然影响广泛，但技术点成熟，无新意。",
+   "attack_chain": "解析恶意 XML→触发 UAF/OOB 读取→信息泄露或代码执行。",
+   "bypass_technique": "无实质绕过，利用已知漏洞。",
+   "defensive_insight": "及时更新 Libxml2 版本，对不可信 XML 进行严格验证。"
+  },
+  {
+   "id": 164483,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。密码重置链接在用户登录后未失效，属于常见业务逻辑缺陷，无新意。",
+   "attack_chain": "攻击者请求重置链接→用户登录→链接仍有效→攻击者利用。",
+   "bypass_technique": "无实质绕过，利用链接未失效。",
+   "defensive_insight": "密码重置链接应在用户登录后立即失效。"
+  },
+  {
+   "id": 168116,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 框架行为利用",
+   "reasoning": "是。利用 Referer 为空时验证失效，通过 meta 标签禁用 Referer 绕过，属于框架行为利用。优雅且通用，可抽象为“空 Referer 绕过”模式。",
+   "attack_chain": "攻击者页面嵌入 iframe→禁用 Referer→调用 getLoginStatus→获取 OAuth 凭据。",
+   "bypass_technique": "使用 <meta name=\"referrer\" content=\"never\"> 使 Referer 为空，绕过验证。",
+   "defensive_insight": "使用 postMessage 的 targetOrigin 而非 Referer 验证。"
+  },
+  {
+   "id": 95981,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 配置错误",
+   "reasoning": "部分。HTTP 响应拆分，利用未编码的 token 注入 Set-Cookie 头，属于协议行为利用。但限制较多，且需重定向，影响有限。",
+   "attack_chain": "构造恶意 URL→注入响应头→设置任意 Cookie→可能绕过安全头。",
+   "bypass_technique": "利用未编码的 token 注入 CRLF 和 Set-Cookie。",
+   "defensive_insight": "对响应头值进行严格编码，禁止 CRLF 注入。"
+  },
+  {
+   "id": 127995,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。邮箱长度未限制，属于常见输入验证缺失，无新意。",
+   "attack_chain": "无攻击链，仅输入超长邮箱。",
+   "bypass_technique": "无实质绕过。",
+   "defensive_insight": "实施输入长度限制。"
+  },
+  {
+   "id": 257331,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "子域名接管",
+   "reasoning": "否。子域名接管，常见套路，且 substate 为 informative，可能未验证。",
+   "attack_chain": "扫描子域名→发现未注册的 heroku DNS→购买接管。",
+   "bypass_technique": "无实质绕过，利用配置错误。",
+   "defensive_insight": "清理未使用的 DNS 记录。"
+  },
+  {
+   "id": 730121,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "命令注入",
+   "reasoning": "是。npm 模块中用户输入直接拼入命令，导致 RCE。虽然命令注入常见，但模块化供应链攻击具有启发性，且 PoC 完整。",
+   "attack_chain": "构造恶意仓库 URL→注入命令→执行任意代码。",
+   "bypass_technique": "利用命令拼接未过滤，注入分号和命令。",
+   "defensive_insight": "使用参数化命令执行，避免字符串拼接。"
+  },
+  {
+   "id": 5946,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。CSRF 标记通知为已读，影响低，常见套路。",
+   "attack_chain": "诱导访问图片→触发 GET 请求→标记已读。",
+   "bypass_technique": "无实质绕过，利用 GET 请求无 CSRF 保护。",
+   "defensive_insight": "对状态改变操作使用 POST 和 CSRF 令牌。"
+  },
+  {
+   "id": 90690,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过",
+   "reasoning": "部分。管理员可修改仅限所有者的设置，属于授权绕过。虽然常见，但通过直接 POST 请求绕过 UI 限制，具有启发性。",
+   "attack_chain": "获取管理员 token→直接 POST 修改设置→提升权限。",
+   "bypass_technique": "绕过 UI 限制，直接调用 API。",
+   "defensive_insight": "服务端强制权限检查，不依赖 UI 隐藏。"
+  },
+  {
+   "id": 919429,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "信息泄露",
+   "reasoning": "否。信息不足，仅提及上传 .htaccess 导致路径泄露，无具体细节。",
+   "attack_chain": "上传 .htaccess→触发错误→泄露路径。",
+   "bypass_technique": "无实质绕过。",
+   "defensive_insight": "禁止上传 .htaccess 文件。"
+  },
+  {
+   "id": 1223882,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 信息泄露",
+   "reasoning": "是。curl TELNET 选项解析漏洞，修复不完整，利用短名长值绕过，泄露未初始化栈内存。属于协议行为利用，且绕过修复，优雅。",
+   "attack_chain": "构造 NEW_ENV 选项→触发 sscanf 截断→len 计数错误→泄露栈内存。",
+   "bypass_technique": "使用短名长值，使 sscanf 返回 2 但 varval 截断，导致 len 计算错误。",
+   "defensive_insight": "正确计算写入长度，基于实际写入数据而非原始长度。"
+  },
+  {
+   "id": 191095,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。反射型 XSS，但注入点在 XML 标签内，需构造闭合，有一定技巧。PoC 完整，但属于常见 XSS 类型。",
+   "attack_chain": "构造恶意 ctx 参数→注入 XML→执行脚本。",
+   "bypass_technique": "利用 XML 标签内未过滤，闭合标签注入事件。",
+   "defensive_insight": "对 XML 输入进行严格转义和验证。"
+  },
+  {
+   "id": 285482,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。弱密码策略，常见配置问题，无新意。",
+   "attack_chain": "无攻击链，仅弱密码可猜测。",
+   "bypass_technique": "无实质绕过。",
+   "defensive_insight": "实施强密码策略。"
+  },
+  {
+   "id": 283825,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型 XSS，常见套路，无新意。",
+   "attack_chain": "注入 payload→存储→触发。",
+   "bypass_technique": "无实质绕过。",
+   "defensive_insight": "输出编码和输入验证。"
+  },
+  {
+   "id": 158872,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / CSRF",
+   "reasoning": "部分。删除任意账户，利用 removehash 参数可预测，且无 CSRF 保护。虽然常见，但影响严重，且 PoC 视频。",
+   "attack_chain": "构造表单→诱导点击→删除账户。",
+   "bypass_technique": "利用可预测的 removehash 和缺少 CSRF 保护。",
+   "defensive_insight": "实施 CSRF 令牌和不可预测的令牌。"
+  },
+  {
+   "id": 1439552,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 认证绕过",
+   "reasoning": "是。利用 Service Worker 拦截 OAuth 响应，绕过 CSRF state 参数，窃取会话令牌。跨多个组件，攻击链完整，思路新颖。",
+   "attack_chain": "创建恶意 Pages 站点→注册 Service Worker→诱导受害者访问→拦截 /auth 响应→窃取令牌→访问私有站点。",
+   "bypass_technique": "利用 Service Worker 拦截请求，绕过 OAuth state 验证。",
+   "defensive_insight": "验证 cookie 与子域匹配，限制 Service Worker 权限。"
+  },
+  {
+   "id": 1016253,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS，路径注入，常见套路。",
+   "attack_chain": "构造恶意 URL→触发 XSS。",
+   "bypass_technique": "无实质绕过。",
+   "defensive_insight": "对路径参数进行编码。"
+  },
+  {
+   "id": 104543,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。信息不足，仅视频链接，无具体技术细节。",
+   "attack_chain": "未知。",
+   "bypass_technique": "未知。",
+   "defensive_insight": "需更多信息。"
+  }
+ ]
+}

@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   784186,
+   299473,
+   1357948,
+   1142918,
+   123119
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 7803,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告仅指向Adobe安全公告，无具体技术细节，无法判断漏洞类型和利用方式，信息严重不足。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "无"
+  },
+  {
+   "id": 35363,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。通过ajax加载css内容并赋值给window.name，再跳转到用户控制的url，形成DOM-based XSS。虽然XSS是常见类型，但利用window.name传递数据并配合跳转实现XSS的思路有一定启发性，且PoC完整。",
+   "attack_chain": "构造恶意css和url参数→ajax加载css内容存入window.name→跳转到javascript:alert(1)执行XSS。",
+   "bypass_technique": "利用window.name作为数据传递通道，绕过同源策略限制。",
+   "defensive_insight": "对url参数进行白名单校验，禁止javascript:等危险协议；对css内容进行安全处理。"
+  },
+  {
+   "id": 452973,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "部分。通过报告页面内联横幅的差异判断程序是否有私有部分，属于逻辑信息泄露。虽然有一定非预期性，但影响较小，且无攻击链，属于常见的信息泄露套路。",
+   "attack_chain": "创建报告→观察横幅是否存在→推断程序是否私有。",
+   "bypass_technique": "无实质绕过，利用页面渲染差异。",
+   "defensive_insight": "统一所有程序的横幅显示，避免泄露私有程序信息。"
+  },
+  {
+   "id": 784186,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 内存破坏",
+   "reasoning": "是。N-API函数在bufsize为0时发生整数下溢，导致缓冲区溢出。这是对API文档未明确禁止的边界情况的利用，属于框架行为利用。攻击者可通过控制字符串内容精确写入内存，可能导致RCE。与普通缓冲区溢出不同，该漏洞源于API设计缺陷，影响广泛。",
+   "attack_chain": "调用napi_get_value_string_*传入bufsize=0→整数下溢→写入整个字符串→内存破坏→可能RCE。",
+   "bypass_technique": "利用bufsize=0时的整数下溢，绕过缓冲区大小检查。",
+   "defensive_insight": "在API实现中增加对bufsize==0的显式检查，返回错误或要求buf为NULL；文档明确禁止非NULL指针与bufsize=0的组合。"
+  },
+  {
+   "id": 123119,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "类型混淆 / 内存破坏",
+   "reasoning": "是。通过引用赋值给重载对象，触发PHP引擎的use-after-free。这是对PHP对象模型和引用计数机制的非预期利用，属于框架行为利用。攻击者可通过精心构造的脚本导致内存破坏，可能实现代码执行。与普通UAF不同，该漏洞涉及引用赋值与魔术方法的交互，思路独特。",
+   "attack_chain": "创建重载对象→通过引用赋值触发__get→导致UAF→内存破坏。",
+   "bypass_technique": "利用引用赋值与魔术方法的组合，触发引擎内部状态混乱。",
+   "defensive_insight": "修复PHP引擎中引用赋值与重载方法的交互逻辑，加强内存管理。"
+  },
+  {
+   "id": 1357948,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 协议行为利用",
+   "reasoning": "是。通过路径编码`..%2F`绕过ingress-nginx的路径规范化，导致外部认证服务收到被篡改的X-Original-Url和X-Auth-Request-Redirect头，从而可能错误放行。这是对URL解析差异的利用，属于协议行为利用。攻击链跨组件（ingress控制器与认证服务），且可抽象为通用判断条件。",
+   "attack_chain": "构造`/public-service/..%2Fprotected-service/protected`请求→ingress将请求转发给认证服务并携带被篡改的头→认证服务基于头判断放行→访问受保护服务。",
+   "bypass_technique": "利用路径编码`%2F`绕过路径规范化，使认证服务基于错误路径做出决策。",
+   "defensive_insight": "在ingress层统一路径规范化，禁止`..%2F`等编码；认证服务不应仅依赖X-Original-Url等头做决策，应验证实际请求路径。"
+  },
+  {
+   "id": 3986,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。敏感页面被搜索引擎索引，属于配置错误，无绕过技巧，攻击链简单。虽然影响可能严重，但技术含量低，常见于各类网站。",
+   "attack_chain": "搜索引擎爬取敏感页面→缓存泄露认证令牌。",
+   "bypass_technique": "无。",
+   "defensive_insight": "在敏感页面添加noindex,nofollow标签，并配置robots.txt。"
+  },
+  {
+   "id": 2270082,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "子域名接管",
+   "reasoning": "部分。Mailgun子域名接管，利用未认领的域名，可被任意用户认领。虽然子域名接管是常见套路，但该案例涉及邮件服务，可用于钓鱼，且PoC简单，有一定启发性。",
+   "attack_chain": "发现未认领的mailgun子域→注册mailgun账户认领→控制邮件发送。",
+   "bypass_technique": "无实质绕过，利用配置错误。",
+   "defensive_insight": "定期检查DNS记录，删除未使用的子域，或添加验证机制。"
+  },
+  {
+   "id": 87804,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "开放重定向",
+   "reasoning": "否。利用双斜杠和路径穿越实现开放重定向，属于常见套路，无特殊绕过，攻击链简单。",
+   "attack_chain": "构造URL→服务器返回301重定向到外部域。",
+   "bypass_technique": "利用URL解析差异，双斜杠绕过域名校验。",
+   "defensive_insight": "对重定向URL进行白名单校验，禁止外部域。"
+  },
+  {
+   "id": 299473,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 协议行为利用",
+   "reasoning": "是。通过webhook的secret token注入换行符，利用Redis协议解析HTTP请求，实现SSRF到RCE。这是对Redis协议与HTTP交互的非预期利用，属于协议行为利用。攻击链跨组件（webhook、Redis、Sidekiq），且可抽象为通用判断条件。",
+   "attack_chain": "创建webhook指向Redis→注入换行符和Redis命令→Redis执行命令入队Sidekiq任务→执行Ruby代码→RCE。",
+   "bypass_technique": "利用换行注入绕过HTTP头限制，将Redis命令嵌入HTTP请求。",
+   "defensive_insight": "对webhook的secret token进行严格校验，禁止换行符；限制SSRF目标，禁止内网地址。"
+  },
+  {
+   "id": 321687,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "类型混淆 / 信息泄露",
+   "reasoning": "部分。base64url模块在输入为数字时分配未初始化Buffer，导致信息泄露或DoS。这是对Node.js Buffer分配行为的非预期利用，属于框架行为利用。虽然影响有限，但思路有启发性。",
+   "attack_chain": "传入数字→模块将其作为Buffer大小→分配未初始化内存→泄露敏感数据或DoS。",
+   "bypass_technique": "利用类型混淆，将数字作为Buffer大小。",
+   "defensive_insight": "在模块入口进行类型检查，确保输入为字符串或Buffer。"
+  },
+  {
+   "id": 103991,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。mod_lua的websocket PING处理导致栈递归崩溃，属于已知漏洞，无特殊绕过，攻击链简单。",
+   "attack_chain": "发送恶意PING请求→触发递归→崩溃。",
+   "bypass_technique": "无。",
+   "defensive_insight": "升级Apache版本，修复mod_lua的递归问题。"
+  },
+  {
+   "id": 159984,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。通过meta标签注入实现XSS，利用引号未过滤，属于常见XSS变种，但注入点特殊，有一定启发性。",
+   "attack_chain": "设置bio为恶意meta标签→页面渲染时执行重定向。",
+   "bypass_technique": "利用引号闭合meta标签属性，注入http-equiv。",
+   "defensive_insight": "对用户输入进行HTML实体编码，特别是引号。"
+  },
+  {
+   "id": 1142918,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 授权绕过",
+   "reasoning": "是。通过恶意Activity返回file:// URI，利用Android的Intent机制，使Nextcloud客户端将私有文件共享出去。这是对Android组件间通信的非预期利用，属于框架行为利用。攻击链跨组件（恶意应用与Nextcloud客户端），且可抽象为通用判断条件。",
+   "attack_chain": "安装恶意应用→在Nextcloud中选择上传→恶意应用返回file:// URI→Nextcloud将私有文件共享。",
+   "bypass_technique": "利用Intent的setResult返回任意URI，绕过文件选择限制。",
+   "defensive_insight": "在接收Activity结果时验证URI的scheme和权限，禁止file://等敏感协议。"
+  },
+  {
+   "id": 639796,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，参数未过滤，常见套路，无特殊绕过。",
+   "attack_chain": "构造恶意URL→服务器反射执行脚本。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对参数进行输出编码。"
+  },
+  {
+   "id": 103772,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "开放重定向",
+   "reasoning": "部分。通过checkout_url参数构造域名混淆，实现开放重定向。虽然常见，但利用域名后缀混淆有一定技巧性。",
+   "attack_chain": "构造checkout_url=.np→登录后重定向到恶意域。",
+   "bypass_technique": "利用域名后缀混淆，绕过域名校验。",
+   "defensive_insight": "对重定向URL进行严格白名单校验，确保在shopify.com域内。"
+  },
+  {
+   "id": 159985,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 命令注入",
+   "reasoning": "部分。通过URL路径注入XSS和SSI指令，利用服务器对URL的解析差异，属于协议行为利用。虽然XSS和SSI注入是常见类型，但组合使用且利用路径解析差异有一定启发性。",
+   "attack_chain": "构造恶意URL→服务器解析路径→注入XSS或SSI指令→执行。",
+   "bypass_technique": "利用URL编码和路径穿越，绕过过滤。",
+   "defensive_insight": "对URL路径进行规范化，过滤特殊字符，禁用SSI。"
+  },
+  {
+   "id": 245527,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少速率限制，属于配置错误，无技术含量。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "添加速率限制。"
+  },
+  {
+   "id": 663431,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "IDOR / 信息泄露",
+   "reasoning": "部分。通过IDOR参数枚举私有hackathon ID，推断其日期范围。虽然影响较小，但利用IDOR获取非公开信息，有一定启发性。",
+   "attack_chain": "枚举hackathon ID→通过报告日期推断hackathon时间。",
+   "bypass_technique": "无实质绕过，直接利用IDOR。",
+   "defensive_insight": "对hackathon参数进行权限校验，禁止访问私有hackathon。"
+  },
+  {
+   "id": 178278,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 开放重定向",
+   "reasoning": "部分。endpoint参数未过滤，导致XSS和开放重定向。虽然常见，但参数在表单提交后触发，有一定场景特殊性。",
+   "attack_chain": "构造恶意endpoint→提交表单→执行XSS或重定向。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对endpoint参数进行白名单校验，禁止javascript:等协议。"
+  }
+ ]
+}

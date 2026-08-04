@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 8,
+  "dropped": 12,
+  "avg_score": 4.6,
+  "top_n": [
+   790634,
+   1066790,
+   473950,
+   182027,
+   180584
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 790634,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 业务逻辑",
+   "reasoning": "是。利用 Git 对分支名与哈希的解析优先级差异，GitLab 未像 GitHub 那样阻止 40 位十六进制分支名，导致引用哈希的依赖被劫持。这是对 Git 协议行为的反直觉利用，可抽象为通用判断条件（任何允许创建与哈希同名的分支的 Git 服务均受影响），且攻击链跨组件（仓库控制者→依赖者）。",
+   "attack_chain": "攻击者创建与目标提交哈希同名的分支并推送恶意内容→依赖者执行 git checkout <hash> 时实际检出恶意分支→供应链投毒。",
+   "bypass_technique": "利用 Git 分支名优先于哈希的解析规则，创建与哈希同名的分支。",
+   "defensive_insight": "Git 服务端应禁止推送与 40 位十六进制哈希同名的分支（如 GitHub 所做）；客户端应使用完整哈希或显式 refs/heads/ 前缀。"
+  },
+  {
+   "id": 1066790,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "配置错误 / 授权绕过",
+   "reasoning": "是。内部 cron 端点未限制访问，任何人都可触发耗时操作，导致 DoS。虽然属于配置错误，但利用了 App Engine 的 cron 机制，且影响明确，可复现。",
+   "attack_chain": "直接访问 /internal/cron/refreshCaseStats → 触发后端耗时操作 → 资源耗尽。",
+   "bypass_technique": "无绕过，直接利用未受保护的内部端点。",
+   "defensive_insight": "内部端点应通过 App Engine 的 cron 服务进行访问控制，或使用管理员权限校验。"
+  },
+  {
+   "id": 190964,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "配置错误",
+   "reasoning": "否。仅报告 Content-Type 错误，无实际安全影响，且报告为 informative，信息不足。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "正确设置 Content-Type 头。"
+  },
+  {
+   "id": 163087,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告仅指向外部邮件和 bug 链接，无具体漏洞信息，无法评估。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "无"
+  },
+  {
+   "id": 221043,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。登录页面缺少 CSRF 令牌，属于常见漏洞，且报告为 informative，无实际利用链。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "在登录表单中添加 CSRF 令牌。"
+  },
+  {
+   "id": 312510,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 配置错误",
+   "reasoning": "是。利用 nginx alias 配置错误，通过 /media../ 绕过路径限制，读取敏感文件。虽然属于已知的 alias 遍历，但利用方式简洁，且直接泄露 SECRET_KEY，影响严重。",
+   "attack_chain": "构造 /media../mobs/settings.py → nginx alias 解析错误 → 读取源码和配置。",
+   "bypass_technique": "利用 alias 与 location 的路径拼接差异，使用 ../ 跳出目录。",
+   "defensive_insight": "正确配置 nginx alias，确保 location 与 alias 路径匹配，并限制静态文件目录。"
+  },
+  {
+   "id": 1118501,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS / CSRF",
+   "reasoning": "否。CSRF 导致存储型 XSS，属于常见组合，且报告大量 [REDACTED]，信息不完整。",
+   "attack_chain": "CSRF 提交恶意 payload → 存储型 XSS → 窃取会话。",
+   "bypass_technique": "无实质绕过，利用 CSRF 触发 XSS。",
+   "defensive_insight": "实施 CSRF 令牌和输出编码。"
+  },
+  {
+   "id": 289246,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "点击劫持",
+   "reasoning": "否。点击劫持是常见漏洞，无新意，且报告为 informative。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "设置 X-Frame-Options 或 CSP frame-ancestors。"
+  },
+  {
+   "id": 12588,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。利用文件名中的 XSS payload，在云盘附件预览时触发，属于存储型 XSS 的变体，但思路简单，PoC 不完整。",
+   "attack_chain": "创建恶意文件名 → 用户预览附件 → XSS 执行。",
+   "bypass_technique": "利用文件名作为 XSS 载体。",
+   "defensive_insight": "对文件名进行输出编码，并限制附件预览的脚本执行。"
+  },
+  {
+   "id": 643442,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。未认证的反射型 XSS，参数未过滤，直接输出到 iframe src，属于常见漏洞，但利用简单，影响明确。",
+   "attack_chain": "构造恶意 URL → 反射 XSS → 窃取会话。",
+   "bypass_technique": "无绕过，直接利用未过滤参数。",
+   "defensive_insight": "对输出进行 HTML 编码，或使用 intval 强制类型。"
+  },
+  {
+   "id": 915140,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。通过 Export 功能绕过页面访问限制，导出受限页面数据。属于业务逻辑漏洞，利用 URL 直接访问，思路清晰，可复现。",
+   "attack_chain": "共享调查结果时仅允许访问 Results 页 → 通过 Export URL 导出其他页面数据。",
+   "bypass_technique": "利用 Export 功能未对页面权限进行校验。",
+   "defensive_insight": "在 Export 功能中实施与页面相同的权限检查。"
+  },
+  {
+   "id": 182027,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "内存破坏 / 其他",
+   "reasoning": "是。通过数组自赋值触发 mrb_ary_splice 中的段错误，属于沙箱逃逸的 DoS 向量。虽然未导致 RCE，但利用方式简洁，且提供了完整崩溃分析。",
+   "attack_chain": "执行 t0me[0,0]=t0me → 触发 mrb_ary_splice 中的野指针 → 段错误。",
+   "bypass_technique": "利用数组自引用导致内存管理错误。",
+   "defensive_insight": "修复 mrb_ary_splice 中的边界检查，避免自引用。"
+  },
+  {
+   "id": 473950,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "是。利用文件名中的特殊字符注入到 webview 的 JavaScript 模板中，导致 XSS。这是对模板字面量拼接的利用，思路巧妙，且影响桌面客户端。",
+   "attack_chain": "创建恶意文件名 → 预览文件 → webview 执行注入的 JS。",
+   "bypass_technique": "利用文件名中的单引号和括号闭合模板字符串。",
+   "defensive_insight": "对插入到模板中的 URL 进行编码或使用安全 API。"
+  },
+  {
+   "id": 99321,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。CSRF 激活 PayPal 功能，属于常见漏洞，且报告为 informative，无实际利用。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "添加 CSRF 令牌。"
+  },
+  {
+   "id": 170138,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "内存破坏 / 其他",
+   "reasoning": "是。通过超长 locale 字符串触发 libicu 栈溢出，导致 SEH 覆盖，可被利用。属于已知漏洞，但提供了完整 PoC 和崩溃分析。",
+   "attack_chain": "构造超长 locale → 触发 libicu 溢出 → 覆盖 SEH → 控制执行流。",
+   "bypass_technique": "利用未限制的 locale 长度。",
+   "defensive_insight": "限制 locale 长度，或使用安全函数。"
+  },
+  {
+   "id": 143903,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "部分。通过 IM 频道 ID 上传文件到其他成员的私聊，属于 IDOR 变体，但报告信息不足，缺少具体细节。",
+   "attack_chain": "获取目标频道 ID → 上传文件到该频道。",
+   "bypass_technique": "利用未校验的频道 ID。",
+   "defensive_insight": "校验用户是否有权限访问目标频道。"
+  },
+  {
+   "id": 180584,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 3
+   },
+   "verdict": "保留，高优先级",
+   "category": "内存破坏 / 整数溢出",
+   "reasoning": "是。通过整数溢出导致堆溢出，可导致任意代码执行。属于经典漏洞，但 PoC 完整，且提供了详细分析。",
+   "attack_chain": "构造超长字符串 → 整数溢出 → 堆溢出 → 控制 EIP。",
+   "bypass_technique": "利用整数溢出绕过长度检查。",
+   "defensive_insight": "使用安全分配函数，检查长度溢出。"
+  },
+  {
+   "id": 146106,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。通过分享链接泄露用户邮箱，属于常见信息泄露，且报告为 informative。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "在分享功能中隐藏邮箱。"
+  },
+  {
+   "id": 35237,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。通过重复提交报告获取积分，属于平台逻辑漏洞，但无技术含量。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "限制重复报告。"
+  },
+  {
+   "id": 6504,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "会话固定",
+   "reasoning": "否。会话固定是常见漏洞，且报告为 informative，无实际利用。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "登录后重新生成会话 ID。"
+  }
+ ]
+}

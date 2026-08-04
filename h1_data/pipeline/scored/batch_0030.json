@@ -1,0 +1,335 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 3,
+  "dropped": 17,
+  "avg_score": 3.4,
+  "top_n": [
+   1212067,
+   348443,
+   31082
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1938693,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 认证绕过",
+   "reasoning": "否。Kinetic 控制台 admin/admin 默认凭据，登录后泄露日志/用户/邮箱——默认凭据经典，影响面大但机制零变形。",
+   "attack_chain": "单点：admin/admin 登录控制台→读日志/用户数据。",
+   "bypass_technique": "无绕过，直接使用默认凭据。",
+   "defensive_insight": "默认凭据强制轮换；管理台 IP 白名单+2FA。"
+  },
+  {
+   "id": 1010835,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "授权绕过",
+   "reasoning": "否。billingChargesExport mutation 低权 staff 可调（响应 Not found 而非 access denied 提示权限缺失）——GraphQL 权限检查缺失经典，报告者无法确认实际导出成功，复现不完整。",
+   "attack_chain": "单点：低权 staff 调 billingChargesExport→（推断）导出账单。",
+   "bypass_technique": "无绕过，直接调用未校验权限的 mutation。",
+   "defensive_insight": "mutation 按操作权限校验（含导出类）；错误响应不泄露资源存在性。"
+  },
+  {
+   "id": 324021,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 业务逻辑",
+   "reasoning": "否。RSK 公开 RPC 节点暴露调试方法（evm_reset/evm_snapshot），evm_reset 重置到 block 0 并挂起——测试/调试方法在生产节点暴露的经典配置错误，一条 curl 触发，影响节点 DoS/回滚。",
+   "attack_chain": "单点：调 evm_reset→节点回滚/挂起→服务不可用。",
+   "bypass_technique": "无绕过，直接利用暴露的调试 RPC。",
+   "defensive_insight": "公开 RPC 仅暴露必要方法白名单；调试/测试方法绑定内网或鉴权。"
+  },
+  {
+   "id": 1212067,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 跨组件攻击链 / 框架行为利用",
+   "reasoning": "是。GitLab 设计引用过滤器四层组合：valid_char 正则允许引号（仅排除 / 和空白）→ filename*=ASCII-8BIT 绕过 workhorse 上传 sanitize 得到带引号文件名 → 链接字符串拼接逃逸 href → 借 ReferenceRedactor 的 data-original 注入任意 HTML → 用 Google JSONP+setTimeout 完成 CSP 绕过——'上传消毒绕过+字符串拼接+redactor 数据属性+JSONP 的完整链'是教科书级存储 XSS，vakzz 把每层机制打通，GitLab.com 实测；可抽象为通用判据（链接生成必须转义+上传文件名严格白名单）。",
+   "attack_chain": "上传带引号文件名设计→markdown 引用渲染引号逃逸→data-original 注入→JSONP 加载外部 JS→任意代码执行。",
+   "bypass_technique": "ASCII-8BIT 文件名绕过 sanitize+引号逃逸 href+data-original 属性注入+JSONP setTimeout CSP 绕过。",
+   "defensive_insight": "上传文件名严格字符白名单；HTML 构建用 DOM API 并转义全部属性；渲染管线统一 sanitize 层。"
+  },
+  {
+   "id": 190933,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。openssl_pbkdf2 的 key_length>0x7fffffff 致 size 负值进 memcpy——整型符号转换经典（PHP 5.6 only，7.0 已防护），ASAN 完整但机制成熟。",
+   "attack_chain": "单点：pbkdf2 传超大 key_length→负 size→memcpy 崩溃。",
+   "bypass_technique": "无绕过，直接利用符号转换溢出。",
+   "defensive_insight": "密码学参数做范围校验；升级 PHP 并统一数值转换防护。"
+  },
+  {
+   "id": 182557,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。Brave 下载文件按 URL 域名/扩展名命名，.com 域名页面可下载为 .com 可执行文件——浏览器下载命名行为的社工角度观察，informative，非漏洞。",
+   "attack_chain": "单点：诱导下载 .com 域名页面→保存为 .com 可执行文件。",
+   "bypass_technique": "无绕过，利用下载命名习惯。",
+   "defensive_insight": "浏览器对下载文件名做安全后缀处理或警告。"
+  },
+  {
+   "id": 143139,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。静态资源路径 %0d 注入 Set-Cookie 响应头——CRLF 注入经典（IE 老版本响应头分割），报告标题即'升级 Aspen 修复'，机制成熟。",
+   "attack_chain": "单点：URL 注入 %0dSet-Cookie→种任意 cookie。",
+   "bypass_technique": "无绕过，直接利用未过滤 CR。",
+   "defensive_insight": "响应头拼接过滤 CR/LF；静态服务器头生成统一转义。"
+  },
+  {
+   "id": 246780,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。nmap 发现 db01.wakatime.com 用旧版 OpenSSH——版本指纹提示，无实际漏洞利用。",
+   "attack_chain": "单点：识别旧版→查对应 CVE。",
+   "bypass_technique": "无。",
+   "defensive_insight": "SSH 服务升级；版本指纹隐藏。"
+  },
+  {
+   "id": 904659,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "授权绕过 / 信息泄露",
+   "reasoning": "否。登录后访问特定端点可见全员 PII——授权配置错误经典，目标 REDACTED，机制零变形。",
+   "attack_chain": "单点：登录后访问管理端点→查看全员 PII。",
+   "bypass_technique": "无绕过，直接利用过宽的访问控制。",
+   "defensive_insight": "PII 端点按角色授权；数据接口字段级最小化。"
+  },
+  {
+   "id": 55546,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。登录后 return_to 可跳 .mx/.es/.tw 变体域——登录后 open redirect（域名变体技巧），影响钓鱼，机制成熟。",
+   "attack_chain": "单点：return_to=.mx/→登录后跳转变体域。",
+   "bypass_technique": "无绕过，构造同根变体域绕过校验。",
+   "defensive_insight": "return_to 白名单精确匹配主机；拒绝域变体。"
+  },
+  {
+   "id": 380939,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。韩星巴克登录 redirect_url=// 跳外域——open redirect 经典，PoC 简洁但机制零变形。",
+   "attack_chain": "单点：redirect_url=//evil→登录后跳转。",
+   "bypass_technique": "无绕过，直接利用协议相对地址。",
+   "defensive_insight": "redirect_url 白名单校验；拒绝 // 开头。"
+  },
+  {
+   "id": 1652903,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。SharePoint 挂载异常时连接凭据明文写日志——异常日志未脱敏经典，需读日志权限前置，机制零变形。",
+   "attack_chain": "单点：触发挂载异常→明文凭据进日志→读日志获取。",
+   "bypass_technique": "无绕过，利用异常路径未脱敏。",
+   "defensive_insight": "日志层统一脱敏凭据；异常处理不清洗敏感参数。"
+  },
+  {
+   "id": 348443,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 授权绕过",
+   "reasoning": "部分。GitLab 私密 snippet 追加 .js 返回 JS 模板含完整内容——'模板渲染通道不校验可见性'，私密 snippet 内容可经第三方页面嵌入读取，ID 可枚举；条件极简（URL 加 .js），可抽象为通用判据（所有渲染通道与查看通道共享同一权限校验）。",
+   "attack_chain": "单点：私密 snippet URL 加 .js→JS 模板含内容→第三方站读取/枚举。",
+   "bypass_technique": "无绕过，利用 .js 渲染路径未做可见性校验。",
+   "defensive_insight": "模板/嵌入渲染路径统一执行对象可见性校验；非公开资源禁止生成嵌入代码。"
+  },
+  {
+   "id": 415233,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "路径遍历 / 其他",
+   "reasoning": "否（真实漏洞意义上）。h1-5411 CTF writeup（LFI→反序列化→XXE→SSRF 链），细节在 PDF 附件——CTF 环境非生产漏洞，不入真实案例库；技巧组合（LFI 读源码→反序列化→XXE SSRF）本身有参考性但正文无内容。",
+   "attack_chain": "CTF 链：LFI 读源码→发现序列化/XXE→XXE 作 SSRF→打维护页。",
+   "bypass_technique": "CTF 内组合：LFI 信息收集+反序列化+XXE SSRF。",
+   "defensive_insight": "修复 LFI 与反序列化入口；XML 禁用外部实体。"
+  },
+  {
+   "id": 31082,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "部分。Twitter Ads 的 Ad Manager 权限由 nullcast_flag=1 参数限制为'仅推广推文'，删除该参数即可在账号所有者时间线发真实推文——'权限边界由客户端可删参数控制'是反直觉的授权缺陷，可抽象为通用判据（行为模式限制必须服务端判定而非客户端参数）；条件极简（删参数），PoC 完整。",
+   "attack_chain": "Ad Manager 删除 nullcast_flag 参数→create_tweet→在所有者时间线发布真实推文。",
+   "bypass_technique": "移除 nullcast_flag 使推文从'推广'变'真实发布'。",
+   "defensive_insight": "推文发布类型由服务端按角色权限判定；nullcast 标志仅作 UI 提示不参与授权。"
+  },
+  {
+   "id": 340012,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。miniupnpc XML 的 CDATA memcmp 无边界检查，畸形 UPnP 响应越界读崩溃 Monero 客户端——解析器越界读经典（局域网攻击面），PoC 完整但机制成熟。",
+   "attack_chain": "单点：恶意 UPnP 服务器发畸形 XML→越界读→客户端崩溃。",
+   "bypass_technique": "无绕过，直接利用解析器边界缺失。",
+   "defensive_insight": "XML 解析前校验缓冲长度；UPnP 仅信内网受信设备。"
+  },
+  {
+   "id": 390631,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "命令注入",
+   "reasoning": "否。ascii-art CLI 的 target 参数拼进 exec 打开 figlet URL——CLI 命令注入经典，PoC 完整但机制零变形。",
+   "attack_chain": "单点：target 注入 shell 元字符→exec 执行任意命令。",
+   "bypass_technique": "无绕过，直接利用 exec 字符串拼接。",
+   "defensive_insight": "exec 改 execFile 参数数组；CLI 输入转义。"
+  },
+  {
+   "id": 769716,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。xmlrpc.php 启用可爆破/放大 DDoS——WordPress 通用加固话题（重复报告），not-applicable，无实际攻击演示。",
+   "attack_chain": "单点：pingback/爆破经 xmlrpc.php。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁用/限制 xmlrpc.php；通用加固基线。"
+  },
+  {
+   "id": 255481,
+   "value_score": 0,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "无法判断。Firefox ESR 打开跳转 browser-update.org——浏览器兼容/浏览器嗅探问题，非安全漏洞。",
+   "attack_chain": "无法确认。",
+   "bypass_technique": "无法确认。",
+   "defensive_insight": "站点兼容 ESR 浏览器；避免强制升级跳转。"
+  },
+  {
+   "id": 127645,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "认证绕过",
+   "reasoning": "否。共享电脑先登录攻击者再登录受害者，受害者进入 riders 仍看到攻击者会话——登录流程未清理旧会话的会话管理缺陷（login CSRF 变体），网咖场景，报告步骤完整但机制成熟。",
+   "attack_chain": "共享设备先登录攻击者→受害者登录→进入攻击者会话→可能误输卡信息。",
+   "bypass_technique": "无绕过，利用登录未清除旧会话。",
+   "defensive_insight": "登录流程清除/隔离旧会话；账户切换强制注销并提示当前身份。"
+  }
+ ]
+}

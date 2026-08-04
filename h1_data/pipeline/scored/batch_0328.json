@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.4,
+  "top_n": [
+   143717,
+   1004007,
+   1024734,
+   1454002,
+   98259
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 778931,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。S3 桶公开可读是常见配置错误，无绕过、无攻击链，仅信息泄露。",
+   "attack_chain": "直接访问公开 S3 桶 → 读取日志和源码。",
+   "bypass_technique": "无，利用错误配置。",
+   "defensive_insight": "S3 桶应设置私有 ACL，并定期审计权限。"
+  },
+  {
+   "id": 506498,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 反序列化",
+   "reasoning": "是。利用反序列化时 reserve 函数对长度字段的信任，分配 4EB 内存导致 DoS。这是对序列化格式的协议行为利用，可远程触发，思路新颖。",
+   "attack_chain": "构造恶意二进制数据 → 触发 load_from_binary → reserve 分配巨量内存 → 崩溃。",
+   "bypass_technique": "利用序列化格式中长度字段未校验，直接指定超大值。",
+   "defensive_insight": "反序列化时应限制分配大小，校验长度字段合理性。"
+  },
+  {
+   "id": 33018,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型 XSS 在团队名称处注入，经典场景，无绕过。",
+   "attack_chain": "在团队名称注入 payload → 在导入页面执行。",
+   "bypass_technique": "无，直接注入。",
+   "defensive_insight": "对用户输入进行输出编码，使用 CSP。"
+  },
+  {
+   "id": 503804,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。路径泄露是低危信息泄露，无绕过无链。",
+   "attack_chain": "访问特定 PHP 文件 → 显示错误路径。",
+   "bypass_technique": "无。",
+   "defensive_insight": "关闭错误显示，配置 .htaccess。"
+  },
+  {
+   "id": 4638,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。重复报告，无具体信息。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "无。"
+  },
+  {
+   "id": 49513,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。上传文件触发 XSS，常见于头像上传，无绕过。",
+   "attack_chain": "上传恶意文件 → 触发 XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对上传文件进行内容校验和输出编码。"
+  },
+  {
+   "id": 1004007,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 授权绕过",
+   "reasoning": "是。利用 `..;` 绕过代理路径规范化，访问 Tomcat 示例脚本，可导致会话操纵和 ATO。这是对路径解析差异的利用，可抽象为通用绕过。",
+   "attack_chain": "构造 `..;` URL → 绕过代理 → 访问 Tomcat 示例 → 会话操纵。",
+   "bypass_technique": "利用 `..;` 在代理和后端解析差异。",
+   "defensive_insight": "统一路径规范化，移除生产环境示例应用。"
+  },
+  {
+   "id": 1454002,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 授权绕过",
+   "reasoning": "是。利用导出的 Activity 和 SEND_MULTIPLE intent 读取应用私有文件，绕过 Android 沙箱。这是对 Android 组件间通信的利用，可跨应用攻击。",
+   "attack_chain": "恶意应用启动导出 Activity → 传入 file:// URI → 上传私有文件到服务器。",
+   "bypass_technique": "利用 intent 的 URI 权限授予，读取受保护文件。",
+   "defensive_insight": "导出组件应限制权限，对传入 URI 进行校验。"
+  },
+  {
+   "id": 215859,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 业务逻辑",
+   "reasoning": "是。会话 cookie 直接使用用户 ID，可篡改实现任意账户接管。这是对会话管理的反直觉利用，简单但致命。",
+   "attack_chain": "修改 cookie 为用户 ID → 刷新页面 → 登录受害者账户。",
+   "bypass_technique": "直接篡改会话 cookie 中的用户标识。",
+   "defensive_insight": "会话标识应随机且不可预测，服务端验证会话完整性。"
+  },
+  {
+   "id": 1888723,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / DoS",
+   "reasoning": "否。wp-cron.php 的 DoS 是已知问题，无绕过。",
+   "attack_chain": "发送大量请求到 wp-cron.php → 资源耗尽。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁用默认 cron，使用服务器端定时任务。"
+  },
+  {
+   "id": 141198,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。模板字段名未转义导致存储型 XSS，常见。",
+   "attack_chain": "创建模板字段名含 payload → 分享后触发。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对字段名进行输出编码。"
+  },
+  {
+   "id": 7894,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。路径泄露，低危。",
+   "attack_chain": "访问验证链接 → 显示错误路径。",
+   "bypass_technique": "无。",
+   "defensive_insight": "关闭错误显示。"
+  },
+  {
+   "id": 1024734,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "是。利用 DOMPurify 的 mutation XSS 绕过，通过 MathML 和 SVG 的解析差异。这是对 HTML 解析器行为的利用，可通用化。",
+   "attack_chain": "构造特殊 HTML → DOMPurify 净化后仍触发 XSS。",
+   "bypass_technique": "利用 MathML 和 SVG 的 mutation 行为。",
+   "defensive_insight": "更新 DOMPurify，使用更严格的配置。"
+  },
+  {
+   "id": 418743,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少 SPF/DMARC 是常见配置问题。",
+   "attack_chain": "伪造邮件 → 欺骗用户。",
+   "bypass_technique": "无。",
+   "defensive_insight": "配置 SPF 和 DMARC 策略。"
+  },
+  {
+   "id": 90321,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "信息泄露",
+   "reasoning": "否。仅建议移除页面，无漏洞细节。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "移除不必要的文档页面。"
+  },
+  {
+   "id": 98259,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "模板注入 / 框架行为利用",
+   "reasoning": "是。Liquid 模板中可访问所有对象方法和属性，导致信息泄露。这是对模板引擎沙箱的绕过，可抽象为通用。",
+   "attack_chain": "在模板中注入 {{ to_yaml }} → 泄露敏感数据。",
+   "bypass_technique": "利用 Liquid 的 Drop 对象暴露内部方法。",
+   "defensive_insight": "限制模板可访问的对象，使用白名单。"
+  },
+  {
+   "id": 146838,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。彩蛋密码硬编码，无实际影响。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "无。"
+  },
+  {
+   "id": 143717,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 业务逻辑",
+   "reasoning": "是。通过密码重置接口直接设置任意用户密码，无需验证。这是对业务逻辑的严重缺陷，可导致大规模 ATO。",
+   "attack_chain": "构造请求 → 指定受害者手机号 → 设置新密码 → 登录。",
+   "bypass_technique": "利用密码重置流程缺少验证步骤。",
+   "defensive_insight": "密码重置必须验证身份，如 OTP。"
+  },
+  {
+   "id": 156347,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。JSON 键触发存储型 XSS，常见。",
+   "attack_chain": "在 JSON 键中注入 payload → UI 生成时执行。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对 JSON 键进行输出编码。"
+  },
+  {
+   "id": 45428,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。CSRF token 未验证，可导致邮件轰炸，常见。",
+   "attack_chain": "构造恶意页面 → 触发密码重置请求。",
+   "bypass_technique": "无。",
+   "defensive_insight": "服务端验证 CSRF token。"
+  }
+ ]
+}

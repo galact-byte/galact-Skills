@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1066914,
+   499030,
+   965914,
+   970157,
+   159387
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 106678,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，参数company_name直接注入，无绕过，无链，典型常见套路。",
+   "attack_chain": "单点：参数company_name注入XSS payload。",
+   "bypass_technique": "无，直接注入。",
+   "defensive_insight": "对输出进行HTML编码，使用CSP。"
+  },
+  {
+   "id": 723044,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SQL注入",
+   "reasoning": "否。Referer头时间盲注，sleep+算术确认，成熟套路，无绕过无链。",
+   "attack_chain": "单点：Referer头→SQL拼接→时间盲注。",
+   "bypass_technique": "无实质绕过，直接利用未过滤头部拼接。",
+   "defensive_insight": "所有请求头参数化查询。"
+  },
+  {
+   "id": 115323,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。CSRF on subscribe form，无状态改变，无敏感操作，影响低，常见套路。",
+   "attack_chain": "单点：CSRF订阅表单。",
+   "bypass_technique": "无。",
+   "defensive_insight": "添加CSRF token，验证Origin。"
+  },
+  {
+   "id": 970157,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 业务逻辑",
+   "reasoning": "是。通过无速率限制的密码暴力破解绕过密码验证，看似已生效的密码保护被绕过。技术点在于缺少速率限制，使得暴力破解可行。区别于普通暴力破解：针对密码修改功能，且结合会话劫持场景，形成完整攻击链。",
+   "attack_chain": "会话劫持→进入密码修改→暴力破解旧密码→修改密码→账户接管。",
+   "bypass_technique": "利用无速率限制的密码修改接口进行暴力破解。",
+   "defensive_insight": "对密码修改接口实施速率限制和账户锁定。"
+  },
+  {
+   "id": 1239633,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。日志文件可预测命名，直接访问泄露登录日志，无绕过，无链，常见配置错误。",
+   "attack_chain": "单点：猜测日志文件名→读取日志。",
+   "bypass_technique": "无，直接利用可预测文件名。",
+   "defensive_insight": "日志文件不应公开可访问，使用随机文件名或访问控制。"
+  },
+  {
+   "id": 1066914,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 框架行为利用 / 业务逻辑",
+   "reasoning": "是。CTF挑战，但包含多种高启发性技术：intval()科学计数法绕过长度限制、str_replace递归绕过、DNS rebinding绕过IP限制、二次注入等。每个技术点都体现框架/语言行为利用，且组合成完整攻击链。区别于普通CTF：展示了多种可复用的绕过技巧。",
+   "attack_chain": "多步：信息收集→多种绕过→最终获取flag。",
+   "bypass_technique": "intval()科学计数法、str_replace递归、DNS rebinding、二次注入。",
+   "defensive_insight": "严格输入验证，避免使用不安全的函数，实施网络层防护。"
+  },
+  {
+   "id": 107036,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，URL路径注入，无绕过，无链，常见套路。",
+   "attack_chain": "单点：URL路径注入XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对URL路径进行编码和验证。"
+  },
+  {
+   "id": 159387,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。PM角色可以删除公司Logo，绕过权限检查。技术点在于删除接口未验证用户角色，直接调用即可。区别于普通越权：接口功能敏感，且权限控制缺失明显，可抽象为通用判断条件。",
+   "attack_chain": "PM登录→直接发送删除Logo请求→删除成功。",
+   "bypass_technique": "直接调用未授权接口。",
+   "defensive_insight": "服务端对每个接口进行角色权限验证。"
+  },
+  {
+   "id": 499030,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 跨组件攻击链",
+   "reasoning": "是。通过注册相似域名绕过origin检查，利用字符串前缀匹配漏洞。技术点在于origin检查使用indexOf而非精确匹配，可被域名欺骗。区别于普通XSS：绕过现代防御（origin检查），且可跨组件利用。",
+   "attack_chain": "注册相似域名→构造恶意页面→发送postMessage→执行XSS。",
+   "bypass_technique": "利用indexOf前缀匹配，注册相似域名。",
+   "defensive_insight": "使用精确的origin比较，避免前缀匹配。"
+  },
+  {
+   "id": 223557,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少速率限制导致垃圾邮件和DOS，常见配置问题，无绕过无链。",
+   "attack_chain": "单点：无速率限制的接口→批量请求。",
+   "bypass_technique": "无。",
+   "defensive_insight": "实施速率限制和验证码。"
+  },
+  {
+   "id": 965914,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 其他",
+   "reasoning": "是。libuv的realpath实现使用pathconf获取缓冲区大小，失败时回退到_POSIX_PATH_MAX（256），但realpath需要PATH_MAX（1024）缓冲区，导致缓冲区溢出。技术点在于系统调用行为利用，反直觉。区别于普通缓冲区溢出：根因是系统调用参数错误，可抽象为通用判断条件。",
+   "attack_chain": "构造长路径→调用fs.realpath.native→缓冲区溢出→崩溃。",
+   "bypass_technique": "利用pathconf失败回退到较小缓冲区。",
+   "defensive_insight": "修复libuv，使用PATH_MAX分配缓冲区。"
+  },
+  {
+   "id": 737625,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "点击劫持",
+   "reasoning": "否。点击劫持，无绕过，无链，常见套路，且substate为informative。",
+   "attack_chain": "单点：iframe嵌入→诱导点击。",
+   "bypass_technique": "无。",
+   "defensive_insight": "设置X-Frame-Options或CSP frame-ancestors。"
+  },
+  {
+   "id": 1812768,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。已知CVE-2020-11022，jQuery XSS，无新意，无绕过，无链。",
+   "attack_chain": "单点：jQuery漏洞触发XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "升级jQuery，过滤输入。"
+  },
+  {
+   "id": 106897,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。存储型XSS，通过tracking_urls注入javascript:协议，需要多步操作，但技术点常见。",
+   "attack_chain": "创建订单→更新fulfillment→点击链接触发XSS。",
+   "bypass_technique": "利用javascript:协议绕过URL验证。",
+   "defensive_insight": "对URL进行协议白名单验证。"
+  },
+  {
+   "id": 878145,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "部分。盲存储XSS，通过联系表单注入，在管理后台触发，跨组件（用户→管理后台），但技术点常见。",
+   "attack_chain": "提交恶意表单→管理员查看→XSS触发→窃取会话。",
+   "bypass_technique": "无，直接注入。",
+   "defensive_insight": "对输入进行严格过滤，管理后台使用CSP。"
+  },
+  {
+   "id": 112372,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型XSS，在演示中触发，无绕过，无链，常见套路。",
+   "attack_chain": "单点：插入XSS payload→触发。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对输入进行HTML编码。"
+  },
+  {
+   "id": 305128,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "点击劫持",
+   "reasoning": "否。点击劫持，无绕过，无链，常见套路。",
+   "attack_chain": "单点：iframe嵌入→诱导点击。",
+   "bypass_technique": "无。",
+   "defensive_insight": "设置X-Frame-Options。"
+  },
+  {
+   "id": 995144,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误",
+   "reasoning": "部分。CORS配置错误，反射任意Origin并允许凭据，可窃取用户数据，但技术点常见。",
+   "attack_chain": "单点：恶意网站→CORS请求→窃取数据。",
+   "bypass_technique": "无，直接利用配置错误。",
+   "defensive_insight": "正确配置CORS白名单，避免反射任意Origin。"
+  },
+  {
+   "id": 167910,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "内存破坏",
+   "reasoning": "否。仅提供bug链接，无详细PoC，信息不足。",
+   "attack_chain": "未知。",
+   "bypass_technique": "未知。",
+   "defensive_insight": "升级PHP。"
+  },
+  {
+   "id": 507172,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "认证绕过 / 竞争条件",
+   "reasoning": "部分。通过快速打开/关闭应用绕过设备凭据锁，利用竞争条件，技术点有趣，但复现条件苛刻。",
+   "attack_chain": "快速操作→绕过锁→访问文件。",
+   "bypass_technique": "利用应用生命周期竞争条件。",
+   "defensive_insight": "确保锁在应用启动时立即生效，避免异步绕过。"
+  }
+ ]
+}

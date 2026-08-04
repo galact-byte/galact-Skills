@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 8,
+  "dropped": 12,
+  "avg_score": 4.6,
+  "top_n": [
+   2208860,
+   315773,
+   1444682,
+   248668,
+   126906
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 315773,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "命令注入 / 框架行为利用",
+   "reasoning": "是。利用 GitHub 分支名可包含 shell 元字符的特性，通过 `execSync` 拼接命令导致 RCE。攻击者只需创建恶意分支名，诱导用户使用 pullit 即可触发，无需其他条件。技术点在于未对用户可控的分支名进行过滤，直接拼入 shell 命令，且分支名可包含分号和花括号等，形成命令注入。与普通命令注入的区别在于攻击面是 GitHub 分支名，且利用 npm 包生态的供应链特性，具有通用性。",
+   "attack_chain": "创建恶意分支名（如 `;{echo,hello,world}>/tmp/c`）→ 推送并创建 PR → 用户运行 pullit 选择该 PR → `execSync` 拼接分支名执行命令 → RCE。",
+   "bypass_technique": "利用 shell 元字符（分号、花括号）注入命令，绕过参数化命令执行。",
+   "defensive_insight": "使用 `execFileSync` 或参数化方式执行 git 命令，避免 shell 拼接；对用户输入进行严格校验。"
+  },
+  {
+   "id": 2208860,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 认证绕过",
+   "reasoning": "是。Node.js 的 policy 机制本应保证资源完整性，但攻击者通过替换 `Hash` 类的内部 C++ 绑定（`kHandle`）的 `digest` 方法，伪造校验和，从而绕过完整性检查。这利用了 Node.js 内部实现细节，即 `Hash` 类依赖可被应用替换的 C++ 绑定，而 policy 机制只保护了 JS 层原型。技术点在于对内部符号（Symbol）的访问和原型链的篡改，实现了对安全策略的优雅绕过。与普通完整性绕过不同，它针对的是 Node.js 的信任边界，且可抽象为通用攻击模式。",
+   "attack_chain": "构造恶意 `main.js` → 获取 `crypto` 模块的 `Hash` 实例 → 通过 `Object.getOwnPropertySymbols` 找到 `kHandle` → 修改其构造函数的 `digest` 方法返回伪造摘要 → 加载 `protected.js` 时完整性检查被绕过 → 执行任意代码。",
+   "bypass_technique": "通过修改内部 C++ 绑定的原型方法，伪造哈希摘要，使 policy 完整性检查失效。",
+   "defensive_insight": "Node.js 应加固内部绑定，防止应用层篡改；或使用更底层的完整性校验机制，如签名。"
+  },
+  {
+   "id": 157507,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。nginx 版本号泄露是常见的信息泄露问题，无绕过、无攻击链，属于低危配置问题。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "隐藏服务器版本号，避免暴露已知漏洞信息。"
+  },
+  {
+   "id": 224006,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少 HttpOnly 标志是常见的 cookie 配置问题，无绕过、无攻击链，属于低危配置问题。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "为敏感 cookie 设置 HttpOnly 和 Secure 标志。"
+  },
+  {
+   "id": 2429,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。注册接口的邮箱枚举是常见的信息泄露，虽然绕过了忘记密码页面的防护，但属于业务逻辑的轻微变形，无攻击链，价值有限。",
+   "attack_chain": "无。",
+   "bypass_technique": "通过注册接口的响应差异枚举已注册邮箱。",
+   "defensive_insight": "统一注册和忘记密码的响应，避免枚举。"
+  },
+  {
+   "id": 1444682,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "是。利用 Swagger-UI 的 `configUrl` 参数加载外部配置，实现 XSS，并进一步窃取认证 token。技术点在于 Swagger-UI 的配置加载机制未限制 URL 协议，允许 `data:` 协议，且 Jamf Pro 将 token 存储在 localStorage，导致可被窃取。与普通 XSS 的区别在于利用了 Swagger-UI 的合法功能，且攻击链完整，可导致账户接管。",
+   "attack_chain": "构造恶意配置 URL（data:text/html）→ 用户点击链接 → Swagger-UI 加载配置 → 执行恶意 JS → 窃取 localStorage 中的 authToken → 账户接管。",
+   "bypass_technique": "利用 `data:` 协议绕过 URL 限制，加载外部配置。",
+   "defensive_insight": "限制 Swagger-UI 的配置来源，禁止 `data:` 协议；对 localStorage 中的敏感信息进行保护。"
+  },
+  {
+   "id": 49888,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少 X-Frame-Options 是常见的点击劫持风险，无绕过、无攻击链，属于低危配置问题。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "添加 X-Frame-Options 或 CSP frame-ancestors 头。"
+  },
+  {
+   "id": 2104564,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 框架行为利用",
+   "reasoning": "是。Node.js 权限模型（Permission Model）本应限制文件系统访问，但通过将路径遍历序列放在 Buffer 中，可以绕过检查。技术点在于权限模型对 Buffer 类型的路径参数处理不当，未正确解析其中的路径遍历序列。这利用了 Node.js 内部对路径参数类型处理的差异，实现了对安全策略的绕过。与普通路径遍历不同，它针对的是 Node.js 的权限模型，且可抽象为通用攻击模式。",
+   "attack_chain": "构造包含路径遍历序列的 Buffer 作为文件路径参数 → 权限模型未正确解析 → 访问受限文件。",
+   "bypass_technique": "利用 Buffer 类型绕过路径规范化检查。",
+   "defensive_insight": "Node.js 应统一对路径参数进行规范化处理，包括 Buffer 类型。"
+  },
+  {
+   "id": 1272095,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。SQL 错误信息泄露是常见的信息泄露问题，无绕过、无攻击链，属于低危配置问题。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "配置数据库错误处理，避免向用户展示详细错误信息。"
+  },
+  {
+   "id": 126906,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "是。利用 Python 包元数据中的 `home_page` 和 `download_url` 字段注入 `javascript:` 协议，导致存储型 XSS。技术点在于 PyPI 镜像站未对包元数据进行充分过滤，且 PEP 470 已废弃这些字段，但旧数据仍存在。与普通 XSS 的区别在于攻击面是 Python 包生态，且可持久化。",
+   "attack_chain": "构造恶意 setup.py → 上传到 PyPI → 镜像站抓取并展示 → 用户点击链接 → 执行 JS。",
+   "bypass_technique": "利用 `javascript:` 协议绕过 URL 协议限制。",
+   "defensive_insight": "对包元数据中的 URL 字段进行协议白名单校验，升级镜像软件。"
+  },
+  {
+   "id": 248668,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XXE / 跨组件攻击链",
+   "reasoning": "是。XXE 漏洞不仅可读取本地文件，还可发起外部请求，用于内网探测。技术点在于 XML 解析器未禁用外部实体，且服务有出网权限。与普通 XXE 的区别在于攻击链完整，可进一步利用。",
+   "attack_chain": "发送恶意 XML → 解析器加载外部实体 → 读取文件或发起请求 → 内网探测。",
+   "bypass_technique": "利用外部实体读取文件或发起 SSRF。",
+   "defensive_insight": "禁用 XML 外部实体，限制出网流量。"
+  },
+  {
+   "id": 1435392,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 0
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 认证绕过",
+   "reasoning": "部分。通过业务逻辑组合（先改邮箱再注册新账号）导致进入无速率限制的登录页面，可进行暴力破解。技术点在于状态混淆，但复现步骤依赖特定时序，且缺少关键细节。",
+   "attack_chain": "修改邮箱 → 不确认 → 用新邮箱注册 → 点击旧确认链接 → 进入无速率限制的登录页 → 暴力破解。",
+   "bypass_technique": "利用业务逻辑状态混淆绕过速率限制。",
+   "defensive_insight": "统一登录页的速率限制，修复业务逻辑漏洞。"
+  },
+  {
+   "id": 33987,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。OPTIONS 方法启用是常见的配置问题，无绕过、无攻击链，属于低危信息泄露。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁用不必要的 HTTP 方法。"
+  },
+  {
+   "id": 1147951,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。Jira 用户枚举是已知 CVE 的利用，无绕过、无攻击链，属于常见套路。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "升级 Jira 版本。"
+  },
+  {
+   "id": 632808,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。Jira 多个已知 CVE 的利用，无绕过、无攻击链，属于常见套路。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "升级 Jira 版本。"
+  },
+  {
+   "id": 333459,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "部分。npm 包名与核心包重叠可能导致社会工程学攻击，但未提供具体利用场景，信息不足。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "npm 应阻止与核心包同名的包发布。"
+  },
+  {
+   "id": 55009,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "部分。利用 frameset 隐藏代理提示，可能用于钓鱼，但未提供完整攻击链，且属于设计缺陷。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "代理页面应强制显示提示，防止被 frameset 隐藏。"
+  },
+  {
+   "id": 1638347,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。前端长度限制可被绕过，属于常见问题，无攻击链，影响有限。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "后端也应进行长度校验。"
+  },
+  {
+   "id": 35823,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。路径遍历探测是常见的信息泄露，无绕过、无攻击链，属于低危。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "正确配置 Web 服务器，防止路径遍历。"
+  },
+  {
+   "id": 97609,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。注册接口的速率限制缺失导致用户枚举，是常见问题，无攻击链。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对注册接口实施速率限制。"
+  }
+ ]
+}

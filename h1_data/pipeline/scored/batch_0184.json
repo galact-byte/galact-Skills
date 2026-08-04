@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 8,
+  "dropped": 12,
+  "avg_score": 4.6,
+  "top_n": [
+   716677,
+   405100,
+   104931,
+   241598,
+   212107
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 716677,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "子域名接管 / 配置错误",
+   "reasoning": "是。利用 Fastly 的 freetls.fastly.net 域名可被任意账户注册的特性，接管了 GitLab CSP 白名单中的域名，从而绕过 CSP 执行任意脚本。这属于对 CDN 域名分配机制的滥用，非典型子域名接管，且影响面广（CSP 绕过）。",
+   "attack_chain": "注册 Fastly 账户→创建服务并绑定 gl-canary.global.ssl.fastly.net→获得 gl-canary.freetls.fastly.net 控制权→利用该域名绕过 CSP 执行恶意脚本。",
+   "bypass_technique": "利用 Fastly 免费 TLS 域名分配机制，注册目标域名对应的 freetls 域名，实现域名接管。",
+   "defensive_insight": "CSP 白名单应避免使用可被第三方注册的域名；定期审计域名所有权；使用不可预测的子域名或自有域名。"
+  },
+  {
+   "id": 297339,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。phpMyAdmin setup 页面未授权访问是常见配置错误，无绕过技巧，攻击链简单。",
+   "attack_chain": "直接访问 setup 页面→修改服务器配置。",
+   "bypass_technique": "无，直接利用未授权访问。",
+   "defensive_insight": "限制管理页面访问，移除不必要的组件。"
+  },
+  {
+   "id": 405100,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 授权绕过",
+   "reasoning": "是。OAuth redirect_uri 校验只检查前缀，导致可注入任意后缀域名，从而窃取授权码。这是对 URL 校验逻辑的经典绕过，可抽象为'前缀匹配'漏洞，具有通用性。",
+   "attack_chain": "构造恶意 redirect_uri→诱导用户点击→授权码发送到攻击者域名→攻击者兑换授权码接管账户。",
+   "bypass_technique": "利用前缀匹配漏洞，在合法域名后追加攻击者域名。",
+   "defensive_insight": "OAuth redirect_uri 应使用精确匹配或严格解析，避免前缀匹配。"
+  },
+  {
+   "id": 241598,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 状态混淆",
+   "reasoning": "部分。第三方登录时未保留用户已修改的姓名，导致重新登录后姓名被覆盖。这是业务逻辑缺陷，非典型漏洞，但思路简单，启发性中等。",
+   "attack_chain": "用户修改姓名→重新第三方登录→姓名被覆盖为第三方账户信息。",
+   "bypass_technique": "无绕过，利用业务逻辑缺陷。",
+   "defensive_insight": "第三方登录时应保留用户本地修改的字段，或提供确认机制。"
+  },
+  {
+   "id": 1844830,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。HTML 注入是常见漏洞，无绕过，攻击链简单。",
+   "attack_chain": "构造恶意链接→用户点击→页面注入 HTML。",
+   "bypass_technique": "无，直接利用未过滤参数。",
+   "defensive_insight": "对输出进行编码，使用 CSP。"
+  },
+  {
+   "id": 1636345,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "XSS",
+   "reasoning": "否。报告缺少具体参数和请求细节，仅提及反射型 XSS，无法判断技术点。",
+   "attack_chain": "未知。",
+   "bypass_technique": "未知。",
+   "defensive_insight": "对输入进行验证和输出编码。"
+  },
+  {
+   "id": 948929,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型 XSS 是常见漏洞，虽然盲打有创意，但技术点仍是未过滤输入。",
+   "attack_chain": "在员工姓名注入 payload→管理员后台触发→执行脚本。",
+   "bypass_technique": "无，直接利用未过滤输入。",
+   "defensive_insight": "对输入进行过滤和输出编码，使用 CSP。"
+  },
+  {
+   "id": 148751,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。利用 javascript: 协议绕过协议过滤，是常见 XSS 变体，但 CSP 可缓解，启发性一般。",
+   "attack_chain": "在评论中提交 javascript: URL→用户点击→执行脚本。",
+   "bypass_technique": "使用 javascript: 协议绕过协议白名单。",
+   "defensive_insight": "过滤 href 属性中的危险协议，使用 CSP。"
+  },
+  {
+   "id": 158118,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。默认凭据是常见配置错误，无绕过。",
+   "attack_chain": "直接使用默认凭据登录 Splunk。",
+   "bypass_technique": "无，利用默认凭据。",
+   "defensive_insight": "强制修改默认凭据，限制管理端口访问。"
+  },
+  {
+   "id": 212107,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 其他",
+   "reasoning": "是。通过嵌套模块定义和 ensure 块触发 mruby 解释器的空指针解引用，属于对解释器内部行为的利用，非典型 Web 漏洞，具有研究价值。",
+   "attack_chain": "构造特定 Ruby 代码→触发 mrb_class 空指针→崩溃。",
+   "bypass_technique": "利用解释器对嵌套模块和 ensure 块的处理缺陷。",
+   "defensive_insight": "修复解释器对异常路径的处理，加强输入验证。"
+  },
+  {
+   "id": 116360,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。POODLE 攻击是已知漏洞，无新意。",
+   "attack_chain": "MITM 攻击→利用 SSLv3 漏洞解密数据。",
+   "bypass_technique": "无，利用已知协议漏洞。",
+   "defensive_insight": "禁用 SSLv3，使用 TLS。"
+  },
+  {
+   "id": 104931,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 跨组件攻击链",
+   "reasoning": "是。利用 OAuth 流程中缺少 state 参数，结合 CSRF 攻击，实现账户绑定替换。这是对 OAuth 标准实现的缺陷利用，攻击链完整，具有通用性。",
+   "attack_chain": "攻击者获取授权回调 URL→诱导受害者访问→受害者账户绑定攻击者 Pinterest 账户。",
+   "bypass_technique": "利用 OAuth 缺少 state 参数，进行 CSRF。",
+   "defensive_insight": "OAuth 流程必须使用 state 参数并验证。"
+  },
+  {
+   "id": 319279,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SQL注入",
+   "reasoning": "否。布尔盲注是常见 SQL 注入类型，无绕过。",
+   "attack_chain": "构造布尔条件→判断响应差异→提取数据。",
+   "bypass_technique": "无，直接利用未过滤参数。",
+   "defensive_insight": "使用参数化查询。"
+  },
+  {
+   "id": 222870,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。IRC 机器人未授权访问是配置错误，无绕过。",
+   "attack_chain": "向机器人发送任务编号→获取任务标题。",
+   "bypass_technique": "无，利用未授权访问。",
+   "defensive_insight": "对机器人命令进行身份验证。"
+  },
+  {
+   "id": 84374,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "命令注入",
+   "reasoning": "否。恶意文件上传导致 RCE 是常见漏洞，无绕过。",
+   "attack_chain": "上传 PHP 文件→访问文件→执行代码。",
+   "bypass_technique": "无，直接利用未限制上传。",
+   "defensive_insight": "限制上传文件类型，禁止执行上传目录脚本。"
+  },
+  {
+   "id": 1004750,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "IDOR / 授权绕过",
+   "reasoning": "部分。IDOR 导致密码重置是常见漏洞，但未授权场景下可批量利用，有一定启发性。",
+   "attack_chain": "获取用户 ID→构造请求→重置密码→接管账户。",
+   "bypass_technique": "无，直接利用 IDOR。",
+   "defensive_insight": "对对象引用进行访问控制，使用随机 ID。"
+  },
+  {
+   "id": 185794,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "框架行为利用 / 其他",
+   "reasoning": "是。通过删除 to_s 方法触发 mrb_any_to_s 崩溃，属于对解释器内部行为的利用，非典型 Web 漏洞，具有研究价值。",
+   "attack_chain": "删除 to_s 方法→调用 to_s→崩溃。",
+   "bypass_technique": "利用解释器对缺失方法的处理缺陷。",
+   "defensive_insight": "修复解释器对缺失方法的处理，加强输入验证。"
+  },
+  {
+   "id": 175801,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS 是常见漏洞，无绕过。",
+   "attack_chain": "构造恶意 URL→用户点击→执行脚本。",
+   "bypass_technique": "无，直接利用未过滤参数。",
+   "defensive_insight": "对输出进行编码。"
+  },
+  {
+   "id": 329791,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。内部 IP 泄露是常见信息泄露，无绕过。",
+   "attack_chain": "访问 API→获取内部 IP。",
+   "bypass_technique": "无，直接利用未过滤响应。",
+   "defensive_insight": "过滤响应中的内部 IP。"
+  },
+  {
+   "id": 1089116,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。用户枚举是常见漏洞，无绕过。",
+   "attack_chain": "发送请求→根据响应判断用户是否存在。",
+   "bypass_technique": "无，直接利用响应差异。",
+   "defensive_insight": "统一错误消息。"
+  }
+ ]
+}

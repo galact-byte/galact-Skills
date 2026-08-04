@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   390013,
+   522876,
+   1068433,
+   2218334,
+   54733
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 2218334,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。在未发布功能中通过前端脚本强制显示隐藏 GUI，进而发现 GraphQL mutation 的 IDOR，攻击链涉及前端隐藏功能与后端对象引用，思路新颖。技术点在于利用前端隐藏元素暴露未发布功能，并直接调用 GraphQL 操作。",
+   "attack_chain": "前端脚本显示隐藏 GUI → 创建会话获取 ID → 用另一账号调用 DestroyLlmConversation 删除任意会话。",
+   "bypass_technique": "通过修改 DOM 显示隐藏功能，绕过前端限制，直接操作后端 API。",
+   "defensive_insight": "未发布功能应完全禁用或进行服务端权限校验，前端隐藏不足以保护。"
+  },
+  {
+   "id": 202767,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "子域名接管 / 配置错误",
+   "reasoning": "部分。利用第三方服务 API 的 0day 接管子域名，属于配置错误与第三方服务漏洞的组合，但具体细节未完全公开，可复现性一般。",
+   "attack_chain": "发现 CNAME 指向 unbouncepages.com → 利用 API 0day 认领域名 → 放置恶意页面。",
+   "bypass_technique": "利用第三方服务 API 的认证绕过，认领任意域名。",
+   "defensive_insight": "定期检查 DNS 记录，移除不再使用的 CNAME，与第三方服务保持沟通。"
+  },
+  {
+   "id": 121469,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "认证绕过",
+   "reasoning": "否。报告仅提供视频链接，无文字描述，无法判断漏洞细节和真实性。",
+   "attack_chain": "未知",
+   "bypass_technique": "未知",
+   "defensive_insight": "无"
+  },
+  {
+   "id": 853130,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / IDOR",
+   "reasoning": "部分。典型的 IDOR，通过修改资源 ID 操作其他用户数据，但属于常见套路，无特殊绕过。",
+   "attack_chain": "修改 POST 请求中的 ID → 修改其他用户设置。",
+   "bypass_technique": "直接修改资源 ID，未校验所有权。",
+   "defensive_insight": "服务端应校验资源所有权，使用不可预测的 ID。"
+  },
+  {
+   "id": 134292,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 跨组件攻击链",
+   "reasoning": "是。通过 API 端点直接使用全局查找而非项目内查找，导致跨项目访问 webhook，属于框架行为利用，且泄露敏感 token。",
+   "attack_chain": "创建项目 → 调用 API 删除/读取其他项目 webhook → 泄露 token。",
+   "bypass_technique": "利用 API 实现中未限定项目范围，直接使用全局 ID。",
+   "defensive_insight": "API 应始终基于当前用户上下文进行资源过滤，避免全局查找。"
+  },
+  {
+   "id": 817245,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 其他",
+   "reasoning": "是。硬件钱包未检查解锁时间，允许恶意软件永久锁定资金，利用协议设计缺陷，影响严重。",
+   "attack_chain": "恶意软件诱导用户签名高解锁时间交易 → 资金永久锁定。",
+   "bypass_technique": "利用硬件钱包固件未解析解锁时间字段。",
+   "defensive_insight": "硬件钱包应验证所有交易字段，包括解锁时间。"
+  },
+  {
+   "id": 31023,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SQL注入 / XSS",
+   "reasoning": "否。MODx 错误日志中的 SQL 注入和 XSS，属于常见 CMS 漏洞，无特殊绕过。",
+   "attack_chain": "构造恶意 URL → 触发错误日志记录 → SQL 注入或 XSS。",
+   "bypass_technique": "无实质绕过，直接利用未过滤输入。",
+   "defensive_insight": "对日志记录进行参数化查询，输出编码。"
+  },
+  {
+   "id": 951508,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "路径遍历",
+   "reasoning": "否。CVE-2020-3452 是已知漏洞，直接利用公开 PoC，无新意。",
+   "attack_chain": "直接构造 URL 读取任意文件。",
+   "bypass_technique": "无，利用已知漏洞。",
+   "defensive_insight": "及时应用厂商补丁。"
+  },
+  {
+   "id": 1068433,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 其他",
+   "reasoning": "是。CTF 全流程 writeup，展示了多种漏洞组合利用，包括 SQL 注入、SSRF、DNS rebinding 等，攻击链完整，启发性强。",
+   "attack_chain": "多步：信息泄露 → IDOR → 逻辑漏洞 → SSTI → SQLi → SSRF → DNS rebinding。",
+   "bypass_technique": "多种技术组合，如利用 SQL 注入进行二次注入，DNS rebinding 绕过 IP 限制。",
+   "defensive_insight": "全面防御，包括输入验证、权限校验、网络层防护。"
+  },
+  {
+   "id": 8102,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 授权绕过",
+   "reasoning": "部分。通过修改请求中的项目 ID 在他人项目中创建组，属于业务逻辑漏洞，但思路简单。",
+   "attack_chain": "在自有项目发起创建组请求 → 修改项目 ID → 在他人项目创建组。",
+   "bypass_technique": "修改请求参数，未校验权限。",
+   "defensive_insight": "服务端应校验操作权限，不能信任客户端参数。"
+  },
+  {
+   "id": 390013,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 其他",
+   "reasoning": "是。利用 brave:// 协议读取本地文件，绕过浏览器安全限制，属于协议行为利用，影响严重。",
+   "attack_chain": "网页加载恶意 HTML → 通过 brave:// 协议读取本地文件。",
+   "bypass_technique": "利用自定义协议处理器的漏洞，未正确限制文件访问。",
+   "defensive_insight": "自定义协议应严格限制可访问的资源，避免暴露敏感文件。"
+  },
+  {
+   "id": 181642,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。libtiff 堆溢出，属于已知 CVE，无新意。",
+   "attack_chain": "构造恶意 TIFF 文件 → 触发堆溢出。",
+   "bypass_technique": "无，利用已知漏洞。",
+   "defensive_insight": "更新库版本。"
+  },
+  {
+   "id": 6547,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。SMTP 未使用 TLS，属于配置问题，无技术含量。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "启用 STARTTLS。"
+  },
+  {
+   "id": 1094151,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。GitHub 泄露 API key，属于常见信息泄露，无技术难度。",
+   "attack_chain": "搜索 GitHub 历史提交 → 发现 API key → 验证有效。",
+   "bypass_technique": "无",
+   "defensive_insight": "使用密钥扫描工具，及时撤销泄露的密钥。"
+  },
+  {
+   "id": 1093,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。LinkedIn 分享按钮未使用 HTTPS，属于低危配置问题。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "统一使用 HTTPS。"
+  },
+  {
+   "id": 1420529,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / WAF绕过",
+   "reasoning": "部分。利用 JSFuck 编码绕过 WAF，属于常见绕过技巧，但结合 clickjacking 提升利用性。",
+   "attack_chain": "构造恶意 URL → 触发 XSS → 结合 clickjacking 提升危害。",
+   "bypass_technique": "使用 JSFuck 编码绕过 WAF 过滤。",
+   "defensive_insight": "加强输入过滤，使用 CSP，防止 clickjacking。"
+  },
+  {
+   "id": 522876,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "配置错误 / 跨组件攻击链",
+   "reasoning": "是。利用 Docker 环境中的配置读取失败，导致安装程序暴露，进而创建任意管理员，属于环境配置与业务逻辑的组合，攻击链完整。",
+   "attack_chain": "容器无法读取 config.php → 触发安装程序 → 攻击者创建管理员账户。",
+   "bypass_technique": "利用配置读取失败，绕过已安装检查。",
+   "defensive_insight": "安装程序应检查数据库是否已有表，避免重复安装。"
+  },
+  {
+   "id": 8017,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。无暴力破解防护，属于常见配置问题，且为重复报告。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "实施账户锁定或速率限制。"
+  },
+  {
+   "id": 54733,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 其他",
+   "reasoning": "是。利用 HTML5 sandbox 禁用 JavaScript 但保留表单提交，绕过确认对话框，属于协议行为利用，思路新颖。",
+   "attack_chain": "构造 sandbox iframe → 用户点击 → 支付确认被绕过。",
+   "bypass_technique": "利用 sandbox 属性，禁用 JS 但保留表单提交。",
+   "defensive_insight": "支付确认应依赖服务端验证，不能仅依赖前端 JS。"
+  },
+  {
+   "id": 2213251,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 业务逻辑",
+   "reasoning": "部分。利用搜索功能泄露受限报告中的敏感词，属于逻辑漏洞，可被用于逐字符提取秘密。",
+   "attack_chain": "构造搜索查询 → 判断词是否存在 → 逐字符提取秘密。",
+   "bypass_technique": "利用搜索功能对全文索引，而非仅限公开部分。",
+   "defensive_insight": "搜索功能应仅索引公开部分，避免泄露非公开内容。"
+  }
+ ]
+}

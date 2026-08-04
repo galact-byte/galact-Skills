@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 5,
+  "dropped": 15,
+  "avg_score": 3.4,
+  "top_n": [
+   416040,
+   633245,
+   962705,
+   1763704,
+   2032716
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 416040,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链 / 配置错误",
+   "reasoning": "是。Brave 浏览器协议权限模型存在三重缺陷，核心是 url: 协议前缀嵌套绕过：用户仅被询问 url: 协议，允许后 url:mailto:、url:bitcoin: 等所有协议免确认直接启动外部应用——'协议前缀嵌套使权限检查被短路'是浏览器权限模型的系统性绕过，反直觉且可通用；叠加'记住决定后任意域名免问'与'循环启动崩溃 OS'形成完整攻击面。Chrome/FF/IE 均不受影响，Brave 独有，边界条件清晰。",
+   "attack_chain": "诱导允许 url: 协议→window.open('url:mailto:'+payload)→外部应用免确认启动→任意域名/循环启动→钱包误操作或系统崩溃。",
+   "bypass_technique": "用 url: 前缀嵌套目标协议，使权限模型只匹配外层协议。",
+   "defensive_insight": "协议权限按解析后的最终协议判定，禁止前缀嵌套绕过；'记住决定'不得跨域生效；外部应用启动频率限制。"
+  },
+  {
+   "id": 684567,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。AF_PACKET 套接字有符号问题致内核写越界提权 root（CVE-2017-7308）——内核环形缓冲区长度计算缺陷是经典 LPE 套路（Project Zero 级别质量但技术机制成熟），正文仅引用外部 exploit/blog 无自证细节。",
+   "attack_chain": "非特权进程开 AF_PACKET 套接字→构造恶意环形缓冲区参数→内核越界写→提权 root。",
+   "bypass_technique": "无绕过，直接利用内核符号缺陷。",
+   "defensive_insight": "内核长度计算统一用无符号类型并做溢出检查；及时跟进内核安全补丁。"
+  },
+  {
+   "id": 633245,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑 / 跨组件攻击链",
+   "reasoning": "是。Nextcloud 分享权限模型缺陷：为'接收方可解绑共享'设计的隐含 DELETE 权限在重分享时被显式化并逐级传播，read+reshare 接收方可给下家 read+delete，删除上家文件——'为内部解绑设计的隐含权限被继承为真实权限'是权限传播裁剪缺陷的典型，可抽象为通用判据（重分享必须对权限做裁剪/降级而非原样传递）；一级 curl 触发，user0→user1→user2 三级链路清晰。",
+   "attack_chain": "user1 收 read+reshare→重分享给 user2 附 delete→user2 删除 user0 的文件。",
+   "bypass_technique": "无绕过，利用重分享时隐含 delete 被显式传递的权限模型缺陷。",
+   "defensive_insight": "重分享权限必须按接收方实际持有裁剪（隐含权限不得外传）；共享根目录的 delete 语义与文件删除解耦。"
+  },
+  {
+   "id": 138659,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。%ff 触发 unicode 解码错误，错误页暴露 Python 安装路径——错误信息泄露服务器路径的经典问题，影响轻微（仅路径），informative。",
+   "attack_chain": "单点：请求 %ff→解码异常→错误页回显 Python 路径。",
+   "bypass_technique": "无绕过，直接利用未脱敏错误信息。",
+   "defensive_insight": "错误页统一脱敏（路径/版本）；生产环境隐藏堆栈与内部路径。"
+  },
+  {
+   "id": 654198,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。利用 publish 功能对未受邀私有程序提交报告，经安全转发邀请后 hacktivity 显示 resolved——业务流程组合操纵公开形象（信誉影响），多步但每一步都是正常功能，无技术绕过；影响非数据安全而是展示层欺骗。",
+   "attack_chain": "publish 报告选未受邀程序→邮件触发邀请→接受后 hacktivity 显示 resolved。",
+   "bypass_technique": "无绕过，组合正常功能制造虚假记录。",
+   "defensive_insight": "发布/转发流程校验程序邀请关系；hacktivity 记录与真实参与状态强绑定。"
+  },
+  {
+   "id": 1860905,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。Splunk __raw 端点泄露 server-info（license key）——已知 CVE-2018-11409 的标准复现，无新技巧无链。",
+   "attack_chain": "单点：访问 __raw/services/server/info→未认证读服务器信息与许可证。",
+   "bypass_technique": "无绕过，直接利用已知 CVE 端点。",
+   "defensive_insight": "升级 Splunk；管理端点强制认证并限制外部访问。"
+  },
+  {
+   "id": 2032716,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 授权绕过",
+   "reasoning": "部分。SaveCollaboratorsMutation 添加协作者时，响应泄露任意 hack 的注册邮箱——'输入用户名返回邮箱'的 PII 枚举接口，影响面大（全站用户邮箱）且未受邀即可触发（用 dummy 报告发邀请）；但机制是接口返回多余字段的经典信息泄露，无绕过技巧。",
+   "attack_chain": "创建 dummy 报告→SaveCollaboratorsMutation 添加目标用户名→响应回显其邮箱→批量枚举。",
+   "bypass_technique": "无绕过，直接利用响应中的冗余字段。",
+   "defensive_insight": "GraphQL 响应字段级最小化；邮箱仅本人可见，协作者邀请响应只返回邀请状态。"
+  },
+  {
+   "id": 158554,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑 / 其他",
+   "reasoning": "否。名字设为 URL 使邀请邮件首词成为恶意链接——用户可控字段进入邮件超链接的邮件注入经典问题，钓鱼价值明确但机制零变形。",
+   "attack_chain": "名字设为恶意 URL→发送邀请→收件人点击邮件内链接→钓鱼。",
+   "bypass_technique": "无绕过，直接利用名字字段未校验进邮件正文。",
+   "defensive_insight": "事务邮件正文中的用户字段以纯文本插入，禁止自动链接化。"
+  },
+  {
+   "id": 1578400,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。客户联系姓名存 <script>，/add_contacts 快速命令弹窗触发——新功能输出未转义的经典存储 XSS，步骤完整但技术零变形。",
+   "attack_chain": "联系人姓名存 payload→他人使用 /add_contacts→弹窗渲染执行。",
+   "bypass_technique": "无绕过，直接利用未转义输出。",
+   "defensive_insight": "快速命令/弹窗类输出统一上下文编码；新功能上线带 XSS 回归测试。"
+  },
+  {
+   "id": 962705,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 信息泄露 / 跨组件攻击链",
+   "reasoning": "部分。Hyperledger Fabric 2.0 的 invoke 交易把私有数据明文放进 payload 字段，区块分发给通道内全部 peer（含 PDC 非成员）——'宣称的隐私机制（私有数据集合）被交易结构设计破坏'是协议层缺陷，invoke 与 query 行为差异（query 不走 payload）有反直觉性；官方示例复现完整。",
+   "attack_chain": "PDC 成员 invoke 读私有数据→明文进 payload 打包区块→分发给通道全部 peer→非成员从本地账本读取。",
+   "bypass_technique": "无绕过，利用交易 payload 字段携带私有数据明文的协议设计。",
+   "defensive_insight": "交易载荷与账本分发做隐私分级：私有数据只哈希上链、明文仅限 PDC 内分发。"
+  },
+  {
+   "id": 15330,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "XSS",
+   "reasoning": "无法判断。正文仅声明 go.mail.ru 存在 Flash XSS 并附 YouTube 视频，无任何技术细节、payload 或触发路径。",
+   "attack_chain": "无法确认。",
+   "bypass_technique": "无法确认。",
+   "defensive_insight": "Flash 内容已基本废弃；外链白名单与 SWF 加固。"
+  },
+  {
+   "id": 35532,
+   "value_score": 0,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "无法判断。印度手机号收不到注册验证码——短信服务功能故障而非安全漏洞，无攻击路径与安全影响。",
+   "attack_chain": "无法确认。",
+   "bypass_technique": "无法确认。",
+   "defensive_insight": "验证码通道可用性监控（短信送达率）。"
+  },
+  {
+   "id": 1746098,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "部分。Django 国际化 URL 的 locale 参数直接作为正则处理，构造 Python 正则可 ReDoS——'用户输入进入正则引擎'的框架行为缺陷有反直觉性；但正文无 PoC 细节（仅 CVE 摘要），可复现性缺失。",
+   "attack_chain": "单点：构造恶意 locale 正则→URL 解析正则回溯→CPU 耗尽。",
+   "bypass_technique": "无绕过，利用参数值被编译为正则的行为。",
+   "defensive_insight": "locale 参数白名单化而非正则编译；升级修复版本。"
+  },
+  {
+   "id": 1086752,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。加载重置链接后 resetpasswordpost 表单无 CSRF 防护，可被诱导提交改密——'重置流程激活的改密状态无 CSRF 保护'的组合有细节，但机制是经典 CSRF，PoC 完整。",
+   "attack_chain": "受害者打开重置链接→诱导提交隐藏改密表单→密码被篡改。",
+   "bypass_technique": "无绕过，利用改密状态期间缺失的 CSRF 防护。",
+   "defensive_insight": "改密表单强制 CSRF token；重置会话绑定一次性随机 token 且提交后即失效。"
+  },
+  {
+   "id": 30019,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。上传文件名含 svg onload 未转义显示，文件管理器页触发——文件名存储 XSS 经典，正文简略无响应细节。",
+   "attack_chain": "上传恶意文件名→他人访问文件管理器→文件名渲染执行。",
+   "bypass_technique": "无绕过，直接利用文件名未转义。",
+   "defensive_insight": "文件名展示统一转义；上传文件名规范化（拒绝引号/尖括号）。"
+  },
+  {
+   "id": 17766,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "无法判断。仅泛泛建议 Android button 加 filterTouchesWhenObscured 防 tapjacking，无具体受影响应用、无 PoC，是安全建议而非漏洞报告。",
+   "attack_chain": "无法确认。",
+   "bypass_technique": "无法确认。",
+   "defensive_insight": "关键按钮控件加 filterTouchesWhenObscured 并检测 overlay。"
+  },
+  {
+   "id": 65729,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。Drozer 扫描发现 20+ Activity 无权限保护可被其他 app 调用/崩溃——Android 组件暴露经典问题，组件清单完整但无实际攻击演示。",
+   "attack_chain": "单点：第三方 app 隐式 Intent 启动未保护 Activity→越权操作/崩溃。",
+   "bypass_technique": "无绕过，直接利用缺失的组件权限。",
+   "defensive_insight": "导出组件最小化并加权限校验；exported=false 默认+Intent 校验。"
+  },
+  {
+   "id": 128051,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "授权绕过 / 信息泄露",
+   "reasoning": "否。导入成员功能未校验对 source_project_id 的访问权限，指向私有项目即可复制其成员名单（含邮箱）——IDOR 经典，代码定位清晰但机制零变形。",
+   "attack_chain": "单点：导入成员时把 source_project_id 换为私有项目→成员名单复制进自己项目。",
+   "bypass_technique": "无绕过，直接替换源对象引用。",
+   "defensive_insight": "导入/引用类操作校验当前用户对源资源的访问权；成员邮箱字段级最小化。"
+  },
+  {
+   "id": 1763704,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "命令注入",
+   "reasoning": "部分。release-sdk 的 LSRemoteExec 把用户输入拼进 git 命令，--upload-pack=touch 参数注入执行任意命令——'git 等 CLI 的选项参数注入'（非命令拼接）是 Snyk 总结的精细技巧，--upload-pack 可被滥用执行任意程序，payload 极简可复用；可抽象为通用判据（用户输入拼进 CLI 前必须加 -- 终止选项解析）。",
+   "attack_chain": "单点：传 --upload-pack=touch${IFS}hack→git 解析为执行选项→任意命令执行。",
+   "bypass_technique": "借 git 的 --upload-pack 选项注入执行任意程序。",
+   "defensive_insight": "用户输入拼进 CLI 前加 '--' 终止选项解析；子进程调用用参数数组禁用 shell。"
+  },
+  {
+   "id": 17241,
+   "value_score": 0,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "XSS",
+   "reasoning": "无法判断。正文仅一行声称 staging 站点 ?q=user 参数存在 XSS，无 payload、无请求、无证明。",
+   "attack_chain": "无法确认。",
+   "bypass_technique": "无法确认。",
+   "defensive_insight": "无有效信息。"
+  }
+ ]
+}

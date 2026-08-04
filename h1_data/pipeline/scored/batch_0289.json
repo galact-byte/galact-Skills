@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   447930,
+   1805893,
+   921704,
+   439107,
+   1250730
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 439107,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "原型污染 / 框架行为利用",
+   "reasoning": "是。通过 JSON.parse 解析用户输入，利用 __proto__ 键在递归合并时污染 Object.prototype，这是原型污染的经典触发方式，但 lutils-merge 库的递归合并行为使得攻击面扩大，且 PoC 简洁清晰。技术点在于递归合并未过滤 __proto__ 键，导致全局对象污染，可导致 DoS 或 RCE。与普通原型污染报告的区别在于库的通用性和触发条件的明确性，值得进库作为库安全审计的参考。",
+   "attack_chain": "用户输入 JSON → 递归合并 → 污染 Object.prototype → 影响所有对象 → 潜在 DoS/RCE",
+   "bypass_technique": "利用 __proto__ 键在合并时未过滤，直接污染原型链。",
+   "defensive_insight": "在递归合并时过滤 __proto__、constructor 等危险键，使用 Object.create(null) 或白名单键。"
+  },
+  {
+   "id": 38189,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。通过 Google 联系人名称注入 XSS payload，同步到 openfolio 后触发存储型 XSS，属于常见的存储型 XSS 场景，无特殊绕过或非预期行为。技术点在于外部数据同步未过滤，但思路常规。",
+   "attack_chain": "创建恶意联系人 → 同步到目标应用 → 点击触发 XSS",
+   "bypass_technique": "无实质绕过，利用外部数据源未过滤。",
+   "defensive_insight": "对外部同步数据同样进行输出编码和输入验证。"
+  },
+  {
+   "id": 1805893,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 认证绕过",
+   "reasoning": "是。CVE-2022-23520 展示了 Rails Html::SafeListSanitizer 的不完整修复：修复只处理了通过 options 传入的 tags，而忽略了类属性配置的 tags，导致在特定配置下仍可绕过过滤。这利用了框架内部两条配置路径的不一致，属于框架行为利用。技术点在于修复逻辑只覆盖了部分调用路径，产生非预期行为。与普通 XSS 报告的区别在于它揭示了安全补丁的常见缺陷——修复不完整，值得进库作为补丁审计的案例。",
+   "attack_chain": "配置允许 select 和 style → 使用 payload 触发 XSS → 绕过 sanitizer",
+   "bypass_technique": "利用修复未覆盖的配置路径（类属性 vs options 参数）绕过过滤。",
+   "defensive_insight": "安全修复应覆盖所有配置路径，并统一处理逻辑；测试应覆盖多种配置方式。"
+  },
+  {
+   "id": 380317,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 授权绕过",
+   "reasoning": "部分。GraphQL API 暴露了私有项目的参与者数量，未授权用户可查询，属于授权绕过导致的信息泄露。技术点在于 GraphQL 查询未正确检查权限，但思路较直接，无复杂绕过。",
+   "attack_chain": "构造 GraphQL 查询 → 获取私有项目参与者信息",
+   "bypass_technique": "直接查询未授权字段，利用 API 权限检查缺失。",
+   "defensive_insight": "GraphQL 字段级权限控制，确保私有数据仅对授权用户可见。"
+  },
+  {
+   "id": 192665,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "内存破坏 / 其他",
+   "reasoning": "部分。mruby 中的堆缓冲区溢出，通过构造特定 Ruby 代码触发，ASAN 报告清晰。技术点在于字符串拼接时的缓冲区大小计算错误，但属于常见的内存管理问题，无特殊绕过。",
+   "attack_chain": "构造恶意 Ruby 脚本 → 触发字符串拼接 → 堆溢出 → 潜在 RCE",
+   "bypass_technique": "无实质绕过，利用未检查的缓冲区大小。",
+   "defensive_insight": "在字符串操作中严格检查缓冲区大小，使用安全函数。"
+  },
+  {
+   "id": 143323,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。多个参数存在反射型 XSS，直接注入 payload，无绕过，属于成熟套路。",
+   "attack_chain": "单点：参数注入 → 反射 XSS",
+   "bypass_technique": "无实质绕过，直接利用未过滤参数。",
+   "defensive_insight": "对所有输入进行输出编码，使用安全框架。"
+  },
+  {
+   "id": 106779,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 0
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 协议行为利用",
+   "reasoning": "部分。利用 Markdown 链接的 data: URI 协议执行 XSS，属于协议行为利用，但 payload 较常见，且报告缺少详细复现步骤。",
+   "attack_chain": "提交恶意 Markdown → 点击链接 → 执行 data: URI 中的脚本",
+   "bypass_technique": "利用 data: URI 绕过链接协议限制。",
+   "defensive_insight": "过滤 Markdown 中的危险协议，限制链接的 scheme。"
+  },
+  {
+   "id": 313050,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "IDOR",
+   "reasoning": "否。通过修改 user_id 参数查看其他用户的订阅，典型的 IDOR，无特殊之处。",
+   "attack_chain": "单点：修改 user_id → 查看他人数据",
+   "bypass_technique": "无实质绕过，直接利用未授权对象引用。",
+   "defensive_insight": "服务端校验用户权限，使用不可预测的标识符。"
+  },
+  {
+   "id": 447930,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "IDOR / 跨组件攻击链",
+   "reasoning": "是。通过 GraphQL node 接口枚举嵌入式提交表单的 UUID，利用后端自增主键与 UUID 的映射，绕过随机 UUID 的保护，进而获取私有项目信息。技术点在于 GraphQL 的 node 接口暴露了内部主键，且 UUID 并非主键，导致可枚举。这属于跨组件攻击链（GraphQL 接口 + 内部主键），且可抽象为通用判断条件：任何使用 UUID 作为外部标识但内部使用自增主键的系统都可能受影响。与普通 IDOR 的区别在于它利用了 GraphQL 的全局 ID 设计缺陷，值得进库。",
+   "attack_chain": "解码 node ID → 修改主键 → 查询 UUID → 使用 UUID 获取私有项目信息",
+   "bypass_technique": "利用 GraphQL node 接口的全局 ID 可预测性，枚举内部主键。",
+   "defensive_insight": "避免在外部暴露内部主键，使用不可预测的 UUID 作为主键，或对 node 接口进行权限校验。"
+  },
+  {
+   "id": 921704,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 0
+   },
+   "verdict": "保留，高优先级",
+   "category": "缓存投毒 / 跨组件攻击链",
+   "reasoning": "是。通过缓存投毒 CORS 响应，导致跨域请求被拒绝，形成 DoS。技术点在于缓存未根据 Origin 头进行键控，且服务端回显任意 Origin，属于缓存与 CORS 的交互问题。这属于跨组件攻击链（缓存 + CORS），且可抽象为通用判断条件：任何缓存未键控 Origin 且回显 Origin 的端点都可能受影响。与普通缓存投毒的区别在于它利用 CORS 配置错误，值得进库。",
+   "attack_chain": "发送带恶意 Origin 的请求 → 缓存投毒 → 其他用户请求被拒绝 → DoS",
+   "bypass_technique": "利用缓存未键控 Origin，投毒 Access-Control-Allow-Origin 头。",
+   "defensive_insight": "缓存键应包含 Origin 头，或对 Origin 进行白名单校验，不直接回显。"
+  },
+  {
+   "id": 181677,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "内存破坏 / 其他",
+   "reasoning": "部分。解析三元运算符时出现空指针解引用，导致崩溃。技术点在于语法解析器对特定输入处理不当，但属于常见的解析器漏洞，无特殊绕过。",
+   "attack_chain": "构造恶意 Ruby 代码 → 触发解析器崩溃 → DoS",
+   "bypass_technique": "无实质绕过，利用解析器缺陷。",
+   "defensive_insight": "加强解析器的输入验证和错误处理。"
+  },
+  {
+   "id": 144674,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SQL注入",
+   "reasoning": "否。时间盲注，通过控制参数触发延迟，成熟套路，无特殊之处。",
+   "attack_chain": "单点：参数注入 → 时间盲注",
+   "bypass_technique": "无实质绕过，直接利用未过滤拼接。",
+   "defensive_insight": "使用参数化查询，避免拼接。"
+  },
+  {
+   "id": 141541,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 信息泄露",
+   "reasoning": "部分。无权限用户可直接访问日历数据接口，属于授权绕过，但思路较直接，无复杂绕过。",
+   "attack_chain": "获取日历接口 URL → 以无权限用户访问 → 获取敏感数据",
+   "bypass_technique": "直接访问未授权接口，利用权限检查缺失。",
+   "defensive_insight": "服务端对每个接口进行权限校验，确保用户有权限访问。"
+  },
+  {
+   "id": 217344,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "路径遍历",
+   "reasoning": "部分。通过 editorImpl 参数进行路径遍历，读取 WEB-INF/web.xml，经典漏洞，但 PoC 完整，且需要特殊字符（?）绕过错误，略有变形。",
+   "attack_chain": "构造路径遍历 payload → 读取敏感文件",
+   "bypass_technique": "利用 ../ 和 ? 绕过路径检查。",
+   "defensive_insight": "对用户输入进行规范化，禁止包含 .. 和特殊字符。"
+  },
+  {
+   "id": 686823,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "内存破坏 / 其他",
+   "reasoning": "部分。Curl_saferealloc 失败后导致 double-free，可远程触发。技术点在于错误处理路径未正确释放内存，属于常见的内存管理问题，但可远程触发，且 PoC 清晰。",
+   "attack_chain": "发送特定长度值 → 触发 realloc 失败 → double-free → 潜在 RCE",
+   "bypass_technique": "无实质绕过，利用错误处理缺陷。",
+   "defensive_insight": "在 realloc 失败时正确释放资源，避免 double-free。"
+  },
+  {
+   "id": 144485,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "内存破坏 / 其他",
+   "reasoning": "否。字符串转换时缓冲区大小不足导致堆溢出，常见内存问题，无特殊之处。",
+   "attack_chain": "单点：构造特定字符串 → 触发溢出",
+   "bypass_technique": "无实质绕过，利用缓冲区大小计算错误。",
+   "defensive_insight": "在字符串转换时正确计算缓冲区大小。"
+  },
+  {
+   "id": 1065041,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。Google API 密钥泄露，直接暴露在端点中，属于配置错误，无技术含量。",
+   "attack_chain": "单点：发现泄露的 API 密钥 → 滥用",
+   "bypass_technique": "无实质绕过，直接利用配置错误。",
+   "defensive_insight": "密钥应存储在服务端，不暴露在前端。"
+  },
+  {
+   "id": 149855,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。移动版网站用户名反射 XSS，直接注入，无绕过，常见套路。",
+   "attack_chain": "单点：构造恶意 URL → 反射 XSS",
+   "bypass_technique": "无实质绕过，利用未过滤输出。",
+   "defensive_insight": "对所有输出进行编码，特别是用户可控数据。"
+  },
+  {
+   "id": 1250730,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "CSS注入 / 协议行为利用",
+   "reasoning": "是。通过在白名单域名后添加参数，绕过 CSS 加载的域名白名单，实现任意 CSS 注入。技术点在于 URL 解析时，白名单检查只验证了域名部分，而忽略了路径和参数，导致可注入外部 CSS。这属于协议行为利用，且可抽象为通用判断条件：任何基于域名白名单的 URL 过滤都可能被参数绕过。与普通 CSS 注入的区别在于它利用了白名单检查的缺陷，值得进库。",
+   "attack_chain": "构造恶意 URL → 绕过白名单 → 加载外部 CSS → 执行恶意脚本或窃取数据",
+   "bypass_technique": "在 URL 中添加白名单域名作为参数，绕过域名检查。",
+   "defensive_insight": "对 URL 进行完整解析，不仅检查域名，还要检查路径和参数，使用严格的白名单。"
+  },
+  {
+   "id": 223344,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSV注入",
+   "reasoning": "否。CSV 导出时未过滤公式，导致公式执行，常见套路，无特殊之处。",
+   "attack_chain": "单点：输入公式 → 导出 CSV → 公式执行",
+   "bypass_technique": "无实质绕过，直接利用未过滤公式。",
+   "defensive_insight": "在 CSV 导出时对以 =、+、-、@ 开头的单元格进行转义。"
+  }
+ ]
+}

@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1061591,
+   173969,
+   330957,
+   1322322,
+   753567
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 29234,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑",
+   "reasoning": "部分。信用卡验证只在添加时检查，之后不验证有效性，导致可取消卡片后继续使用即时购买。这是业务逻辑缺陷，但思路较直接，没有复杂绕过。",
+   "attack_chain": "添加信用卡→取消卡片→利用系统不重新验证→进行即时购买→银行转账失败导致资金损失。",
+   "bypass_technique": "利用系统只在添加时验证信用卡，之后不检查卡片状态。",
+   "defensive_insight": "定期重新验证支付方式，或在交易时检查卡片状态。"
+  },
+  {
+   "id": 2215418,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。事件描述中的HTML注入，属于存储型XSS的常见变体，没有特殊绕过或创新。",
+   "attack_chain": "创建事件→在描述中注入HTML→用户搜索时执行。",
+   "bypass_technique": "无实质绕过，直接注入HTML。",
+   "defensive_insight": "对用户输入进行HTML转义或使用白名单过滤。"
+  },
+  {
+   "id": 126049,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。存储型XSS，但触发需要受害者删除应用，属于交互性较强的场景，但技术点仍是常见的XSS。",
+   "attack_chain": "创建恶意应用→受害者删除时触发XSS→窃取会话。",
+   "bypass_technique": "利用应用名称未过滤，注入XSS payload。",
+   "defensive_insight": "对应用名称进行输出编码，并实施内容安全策略。"
+  },
+  {
+   "id": 1061591,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 跨组件攻击链",
+   "reasoning": "是。Nextcloud在用户列表页面预填充存储凭据，导致管理员凭据被存储为所有用户的SMB凭据，从而允许用户以管理员身份访问SMB共享。这是跨组件（用户管理、外部存储、认证）的逻辑缺陷，且影响所有版本。",
+   "attack_chain": "管理员访问用户列表→触发预填充凭据→所有用户获得管理员凭据→访问SMB共享。",
+   "bypass_technique": "利用用户列表页面预填充凭据的逻辑，导致凭据混淆。",
+   "defensive_insight": "不要在用户列表页面预填充凭据，确保凭据与当前用户匹配。"
+  },
+  {
+   "id": 178253,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，通过URL路径注入，常见于错误页面，没有特殊绕过。",
+   "attack_chain": "构造恶意URL→服务器错误页面反射脚本→执行。",
+   "bypass_technique": "无实质绕过，直接注入。",
+   "defensive_insight": "对错误消息中的用户输入进行编码。"
+  },
+  {
+   "id": 260239,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "业务逻辑",
+   "reasoning": "否。报告描述篡改邮件ID，但缺少具体影响和验证，且substate为informative，信息不足。",
+   "attack_chain": "拦截聊天请求→修改邮件ID→发送。",
+   "bypass_technique": "无实质绕过，直接修改参数。",
+   "defensive_insight": "服务端验证邮件ID与当前用户匹配。"
+  },
+  {
+   "id": 1943252,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑",
+   "reasoning": "部分。通过修改响应中的false为true绕过验证码，属于客户端验证绕过，思路简单但有效。",
+   "attack_chain": "预约→输入验证码→拦截响应→修改false为true→绕过验证。",
+   "bypass_technique": "修改响应中的布尔值。",
+   "defensive_insight": "服务端验证验证码，不信任客户端响应。"
+  },
+  {
+   "id": 859802,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，参数未过滤，常见套路。",
+   "attack_chain": "构造恶意URL→参数反射→执行脚本。",
+   "bypass_technique": "无实质绕过。",
+   "defensive_insight": "对参数进行输出编码。"
+  },
+  {
+   "id": 888253,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。这是CTF writeup，不是漏洞报告，且信息不足。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "无。"
+  },
+  {
+   "id": 159693,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告指向外部链接，缺少具体细节，无法评估。",
+   "attack_chain": "未知。",
+   "bypass_technique": "未知。",
+   "defensive_insight": "未知。"
+  },
+  {
+   "id": 13285,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。URL路径后缀XSS，常见于错误页面，没有特殊绕过。",
+   "attack_chain": "构造恶意URL→路径反射→执行脚本。",
+   "bypass_technique": "无实质绕过。",
+   "defensive_insight": "对路径进行编码。"
+  },
+  {
+   "id": 753567,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "是。存储型XSS，通过select属性选项注入，且未认证用户可通过Express Form触发，形成跨组件攻击链。",
+   "attack_chain": "创建select属性→注入XSS→编辑时触发→或通过Express Form未认证提交→存储XSS。",
+   "bypass_technique": "利用属性选项未过滤，注入脚本。",
+   "defensive_insight": "对属性选项进行输出编码，并限制未认证用户提交。"
+  },
+  {
+   "id": 173969,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过",
+   "reasoning": "是。添加列表协作者端点缺少授权检查，任何用户可添加自己为任意列表的协作者，从而完全控制列表。这是典型的IDOR，但影响广泛。",
+   "attack_chain": "构造请求→添加自己为协作者→获取列表token→完全控制列表。",
+   "bypass_technique": "直接调用API，未验证用户是否有权限。",
+   "defensive_insight": "在添加协作者时验证当前用户对列表的权限。"
+  },
+  {
+   "id": 330957,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "命令注入",
+   "reasoning": "是。pdfinfojs模块将filename参数直接拼接到命令中，导致命令注入。利用$({touch,a})绕过空格限制，展示了优雅的payload构造。",
+   "attack_chain": "传入恶意filename→命令拼接→执行任意命令。",
+   "bypass_technique": "使用$()和花括号扩展绕过空格限制。",
+   "defensive_insight": "使用child_process.execFile或参数化调用，避免拼接。"
+  },
+  {
+   "id": 129027,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。错误页面泄露堆栈信息，常见的信息泄露，没有特殊绕过。",
+   "attack_chain": "访问特殊URL→触发错误→泄露路径。",
+   "bypass_technique": "无。",
+   "defensive_insight": "在生产环境禁用详细错误信息。"
+  },
+  {
+   "id": 800140,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用",
+   "reasoning": "部分。利用HTTP/2 SETTINGS帧的畸形序列触发断言，导致DoS。这是协议层面的行为利用，但需要特定序列，通用性一般。",
+   "attack_chain": "发送畸形SETTINGS帧→触发断言→进程崩溃。",
+   "bypass_technique": "利用HTTP/2实现中的断言缺陷。",
+   "defensive_insight": "修复断言，增加输入验证。"
+  },
+  {
+   "id": 217058,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "CRLF注入",
+   "reasoning": "部分。CRLF注入，但影响有限，且需要特定环境。",
+   "attack_chain": "注入CRLF→修改响应头→可能缓存投毒。",
+   "bypass_technique": "利用URL编码的CRLF。",
+   "defensive_insight": "过滤用户输入中的CRLF字符。"
+  },
+  {
+   "id": 319794,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。存储型XSS，通过文件名注入，需要用户访问目录列表，但展示了文件名作为攻击面。",
+   "attack_chain": "创建恶意文件名→访问目录列表→执行脚本。",
+   "bypass_technique": "利用文件名未转义。",
+   "defensive_insight": "对文件名进行HTML转义。"
+  },
+  {
+   "id": 390499,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用",
+   "reasoning": "部分。JSON解析器未检查嵌套深度，导致栈溢出，属于协议行为利用，但思路较直接。",
+   "attack_chain": "发送深层嵌套JSON→栈溢出→DoS。",
+   "bypass_technique": "利用解析器未限制深度。",
+   "defensive_insight": "限制JSON嵌套深度。"
+  },
+  {
+   "id": 1322322,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "是。通过URL参数生成隐藏输入字段，利用name属性注入HTML，绕过基本防护，并利用事件处理器触发XSS。展示了框架行为利用。",
+   "attack_chain": "构造URL参数→生成隐藏字段→注入HTML→触发XSS→窃取cookie。",
+   "bypass_technique": "利用参数名注入HTML，使用事件处理器绕过过滤。",
+   "defensive_insight": "对参数名进行编码，使用CSP。"
+  }
+ ]
+}

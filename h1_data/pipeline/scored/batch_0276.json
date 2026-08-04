@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   108113,
+   1266828,
+   1656627,
+   1364851,
+   863956
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 257376,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告仅提及缺少字符串大小限制，但未提供具体影响、利用方式或复现细节，信息严重不足，无法判断是否为真实漏洞。",
+   "attack_chain": "无明确攻击链。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对用户输入实施长度限制和验证。"
+  },
+  {
+   "id": 52532,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。邮件中链接指向过期域名，属于典型的配置疏漏，可被用于钓鱼，但无技术绕过或攻击链，属于常见问题。",
+   "attack_chain": "邮件链接→过期域名→潜在钓鱼。",
+   "bypass_technique": "无。",
+   "defensive_insight": "定期检查邮件中外部链接的有效性，避免使用过期域名。"
+  },
+  {
+   "id": 280504,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。弱密码策略是常见配置问题，无技术含量，属于成熟套路。",
+   "attack_chain": "注册→弱密码→账户易被破解。",
+   "bypass_technique": "无。",
+   "defensive_insight": "实施强密码策略，强制复杂度要求。"
+  },
+  {
+   "id": 108113,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 认证绕过",
+   "reasoning": "是。利用URL解析与输出编码差异：验证时解析URL的hostname，但输出时非ASCII字符被转换为问号，导致URL结构改变，将攻击者域名变为hostname，实现OAuth回调URL绕过。这是对URL解析器与HTTP头编码行为差异的巧妙利用，可抽象为通用绕过模式。",
+   "attack_chain": "构造恶意callback_url→通过hostname验证→输出时%ff转为?→重定向至攻击者域名→窃取OAuth凭据→账户接管。",
+   "bypass_technique": "在authority部分插入%ff，利用输出时非ASCII转?改变URL结构，使hostname变为攻击者域名。",
+   "defensive_insight": "在输出重定向URL前，应丢弃authority部分或对URL进行规范化，确保hostname与注册域名严格匹配。"
+  },
+  {
+   "id": 317476,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 跨组件攻击链",
+   "reasoning": "是。通过修改Host头为`attacker.com/www.periscope.tv`，使OAuth回调重定向到攻击者控制的域名，实现账户接管。这是对Host头信任的滥用，属于常见的Host头注入变体，但攻击链完整，影响严重。",
+   "attack_chain": "修改Host头→OAuth回调重定向至攻击者域名→获取受害者授权→账户接管。",
+   "bypass_technique": "利用Host头注入，将回调域名改为攻击者控制的域名。",
+   "defensive_insight": "验证Host头是否在允许列表中，或使用绝对URL生成回调地址。"
+  },
+  {
+   "id": 508024,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。在公开仓库中泄露API密钥是常见配置错误，无技术绕过，属于成熟套路。",
+   "attack_chain": "公开仓库→泄露密钥→滥用API。",
+   "bypass_technique": "无。",
+   "defensive_insight": "使用密钥管理工具，避免将密钥提交到代码仓库。"
+  },
+  {
+   "id": 99374,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。已删除的员工仍可利用之前保存的Amazon授权链接添加MWS账户，因为端点未验证管理员权限。这是对权限验证缺失的利用，属于业务逻辑漏洞，攻击链清晰。",
+   "attack_chain": "员工保存授权链接→被删除→使用链接添加MWS账户→接管订单履行。",
+   "bypass_technique": "利用未验证权限的端点，重用授权链接。",
+   "defensive_insight": "确保所有敏感操作都进行权限验证，并撤销已删除用户的授权令牌。"
+  },
+  {
+   "id": 1351326,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。前端源码中泄露Firebase配置是常见错误，无技术绕过，属于成熟套路。",
+   "attack_chain": "查看源码→获取Firebase凭据→未授权访问数据库。",
+   "bypass_technique": "无。",
+   "defensive_insight": "Firebase配置应视为公开信息，但需通过安全规则保护数据库。"
+  },
+  {
+   "id": 1364851,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 配置错误",
+   "reasoning": "是。利用WordPress插件目录的自动化审核流程，攻击者可以注册与内部插件同名的插件，从而在更新时植入后门。这是对供应链信任模型的利用，属于新颖的攻击向量。",
+   "attack_chain": "注册同名插件→通过审核→上传恶意代码→受害者更新→RCE。",
+   "bypass_technique": "利用插件目录的审核漏洞，注册内部插件名。",
+   "defensive_insight": "内部插件应使用独特名称，或通过自定义更新机制避免依赖公共目录。"
+  },
+  {
+   "id": 863956,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "命令注入",
+   "reasoning": "是。`uploadSync`函数将用户输入直接拼接到`execSync`命令中，导致命令注入。虽然命令注入是常见漏洞，但该案例展示了npm模块中不安全的命令格式化，且PoC完整，具有教育意义。",
+   "attack_chain": "用户输入→拼接命令→执行任意命令。",
+   "bypass_technique": "利用shell元字符（如分号）注入命令。",
+   "defensive_insight": "使用`execFileSync`或`spawnSync`避免shell解释，或对输入进行严格校验。"
+  },
+  {
+   "id": 1166766,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / XSS",
+   "reasoning": "部分。CSP中允许`*.firebaseapp.com`，攻击者利用免费托管域名绕过iframe限制，实现钓鱼和XSS。这是对CSP白名单的滥用，属于配置错误，但思路可借鉴。",
+   "attack_chain": "CSP允许firebaseapp→部署恶意页面→iframe嵌入→钓鱼/XSS。",
+   "bypass_technique": "利用CSP白名单中的免费托管域名。",
+   "defensive_insight": "CSP白名单应最小化，避免使用公共托管域名。"
+  },
+  {
+   "id": 37822,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。Remember Me功能长期有效是常见设计问题，无技术绕过，属于成熟套路。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "限制Remember Me的有效期，或采用更安全的会话管理。"
+  },
+  {
+   "id": 2249299,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "授权绕过",
+   "reasoning": "否。CVE-2023-47037是已知漏洞，报告仅引用公开信息，无新意，属于常见套路。",
+   "attack_chain": "认证用户→修改DAG run详情→越权。",
+   "bypass_technique": "利用缺失的权限检查。",
+   "defensive_insight": "实施严格的访问控制，确保用户只能修改自己有权修改的资源。"
+  },
+  {
+   "id": 250766,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。CNAME指向未认领的Google服务，属于子域名接管常见套路，无技术绕过。",
+   "attack_chain": "CNAME→未认领→接管。",
+   "bypass_technique": "无。",
+   "defensive_insight": "定期检查DNS记录，移除未使用的CNAME。"
+  },
+  {
+   "id": 1266828,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。通过先发送`send_invite`请求，再请求`invite_links`，绕过了对已激活账户的邀请链接限制，导致账户接管。这是对业务逻辑顺序的巧妙利用，属于非预期解。",
+   "attack_chain": "发送send_invite→获取invite_link→重置密码→账户接管。",
+   "bypass_technique": "利用API调用顺序，先触发send_invite再获取invite_link。",
+   "defensive_insight": "确保所有API端点都验证权限和状态，避免逻辑顺序漏洞。"
+  },
+  {
+   "id": 805013,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "框架行为利用 / 路径遍历",
+   "reasoning": "部分。PHP的DirectoryIterator类在解析路径时忽略null字节，导致路径验证绕过。这是对PHP内部行为的利用，属于框架行为利用，但需要特定条件。",
+   "attack_chain": "构造含null字节的路径→绕过验证→访问未授权目录。",
+   "bypass_technique": "利用null字节截断路径。",
+   "defensive_insight": "在应用层对路径进行规范化，拒绝包含null字节的输入。"
+  },
+  {
+   "id": 1656627,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / XSS",
+   "reasoning": "是。Rails的SafeListSanitizer在允许`svg`和`style`或`math`和`style`组合时，未能正确过滤，导致XSS。这是对HTML解析器行为差异的利用，属于框架行为利用，且PoC完整。",
+   "attack_chain": "构造svg+style或math+style→绕过sanitizer→XSS。",
+   "bypass_technique": "利用HTML解析器对style标签内脚本的处理差异。",
+   "defensive_insight": "更新rails-html-sanitizer至修复版本，或避免允许style与其他标签组合。"
+  },
+  {
+   "id": 997381,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XML注入",
+   "reasoning": "否。XML注入是常见漏洞，报告仅提供payload，无新意，属于成熟套路。",
+   "attack_chain": "注入XInclude→读取外部资源。",
+   "bypass_technique": "利用XInclude。",
+   "defensive_insight": "禁用XML外部实体和XInclude。"
+  },
+  {
+   "id": 383564,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "子域名接管",
+   "reasoning": "部分。子域名接管是常见漏洞，但报告提供了详细的DNS记录和PoC，且影响较大，属于标准案例。",
+   "attack_chain": "CNAME→未认领→接管。",
+   "bypass_technique": "无。",
+   "defensive_insight": "定期检查DNS记录，移除未使用的CNAME。"
+  },
+  {
+   "id": 185705,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "其他",
+   "reasoning": "部分。mruby中的空指针解引用导致段错误，属于内存破坏漏洞，但报告提供了详细的崩溃信息和补丁，具有参考价值。",
+   "attack_chain": "构造特定输入→触发空指针→崩溃。",
+   "bypass_technique": "无。",
+   "defensive_insight": "修复mrb_str_concat中的类型检查。"
+  }
+ ]
+}

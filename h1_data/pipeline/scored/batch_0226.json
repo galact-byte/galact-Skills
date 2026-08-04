@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1217114,
+   1096907,
+   978335,
+   56511,
+   159391
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 834366,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "认证绕过 / 业务逻辑",
+   "reasoning": "部分。CSRF token 未正确验证，删除 token 后请求仍被接受，属于对'已生效'防御的绕过，但本质是服务端校验缺失，思路简单，PoC 完整但启发性一般。",
+   "attack_chain": "构造无 token 的登录表单→诱导受害者提交→攻击者账户被登录。",
+   "bypass_technique": "删除 CSRF token 字段，利用服务端未强制校验。",
+   "defensive_insight": "服务端必须验证 CSRF token 的存在与有效性，不能仅依赖前端。"
+  },
+  {
+   "id": 63865,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 其他",
+   "reasoning": "否。提交超大数字导致服务端资源耗尽，属于典型的输入验证缺失，无绕过无链，成熟套路。",
+   "attack_chain": "单点：提交超大 bounty 值→服务端处理超时→DoS。",
+   "bypass_technique": "无实质绕过，直接利用未限制的输入长度。",
+   "defensive_insight": "对输入长度和数值范围进行严格限制，并设置超时。"
+  },
+  {
+   "id": 1209098,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "XSS",
+   "reasoning": "否。报告描述模糊，未提供具体 URL 和触发条件，仅泛泛而谈，无法判断真实性。",
+   "attack_chain": "未知。",
+   "bypass_technique": "未知。",
+   "defensive_insight": "需提供具体复现步骤和 PoC。"
+  },
+  {
+   "id": 866829,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "否。经典反射型 XSS，参数未过滤，PoC 清晰，但无绕过无链，常见套路。",
+   "attack_chain": "单点：构造恶意 URL→受害者点击→脚本执行。",
+   "bypass_technique": "无实质绕过，直接注入 HTML 标签。",
+   "defensive_insight": "对输出进行编码，实施 CSP。"
+  },
+  {
+   "id": 684838,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。目录索引导致备份文件泄露，属于配置错误，无绕过，常见套路。",
+   "attack_chain": "目录索引→下载备份→获取凭据。",
+   "bypass_technique": "无实质绕过，直接利用配置错误。",
+   "defensive_insight": "禁用目录索引，限制敏感文件访问。"
+  },
+  {
+   "id": 148848,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型 XSS，但描述不完整，缺少关键细节，且属于常见漏洞类型。",
+   "attack_chain": "创建含 payload 的团队名→分享帖子→触发 XSS。",
+   "bypass_technique": "无实质绕过，直接注入。",
+   "defensive_insight": "对用户输入进行过滤和输出编码。"
+  },
+  {
+   "id": 56511,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / IDOR",
+   "reasoning": "是。通过修改请求中的 ID 即可使其他用户会话失效，属于典型的 IDOR，但利用了'会话管理'这一关键功能，影响明确，PoC 完整。",
+   "attack_chain": "登录→捕获请求→替换 ID→受害者被登出。",
+   "bypass_technique": "直接修改资源 ID，服务端未校验所有权。",
+   "defensive_insight": "服务端必须校验用户对资源的访问权限。"
+  },
+  {
+   "id": 159391,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。项目管理员可对任意发票记录付款，服务端未校验发票归属，属于水平越权，思路清晰，PoC 完整。",
+   "attack_chain": "记录付款→修改发票 ID→服务端接受。",
+   "bypass_technique": "修改资源 ID，利用缺失的访问控制。",
+   "defensive_insight": "服务端必须校验用户对发票的访问权限。"
+  },
+  {
+   "id": 13748,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 其他",
+   "reasoning": "否。与 63865 类似，提交超大值导致 DoS，信息不足，常见套路。",
+   "attack_chain": "单点：提交超大 bounty 值→服务端超时。",
+   "bypass_technique": "无实质绕过。",
+   "defensive_insight": "限制输入长度和数值范围。"
+  },
+  {
+   "id": 1601140,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS，但 HTML 注入已确认，PoC 清晰，常见套路。",
+   "attack_chain": "构造恶意 URL→受害者访问→HTML 注入。",
+   "bypass_technique": "无实质绕过，直接注入 HTML。",
+   "defensive_insight": "对输出进行编码，实施 CSP。"
+  },
+  {
+   "id": 1096907,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用 Validating Webhook 机制，通过并发发送大资源导致 API 服务器崩溃，属于对 Kubernetes 控制面行为的非预期利用，跨组件且可重复触发。",
+   "attack_chain": "安装恶意 webhook→并发创建大 secret→API 服务器资源耗尽→崩溃。",
+   "bypass_technique": "利用 webhook 的同步调用和资源限制缺失。",
+   "defensive_insight": "限制 webhook 请求大小和并发数，实施资源配额。"
+  },
+  {
+   "id": 1012249,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。利用换行符绕过 WAF 的 javascript 协议过滤，属于轻微变形，PoC 清晰。",
+   "attack_chain": "构造 payload→提交搜索→点击链接触发。",
+   "bypass_technique": "在 javascript 协议中插入换行符绕过 WAF。",
+   "defensive_insight": "对协议关键字进行规范化过滤，实施 CSP。"
+  },
+  {
+   "id": 156196,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 其他",
+   "reasoning": "否。404 页面文本注入，属于配置错误，无绕过，常见套路。",
+   "attack_chain": "构造 URL→404 页面显示注入文本。",
+   "bypass_technique": "无实质绕过，利用路径解析差异。",
+   "defensive_insight": "对 404 页面输出进行编码。"
+  },
+  {
+   "id": 1217114,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 协议行为利用",
+   "reasoning": "是。通过 XXE 读取 nginx 配置发现隐藏应用，再通过 SQL 注入利用 ICMP 包大小外泄数据，整个链路巧妙且可复用，属于高启发性案例。",
+   "attack_chain": "S3 桶接管→XXE 读取文件→发现隐藏应用→SQL 注入→ICMP 外泄。",
+   "bypass_technique": "利用 XXE 进行 OOB 数据外泄，利用 ICMP 包大小作为隐蔽信道。",
+   "defensive_insight": "禁用外部实体，使用参数化查询，限制出站流量。"
+  },
+  {
+   "id": 1747146,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 认证绕过",
+   "reasoning": "否。使用默认凭据访问 Tiny File Manager，属于配置错误，无绕过，常见套路。",
+   "attack_chain": "发现文件管理器→使用默认凭据登录。",
+   "bypass_technique": "无实质绕过，直接使用默认凭据。",
+   "defensive_insight": "强制修改默认凭据，实施强密码策略。"
+  },
+  {
+   "id": 1091165,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。经典反射型 XSS，PoC 清晰，但无绕过无链，常见套路。",
+   "attack_chain": "构造恶意 URL→受害者访问→脚本执行。",
+   "bypass_technique": "无实质绕过，直接注入。",
+   "defensive_insight": "对输出进行编码，实施 CSP。"
+  },
+  {
+   "id": 978335,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 协议行为利用",
+   "reasoning": "是。利用 Cisco ASA 的路径遍历漏洞，通过 Cookie 中的 token 参数进行目录穿越，实现任意文件删除，属于对设备特定行为的利用，PoC 完整。",
+   "attack_chain": "识别漏洞→构造 Cookie→删除任意文件。",
+   "bypass_technique": "在 Cookie 中插入 ../ 进行路径穿越。",
+   "defensive_insight": "对用户输入进行规范化，限制文件操作权限。"
+  },
+  {
+   "id": 888484,
+   "value_score": 0,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告仅包含 CTF 标志，无漏洞细节，无法评估。",
+   "attack_chain": "未知。",
+   "bypass_technique": "未知。",
+   "defensive_insight": "无。"
+  },
+  {
+   "id": 477344,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "其他",
+   "reasoning": "部分。通过 fuzzing 发现 PHP Phar 解析器堆缓冲区溢出，属于对解析器行为的非预期利用，但技术门槛高，通用性有限。",
+   "attack_chain": "构造恶意 Phar 文件→触发解析器溢出。",
+   "bypass_technique": "利用 Phar 文件格式的边界条件。",
+   "defensive_insight": "更新 PHP 版本，对 Phar 文件进行严格校验。"
+  },
+  {
+   "id": 642862,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。OPTIONS 方法启用，属于配置错误，无实际影响，常见套路。",
+   "attack_chain": "单点：发送 OPTIONS 请求→获取方法列表。",
+   "bypass_technique": "无实质绕过。",
+   "defensive_insight": "禁用不必要的 HTTP 方法。"
+  }
+ ]
+}

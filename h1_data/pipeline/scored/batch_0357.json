@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   824163,
+   485407,
+   1132378,
+   6910,
+   207266
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 824163,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 信息泄露",
+   "reasoning": "是。利用FTP列表解析中strtok与strstr对分隔符假设的差异，导致指针越过NULL终止符，从内存池中泄露其他用户数据。这是对协议解析器内部假设的巧妙利用，非预期性强。",
+   "attack_chain": "恶意FTP服务器返回特制列表→Squid解析时错误计算长度→越界读取内存池数据→泄露至响应HTML。",
+   "bypass_technique": "构造包含制表符和重复字符的列表项，使strstr匹配到错误token，导致指针越界。",
+   "defensive_insight": "修复解析逻辑，确保指针计算基于实际分隔符；对内存池缓冲区进行清零或使用安全拷贝函数。"
+  },
+  {
+   "id": 283063,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "是。通过导出Activity的Intent注入HTML/JS，利用WebView加载数据，实现任意代码执行。这是Android组件间通信的典型滥用，非预期性较强。",
+   "attack_chain": "恶意应用构造Intent→启动ImageViewerActivity→注入HTML/JS到WebView→执行任意代码。",
+   "bypass_technique": "利用Intent的data URI注入单引号闭合img标签的src属性，插入onload事件。",
+   "defensive_insight": "限制Activity的导出，或对Intent数据进行严格校验和编码；避免将用户输入直接拼接到HTML中。"
+  },
+  {
+   "id": 51166,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。邮箱验证链接的哈希基于邮箱地址，导致重复使用相同邮箱时链接不变。这是常见的业务逻辑缺陷，思路简单，无绕过或攻击链。",
+   "attack_chain": "用户重复更改邮箱至原地址→验证链接复用→可能被重放。",
+   "bypass_technique": "无实质绕过，利用哈希生成逻辑的确定性。",
+   "defensive_insight": "在验证链接中加入随机盐并存储，确保每次生成不同链接。"
+  },
+  {
+   "id": 22203,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "认证绕过 / 业务逻辑",
+   "reasoning": "部分。密码重置链接在邮箱更新后仍有效，导致账户接管。这是对密码重置流程状态管理的疏忽，非预期性中等，但攻击链简单。",
+   "attack_chain": "请求密码重置→更新邮箱→旧链接仍可用→重置密码接管账户。",
+   "bypass_technique": "利用密码重置链接未随邮箱变更失效的缺陷。",
+   "defensive_insight": "邮箱变更后应使所有旧重置链接失效，并增加额外验证。"
+  },
+  {
+   "id": 6872,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。注册接口无CSRF防护，属于常见配置缺失，无绕过或攻击链。",
+   "attack_chain": "单点：构造表单自动提交注册。",
+   "bypass_technique": "无实质绕过，直接利用缺少CSRF token。",
+   "defensive_insight": "为所有状态变更请求添加CSRF token。"
+  },
+  {
+   "id": 2383486,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。S3桶上暴露.git目录，属于常见配置错误，无绕过或攻击链。",
+   "attack_chain": "单点：访问/.git目录→下载源码。",
+   "bypass_technique": "无实质绕过，直接利用配置错误。",
+   "defensive_insight": "禁止公开访问.git目录，配置S3桶策略。"
+  },
+  {
+   "id": 1712240,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告内容混乱，声称SSRF但实际只是修改Referer头，无实际漏洞证据，信息不足。",
+   "attack_chain": "无明确攻击链。",
+   "bypass_technique": "无。",
+   "defensive_insight": "无。"
+  },
+  {
+   "id": 6910,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "CSRF / 跨组件攻击链",
+   "reasoning": "是。通过CSRF修改邮箱，再利用密码重置功能实现账户接管，形成完整攻击链。绕过优雅，通用性强。",
+   "attack_chain": "CSRF修改邮箱→攻击者接收确认邮件→使用密码重置→完全控制账户。",
+   "bypass_technique": "利用CSRF漏洞结合密码重置流程，无需用户交互。",
+   "defensive_insight": "为邮箱修改添加CSRF防护，并确保密码重置链接与最新邮箱绑定。"
+  },
+  {
+   "id": 358119,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "SSRF",
+   "reasoning": "部分。SSRF漏洞，但仅限制协议，可访问内部端口。非预期性一般，但绕过清晰，可复用。",
+   "attack_chain": "构造image_host参数→服务器发起请求→访问内部服务。",
+   "bypass_technique": "利用仅要求http/https前缀的限制，直接指定内部地址。",
+   "defensive_insight": "对SSRF目标进行白名单校验，禁止访问内网IP。"
+  },
+  {
+   "id": 131450,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "是。通过readme.io的模板注入，在文档页面执行JS，影响所有访问者。跨组件攻击链，非预期性强。",
+   "attack_chain": "在readme.io提交恶意模板→管理员查看时执行→自动批准→XSS传播。",
+   "bypass_technique": "利用模板引擎的表达式注入，绕过HTML转义。",
+   "defensive_insight": "对用户输入进行严格过滤，使用ng-nonbindable等指令禁用模板解析。"
+  },
+  {
+   "id": 80990,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。.idea目录暴露，属于常见配置错误，无绕过或攻击链。",
+   "attack_chain": "单点：访问/.idea/workspace.xml→获取配置信息。",
+   "bypass_technique": "无实质绕过，直接利用配置错误。",
+   "defensive_insight": "禁止公开访问.idea目录。"
+  },
+  {
+   "id": 137487,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。S3桶公开可访问，属于常见配置错误，无绕过或攻击链。",
+   "attack_chain": "单点：访问S3桶→列出文件。",
+   "bypass_technique": "无实质绕过，直接利用配置错误。",
+   "defensive_insight": "配置S3桶策略为私有。"
+  },
+  {
+   "id": 1132378,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 跨组件攻击链",
+   "reasoning": "是。利用json schema validator的误用，通过open-uri实现任意文件读取和SSRF，影响严重。非预期性强，跨组件。",
+   "attack_chain": "导入恶意项目→触发json schema验证→open-uri读取任意文件→泄露凭据。",
+   "bypass_technique": "利用open-uri的URL处理，绕过文件路径限制。",
+   "defensive_insight": "限制open-uri的协议和路径，对导入内容进行严格校验。"
+  },
+  {
+   "id": 485407,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 跨组件攻击链",
+   "reasoning": "是。利用路径标准化差异，通过符号链接替换系统二进制，实现权限提升。这是对macOS路径解析行为的巧妙利用，非预期性强。",
+   "attack_chain": "构造恶意app-path→安装器创建符号链接→替换/usr/local/bin中的二进制→等待用户执行→任意代码执行。",
+   "bypass_technique": "利用stringByStandardizingPath解析差异，绕过前缀检查。",
+   "defensive_insight": "对路径进行规范化并验证真实路径，避免符号链接攻击。"
+  },
+  {
+   "id": 627376,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 状态混淆",
+   "reasoning": "部分。路径清理后为空导致服务器崩溃，是对修复逻辑的绕过，非预期性中等，但无攻击链。",
+   "attack_chain": "单点：发送特殊URL→路径变为空→读取目录失败→崩溃。",
+   "bypass_technique": "利用路径清理逻辑的缺陷，使pathname为空。",
+   "defensive_insight": "在清理后检查路径是否为空，并处理目录读取错误。"
+  },
+  {
+   "id": 1379297,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，参数直接输出，无绕过或攻击链。",
+   "attack_chain": "单点：构造URL→执行JS。",
+   "bypass_technique": "无实质绕过，直接利用未过滤参数。",
+   "defensive_insight": "对输出进行HTML编码。"
+  },
+  {
+   "id": 98281,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，参数直接输出，无绕过或攻击链。",
+   "attack_chain": "单点：构造URL→执行JS。",
+   "bypass_technique": "无实质绕过，直接利用未过滤参数。",
+   "defensive_insight": "对输出进行HTML编码。"
+  },
+  {
+   "id": 181214,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。使用不安全的git协议，属于配置错误，无绕过或攻击链。",
+   "attack_chain": "单点：MITM攻击→篡改代码。",
+   "bypass_technique": "无实质绕过，直接利用协议缺陷。",
+   "defensive_insight": "使用HTTPS协议并验证提交。"
+  },
+  {
+   "id": 207266,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "是。利用CSV内容构造合法JavaScript，通过script标签加载窃取数据。这是对CSV格式和SOP豁免的巧妙利用，非预期性强。",
+   "attack_chain": "构造CSV为JS→诱导受害者加载→窃取数据。",
+   "bypass_technique": "利用CSV字段注入JS代码，使整个CSV成为合法脚本。",
+   "defensive_insight": "对CSV输出进行转义，设置正确的Content-Type和X-Content-Type-Options。"
+  },
+  {
+   "id": 430831,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "原型污染",
+   "reasoning": "部分。原型污染漏洞，利用__proto__注入属性，非预期性中等，但攻击链简单。",
+   "attack_chain": "构造恶意对象→extend合并→污染Object.prototype→影响所有对象。",
+   "bypass_technique": "利用__proto__属性绕过属性过滤。",
+   "defensive_insight": "在合并时过滤__proto__等特殊键。"
+  }
+ ]
+}

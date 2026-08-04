@@ -1,0 +1,336 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 4,
+  "dropped": 16,
+  "avg_score": 3.4,
+  "top_n": [
+   1417211,
+   538938,
+   195580,
+   761975
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 155130,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "认证绕过",
+   "reasoning": "无法判断。正文仅声称可完全访问用户账户（增删改广告/删账户），技术细节全部在外部视频与 PDF 中，无任何请求、端点或原理说明。",
+   "attack_chain": "无法确认。",
+   "bypass_technique": "无法确认。",
+   "defensive_insight": "无有效信息。"
+  },
+  {
+   "id": 1940443,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "否。开源 KeyDB 时提交历史残留内部 GitHub PAT token——'开源化未清理历史敏感提交'的经典信息泄露，无技巧无链，价值仅在及时提示。",
+   "attack_chain": "单点：翻开源仓库 commit 历史→发现内部 token→尝试访问内网服务。",
+   "bypass_technique": "无绕过，直接利用历史提交中的硬编码凭据。",
+   "defensive_insight": "开源化前用工具全量清洗 git 历史中的密钥/token；泄露后立即吊销并轮换。"
+  },
+  {
+   "id": 532643,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。供应商消息功能存储 `\"><img onerror>` payload，收件箱触发——经典存储 XSS，步骤完整但技术点零变形，无绕过无链。",
+   "attack_chain": "发消息携带 img onerror payload→收件箱渲染执行 JS。",
+   "bypass_technique": "无绕过，直接利用输出未编码。",
+   "defensive_insight": "消息内容入库/输出统一上下文编码；富文本走白名单解析。"
+  },
+  {
+   "id": 538938,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "命令注入 / 框架行为利用",
+   "reasoning": "部分。Express 路由 /plugins/:id 直接 require(req.params.id) 且无任何校验——'动态 require 用户输入'是 Node 特有危险模式，可读任意 JSON（如 package.json）或加载未预期代码（潜在 RCE），攻击面在 require 的模块解析语义而非字符串拼接，有反直觉性；可抽象为通用判据（动态加载路径必须白名单化）。前置为依赖该 npm 包的服务，场景具体。",
+   "attack_chain": "请求 /plugins/.%2Fpackage.json→服务端 require 该路径→JSON 内容回显/任意模块被加载。",
+   "bypass_technique": "利用 require() 对相对路径的解析行为，传入未预期的模块路径。",
+   "defensive_insight": "动态 require 路径必须白名单校验并拒绝相对/绝对路径；用户输入永远不进 require/import 参数。"
+  },
+  {
+   "id": 2402845,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。libcurl 拒绝超量 PUSH_PROMISE 头时忘记释放已分配的 push_headers 元素，恶意服务器持续发送即内存耗尽——错误路径清理遗漏的内存泄露 DoS（CVE-2024-2398），valgrind 证据完整但机制是经典'异常分支未释放'，无绕过无链。",
+   "attack_chain": "单点：恶意服务器持续发超 1000 头的 PUSH_PROMISE→错误路径不释放→内存耗尽。",
+   "bypass_technique": "无绕过，反复触发失败分支累积泄露。",
+   "defensive_insight": "错误/拒绝路径必须完整释放已分配资源；对协议帧做总量与速率上限。"
+  },
+  {
+   "id": 225831,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "授权绕过 / 信息泄露",
+   "reasoning": "否。teamPlans/members 接口传任意 teamId 即返回该团队 billingAdmins 邮箱——对象级授权缺失的经典 IDOR，遍历 teamId 批量枚举，步骤完整但机制零变形。",
+   "attack_chain": "单点：改 teamId 为目标团队→响应含 billingAdmins 邮箱→遍历枚举。",
+   "bypass_technique": "无绕过，直接替换对象引用。",
+   "defensive_insight": "团队数据接口校验当前用户与 teamId 的成员关系；计费管理员邮箱字段最小化。"
+  },
+  {
+   "id": 174871,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "授权绕过",
+   "reasoning": "否。发票的 project_id 可改为任意值（含未受邀项目），302 后发票即关联/合并过去——IDOR 变体（发票-项目绑定无归属校验），请求响应完整但机制成熟。",
+   "attack_chain": "单点：改 invoice[project_id] 为他人/未受邀项目→发票被关联。",
+   "bypass_technique": "无绕过，直接替换对象引用。",
+   "defensive_insight": "绑定类操作校验两侧资源归属（发票与项目均须属于当前用户可见范围）。"
+  },
+  {
+   "id": 148770,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "子域名接管 / 配置错误",
+   "reasoning": "否。api.legalrobot.com 委派到未使用的 Modulus 应用，注册后认领 *.legalrobot.com 通配符即接管全部子域——子域名接管的经典配置错误，'通配符认领'比单子域影响面大算轻微亮点，但机制无新意；报告自查自证且主动提供清理，PoC 完整。",
+   "attack_chain": "注册 Modulus→添加 *.legalrobot.com 通配域名→api 子域解析到攻击者应用。",
+   "bypass_technique": "无绕过，直接认领未使用的第三方服务委派。",
+   "defensive_insight": "DNS 委派台账化，指向第三方服务的记录须确认认领状态；弃用域名及时删除 CNAME。"
+  },
+  {
+   "id": 182467,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 其他",
+   "reasoning": "否。用第三方工具伪造发件人发钓鱼邮件，SPF/DKIM 缺失——邮件伪造的经典配置缺陷，无技巧（工具代劳），无实际投递利用证明。",
+   "attack_chain": "单点：伪造发件人地址→受害者收到伪官方钓鱼邮件。",
+   "bypass_technique": "无绕过，直接利用缺失的 SPF/DKIM/DMARC。",
+   "defensive_insight": "配置 SPF+DKIM+DMARC（严格策略）；邮件网关对未通过验证的信件拒收或隔离。"
+  },
+  {
+   "id": 354650,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。Perl pack() 大 item count 整数溢出致堆写溢出（CVE-2018-6913）——解析器长度计算溢出的经典内存破坏套路，ASAN 证据完整但无绕过无链，技术启发有限。",
+   "attack_chain": "单点：构造大 pack 计数→缓冲区分配溢出→堆写越界。",
+   "bypass_technique": "无绕过，直接利用整数溢出。",
+   "defensive_insight": "长度推导先做溢出检查；解析入口限制输入规模。"
+  },
+  {
+   "id": 195580,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "框架行为利用 / 其他",
+   "reasoning": "部分。恶意 TIFF 中 SRATIONAL 分子分母构造 -1/MIN_INT，Intel 芯片上该除法触发 IDIV 硬件异常（SIGFPE）直接崩溃——'利用 CPU 算术异常的边界值'有反直觉性，属平台行为利用的经典技巧（PHP bug #73737），且任何语言实现同样除法都可能踩中；构造条件明确、gdb 证据完整。",
+   "attack_chain": "单点：上传含 -1/MIN_INT 的 TIFF→EXIF 解析除法→SIGFPE 崩溃。",
+   "bypass_technique": "无绕过，利用硬件除法的溢出边界值触发不可恢复异常。",
+   "defensive_insight": "除法前检查分母与 MIN_INT 边界；解析器对数值型字段先做范围与符号校验。"
+  },
+  {
+   "id": 519367,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。修改密码时明文密码写入 Tomcat 日志文件——密码明文落日志的经典配置/开发缺陷，需本地文件访问，无绕过无链。",
+   "attack_chain": "单点：改密码→明文进日志→本地读取凭据。",
+   "bypass_technique": "无绕过，直接读取未脱敏日志。",
+   "defensive_insight": "日志层统一脱敏（密码/令牌等字段），审计日志严禁记录明文凭据。"
+  },
+  {
+   "id": 1417211,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "跨组件攻击链 / 配置错误",
+   "reasoning": "部分。GitLab 官方文档推荐绑定 /var/run/docker.sock 的 CI runner，任何 CI 用户即可 docker run --privileged --volume /:/host 读取宿主机 /etc/shadow 并获 root——docker socket=root 是知名事实，但'官方文档主动推荐危险配置且无安全警告'的传播面是其价值点，可抽象为通用判据（挂载 docker.sock 的 CI runner 等价宿主机 root）；链路跨 CI 作业与宿主机两个信任边界。",
+   "attack_chain": "注册带 docker.sock 的 runner→提交恶意 pipeline（--privileged --volume /:/host）→读取宿主机 shadow/任意文件→root。",
+   "bypass_technique": "无绕过，直接利用 docker daemon 的宿主机权限语义。",
+   "defensive_insight": "CI runner 禁止绑定 docker.sock（用 DinD rootless/kaniko）；文档对危险配置必须显著标注安全风险。"
+  },
+  {
+   "id": 481335,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。Define language 对话框粘贴超长文本触发栈缓冲区溢出（GS 检测崩溃，栈被 0x42 填充）——GUI 应用本地输入溢出的经典内存破坏，PoC 与调试器输出完整但机制零变形，需本地交互。",
+   "attack_chain": "单点：粘贴 20000/11000 字节到注释样式字段→栈溢出→崩溃。",
+   "bypass_technique": "无绕过，直接利用定长缓冲缺边界检查。",
+   "defensive_insight": "GUI 文本框与底层缓冲均限长；解析外部配置/粘贴内容时先校验长度。"
+  },
+  {
+   "id": 890196,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "跨组件攻击链 / 其他",
+   "reasoning": "否（真实漏洞意义上）。这是 HackerOne 官方 CTF（H1-2006）挑战链而非生产系统漏洞：CTF 漏洞为刻意设计，无真实修复背景，不入高质量案例库。但其技巧密度高（2FA challenge 明文=答案 md5 直接可算、CSS 注入 nth-child 逐字符 OOB 泄露 2FA 码、class 双选择器注入触发隐藏 admin 升级、cookie account_id 路径注入 SSRF），非预期性维度给足，reasoning 仅作技巧参考。",
+   "attack_chain": "CTF 链：.git 泄露日志→凭据+2FA 绕过（md5 challenge）→cookie 路径注入 SSRF→APK token 泄露→创建 staff→class 注入+report 功能触发提权→CSS OOB 泄露支付 2FA→CEO 接管。",
+   "bypass_technique": "challenge 字段即答案 md5（自算答案）；CSS input[value^=] nth-child 逐字符外带；模板参数数组语法加载多模板拼合攻击面。",
+   "defensive_insight": "2FA challenge 必须服务端随机不可预测；OOB 型功能（css/url 参数）一律白名单；模板加载按白名单并禁止数组参数拼接。"
+  },
+  {
+   "id": 509697,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "路径遍历",
+   "reasoning": "否。md-fileserver 把 URL 路径直接拼到根目录，curl --path-as-is /etc/passwd 即读系统文件——静态服务器路径拼接的经典缺陷，无任何绕过技巧。",
+   "attack_chain": "单点：curl --path-as-is /etc/passwd→服务端拼根目录读取。",
+   "bypass_technique": "无绕过，直接利用未校验的路径拼接。",
+   "defensive_insight": "请求路径先规范化再校验根目录包含；静态服务拒绝绝对路径与 .. 段。"
+  },
+  {
+   "id": 137631,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "命令注入",
+   "reasoning": "否。Net::SMTP 的 RCPT TO/MAIL FROM 无输入校验可注入 SMTP 命令——公开披露过的已知缺陷，本报告价值在厘清'归因错误'（问题在 net-smtp 而非 mail gem），技术本身无新意，无 PoC。",
+   "attack_chain": "单点：构造含 CRLF 的收件人地址→注入额外 SMTP 指令。",
+   "bypass_technique": "无绕过，直接利用协议层未校验的地址字段。",
+   "defensive_insight": "SMTP 客户端对地址字段做协议级校验（拒绝 CR/LF）；库级输入验证与业务层职责分离并各自落实。"
+  },
+  {
+   "id": 761975,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 其他",
+   "reasoning": "部分。Qiwi 银行 app 删除后 iOS Keychain 不清理，重装后 PIN 以明文存于类数据，二手设备买家可越狱+Frida 定位 PIN 登录——'iOS Keychain 跨重装持久化语义 + PIN 明文存储'的组合绕过'删除 app 即安全'的用户认知，对移动金融类应用有普遍借鉴意义；但利用需物理设备+越狱，前置苛刻。",
+   "attack_chain": "获取未重置的二手 iPhone→重装 Qiwi→越狱+Frida 定位 PIN 明文→登录接管账户。",
+   "bypass_technique": "无绕过，直接利用 Keychain 持久化与 PIN 明文残留。",
+   "defensive_insight": "首次启动即清除本 app 相关 Keychain；敏感认证材料（PIN/密钥）用 Secure Enclave 并禁止明文落类。"
+  },
+  {
+   "id": 154096,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。搜索 API 的 XML 参数经典盲 XXE，外部 DTD + 参数实体做 OOB 探测成功（HTTP 回连）——标准 XXE 手法，步骤完整但无法读文件（仅确认存在），技术零变形。",
+   "attack_chain": "POST XML 含外部实体→服务器请求外部 DTD→OOB 回连确认（未能读文件）。",
+   "bypass_technique": "无绕过，用外部 DTD 参数实体做经典 OOB 探测。",
+   "defensive_insight": "XML 解析器禁用外部实体与 DTD；JSON 替代 XML 或严格 schema 校验。"
+  },
+  {
+   "id": 1064095,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。保护计划名存 `<video><source onerror=...>`，确认对话框触发——经典存储型 XSS（视频标签变体），步骤详细但机制零变形，无绕过无链。",
+   "attack_chain": "创建含恶意标签的计划名→他人操作触发 onerror→JS 执行。",
+   "bypass_technique": "无绕过，直接利用名称输出未转义。",
+   "defensive_insight": "计划名等展示字段统一上下文编码；标签白名单化并限制特殊字符。"
+  }
+ ]
+}

@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   328486,
+   1179232,
+   1872682,
+   915127,
+   129862
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 129862,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 业务逻辑",
+   "reasoning": "是。利用Facebook页面名称的转义缺陷，通过构造包含事件属性的名称，在Zendesk后台触发存储型XSS。技术点在于外部平台数据（Facebook页面名）未经过滤直接嵌入HTML，形成跨平台攻击链。与普通存储XSS的区别在于攻击面来自第三方平台，且需要绕过Facebook的命名限制，思路新颖。",
+   "attack_chain": "创建恶意Facebook页面→在Zendesk添加该页面→后台渲染页面名时触发XSS→攻击管理员。",
+   "bypass_technique": "利用Facebook页面名称中的引号和事件属性，绕过Zendesk的转义。",
+   "defensive_insight": "对外部平台数据（如页面名称）进行严格的HTML编码，并限制允许的HTML标签和属性。"
+  },
+  {
+   "id": 5437,
+   "value_score": 0,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告内容为勒索式要求，无任何技术细节，无法判断漏洞真实性。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "无"
+  },
+  {
+   "id": 953719,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "子域名接管 / 配置错误",
+   "reasoning": "部分。子域名接管是常见套路，但报告提供了完整的PoC和步骤，且涉及外部服务（Webflow）的配置错误，有一定启发性。",
+   "attack_chain": "发现未认领的Webflow服务→注册该域名→控制子域名内容。",
+   "bypass_technique": "利用未认领的第三方服务进行子域名接管。",
+   "defensive_insight": "定期检查DNS记录，确保所有子域名指向的服务均已认领，并监控第三方服务的过期情况。"
+  },
+  {
+   "id": 39250,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少SPF记录是常见的配置错误，无绕过或攻击链，信息量低。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "配置SPF记录以防止邮件伪造。"
+  },
+  {
+   "id": 328486,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 认证绕过",
+   "reasoning": "是。利用Android深链（deep link）的导出Activity，通过WebView加载任意URL，窃取用户token。技术点在于深链处理未验证来源，且WebView加载外部URL时携带了敏感cookie，形成跨组件攻击链。与普通WebView漏洞的区别在于攻击面来自系统级深链，且可被浏览器或第三方应用触发。",
+   "attack_chain": "构造恶意链接→用户点击→启动Zomato深链Activity→WebView加载攻击者URL→窃取token。",
+   "bypass_technique": "利用导出的深链Activity，通过WebView加载任意URL，绕过同源策略。",
+   "defensive_insight": "限制深链Activity的导出，对传入URL进行白名单校验，WebView不携带敏感cookie。"
+  },
+  {
+   "id": 1179232,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 认证绕过",
+   "reasoning": "是。通过修改steamid cookie，在2FA确认请求中锁定受害者账户，实现拒绝服务。技术点在于服务端未将cookie中的steamid与会话绑定，导致可篡改。与普通逻辑漏洞的区别在于影响面广，仅需知道SteamID即可阻断登录，且可批量操作。",
+   "attack_chain": "获取受害者SteamID→修改cookie→发送错误2FA代码→触发账户锁定。",
+   "bypass_technique": "篡改cookie中的steamid，绕过身份验证。",
+   "defensive_insight": "服务端应使用会话中的用户标识，而非信任客户端cookie。"
+  },
+  {
+   "id": 952349,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。超长密码导致DoS是已知问题，无绕过或攻击链，信息量大但属成熟套路。",
+   "attack_chain": "单点：输入超长密码→哈希计算消耗资源→服务不可用。",
+   "bypass_technique": "无实质绕过，直接利用未限制密码长度。",
+   "defensive_insight": "限制密码最大长度，并对哈希算法进行资源限制。"
+  },
+  {
+   "id": 866815,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 业务逻辑",
+   "reasoning": "部分。利用javascript: URL在书签功能中触发存储型XSS，技术点在于未过滤URL协议。与普通XSS的区别在于攻击面在书签功能，且需要用户点击触发，有一定启发性。",
+   "attack_chain": "创建书签时输入javascript: URL→存储后点击触发XSS。",
+   "bypass_technique": "使用javascript:协议绕过URL过滤。",
+   "defensive_insight": "对URL协议进行白名单校验，禁止javascript:等危险协议。"
+  },
+  {
+   "id": 1801427,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "信息泄露 / 跨组件攻击链",
+   "reasoning": "是。通过发送GIF消息，利用外部服务交互（Collaborator）获取受害者设备信息。技术点在于消息系统允许自定义媒体URL，且客户端加载时泄露敏感信息。与普通信息泄露的区别在于攻击面在消息功能，且可跨平台影响。",
+   "attack_chain": "构造恶意GIF消息→受害者打开→加载外部URL→泄露IP、OS等信息。",
+   "bypass_technique": "利用消息系统的外部媒体URL加载，触发外部服务交互。",
+   "defensive_insight": "对外部媒体URL进行过滤，禁止加载非白名单域名，并限制客户端发送的请求头信息。"
+  },
+  {
+   "id": 643537,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，参数未过滤，经典套路，无绕过或攻击链。",
+   "attack_chain": "单点：构造恶意URL→触发XSS。",
+   "bypass_technique": "无实质绕过，直接利用未过滤参数。",
+   "defensive_insight": "对所有输入进行输出编码，使用上下文感知的转义。"
+  },
+  {
+   "id": 1200770,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 业务逻辑",
+   "reasoning": "部分。通过iframe注入并链式加载外部图片触发XSS，技术点在于利用iframe的src加载外部资源，绕过直接XSS限制。与普通XSS的区别在于需要链式利用，且攻击者无法直接窃取cookie，但可进行钓鱼。",
+   "attack_chain": "注入iframe→加载外部图片→触发XSS→钓鱼攻击。",
+   "bypass_technique": "利用iframe加载外部资源，绕过直接脚本注入限制。",
+   "defensive_insight": "过滤iframe标签，对外部资源进行白名单校验。"
+  },
+  {
+   "id": 1872682,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 0
+   },
+   "verdict": "保留，高优先级",
+   "category": "配置错误 / 跨组件攻击链",
+   "reasoning": "是。利用Airflow日志文件权限设置不当（chmod 666），通过符号链接读取任意文件，实现本地提权。技术点在于日志文件权限过宽，且可通过符号链接指向敏感文件。与普通配置错误的区别在于攻击链完整，可读取SSH私钥等敏感信息。",
+   "attack_chain": "删除日志文件→创建符号链接指向敏感文件→通过Web界面读取日志→泄露私钥。",
+   "bypass_technique": "利用符号链接和宽松的文件权限，读取任意文件。",
+   "defensive_insight": "确保日志文件权限最小化，避免使用符号链接，并定期审计文件权限。"
+  },
+  {
+   "id": 2104567,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。报告仅引用CVE和补丁链接，无具体技术细节，信息不足。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "无"
+  },
+  {
+   "id": 118024,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "部分。利用Markdown渲染中的vbscript:协议，在IE兼容模式下触发XSS。技术点在于利用旧浏览器的协议支持，绕过现代浏览器的防护。与普通XSS的区别在于针对特定浏览器，且需要用户启用兼容模式。",
+   "attack_chain": "在Markdown中插入vbscript:链接→IE用户点击→触发XSS。",
+   "bypass_technique": "利用vbscript:协议在IE兼容模式下的执行。",
+   "defensive_insight": "过滤Markdown中的危险协议，并提示用户禁用兼容模式。"
+  },
+  {
+   "id": 330285,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "路径遍历",
+   "reasoning": "部分。mcstatic模块存在目录遍历漏洞，可读取任意文件。技术点在于未对URL路径进行规范化，导致../可穿越。与普通路径遍历的区别在于影响npm模块，可被广泛使用。",
+   "attack_chain": "构造包含../的URL→读取服务器文件。",
+   "bypass_technique": "利用未过滤的../序列进行路径穿越。",
+   "defensive_insight": "对URL路径进行规范化，拒绝包含../的请求。"
+  },
+  {
+   "id": 905641,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。S3桶配置错误导致公开访问，常见套路，无绕过或攻击链。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "配置S3桶策略，确保私有访问。"
+  },
+  {
+   "id": 141065,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。CSRF token不轮换是常见设计缺陷，无绕过或攻击链，信息量低。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "每次请求轮换CSRF token。"
+  },
+  {
+   "id": 915127,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 0
+   },
+   "verdict": "保留，高优先级",
+   "category": "IDOR / 业务逻辑",
+   "reasoning": "是。通过修改actionable[]参数，利用IDOR漏洞移动受害者内容，并通过团队账户实现完全接管。技术点在于IDOR与业务逻辑（移动内容）结合，且内容ID可预测。与普通IDOR的区别在于攻击链完整，可完全控制受害者内容。",
+   "attack_chain": "修改内容ID→移动受害者内容→通过团队账户完全接管。",
+   "bypass_technique": "利用IDOR和团队账户功能，绕过权限控制。",
+   "defensive_insight": "服务端校验对象所有权，使用不可预测的ID。"
+  },
+  {
+   "id": 56385,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告仅提及CVE和补丁，无技术细节，无法评估。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "无"
+  },
+  {
+   "id": 806151,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。用户名枚举是常见漏洞，无绕过或攻击链，信息量低。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "统一错误消息，避免区分用户是否存在。"
+  }
+ ]
+}

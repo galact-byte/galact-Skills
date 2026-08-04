@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 8,
+  "dropped": 12,
+  "avg_score": 4.6,
+  "top_n": [
+   1684163,
+   1704017,
+   1032086,
+   963774,
+   118731
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 131065,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。弱SSL/SSH密码套件是典型的配置审计发现，无绕过、无攻击链，属于成熟套路。",
+   "attack_chain": "无，直接扫描发现弱密码套件。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁用弱密码套件，升级到TLS1.2+并配置强密码策略。"
+  },
+  {
+   "id": 1684163,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 协议行为利用",
+   "reasoning": "是。利用Ruby正则引擎的灾难性回溯，在Rails HTML sanitizer的PermitScrubber中触发ReDoS。技术点在于正则`/url\\s*\\(\\s*[^#\\s][^)]+?\\)/m`的嵌套量词导致指数级回溯，且触发条件仅需特定属性名，可抽象为通用正则安全审计。",
+   "attack_chain": "构造恶意属性值→触发正则回溯→CPU耗尽→DoS。",
+   "bypass_technique": "利用正则表达式的嵌套量词和回溯行为，通过长字符串输入触发ReDoS。",
+   "defensive_insight": "使用安全正则库（如re2），或限制输入长度，并定期审计正则表达式。"
+  },
+  {
+   "id": 385372,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。同形异义词攻击是已知的URL混淆手法，无新意，且报告未提供实际利用链，仅描述概念。",
+   "attack_chain": "构造同形异义URL→诱导用户点击→跳转恶意站点。",
+   "bypass_technique": "使用Unicode同形字符绕过视觉检测。",
+   "defensive_insight": "对重定向URL进行域名规范化，并显示可读的域名提示。"
+  },
+  {
+   "id": 1032086,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "状态混淆 / 跨组件攻击链",
+   "reasoning": "是。通过创建引用不存在PVC的VolumeSnapshot，触发csi-snapshot-controller的空指针解引用崩溃。技术点在于控制器未处理PVC不存在的情况，导致nil指针访问，且崩溃后重启会重复处理同一对象，形成持久DoS。",
+   "attack_chain": "创建恶意VolumeSnapshot→控制器处理时nil指针→崩溃→重启后重复崩溃→DoS。",
+   "bypass_technique": "利用控制器对无效输入的缺失校验，触发未处理的nil指针。",
+   "defensive_insight": "在访问PVC前检查其存在性，并添加错误处理逻辑。"
+  },
+  {
+   "id": 1704017,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。libcurl的选项状态残留导致PUT和POST混淆，可能造成信息泄露或UAF。技术点在于CURLOPT_UPLOAD未重置，导致后续POST被当作PUT发送，且数据源错误。可抽象为API状态管理缺陷。",
+   "attack_chain": "设置UPLOAD→未重置→设置POST→实际发送PUT→数据泄露或UAF。",
+   "bypass_technique": "利用libcurl选项状态残留，使请求方法混淆。",
+   "defensive_insight": "在切换请求方法时重置所有相关选项，或使用独立的句柄。"
+  },
+  {
+   "id": 175410,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，经典注入点，无绕过，无攻击链。",
+   "attack_chain": "构造恶意URL→参数未过滤→执行脚本。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对输出进行HTML编码，使用CSP。"
+  },
+  {
+   "id": 1339034,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "部分。盲XSS在管理后台触发，需要多步操作和等待，但技术点仍是存储型XSS，无特殊绕过。",
+   "attack_chain": "提交反馈表单→payload存储→管理员查看→触发XSS→窃取会话。",
+   "bypass_technique": "利用反馈表单未过滤，存储payload。",
+   "defensive_insight": "对用户输入进行过滤和输出编码，管理后台加强安全。"
+  },
+  {
+   "id": 203409,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。HTTP TRACE方法启用是常见配置问题，无攻击链。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁用TRACE方法。"
+  },
+  {
+   "id": 1398285,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。存储型XSS，使用data URI和base64编码，但仍是常见XSS变体。",
+   "attack_chain": "提交恶意链接→用户点击→触发XSS。",
+   "bypass_technique": "使用data URI绕过过滤。",
+   "defensive_insight": "过滤危险协议，对输出编码。"
+  },
+  {
+   "id": 211988,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SQL注入",
+   "reasoning": "否。盲注，经典UNION注入，无绕过。",
+   "attack_chain": "构造注入参数→提取数据。",
+   "bypass_technique": "无。",
+   "defensive_insight": "使用参数化查询。"
+  },
+  {
+   "id": 113865,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。CSRF，经典漏洞，无绕过。",
+   "attack_chain": "构造表单→诱导用户提交→执行操作。",
+   "bypass_technique": "无。",
+   "defensive_insight": "添加CSRF令牌。"
+  },
+  {
+   "id": 218705,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。未注册域名，属于配置疏忽，无攻击链。",
+   "attack_chain": "注册域名→接收邮件→信息泄露。",
+   "bypass_technique": "无。",
+   "defensive_insight": "确保文档中的域名已注册并控制。"
+  },
+  {
+   "id": 1376672,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。存储型XSS，通过邮件模板链接触发，但仍是常见XSS。",
+   "attack_chain": "编辑模板→插入恶意链接→用户点击→触发XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "过滤用户输入，对输出编码。"
+  },
+  {
+   "id": 47536,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型XSS，通过注册名称注入，无特殊绕过。",
+   "attack_chain": "注册恶意名称→访问特定URL→触发XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "过滤特殊字符。"
+  },
+  {
+   "id": 963774,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 状态混淆",
+   "reasoning": "是。通过添加空格绕过邮箱长度检查，但后续空格被剥离，从而以低价获得高级邮箱。技术点在于输入验证和规范化不一致，可抽象为通用逻辑缺陷。",
+   "attack_chain": "注册含空格的邮箱→绕过长度检查→空格被剥离→获得高级邮箱。",
+   "bypass_technique": "利用输入规范化差异，添加空格绕过长度限制。",
+   "defensive_insight": "在验证前规范化输入，确保长度检查基于最终值。"
+  },
+  {
+   "id": 118731,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。只读用户通过直接调用API修改了奖励活动，绕过权限检查。技术点在于API端点未验证用户权限，可抽象为IDOR。",
+   "attack_chain": "构造PUT请求→修改活动内容→权限绕过。",
+   "bypass_technique": "直接调用API，绕过UI权限限制。",
+   "defensive_insight": "在服务端验证所有API请求的权限。"
+  },
+  {
+   "id": 224291,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "命令注入",
+   "reasoning": "否。CSV注入，已知漏洞类型，无绕过。",
+   "attack_chain": "注入公式→导出CSV→打开执行。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对CSV字段进行转义。"
+  },
+  {
+   "id": 99245,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型XSS，通过项目名称注入，无特殊绕过。",
+   "attack_chain": "创建恶意项目名→分享链接→触发XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "过滤用户输入。"
+  },
+  {
+   "id": 175316,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "类型混淆 / 内存破坏",
+   "reasoning": "是。通过超长参数触发libicu的整数溢出，导致栈缓冲区溢出。技术点在于整数溢出绕过容量检查，可抽象为通用内存安全缺陷。",
+   "attack_chain": "传入超长参数→整数溢出→缓冲区溢出→代码执行。",
+   "bypass_technique": "利用整数溢出绕过容量检查。",
+   "defensive_insight": "检查参数长度，使用安全的内存操作函数。"
+  },
+  {
+   "id": 42537,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，经典注入，无绕过。",
+   "attack_chain": "构造恶意搜索→参数未过滤→执行脚本。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对输出编码。"
+  }
+ ]
+}

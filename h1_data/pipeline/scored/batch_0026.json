@@ -1,0 +1,335 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 3,
+  "dropped": 17,
+  "avg_score": 3.0,
+  "top_n": [
+   796956,
+   508459,
+   402753
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1128358,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。复用已用邮箱确认链接显示绑定的邮箱地址——确认 token 复用行为的信息泄露，报告者自述攻击概率低，影响轻微，机制零变形。",
+   "attack_chain": "单点：复用已用确认链接→页面回显绑定的邮箱。",
+   "bypass_technique": "无绕过，直接复用未完全失效的 token。",
+   "defensive_insight": "确认链接一次性使用；失效后统一'链接无效'文案，不回显邮箱。"
+  },
+  {
+   "id": 796956,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 业务逻辑 / 跨组件攻击链",
+   "reasoning": "是。在邮箱确认绕过基础上（#791775），把账户合并流程的 URL 从 /login 改为 /accounts_merge/new-password 即跳过主店铺密码验证，直接设置新密码接管已启用 SSO 的商户——'流程步骤依赖 URL 路径且无服务端状态机校验'是反直觉的认证绕过，攻击者仅需改路径即跨过'验证密码'的强制步骤；叠加邮箱确认绕过形成多步跨组件 ATO 链（含绕过 SSO 缓解措施），复现步骤完整。",
+   "attack_chain": "绕过邮箱确认→Review accounts→改 /login 为 /accounts_merge/new-password→跳过主密码→设新密码→接管商户（含 SSO）。",
+   "bypass_technique": "直接改 URL 路径跳转合并流程步骤，绕过服务端应有的状态校验。",
+   "defensive_insight": "多步流程用服务端状态机推进，禁止按 URL 路径推断当前步骤；关键步骤（密码验证）服务端强制。"
+  },
+  {
+   "id": 237915,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。Oniguruma 正则引擎 6 个内存破坏（\\700 八进制越界写、栈越界读等，5 个 CVE 化）——正则引擎编译期缺陷的经典套路，CVE 汇总分析系统但无 PoC、无绕过、无链。",
+   "attack_chain": "单点：构造畸形正则（如 \\700）→编译/匹配越界→内存破坏/DoS。",
+   "bypass_technique": "无绕过，直接利用解析器缺陷。",
+   "defensive_insight": "正则引擎升级并限制不可信正则在网络入口的编译。"
+  },
+  {
+   "id": 1746582,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SSRF",
+   "reasoning": "否。Mail 应用 smtpHost 参数未校验，响应时间差异探测内网主机/端口——盲 SSRF 端口扫描经典，需先过 IMAP 校验的前置有细节，机制零变形。",
+   "attack_chain": "单点：smtpHost 填内网地址→按响应时间差异扫描端口/服务。",
+   "bypass_technique": "无绕过，直接利用未校验的邮件服务器参数。",
+   "defensive_insight": "邮件服务器配置参数做 SSRF 防护（IP 黑名单）；统一错误语义防时间侧信道。"
+  },
+  {
+   "id": 197976,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。FTP 匿名登录可下载任意文件——匿名访问配置错误经典，影响面大但机制零变形，目标 REDACTED。",
+   "attack_chain": "单点：匿名连接 FTP→下载/枚举全部文件。",
+   "bypass_technique": "无绕过，直接利用匿名访问。",
+   "defensive_insight": "禁用匿名登录；FTP 账号最小权限+白名单 IP。"
+  },
+  {
+   "id": 12497,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。Flash FileReference 包装类触发 UAF（CVE-2016-1001 系列）——Flash 对象生命周期缺陷经典，PoC 完整但机制成熟（UAF 标准模式）。",
+   "attack_chain": "单点：恶意 swf 包装 FileReference 多次浏览→释放后重用→RCE。",
+   "bypass_technique": "无绕过，直接利用对象生命周期缺陷。",
+   "defensive_insight": "Flash 已废弃；对象引用计数与释放校验。"
+  },
+  {
+   "id": 145260,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。联系表单触发全路径泄露——经典错误信息泄露，informative，无技术细节。",
+   "attack_chain": "单点：提交表单→错误页回显服务器路径。",
+   "bypass_technique": "无。",
+   "defensive_insight": "生产环境隐藏错误路径；表单错误统一文案。"
+  },
+  {
+   "id": 801370,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "反序列化",
+   "reasoning": "否。fabric-sdk-java 用 SnakeYAML 默认构造器解析配置/策略文件可实例化任意类型 RCE——YAML 不安全反序列化经典，代码位置明确、修复方案标准，机制成熟。",
+   "attack_chain": "单点：构造恶意 YAML 配置→SnakeYAML 实例化任意类→RCE。",
+   "bypass_technique": "无绕过，直接利用默认构造器。",
+   "defensive_insight": "YAML 解析用 SafeConstructor；配置来源白名单化。"
+  },
+  {
+   "id": 175310,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。number_format 的 decimals/dec_point_len 接近 0x7fffffff 时 reslen 溢出致堆写越界——长度计算整数溢出的经典内存破坏，gdb 证据完整但机制成熟。",
+   "attack_chain": "单点：number_format 传超大 decimals→reslen 溢出→堆越界写。",
+   "bypass_technique": "无绕过，直接利用参数溢出。",
+   "defensive_insight": "格式参数做范围上限校验；长度计算先溢出检查。"
+  },
+  {
+   "id": 1159255,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。backURL 参数 javascript: scheme 注入——DOM XSS 经典，目标与参数 REDACTED。",
+   "attack_chain": "单点：backURL=javascript:alert→返回按钮触发执行。",
+   "bypass_technique": "无绕过，直接利用危险 scheme。",
+   "defensive_insight": "返回 URL 参数 scheme 白名单并输出编码。"
+  },
+  {
+   "id": 873474,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。express 实体名存 </h1><script> 渲染触发——经典存储 XSS，步骤完整但机制零变形。",
+   "attack_chain": "实体名存 payload→他人查看对象→渲染执行。",
+   "bypass_technique": "无绕过，直接利用未转义输出。",
+   "defensive_insight": "实体名称字段统一输出编码。"
+  },
+  {
+   "id": 1329792,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "子域名接管 / 配置错误",
+   "reasoning": "否。www 子域 CNAME 指向未认领 bucket，注册接管——AWS S3 子域接管经典，dig 证据完整但机制零变形。",
+   "attack_chain": "单点：注册未认领 bucket→控制子域内容。",
+   "bypass_technique": "无绕过，直接认领悬空 S3 桶。",
+   "defensive_insight": "CNAME 与 bucket 归属联动管理；弃用桶即删记录。"
+  },
+  {
+   "id": 402753,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 授权绕过",
+   "reasoning": "部分。Jetpack Simple Payments 的自定义 post type 权限错误设为 edit_post，contributor 可创建产品并写未保护 post_meta，价格字段渲染未消毒——'支付模块权限配置错误+meta 字段未转义'组合成低权→全站存储 XSS，能力矩阵与渲染路径的代码分析完整；本质是权限错误+输出未转义的经典组合，但因涉及支付模块与低权提权路径，思路有借鉴。",
+   "attack_chain": "contributor 创建产品→写恶意价格 meta→[simple-payment] shortcode 渲染→XSS→提权。",
+   "bypass_technique": "无绕过，利用 post type 权限错误 + 未消毒 meta 字段。",
+   "defensive_insight": "支付模块 post type 权限收紧（仅管理员）；渲染字段全部转义，meta 键保护。"
+  },
+  {
+   "id": 380782,
+   "value_score": 0,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "配置错误",
+   "reasoning": "无法判断。自报 Ubuntu 12.04 EOL（无补丁）并附 exploit-db 链接——版本生命周期提示，无实际漏洞利用，informative。",
+   "attack_chain": "无法确认。",
+   "bypass_technique": "无法确认。",
+   "defensive_insight": "操作系统升级至受支持版本。"
+  },
+  {
+   "id": 265441,
+   "value_score": 0,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "信息泄露",
+   "reasoning": "无法判断。仅建议修改'邮箱已注册'的提示文案防枚举——纯产品建议，无漏洞论证。",
+   "attack_chain": "无法确认。",
+   "bypass_technique": "无法确认。",
+   "defensive_insight": "注册流程统一提示文案（若属防枚举需求）。"
+  },
+  {
+   "id": 140720,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 其他",
+   "reasoning": "否。报告视图加载全部评论，450 条消息触发 524 超时——评论无数量限制的资源消耗经典，sandbox 验证完整但机制零变形（加载量无上限）。",
+   "attack_chain": "单点：刷大量评论→视图加载超时→报告不可访问。",
+   "bypass_technique": "无绕过，直接利用数据量无上限。",
+   "defensive_insight": "评论视图分页/懒加载；单报告评论数上限与审计。"
+  },
+  {
+   "id": 179121,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。Brave Android 的 logcat 输出浏览 URL——调试日志泄露经典，需 adb/本地访问，informative。",
+   "attack_chain": "单点：logcat 查看进程日志→读取用户浏览 URL。",
+   "bypass_technique": "无绕过，直接读取未脱敏日志。",
+   "defensive_insight": "release 构建关闭日志输出；URL 类敏感数据不落调试日志。"
+  },
+  {
+   "id": 508459,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "SSRF / 协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。Omise webhook 已拦截一般重定向，但 HTTP 303 See Other 可绕过该防护——'重定向防护只覆盖部分状态码'的协议细节遗漏，使攻击者借 303 让 webhook 服务读取 AWS metadata 拿到 opsworks EC2 角色密钥（含 AWS 私钥）；条件极简（发 303 的 PHP 一行），可抽象为通用判据（重定向防护必须覆盖全部 3xx 语义）；证据链（响应体读密钥）完整。",
+   "attack_chain": "webhook 指向 303 重定向器→服务端跟随→读 169.254.169.254 metadata→AWS 密钥泄露→接管云环境。",
+   "bypass_technique": "用 303 See Other 绕过 webhook 的重定向拦截。",
+   "defensive_insight": "SSRF 防护在最终请求处校验目标（含全部重定向）；禁止重定向到 link-local/metadata 地址。"
+  },
+  {
+   "id": 172403,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。Python 2.7 JSON 编码超大 key 触发堆破坏——编码器长度计算缺陷经典，正文极简（仅 bug 链接+一行 PoC）。",
+   "attack_chain": "单点：json.dumps 超大 key→堆破坏。",
+   "bypass_technique": "无绕过，直接利用编码器缺陷。",
+   "defensive_insight": "升级 Python；编码器长度计算溢出检查。"
+  },
+  {
+   "id": 160294,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露 / 其他",
+   "reasoning": "否。EXIF TIFF 的 Thumbnail.offset 无校验（超 FileSize 时 read 返回 0 仍继续），exif_thumbnail_build 泄露未初始化堆内存（CVE-2016-7128，可绕过 PIE/ASLR）——'错误处理后继续执行'的内存泄露经典，PoC 与地址泄露演示完整，机制成熟。",
+   "attack_chain": "单点：构造 offset 超文件大小的 TIFF→读失败仍构建→泄露堆内存/地址。",
+   "bypass_technique": "无绕过，利用错误分支未终止导致未初始化数据外泄。",
+   "defensive_insight": "读失败必须终止并清空缓冲；缩略图偏移与大小交叉校验。"
+  }
+ ]
+}

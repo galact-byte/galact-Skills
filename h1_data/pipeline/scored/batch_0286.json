@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 8,
+  "dropped": 12,
+  "avg_score": 4.6,
+  "top_n": [
+   1154542,
+   1965156,
+   1238749,
+   123125,
+   1397940
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1154542,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 跨组件攻击链",
+   "reasoning": "是。ExifTool 忽略文件扩展名而基于内容解析，导致原本只处理 JPEG/TIFF 的流程被重定向到 DjVu 解析器，而 DjVu 解析器对注解 token 使用 eval 转换 C 转义序列，且反斜杠+换行可闭合引号注入任意 Perl 代码。这种'扩展名白名单被内容嗅探绕过'与'解析器内部 eval 的转义绕过'组合，产生了从文件上传到 RCE 的完整攻击链，极具启发性。",
+   "attack_chain": "上传伪装成 .jpg 的 DjVu 文件 → Workhorse 按扩展名交给 ExifTool → ExifTool 按内容识别为 DjVu → DjVu 解析器 eval 注解中的 Perl 代码 → 执行系统命令（RCE）",
+   "bypass_technique": "利用 ExifTool 基于内容而非扩展名识别文件类型，绕过仅处理 JPEG/TIFF 的限制；利用 DjVu 注解中反斜杠+换行绕过转义校验，闭合引号注入 Perl 代码。",
+   "defensive_insight": "在调用 ExifTool 前验证文件真实类型（如 magic bytes）；避免在解析器中使用 eval 处理转义序列；限制 ExifTool 只启用必要的解析器模块。"
+  },
+  {
+   "id": 1965156,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 授权绕过",
+   "reasoning": "是。'禁止下载'权限仅作用于文件下载接口，但通过将图片插入文本文件，绕过了该权限，实现了间接下载。这种利用功能组合绕过权限控制的思路，展示了权限检查的粒度缺陷，具有通用性。",
+   "attack_chain": "共享文件夹（无下载权限）→ 创建文本文件并插入图片 → 通过文本文件预览或下载接口获取图片内容",
+   "bypass_technique": "利用文本编辑功能对图片的引用，绕过文件下载权限检查。",
+   "defensive_insight": "权限检查应覆盖所有可能泄露文件内容的路径，包括预览、嵌入、引用等；对文本文件中的图片引用也应执行权限验证。"
+  },
+  {
+   "id": 1238749,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 配置错误",
+   "reasoning": "是。缺少速率限制导致资源耗尽，虽然属于常见问题，但影响明确且可造成拒绝服务，且 PoC 视频提供了完整复现步骤。",
+   "attack_chain": "攻击者通过 API 或界面无限创建翻译项目 → 耗尽项目名称和存储空间 → 合法用户无法创建项目",
+   "bypass_technique": "无绕过，直接利用缺少速率限制的接口。",
+   "defensive_insight": "对创建资源的操作实施速率限制和配额管理；监控异常创建行为。"
+  },
+  {
+   "id": 123125,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 类型混淆",
+   "reasoning": "是。通过构造二维数组参数，导致服务端将数组键值对错误地拼接到 HTML 属性中，从而注入事件处理器。这种利用参数结构混淆实现 XSS 的手法，展示了输入验证的盲点。",
+   "attack_chain": "构造 properties[builder_id][payload] 参数 → 服务端将数组序列化为字符串时未转义 → 注入 HTML 属性 → 触发 XSS",
+   "bypass_technique": "利用数组参数导致服务端拼接错误，注入 onmouseover 等事件属性。",
+   "defensive_insight": "对所有参数进行类型检查和输出编码；避免将数组直接拼接为字符串。"
+  },
+  {
+   "id": 1397940,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "是。通过 XSSJacking 将 Self-XSS 转化为实际攻击，利用 iframe 加载目标页面并诱导用户操作，绕过 CSP 和 X-Frame-Options 的限制。这种组合攻击展示了 Self-XSS 的潜在危害。",
+   "attack_chain": "在推荐图片 URL 中注入 XSS payload → 通过邮件模板插入 iframe 加载目标页面 → 诱导用户点击触发 XSS",
+   "bypass_technique": "利用 XSSJacking 技术，通过 iframe 嵌入目标页面，绕过 CSP 和 X-Frame-Options。",
+   "defensive_insight": "对用户可控的 URL 进行严格过滤；设置合理的 CSP 和 X-Frame-Options；对邮件模板中的链接进行安全处理。"
+  },
+  {
+   "id": 46952,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。Markdown 解析器崩溃导致报告不可读，属于低危的解析器 bug，无安全影响，且复现条件不明确。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "对 Markdown 解析器进行 fuzz 测试，修复崩溃问题。"
+  },
+  {
+   "id": 139965,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "认证绕过",
+   "reasoning": "否。添加邮箱无需二次认证，属于常见的账户安全缺陷，但需要已登录会话，且无实际绕过，攻击前提较强。",
+   "attack_chain": "攻击者获得会话 → 添加新邮箱 → 通过邮箱重置密码",
+   "bypass_technique": "无绕过，直接利用缺少二次认证。",
+   "defensive_insight": "敏感操作（如添加邮箱）应要求密码或 2FA 验证。"
+  },
+  {
+   "id": 203595,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告仅提及补丁遗漏，无漏洞详情，无法评估。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "确保补丁完整应用。"
+  },
+  {
+   "id": 215384,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "IDOR / 信息泄露",
+   "reasoning": "部分。通过修改 parent_id 参数泄露私有组名称，属于 IDOR 的简单变形，但利用方式直接，PoC 清晰。",
+   "attack_chain": "访问 /groups/new?parent_id=2 → 泄露私有组名称",
+   "bypass_technique": "直接修改参数值，未授权访问。",
+   "defensive_insight": "对参数进行权限校验，确保用户只能访问授权的资源。"
+  },
+  {
+   "id": 2081930,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过",
+   "reasoning": "部分。通过 API 绕过报告提交限制，属于授权绕过，但需要 API 密钥，且影响有限。",
+   "attack_chain": "被禁止提交报告 → 使用 API 密钥提交报告",
+   "bypass_technique": "利用 API 端点未执行相同的限制检查。",
+   "defensive_insight": "确保所有入口（包括 API）执行相同的权限和限制检查。"
+  },
+  {
+   "id": 123625,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "开放重定向",
+   "reasoning": "否。开放重定向是常见漏洞，此处利用单引号触发重写规则，变形轻微，无特殊绕过。",
+   "attack_chain": "构造含单引号的 URL → 触发重写 → 重定向到外部站点",
+   "bypass_technique": "利用 URL 重写规则缺陷。",
+   "defensive_insight": "修复 URL 重写规则，对重定向目标进行白名单校验。"
+  },
+  {
+   "id": 1283200,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "开放重定向",
+   "reasoning": "否。利用 URL 中的 @ 符号实现重定向，是经典技巧，无新意。",
+   "attack_chain": "构造 https://app.upchieve.org@evil.com → 重定向到 evil.com",
+   "bypass_technique": "利用 URL 解析差异。",
+   "defensive_insight": "对重定向 URL 进行白名单校验。"
+  },
+  {
+   "id": 633607,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "内存破坏",
+   "reasoning": "部分。mruby 的 str_replace_partial 存在越界读，属于内存破坏漏洞，但 PoC 和调试信息完整，可复现。",
+   "attack_chain": "构造特定字符串操作 → 触发 memmove 越界读",
+   "bypass_technique": "无绕过，直接利用漏洞。",
+   "defensive_insight": "修复 str_replace_partial 的长度检查。"
+  },
+  {
+   "id": 141339,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。短信轰炸属于常见业务逻辑缺陷，无技术含量。",
+   "attack_chain": "批量发送邀请 → 触发短信轰炸",
+   "bypass_technique": "无绕过，直接利用缺少频率限制。",
+   "defensive_insight": "对短信发送实施频率限制和验证码。"
+  },
+  {
+   "id": 712376,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "点击劫持",
+   "reasoning": "否。缺少 CSP 导致点击劫持，是常见配置问题，无绕过。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "添加 CSP frame-ancestors 或 X-Frame-Options。"
+  },
+  {
+   "id": 1244145,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS，经典 payload，无绕过。",
+   "attack_chain": "构造 URL → 触发 XSS",
+   "bypass_technique": "无",
+   "defensive_insight": "对输出进行编码。"
+  },
+  {
+   "id": 997988,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "SSRF",
+   "reasoning": "部分。通过 X-Forwarded-Host 等头触发外部服务交互，属于 SSRF 的常见变形，但影响明确。",
+   "attack_chain": "添加恶意头 → 服务器发起请求到外部",
+   "bypass_technique": "利用代理头信任。",
+   "defensive_insight": "不信任代理头，对重定向目标进行校验。"
+  },
+  {
+   "id": 172115,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "内存破坏",
+   "reasoning": "否。Python AST API 的 UAF，已知漏洞，无新意。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "修复 Python 源码。"
+  },
+  {
+   "id": 766533,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "CSRF",
+   "reasoning": "部分。CSRF 修改项目设置，需要知道项目 ID，但 PoC 完整。",
+   "attack_chain": "诱导受害者访问恶意页面 → 发送 PATCH 请求修改设置",
+   "bypass_technique": "无绕过，直接利用 CSRF。",
+   "defensive_insight": "添加 CSRF token 验证。"
+  },
+  {
+   "id": 291489,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "内存破坏 / 跨组件攻击链",
+   "reasoning": "是。Kovri 路由器在处理 Garlic 消息时，未对内部 I2NP 消息长度进行校验，导致越界读并泄露堆内存数据。这种利用协议解析缺陷实现信息泄露，展示了协议实现中的边界检查缺失。",
+   "attack_chain": "构造恶意 Garlic 消息 → 触发越界读 → 泄露堆内存数据",
+   "bypass_technique": "利用未校验的长度字段，导致越界读。",
+   "defensive_insight": "在解析协议消息时，严格校验长度字段，确保在发送前进行边界检查。"
+  }
+ ]
+}

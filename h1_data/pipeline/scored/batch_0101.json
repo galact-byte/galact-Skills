@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1065885,
+   531032,
+   878394,
+   214044,
+   164152
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 283269,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。开放重定向是常见漏洞，报告描述模糊，无具体参数或利用链，且substate为informative，可复现性低。",
+   "attack_chain": "单点：拦截请求修改重定向目标。",
+   "bypass_technique": "无实质绕过，直接利用未验证的重定向参数。",
+   "defensive_insight": "服务端校验重定向URL白名单，禁止开放跳转。"
+  },
+  {
+   "id": 1065885,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 业务逻辑 / 类型混淆",
+   "reasoning": "是。这是一份CTF式完整攻击链，包含多种漏洞类型：LFI绕过（str_replace非递归）、类型混淆（科学计数法绕过长度限制）、SQL注入（二阶盲注）、TOCTOU（DNS重绑定）等。每个环节都展示了非预期解，尤其是利用PHP弱类型和DNS重绑定绕过本地IP检查，极具启发性。",
+   "attack_chain": "多步：从robots.txt开始，逐步利用LFI、IDOR、弱会话、SQL注入、类型混淆、TOCTOU等获取flag。",
+   "bypass_technique": "str_replace非递归绕过；科学计数法绕过长度限制；DNS重绑定绕过IP检查；二阶SQL注入。",
+   "defensive_insight": "修复str_replace递归问题；严格类型校验；使用HMAC签名；DNS解析结果缓存并二次校验。"
+  },
+  {
+   "id": 878394,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "原型污染 / 框架行为利用",
+   "reasoning": "是。原型污染是Node.js生态的经典问题，但此报告展示了通过JSON.parse构造__proto__属性，利用merge函数污染Object.prototype，影响所有对象。这是对JavaScript原型链行为的巧妙利用，可导致DoS或RCE，具有通用性。",
+   "attack_chain": "单组件：构造payload → merge函数 → 污染原型 → 影响所有对象。",
+   "bypass_technique": "利用__proto__属性在merge时未过滤，实现原型污染。",
+   "defensive_insight": "在merge等函数中过滤__proto__、constructor等危险键；使用Object.create(null)创建纯净对象。"
+  },
+  {
+   "id": 1400309,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。报告仅指出Rails版本存在已知漏洞，未提供具体利用细节，属于版本扫描类报告，无新意。",
+   "attack_chain": "单点：版本检测 → 已知漏洞。",
+   "bypass_technique": "无。",
+   "defensive_insight": "及时升级依赖库版本。"
+  },
+  {
+   "id": 1695989,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，使用HTML实体编码绕过过滤，但属于常见变形，无特殊之处。",
+   "attack_chain": "单点：构造恶意URL → 反射执行。",
+   "bypass_technique": "HTML实体编码绕过过滤。",
+   "defensive_insight": "输出编码，使用CSP。"
+  },
+  {
+   "id": 819930,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "认证绕过 / 配置错误",
+   "reasoning": "部分。通过IP轮换绕过基于IP的速率限制，实现暴力破解。思路简单但有效，展示了仅依赖IP限制的弱点，可抽象为通用绕过方法。",
+   "attack_chain": "单点：IP轮换 → 绕过速率限制 → 暴力破解。",
+   "bypass_technique": "使用代理池轮换IP，绕过IP-based rate limiting。",
+   "defensive_insight": "实施账户锁定、验证码、多因素认证等。"
+  },
+  {
+   "id": 32825,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "子域名接管",
+   "reasoning": "部分。子域名接管是常见漏洞，但此报告展示了CNAME到S3的接管细节，包括区域限制，具有教育意义。",
+   "attack_chain": "单点：CNAME指向未绑定S3 → 注册bucket → 控制子域。",
+   "bypass_technique": "利用S3 CNAME规则，注册同名bucket。",
+   "defensive_insight": "定期审计DNS记录，删除未使用的CNAME。"
+  },
+  {
+   "id": 6475,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。Heartbleed是2014年的著名漏洞，报告仅提及存在，无新意。",
+   "attack_chain": "单点：利用Heartbleed读取内存。",
+   "bypass_technique": "无。",
+   "defensive_insight": "升级OpenSSL。"
+  },
+  {
+   "id": 164152,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 协议行为利用",
+   "reasoning": "是。通过构造特殊的Request-URI，利用IE的解析差异绕过XSS过滤器，展示了浏览器差异带来的非预期行为。",
+   "attack_chain": "单点：构造恶意URI → 绕过过滤器 → 执行XSS。",
+   "bypass_technique": "利用IE对URL编码的解析差异，绕过XSS过滤。",
+   "defensive_insight": "服务端规范化输入，输出编码，使用CSP。"
+  },
+  {
+   "id": 309641,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "部分。利用旧版connect框架的directory中间件未转义文件名，导致存储型XSS。展示了依赖旧框架的风险，但利用条件较苛刻。",
+   "attack_chain": "单点：创建恶意文件名 → 访问目录 → 执行XSS。",
+   "bypass_technique": "利用未转义的文件名注入HTML。",
+   "defensive_insight": "升级框架，对输出进行转义。"
+  },
+  {
+   "id": 9735,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，直接注入script标签，无绕过，成熟套路。",
+   "attack_chain": "单点：构造URL → 反射执行。",
+   "bypass_technique": "无。",
+   "defensive_insight": "输入验证，输出编码。"
+  },
+  {
+   "id": 274285,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "信息泄露",
+   "reasoning": "否。报告仅提及目录列表，无具体漏洞利用，且substate为not-applicable，信息不足。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁用目录列表。"
+  },
+  {
+   "id": 1266659,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "子域名接管",
+   "reasoning": "部分。子域名接管，但未实际利用，仅展示CNAME指向未绑定服务，属于常见类型。",
+   "attack_chain": "单点：CNAME指向未绑定服务 → 可接管。",
+   "bypass_technique": "无。",
+   "defensive_insight": "删除未使用的CNAME记录。"
+  },
+  {
+   "id": 531032,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用Janus默认证书和私钥，通过MITM劫持DTLS连接，进而控制SRTP流。展示了硬编码密钥在WebRTC中的严重性，攻击链完整，涉及网络层和应用层。",
+   "attack_chain": "MITM → 劫持TURN → 伪造DTLS证书 → 设置SRTP密钥 → 窃听通话。",
+   "bypass_technique": "使用公开的默认证书绕过DTLS认证。",
+   "defensive_insight": "生成唯一证书，定期轮换，使用证书固定。"
+  },
+  {
+   "id": 214044,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "是。通过修改cookie中的_landing_page为javascript:，在管理员查看订单时触发XSS，实现客户到管理员的攻击。展示了cookie注入和存储型XSS的组合，可导致商店接管。",
+   "attack_chain": "修改cookie → 完成购买 → 管理员查看订单 → 触发XSS → 接管商店。",
+   "bypass_technique": "利用cookie值作为链接，注入javascript协议。",
+   "defensive_insight": "对cookie值进行验证和输出编码，限制javascript协议。"
+  },
+  {
+   "id": 1182016,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。邮箱验证绕过，通过修改邮箱不重新验证，常见业务逻辑缺陷。",
+   "attack_chain": "单点：注册验证 → 修改邮箱 → 绕过验证。",
+   "bypass_technique": "利用修改邮箱功能不触发验证。",
+   "defensive_insight": "修改邮箱时重新验证。"
+  },
+  {
+   "id": 280529,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。密码重置链接未失效，属于常见设计缺陷，无新意。",
+   "attack_chain": "单点：生成多个重置链接 → 旧链接仍有效。",
+   "bypass_technique": "无。",
+   "defensive_insight": "重置链接一次性使用，生成新链接时使旧链接失效。"
+  },
+  {
+   "id": 97319,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。通过数组参数触发PHP警告，泄露路径，常见类型。",
+   "attack_chain": "单点：构造数组参数 → 触发警告 → 泄露路径。",
+   "bypass_technique": "无。",
+   "defensive_insight": "关闭错误显示，参数类型校验。"
+  },
+  {
+   "id": 487081,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "部分。存储型XSS，通过iframe和javascript协议执行，可影响管理员，但利用条件需要用户交互，且属于常见XSS变种。",
+   "attack_chain": "发送恶意消息 → 受害者阅读 → 执行XSS → 提权。",
+   "bypass_technique": "使用iframe和javascript协议绕过过滤。",
+   "defensive_insight": "对消息内容进行HTML转义，使用CSP。"
+  },
+  {
+   "id": 1658418,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "IDOR / 授权绕过",
+   "reasoning": "部分。通过GraphQL操作ID直接访问mod logs，未检查权限，属于IDOR，但利用简单，无复杂链。",
+   "attack_chain": "单点：构造GraphQL请求 → 获取mod logs。",
+   "bypass_technique": "直接调用未授权接口。",
+   "defensive_insight": "服务端校验用户权限。"
+  }
+ ]
+}

@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   99435,
+   2471956,
+   302997,
+   192532,
+   42961
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 99435,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用IE/Edge对URL解析的差异（%2f后跟.badoo.com被视为有效域）绕过开放重定向限制，并利用Facebook OAuth对redirect_uri参数宽容性（允许带参数）窃取access_token。技术点在于浏览器与服务器URL解析不一致，以及第三方OAuth行为差异，形成跨组件攻击链。",
+   "attack_chain": "构造恶意state参数→IE/Edge解析为合法域→Facebook重定向携带access_token到攻击者域→窃取令牌。",
+   "bypass_technique": "利用URL编码和浏览器解析差异绕过域名白名单，利用Facebook对redirect_uri参数宽容性。",
+   "defensive_insight": "服务端严格校验redirect_uri，禁止带参数；统一URL解析规范，避免浏览器差异。"
+  },
+  {
+   "id": 7270,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少登录速率限制是常见配置问题，无绕过技巧，无攻击链，一眼即知。",
+   "attack_chain": "无，直接暴力破解。",
+   "bypass_technique": "无。",
+   "defensive_insight": "实施登录速率限制和账户锁定策略。"
+  },
+  {
+   "id": 403736,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "路径遍历",
+   "reasoning": "部分。路径遍历是常见漏洞，但利用curl --path-as-is绕过服务器规范化，且影响npm包，有一定通用性。",
+   "attack_chain": "curl --path-as-is发送未规范化路径→服务器未处理→列出目录。",
+   "bypass_technique": "使用--path-as-is绕过路径规范化。",
+   "defensive_insight": "服务端规范化路径并拒绝包含..的请求。"
+  },
+  {
+   "id": 759418,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，javascript:协议，常见套路，无绕过，无链。",
+   "attack_chain": "单点：参数注入→执行JS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对输出进行编码，使用CSP。"
+  },
+  {
+   "id": 192532,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 内存破坏",
+   "reasoning": "是。利用Ruby的method_missing和prepend的交互导致use-after-free和内存破坏，触发mruby引擎的崩溃。技术点在于动态语言特性与内存管理的非预期交互，PoC完整，可复现。",
+   "attack_chain": "定义method_missing→prepend模块→触发UAF→内存破坏→DoS。",
+   "bypass_technique": "利用prepend和method_missing的递归调用导致对象生命周期混乱。",
+   "defensive_insight": "修复mruby的GC和对象生命周期管理，对prepend操作进行安全检查。"
+  },
+  {
+   "id": 915756,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "部分。利用Firefox 69及以下版本的CSP绕过，通过<object data=javascript:>执行脚本，属于浏览器行为差异，有一定启发性。",
+   "attack_chain": "构造base64编码的prefill参数→解码后反射tumblelog字段→Firefox低版本CSP绕过→执行JS。",
+   "bypass_technique": "利用旧版Firefox对CSP的绕过，使用<object>标签。",
+   "defensive_insight": "升级浏览器，服务端对输出进行编码，加强CSP。"
+  },
+  {
+   "id": 138179,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。SSLv2的协议弱点导致会话密钥恢复，属于协议行为利用，影响广泛，是DROWN攻击的变体。",
+   "attack_chain": "利用SSLv2的弱密钥交换→恢复会话密钥→解密流量。",
+   "bypass_technique": "利用SSLv2的协议缺陷。",
+   "defensive_insight": "禁用SSLv2，升级到TLS1.2+。"
+  },
+  {
+   "id": 121275,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。存储型XSS，通过Android应用注入，跨组件，但技术点常见。",
+   "attack_chain": "Android应用输入→存储→Web端反射→执行。",
+   "bypass_technique": "无。",
+   "defensive_insight": "输入验证和输出编码。"
+  },
+  {
+   "id": 302997,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 其他",
+   "reasoning": "是。Ruby的UNIXSocket方法未检查路径中的空字符，导致可以连接到非预期socket，属于系统调用行为利用，可抽象为通用判断条件。",
+   "attack_chain": "构造包含空字符的路径→连接非预期socket。",
+   "bypass_technique": "利用空字符截断路径。",
+   "defensive_insight": "在调用系统调用前检查路径是否包含空字符。"
+  },
+  {
+   "id": 692262,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "路径遍历",
+   "reasoning": "部分。通过符号链接读取任意文件，属于配置错误，但利用symlink是常见技巧。",
+   "attack_chain": "创建symlink→请求→读取文件。",
+   "bypass_technique": "利用符号链接绕过路径限制。",
+   "defensive_insight": "禁止符号链接或解析后检查真实路径。"
+  },
+  {
+   "id": 2471956,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "命令注入 / 跨组件攻击链",
+   "reasoning": "是。利用GitHub Actions中未加引号的变量和PR标题注入命令，窃取GITHUB_TOKEN，属于CI/CD配置错误，攻击链完整，可规模化。",
+   "attack_chain": "创建恶意PR标题→触发workflow→命令注入→窃取token→控制仓库。",
+   "bypass_technique": "利用双引号和分号闭合命令，使用xxd+base64绕过日志过滤。",
+   "defensive_insight": "对不可信输入进行严格验证，避免在shell中直接拼接，使用环境变量安全传递。"
+  },
+  {
+   "id": 210429,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 内存破坏",
+   "reasoning": "是。mruby的VM执行特定代码时触发空指针解引用，属于框架行为利用，PoC完整。",
+   "attack_chain": "执行特定Ruby代码→触发空指针→崩溃。",
+   "bypass_technique": "利用instance_eval和super的交互。",
+   "defensive_insight": "修复mruby VM的指令处理逻辑。"
+  },
+  {
+   "id": 142472,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 内存破坏",
+   "reasoning": "部分。OpenSSL的未定义指针算术，属于协议实现缺陷，但信息较少。",
+   "attack_chain": "利用特定SSL操作→触发未定义行为→内存破坏。",
+   "bypass_technique": "无。",
+   "defensive_insight": "修复OpenSSL的指针算术。"
+  },
+  {
+   "id": 327671,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。404页面内容注入，低危，常见。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "自定义404页面，不反射用户输入。"
+  },
+  {
+   "id": 149571,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。存储型XSS，通过meta标签反射，常见但影响明确。",
+   "attack_chain": "创建恶意组名→分享URL→meta标签反射→执行。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对meta标签内容进行编码。"
+  },
+  {
+   "id": 131053,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "配置错误",
+   "reasoning": "否。仅客户端验证绕过，无实际影响，信息不足。",
+   "attack_chain": "无。",
+   "bypass_technique": "修改HTML属性。",
+   "defensive_insight": "服务端验证。"
+  },
+  {
+   "id": 17227,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "SQL注入",
+   "reasoning": "部分。时间盲注，常见，但参数直接拼接，PoC简单。",
+   "attack_chain": "注入BENCHMARK→延迟响应。",
+   "bypass_technique": "无。",
+   "defensive_insight": "参数化查询。"
+  },
+  {
+   "id": 267212,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "配置错误",
+   "reasoning": "否。第三方登录失败，非安全漏洞。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "修复第三方登录集成。"
+  },
+  {
+   "id": 42961,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。通过直接修改PUT请求中的admin字段实现权限提升，属于IDOR和业务逻辑漏洞，简单但有效。",
+   "attack_chain": "获取成员ID→发送PUT请求修改admin→权限提升。",
+   "bypass_technique": "直接修改请求体中的admin字段。",
+   "defensive_insight": "服务端校验权限，不信任客户端输入。"
+  },
+  {
+   "id": 768677,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少输入长度限制导致DoS，常见。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "实施输入长度限制。"
+  }
+ ]
+}

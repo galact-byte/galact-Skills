@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1966492,
+   236607,
+   1132606,
+   320269,
+   1145563
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1145563,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 其他",
+   "reasoning": "是。Tab nabbing 本身是已知攻击模式，但此处利用 HackerOne 平台自身的报告描述功能作为攻击载体，将用户可控的链接注入到受害者收件箱中，形成针对平台用户的钓鱼攻击。这种'平台功能被滥用'的思路具有启发性，且 PoC 完整，可复现。",
+   "attack_chain": "攻击者在报告中放置恶意链接→受害者点击新标签页打开→恶意页面通过 window.opener 重定向原标签页→受害者被钓鱼。",
+   "bypass_technique": "利用 target=_blank 未设置 rel=noopener 的浏览器行为，通过 window.opener 控制原页面。",
+   "defensive_insight": "所有外链添加 rel=noopener noreferrer；对用户提交的链接进行安全过滤或警告。"
+  },
+  {
+   "id": 310105,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "部分。通过发送特定 cookie 名触发应用返回所有 cookie 列表，属于信息泄露，但本质是配置错误或调试接口暴露，无绕过技巧，攻击链简单。",
+   "attack_chain": "发送 Cookie: 0=1 → 服务器返回所有 cookie 名称。",
+   "bypass_technique": "无实质绕过，直接利用未过滤的 cookie 处理逻辑。",
+   "defensive_insight": "避免在响应中回显所有 cookie 名称；对 cookie 处理进行严格校验。"
+  },
+  {
+   "id": 236607,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 配置错误",
+   "reasoning": "是。利用 zip 上传功能，通过构造不完整的压缩包使解压后的文件残留在临时目录，从而上传 PHP 脚本并执行。这绕过了'上传文件类型限制'的防御，且目录列表暴露了临时目录，形成完整攻击链。",
+   "attack_chain": "上传恶意 zip → 解压后文件残留 → 访问临时目录 → 执行 PHP 脚本。",
+   "bypass_technique": "利用 zip 解压失败后文件不清理的缺陷，绕过上传白名单。",
+   "defensive_insight": "上传后及时清理临时文件；对解压目录禁止脚本执行；限制目录列表。"
+  },
+  {
+   "id": 395521,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "SSRF",
+   "reasoning": "是。SSRF 访问 AWS 元数据服务，虽然 SSRF 是常见漏洞，但此处直接利用代理功能访问云元数据，且 PoC 简单有效，具有代表性。",
+   "attack_chain": "构造 image_host 参数为 http://169.254.169.254/latest/meta-data/ → 代理请求 → 返回元数据。",
+   "bypass_technique": "无复杂绕过，直接利用代理未过滤内网地址。",
+   "defensive_insight": "对代理请求的目标地址进行白名单校验，禁止访问内网 IP 和云元数据地址。"
+  },
+  {
+   "id": 165102,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。报告仅引用 CVE 链接，无具体漏洞描述和利用细节，信息不足，无法评估。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "无"
+  },
+  {
+   "id": 1966492,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 授权绕过",
+   "reasoning": "是。Node.js 的 --experimental-permission 权限系统被 fs.openAsBlob() 绕过，这是一个框架行为利用的典型案例。该 API 未受权限系统约束，导致任意文件读取，绕过看似已生效的强制策略。",
+   "attack_chain": "使用 fs.openAsBlob() 读取未授权文件 → 绕过权限检查。",
+   "bypass_technique": "利用 Node.js 权限系统未覆盖的 API 实现绕过。",
+   "defensive_insight": "完善权限系统，确保所有文件操作 API 都经过权限检查。"
+  },
+  {
+   "id": 217610,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。mruby 的崩溃报告，属于内存破坏漏洞，但无利用细节和攻击链，仅提供崩溃信息，启发性有限。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "无"
+  },
+  {
+   "id": 13679,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。注册时未过滤控制字符，属于常见输入验证缺失，无绕过技巧，攻击链简单。",
+   "attack_chain": "注册时注入控制字符 → 身份混淆。",
+   "bypass_technique": "无",
+   "defensive_insight": "对用户输入进行严格过滤，禁止控制字符。"
+  },
+  {
+   "id": 300540,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。SharePoint Web 服务暴露，属于配置错误，无绕过技巧，攻击链简单。",
+   "attack_chain": "访问 _vti_bin/lists.asmx?WSDL → 获取敏感信息。",
+   "bypass_technique": "无",
+   "defensive_insight": "限制匿名访问 Web 服务。"
+  },
+  {
+   "id": 1132606,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 授权绕过",
+   "reasoning": "是。GraphQL 中 Attachment 对象在文件从页面渲染中移除后仍可访问，导致敏感文件泄露。这利用了业务逻辑中'删除渲染'与'删除文件'的语义差异，绕过用户预期，且跨组件（GraphQL API 与页面渲染）。",
+   "attack_chain": "客户删除文件渲染 → 程序公开 → 未授权用户通过 GraphQL 查询附件 → 获取文件。",
+   "bypass_technique": "利用 GraphQL 对象与页面渲染的关联缺失，通过 API 直接访问。",
+   "defensive_insight": "确保删除渲染时同步删除文件或撤销访问权限；对 GraphQL 对象进行权限校验。"
+  },
+  {
+   "id": 946578,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。WordPress 的 load-scripts.php 资源消耗 DoS，是已知 CVE，无绕过技巧，攻击链简单。",
+   "attack_chain": "构造大量脚本加载请求 → 资源耗尽。",
+   "bypass_technique": "无",
+   "defensive_insight": "限制 load-scripts.php 的请求参数长度和频率。"
+  },
+  {
+   "id": 152696,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 业务逻辑",
+   "reasoning": "部分。通过修改 project_id 和 user_id 参数，服务器返回错误信息泄露项目名和用户名，属于 IDOR 导致的批量信息泄露，思路简单但有效。",
+   "attack_chain": "修改 project_id/user_id → 服务器返回错误信息 → 泄露数据。",
+   "bypass_technique": "无实质绕过，直接利用未授权访问。",
+   "defensive_insight": "对参数进行权限校验，避免在错误信息中泄露敏感数据。"
+  },
+  {
+   "id": 177639,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。CSRF 漏洞，无绕过技巧，攻击链简单，常见套路。",
+   "attack_chain": "构造恶意表单 → 受害者访问 → 自动提交修改评论。",
+   "bypass_technique": "无",
+   "defensive_insight": "添加 CSRF Token 验证。"
+  },
+  {
+   "id": 228399,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。Discourse 的导出功能权限检查存在逻辑缺陷，guardian 检查形同虚设，导致任意用户可导出用户列表。这利用了'检查实体类型是否为 admin'但该类型不存在的逻辑漏洞，绕过权限控制。",
+   "attack_chain": "调用导出接口 → 绕过 guardian 检查 → 导出用户数据。",
+   "bypass_technique": "利用不存在的实体类型使权限检查失效。",
+   "defensive_insight": "修复权限检查逻辑，确保所有实体类型都有明确的权限控制。"
+  },
+  {
+   "id": 21150,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。Flash XSS 是已知漏洞类型，但此处利用 swfupload.swf 的 movieName 参数，属于经典 Flash XSS 的实战应用，PoC 简单。",
+   "attack_chain": "构造恶意 URL → 触发 Flash XSS → 执行脚本。",
+   "bypass_technique": "无实质绕过，直接利用 Flash 参数注入。",
+   "defensive_insight": "移除 Flash 组件或对参数进行严格过滤。"
+  },
+  {
+   "id": 1095830,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。AEM CRXDE Lite 暴露，属于配置错误，无绕过技巧，攻击链简单。",
+   "attack_chain": "访问 CRXDE Lite → 查询 admin → 获取信息。",
+   "bypass_technique": "无",
+   "defensive_insight": "禁用或限制 CRXDE Lite 的匿名访问。"
+  },
+  {
+   "id": 320269,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "类型混淆 / 信息泄露",
+   "reasoning": "是。npmconf 在 Node.js 4.x 下将数字类型密码传给 new Buffer()，导致未初始化内存分配，泄露敏感信息。这利用了类型混淆和旧版 Node.js 的 Buffer 行为，属于框架行为利用。",
+   "attack_chain": "传入数字密码 → 分配未初始化 Buffer → 泄露内存内容。",
+   "bypass_technique": "利用类型混淆触发未初始化内存读取。",
+   "defensive_insight": "升级 Node.js 版本；对输入进行类型检查；避免使用 new Buffer()。"
+  },
+  {
+   "id": 1069396,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "跨组件攻击链 / 其他",
+   "reasoning": "是。CTF 题解，包含多种漏洞利用技巧，如 SQL 注入、SSRF、DNS rebinding 等，攻击链完整，但属于 CTF 场景，实际应用价值有限。",
+   "attack_chain": "多步骤：信息收集 → SQL 注入 → SSRF → DNS rebinding → 获取 flag。",
+   "bypass_technique": "多种绕过技巧，如双重 SQL 注入、DNS rebinding 绕过 SSRF 限制。",
+   "defensive_insight": "综合防御：输入验证、SSRF 防护、DNS 解析安全。"
+  },
+  {
+   "id": 1195432,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。公开的 RPC 端点泄露 IP 和端点信息，属于信息泄露，无绕过技巧，攻击链简单。",
+   "attack_chain": "访问公开端点 → 获取敏感信息。",
+   "bypass_technique": "无",
+   "defensive_insight": "限制公开端点的信息暴露。"
+  },
+  {
+   "id": 916430,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "类型混淆 / 其他",
+   "reasoning": "是。json-bigint 库在解析 __proto__ 时导致 DoS，利用了原型链污染和类型混淆，输入极小，PoC 清晰。",
+   "attack_chain": "构造恶意 JSON → 解析后触发 DoS。",
+   "bypass_technique": "利用 __proto__ 赋值污染原型链，导致后续操作挂起。",
+   "defensive_insight": "避免解析不可信 JSON 时直接赋值 __proto__；使用安全解析库。"
+  }
+ ]
+}

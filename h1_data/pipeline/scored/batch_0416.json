@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1082847,
+   1104111,
+   2209130,
+   1848176,
+   437142
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 144803,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "否。这是典型的用户枚举漏洞，通过注册接口的响应差异（406 vs 200）判断邮箱是否已注册。虽然报告指出无速率限制，但这是常见的信息泄露类型，没有绕过或攻击链，思路直接。",
+   "attack_chain": "单点：注册接口→响应差异→枚举邮箱。",
+   "bypass_technique": "无实质绕过，直接利用响应状态码差异。",
+   "defensive_insight": "统一注册接口的响应，无论邮箱是否已注册都返回相同状态码，并添加速率限制。"
+  },
+  {
+   "id": 1082847,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 业务逻辑 / XSS",
+   "reasoning": "是。通过未在TypeScript schema中定义的config参数覆盖运行时配置，导致XSS和业务逻辑篡改。技术点在于Partial schema允许额外属性，且未验证的属性被实际使用，形成配置注入。区别于普通XSS，这是配置覆盖导致的逻辑漏洞，可抽象为通用判断条件。",
+   "attack_chain": "构造config参数→覆盖未验证的api.redirect等属性→触发javascript:URL→XSS或修改下载链接。",
+   "bypass_technique": "利用Partial schema的宽松性，注入未定义但实际使用的配置属性。",
+   "defensive_insight": "移除config参数或使用严格schema，禁止额外属性；对关键配置属性进行白名单验证。"
+  },
+  {
+   "id": 1165015,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑 / 认证绕过",
+   "reasoning": "否。这是邮箱验证逻辑缺陷，点击'不是本人'后账户未禁用，导致未验证邮箱即可使用。属于常见的业务逻辑漏洞，没有绕过或攻击链，思路直接。",
+   "attack_chain": "单点：注册→点击否认→账户仍可用。",
+   "bypass_technique": "无实质绕过，直接利用验证流程缺陷。",
+   "defensive_insight": "在用户否认邮箱后，应禁用账户或要求重新验证。"
+  },
+  {
+   "id": 2209130,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "SQL注入 / 协议行为利用",
+   "reasoning": "是。在invite_code参数中发现PostgreSQL时间盲注，利用PG_SLEEP函数确认。技术点在于注入点在OIDC代理的注册流程中，且使用注释绕过WAF。虽然SQL注入是常见类型，但此处结合了WAF绕过和明确的复现步骤，且影响严重。",
+   "attack_chain": "单点：注册请求→invite_code参数→PG_SLEEP盲注→数据泄露。",
+   "bypass_technique": "使用注释/* */绕过WAF，利用分号堆叠查询。",
+   "defensive_insight": "参数化查询，严格验证输入，部署WAF规则拦截常见注入模式。"
+  },
+  {
+   "id": 1848176,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / IDOR",
+   "reasoning": "是。作为guest用户，通过直接修改USER_ID枚举所有用户信息，这是典型的IDOR，但报告提供了完整的复现步骤和构建环境，且影响范围大。技术点在于API端点未校验对象级授权，可批量枚举。",
+   "attack_chain": "单点：guest登录→GET /api/v1/permission/user/{id}/→遍历ID获取信息。",
+   "bypass_technique": "直接修改资源ID，未验证所有权。",
+   "defensive_insight": "实施对象级访问控制，确保用户只能访问自己的资源。"
+  },
+  {
+   "id": 1118898,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "否。phpinfo页面暴露是常见的配置错误，没有绕过或攻击链，直接访问即可。",
+   "attack_chain": "单点：访问phpinfo.php→信息泄露。",
+   "bypass_technique": "无。",
+   "defensive_insight": "移除生产环境中的phpinfo.php文件。"
+  },
+  {
+   "id": 817244,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。二进制未启用PIE/ASLR是安全加固缺失，属于配置问题，没有绕过或攻击链，且影响间接。",
+   "attack_chain": "单点：二进制未启用ASLR→内存破坏漏洞利用难度降低。",
+   "bypass_technique": "无。",
+   "defensive_insight": "编译时启用PIE，操作系统启用ASLR。"
+  },
+  {
+   "id": 971599,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS / 业务逻辑",
+   "reasoning": "否。在折扣码和产品名中注入HTML标签导致评论功能崩溃，属于存储型XSS的变体，但影响是DoS而非数据窃取，且没有绕过或攻击链。",
+   "attack_chain": "单点：创建含payload的折扣码→在时间线触发→评论功能不可用。",
+   "bypass_technique": "无实质绕过，直接注入HTML。",
+   "defensive_insight": "对输入进行HTML编码，限制允许的标签。"
+  },
+  {
+   "id": 385145,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他 / 配置错误",
+   "reasoning": "否。同形字攻击是已知的URL混淆技术，没有绕过或攻击链，只是未显示punycode。",
+   "attack_chain": "单点：构造同形字URL→用户误点击→重定向到恶意站点。",
+   "bypass_technique": "无实质绕过，利用视觉混淆。",
+   "defensive_insight": "显示punycode或验证URL的域名。"
+  },
+  {
+   "id": 1261225,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "其他 / 配置错误",
+   "reasoning": "部分。上传损坏图片导致内存耗尽，属于资源耗尽型DoS，技术点在于图片预览生成时未正确处理畸形文件，但这是常见问题，没有绕过或攻击链。",
+   "attack_chain": "单点：上传恶意图片→预览生成→内存耗尽。",
+   "bypass_technique": "无实质绕过，利用畸形文件。",
+   "defensive_insight": "限制图片尺寸和内存使用，对上传文件进行严格验证。"
+  },
+  {
+   "id": 158393,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑 / 配置错误",
+   "reasoning": "否。缺少CSRF令牌和速率限制，导致可批量设置提醒，属于常见的业务逻辑漏洞，没有绕过或攻击链。",
+   "attack_chain": "单点：构造请求→批量设置提醒→骚扰用户。",
+   "bypass_technique": "无实质绕过，直接利用缺少防护。",
+   "defensive_insight": "添加CSRF令牌和速率限制，验证用户身份。"
+  },
+  {
+   "id": 415139,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，参数未过滤，直接注入payload，常见套路。",
+   "attack_chain": "单点：构造URL→触发XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对输出进行编码，使用CSP。"
+  },
+  {
+   "id": 1104111,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "SQL注入 / 命令注入 / 跨组件攻击链",
+   "reasoning": "是。通过SQL注入利用xp_cmdshell执行系统命令，实现RCE。技术点在于利用注释绕过WAF，且通过DNS外带数据。这是从SQL注入到RCE的完整攻击链，且影响严重。",
+   "attack_chain": "构造XML请求→DOC_ID参数注入SQL→堆叠查询执行xp_cmdshell→命令执行→数据外带。",
+   "bypass_technique": "使用注释/* */绕过WAF，利用分号堆叠查询。",
+   "defensive_insight": "参数化查询，禁用xp_cmdshell，部署WAF并更新规则。"
+  },
+  {
+   "id": 437142,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 其他",
+   "reasoning": "是。利用iframe缺少sandbox属性，导致内部内容可以重定向顶层窗口。技术点在于iframe的sandbox属性缺失，使得window.open('_top')可以生效，这是对iframe安全策略的绕过。",
+   "attack_chain": "创建恶意JS→在Web IDE预览中加载→iframe重定向顶层窗口。",
+   "bypass_technique": "利用iframe缺少sandbox属性，执行window.open('_top')。",
+   "defensive_insight": "为iframe添加sandbox属性，限制脚本执行和导航。"
+  },
+  {
+   "id": 258630,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "其他 / 协议行为利用",
+   "reasoning": "部分。利用iframe读取本地文件，属于浏览器安全机制绕过，但仅影响Tor浏览器，且需要用户交互，通用性有限。",
+   "attack_chain": "单点：构造HTML→iframe读取本地文件→数据泄露。",
+   "bypass_technique": "利用iframe的file://协议访问本地文件。",
+   "defensive_insight": "浏览器应限制file://协议在网页中的访问。"
+  },
+  {
+   "id": 25160,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他 / 配置错误",
+   "reasoning": "否。开放重定向，常见漏洞，没有绕过或攻击链。",
+   "attack_chain": "单点：构造重定向URL→用户被引导到恶意站点。",
+   "bypass_technique": "无。",
+   "defensive_insight": "验证重定向URL的域名，使用白名单。"
+  },
+  {
+   "id": 335990,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。Flash-based XSS，已知漏洞，没有绕过或攻击链。",
+   "attack_chain": "单点：构造SWF URL→触发XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "移除Flash文件，更新WordPress。"
+  },
+  {
+   "id": 145853,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他 / 配置错误",
+   "reasoning": "否。内容注入，但影响有限，没有绕过或攻击链。",
+   "attack_chain": "单点：构造URL→内容注入。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对URL参数进行编码和验证。"
+  },
+  {
+   "id": 2076019,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 业务逻辑",
+   "reasoning": "部分。存储型XSS，但仅允许特定HTML标签，且不能执行脚本，影响有限。技术点在于白名单过滤不严，允许了<a>标签，可被用于钓鱼。",
+   "attack_chain": "单点：创建含payload的公司名→在Lead Gen表单中触发。",
+   "bypass_technique": "利用允许的HTML标签如<a>进行钓鱼。",
+   "defensive_insight": "对输入进行更严格的过滤，禁止<a>标签或限制其href属性。"
+  },
+  {
+   "id": 1222873,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "部分。账户删除后敏感数据未清除，属于数据残留问题，技术点在于删除逻辑不彻底，但这是常见问题，没有绕过或攻击链。",
+   "attack_chain": "单点：删除账户→本地文件残留→信息泄露。",
+   "bypass_technique": "无。",
+   "defensive_insight": "确保账户删除时彻底清除本地数据。"
+  }
+ ]
+}

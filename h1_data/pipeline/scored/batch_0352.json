@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   422944,
+   2148242,
+   1119228,
+   434116,
+   274541
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1119228,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "SSRF / 框架行为利用",
+   "reasoning": "是。利用 Exchange 的 SSRF 漏洞（CVE-2021-26855）通过构造特殊 Cookie 头实现 SSRF，这是对已知漏洞的实战利用，但展示了如何通过特定头部触发后端请求，具有一定的非预期性。技术点在于利用 Exchange 的认证绕过机制，通过 X-AnonResource 等头部欺骗后端。",
+   "attack_chain": "构造恶意 Cookie 头 → 触发 Exchange 后端请求 → SSRF 访问内网资源。",
+   "bypass_technique": "利用 CVE-2021-26855 的认证绕过，通过 X-AnonResource 和 X-BEResource 头控制后端请求。",
+   "defensive_insight": "及时修补已知漏洞，对 Exchange 进行安全加固，限制后端请求。"
+  },
+  {
+   "id": 422944,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "命令注入 / 跨组件攻击链",
+   "reasoning": "是。利用 ImageTragick 漏洞（CVE-2016-3714）通过上传恶意图片触发命令注入，进而获得反向 shell，并进一步访问 AWS 元数据，形成完整的攻击链。技术点在于利用 ImageMagick 的 delegate 功能执行系统命令，且上传校验不严。",
+   "attack_chain": "上传恶意图片 → ImageMagick 处理时触发命令注入 → 反向 shell → 访问 AWS 元数据获取凭据。",
+   "bypass_technique": "利用 ImageTragick 的漏洞，通过构造恶意 PS 文件绕过图片类型检查。",
+   "defensive_insight": "严格校验上传文件类型和内容，更新 ImageMagick 或禁用危险 delegate，限制出站网络访问。"
+  },
+  {
+   "id": 60058,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "否。WordPress debug.log 公开暴露是常见配置错误，虽然可能通过日志注入实现 RCE，但报告未提供具体利用步骤，且信息泄露本身不具启发性。",
+   "attack_chain": "访问公开的 debug.log → 可能通过日志注入实现 RCE。",
+   "bypass_technique": "无实质绕过，直接利用配置错误。",
+   "defensive_insight": "关闭 WordPress 调试模式，确保日志文件不可公开访问。"
+  },
+  {
+   "id": 1457277,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS 是常见漏洞，payload 为经典 img onerror，无绕过或创新，信息完整但套路成熟。",
+   "attack_chain": "单点：构造恶意 URL → 触发 XSS。",
+   "bypass_technique": "无实质绕过，直接利用未过滤参数。",
+   "defensive_insight": "对用户输入进行输出编码，实施 CSP。"
+  },
+  {
+   "id": 2256548,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 业务逻辑",
+   "reasoning": "部分。通过 API 直接查询用户账户恢复提示，无需认证，属于信息泄露，但未涉及复杂绕过，思路简单但可借鉴。",
+   "attack_chain": "单点：构造 API 请求 → 获取用户恢复提示。",
+   "bypass_technique": "无实质绕过，直接利用未授权 API。",
+   "defensive_insight": "对敏感信息接口实施访问控制，要求认证。"
+  },
+  {
+   "id": 1037714,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。邮箱输入框的反射型 XSS，经典 payload，无绕过，成熟套路。",
+   "attack_chain": "单点：在邮箱输入框注入 payload → 触发 XSS。",
+   "bypass_technique": "无实质绕过，直接利用未过滤输入。",
+   "defensive_insight": "对输入进行验证和输出编码。"
+  },
+  {
+   "id": 138517,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "内存破坏 / 框架行为利用",
+   "reasoning": "部分。Flash Player 的 setMetadata 方法未正确验证参数导致内存破坏，属于框架行为利用，但 Flash 已淘汰，实际价值有限。",
+   "attack_chain": "单点：调用 setMetadata 传入无效参数 → 内存破坏。",
+   "bypass_technique": "利用 Flash 内部类实例缺失导致崩溃。",
+   "defensive_insight": "淘汰 Flash Player，或严格验证输入参数。"
+  },
+  {
+   "id": 12613,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少 X-Content-Type-Options 头是常见配置问题，无利用链，无启发性。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "添加安全响应头。"
+  },
+  {
+   "id": 1767439,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "否。WordPress debug.log 公开导致路径泄露，常见配置错误，无绕过。",
+   "attack_chain": "单点：访问 debug.log → 获取内部路径。",
+   "bypass_technique": "无。",
+   "defensive_insight": "关闭调试，限制日志访问。"
+  },
+  {
+   "id": 274541,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。被邀请的用户可以移除真正的所有者，导致权限提升，这是业务逻辑漏洞，非预期地绕过了所有权保护。技术点在于未检查被邀请用户的权限边界。",
+   "attack_chain": "邀请用户 → 被邀请用户移除所有者 → 获得完全控制。",
+   "bypass_technique": "利用权限检查缺失，被邀请用户可执行所有者操作。",
+   "defensive_insight": "实施基于角色的权限控制，限制被邀请用户的操作。"
+  },
+  {
+   "id": 2148242,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 配置错误",
+   "reasoning": "是。curl 的 duphandle 函数在复制句柄时，如果当前目录存在名为 'none' 的文件，会意外加载该文件作为 cookie 文件，导致 cookie 注入。这是对 curl 内部行为的巧妙利用，非预期且可通用。",
+   "attack_chain": "创建恶意 'none' 文件 → 调用 curl_easy_duphandle → 注入 cookie。",
+   "bypass_technique": "利用 curl 默认文件名 'none' 的隐式加载。",
+   "defensive_insight": "修复 curl 漏洞，或在使用 duphandle 时确保工作目录安全。"
+  },
+  {
+   "id": 434116,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 状态混淆",
+   "reasoning": "是。通过发送非法投票 ID，绕过了“必须投票才能查看结果”的限制，这是对投票状态验证的绕过，非预期地利用了后端对非法输入的处理。",
+   "attack_chain": "拦截投票请求 → 修改 vote_id 为非法值 → 查看结果。",
+   "bypass_technique": "利用后端未验证投票 ID 的有效性，导致状态混淆。",
+   "defensive_insight": "严格验证投票 ID，确保投票状态正确。"
+  },
+  {
+   "id": 52707,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "部分。可以邀请任意用户加入群组，无需关注，属于业务逻辑漏洞，但思路简单，无复杂绕过。",
+   "attack_chain": "单点：构造请求 → 邀请任意用户。",
+   "bypass_technique": "利用未检查关注关系。",
+   "defensive_insight": "实施关系检查，限制邀请权限。"
+  },
+  {
+   "id": 491023,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS，经典 payload，无绕过。",
+   "attack_chain": "单点：构造 URL → 触发 XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "输出编码，CSP。"
+  },
+  {
+   "id": 894604,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。CTF writeup 提交，无漏洞信息，无法评估。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "无。"
+  },
+  {
+   "id": 146235,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "反序列化 / 内存破坏",
+   "reasoning": "部分。PHP ZipArchive 类的 Use After Free 漏洞，通过 unserialize 触发，属于框架行为利用，但报告缺乏细节，仅引用 bug 链接。",
+   "attack_chain": "单点：构造恶意序列化数据 → 触发 UAF。",
+   "bypass_technique": "利用 GC 算法与 unserialize 的交互。",
+   "defensive_insight": "更新 PHP，限制反序列化。"
+  },
+  {
+   "id": 220185,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 状态混淆",
+   "reasoning": "部分。密码重置令牌未在密码更改后失效，导致旧令牌仍可用，这是状态管理缺陷，非预期地绕过了令牌失效机制。",
+   "attack_chain": "获取多个令牌 → 使用新令牌更改密码 → 旧令牌仍有效。",
+   "bypass_technique": "利用令牌未失效的逻辑缺陷。",
+   "defensive_insight": "确保密码更改后所有旧令牌失效。"
+  },
+  {
+   "id": 1068880,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。writeup 提交，无漏洞信息。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "无。"
+  },
+  {
+   "id": 1690510,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。API 返回服务器路径，属于信息泄露，但需登录，影响有限，无绕过。",
+   "attack_chain": "单点：登录后调用 API → 获取路径。",
+   "bypass_technique": "无。",
+   "defensive_insight": "移除敏感信息。"
+  },
+  {
+   "id": 1419213,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "路径遍历",
+   "reasoning": "否。Grafana 的 LFI 是常见漏洞，路径遍历直接利用，无绕过。",
+   "attack_chain": "单点：构造路径 → 读取文件。",
+   "bypass_technique": "无。",
+   "defensive_insight": "修复 Grafana 漏洞，限制文件访问。"
+  }
+ ]
+}

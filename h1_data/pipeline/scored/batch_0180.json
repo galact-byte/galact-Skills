@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   889333,
+   843256,
+   1842829,
+   119022,
+   195140
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 119022,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 业务逻辑",
+   "reasoning": "是。利用多个短字段拼接成完整XSS payload，绕过长度限制，属于非预期组合。技术点在于将长度限制视为可组合的约束，而非绝对障碍。",
+   "attack_chain": "创建多个群组，每个群组名包含部分payload，触发时拼接执行。",
+   "bypass_technique": "分段存储payload，利用多个字段拼接绕过长度限制。",
+   "defensive_insight": "对每个字段单独过滤，同时考虑组合后的输出上下文，使用上下文感知编码。"
+  },
+  {
+   "id": 1882592,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，参数直接反射，无绕过，无攻击链，属于常见套路。",
+   "attack_chain": "单点：参数反射执行脚本。",
+   "bypass_technique": "无，直接利用未过滤参数。",
+   "defensive_insight": "对所有输入进行输出编码，使用CSP。"
+  },
+  {
+   "id": 46345,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。目录索引和信息泄露，无绕过，无攻击链，常见配置错误。",
+   "attack_chain": "单点：目录浏览泄露文件。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁用目录索引，限制敏感文件访问。"
+  },
+  {
+   "id": 843256,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用TURN协议中peer access control缺失，绕过防火墙访问内网，且可控制coturn服务。技术点在于TURN协议设计信任边界，未限制peer地址。",
+   "attack_chain": "获取TURN凭据→使用stunner建立代理→访问内网服务及元数据服务→控制coturn。",
+   "bypass_technique": "利用TURN relay的peer参数指定任意目标，绕过网络访问控制。",
+   "defensive_insight": "在TURN服务器上实施严格的peer访问控制，限制目标IP和端口，并监控异常relay活动。"
+  },
+  {
+   "id": 100849,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "CSRF / 认证绕过",
+   "reasoning": "部分。CSRF导致账户接管，但CSRF本身是常见漏洞，此处因缺少token验证而可被利用，属于配置错误。",
+   "attack_chain": "构造恶意表单→受害者提交→修改邮箱→重置密码接管账户。",
+   "bypass_technique": "利用CSRF漏洞，绕过token验证。",
+   "defensive_insight": "实施严格的CSRF token验证，并确保敏感操作需要额外确认。"
+  },
+  {
+   "id": 49499,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑 / IDOR",
+   "reasoning": "否。IDOR，参数可预测，无绕过，常见业务逻辑漏洞。",
+   "attack_chain": "单点：修改参数生成任意邀请。",
+   "bypass_technique": "无，直接利用可预测参数。",
+   "defensive_insight": "使用不可预测的随机值作为ID，并验证所有权。"
+  },
+  {
+   "id": 1017189,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。存储型XSS，但无绕过，属于常见漏洞，但盲打管理员有潜在影响。",
+   "attack_chain": "提交恶意描述→管理员查看时执行。",
+   "bypass_technique": "无，直接利用未过滤输入。",
+   "defensive_insight": "对输入进行严格过滤和输出编码，实施CSP。"
+  },
+  {
+   "id": 889333,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 框架行为利用",
+   "reasoning": "是。从git泄露到日志文件获取凭据，绕过2FA，利用cookie路径穿越和SSRF访问内部服务，再通过CSS注入提取2FA代码，最终接管管理员账户。技术点在于多个漏洞的组合利用，特别是cookie路径穿越和CSS注入。",
+   "attack_chain": "git泄露→日志获取凭据→绕过2FA→cookie路径穿越→SSRF→获取APK→逆向→获取staff凭据→提权→CSS注入提取2FA→接管。",
+   "bypass_technique": "利用cookie中的路径穿越和URL片段注释绕过API路径限制；利用CSS注入从页面提取敏感信息。",
+   "defensive_insight": "严格保护敏感文件，实施完整的访问控制，对cookie进行签名和验证，对输入进行严格过滤，使用CSP。"
+  },
+  {
+   "id": 411405,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "路径遍历",
+   "reasoning": "部分。双斜杠绕过路径遍历过滤，属于常见绕过技巧，但思路清晰。",
+   "attack_chain": "单点：双斜杠绕过过滤读取任意文件。",
+   "bypass_technique": "在URL中添加双斜杠绕过路径规范化。",
+   "defensive_insight": "使用安全的路径解析函数，拒绝包含特殊字符的路径。"
+  },
+  {
+   "id": 280408,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。SPF配置错误，常见配置问题，无绕过。",
+   "attack_chain": "单点：利用SPF宽松配置发送伪造邮件。",
+   "bypass_technique": "无。",
+   "defensive_insight": "正确配置SPF记录，使用-all。"
+  },
+  {
+   "id": 160109,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "认证绕过",
+   "reasoning": "否。移动端缺少锁定机制，属于配置不一致，常见问题。",
+   "attack_chain": "单点：利用移动端无锁定暴力破解。",
+   "bypass_technique": "无，直接利用不同端点策略差异。",
+   "defensive_insight": "统一所有端点的认证策略，实施速率限制。"
+  },
+  {
+   "id": 1108420,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。HTML注入，但未成功升级为XSS，影响有限，常见输入过滤缺失。",
+   "attack_chain": "单点：注入HTML进行钓鱼或DoS。",
+   "bypass_technique": "无，直接利用未过滤输入。",
+   "defensive_insight": "对输入进行HTML实体编码，实施CSP。"
+  },
+  {
+   "id": 210384,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "开放重定向",
+   "reasoning": "否。开放重定向，常见漏洞，无绕过。",
+   "attack_chain": "单点：构造恶意链接重定向。",
+   "bypass_technique": "无，直接利用未过滤参数。",
+   "defensive_insight": "验证重定向URL的域名白名单。"
+  },
+  {
+   "id": 195140,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过",
+   "reasoning": "是。guest用户通过API绕过Web界面权限检查，发布评论到私有对象。技术点在于API和Web界面权限不一致。",
+   "attack_chain": "邀请guest→创建私有MR→guest通过API发布评论。",
+   "bypass_technique": "利用API端点未正确检查ACL。",
+   "defensive_insight": "确保所有API端点执行与Web界面相同的权限检查。"
+  },
+  {
+   "id": 58612,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。同形文字攻击，常见网络钓鱼技术，无新意。",
+   "attack_chain": "单点：利用同形文字伪装域名。",
+   "bypass_technique": "无，直接利用浏览器显示差异。",
+   "defensive_insight": "在警告页面强制显示punycode。"
+  },
+  {
+   "id": 1842829,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 配置错误",
+   "reasoning": "是。利用kOps在GCP上的配置错误，从pod内获取服务账号令牌，读取状态存储中的CA密钥，生成管理员证书，实现集群接管。技术点在于云元数据服务与Kubernetes权限的结合。",
+   "attack_chain": "获取pod shell→获取服务账号令牌→读取状态存储→生成管理员证书→集群接管→获取GCP服务账号→控制云资源。",
+   "bypass_technique": "利用GCP元数据服务获取令牌，结合kOps状态存储的敏感信息。",
+   "defensive_insight": "限制节点服务账号权限，对状态存储进行加密和访问控制，使用最小权限原则。"
+  },
+  {
+   "id": 1317494,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "配置错误",
+   "reasoning": "否。报告内容为模板占位符，无具体细节，无法判断真实性。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "实施速率限制。"
+  },
+  {
+   "id": 392797,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "部分。利用Laravel默认Vue.js模板的Mustache语法，导致存储型XSS。技术点在于框架默认配置的误解。",
+   "attack_chain": "注册用户时在用户名中注入模板语法→触发时执行。",
+   "bypass_technique": "利用Vue.js的模板渲染，绕过输入过滤。",
+   "defensive_insight": "在输出时进行上下文感知编码，避免使用不安全的模板语法。"
+  },
+  {
+   "id": 2332728,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。CORS配置错误，常见问题，无绕过。",
+   "attack_chain": "单点：利用CORS配置读取敏感信息。",
+   "bypass_technique": "无，直接利用配置错误。",
+   "defensive_insight": "正确配置CORS，避免使用通配符和允许凭据。"
+  },
+  {
+   "id": 686595,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，参数直接反射，无绕过，常见套路。",
+   "attack_chain": "单点：参数反射执行脚本。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对所有输入进行输出编码。"
+  }
+ ]
+}

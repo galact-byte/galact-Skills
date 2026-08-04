@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   519220,
+   191380,
+   403417,
+   894518,
+   53858
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 74518,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS / 配置错误",
+   "reasoning": "否。邮件模板未过滤HTML标签，导致存储型XSS，但依赖收件方邮件客户端不防护，且攻击者可直接发送钓鱼邮件，属于常见业务逻辑缺陷，无特殊绕过或链。",
+   "attack_chain": "构造恶意HTML邮件→发送给受害者→受害者邮件客户端执行脚本或点击钓鱼链接。",
+   "bypass_technique": "无实质绕过，利用邮件模板未过滤HTML。",
+   "defensive_insight": "对邮件模板进行严格HTML过滤，限制可发送邮件的权限。"
+  },
+  {
+   "id": 53858,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 状态混淆",
+   "reasoning": "是。用户离开群组后仍可通过直接构造URL访问群组消息，利用了服务端未正确更新成员状态的逻辑缺陷，绕过看似已生效的权限控制，思路清晰且可复用。",
+   "attack_chain": "创建群组→成员离开→攻击者构造URL访问群组消息ID→获取消息内容。",
+   "bypass_technique": "利用离开群组后服务端未撤销访问权限，直接构造API端点。",
+   "defensive_insight": "离开群组时彻底移除成员权限，并在API层校验成员关系。"
+  },
+  {
+   "id": 152992,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "部分。Web发票链接被搜索引擎收录，导致未授权访问，属于配置错误，但利用Google Dork可批量发现，思路简单但有一定启发性。",
+   "attack_chain": "搜索引擎收录发票链接→攻击者通过Google Dork发现→直接访问查看发票数据。",
+   "bypass_technique": "无实质绕过，利用搜索引擎索引公开链接。",
+   "defensive_insight": "在robots.txt中禁止索引发票页面，或对链接添加访问控制。"
+  },
+  {
+   "id": 591002,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。直接访问PHP文件泄露路径，属于常见配置错误，无绕过或链。",
+   "attack_chain": "直接访问脚本文件→泄露服务器路径。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁止外部访问脚本文件，配置Web服务器规则。"
+  },
+  {
+   "id": 894518,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "是。利用postMessage未校验来源，将恶意JSX代码注入React组件，绕过同源策略，实现DOM XSS。这是对postMessage机制的反直觉利用，可抽象为通用判断条件。",
+   "attack_chain": "创建恶意页面→iframe加载目标→postMessage发送恶意代码→React渲染执行。",
+   "bypass_technique": "利用postMessage不校验origin，注入JSX代码。",
+   "defensive_insight": "在接收message事件时校验event.origin，并对传入数据做安全处理。"
+  },
+  {
+   "id": 218803,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。mruby符号长度校验导致SIGABRT，属于常见内存破坏，无特殊绕过或链。",
+   "attack_chain": "输入超长符号→触发异常→进程崩溃。",
+   "bypass_technique": "无。",
+   "defensive_insight": "加强输入长度校验，避免异常导致崩溃。"
+  },
+  {
+   "id": 191380,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 0
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 协议行为利用",
+   "reasoning": "是。CRLF注入与XSS结合，通过注入auth_token cookie绕过关注限制，实现跨用户XSS。这是对CRLF和cookie机制的巧妙组合，可抽象为通用攻击模式。",
+   "attack_chain": "CRLF注入设置cookie→替换受害者auth_token→访问恶意图片→XSS执行。",
+   "bypass_technique": "利用CRLF注入设置cookie，结合图片扩展名绕过，实现XSS。",
+   "defensive_insight": "严格过滤CRLF字符，对上传文件扩展名进行白名单校验，并设置cookie的HttpOnly和Secure属性。"
+  },
+  {
+   "id": 892667,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "子域名接管",
+   "reasoning": "部分。子域名接管是常见漏洞，但利用第三方服务注册实现接管，步骤清晰，有一定启发性。",
+   "attack_chain": "发现悬空CNAME→注册第三方服务→控制子域名。",
+   "bypass_technique": "无实质绕过，利用未认领的CNAME记录。",
+   "defensive_insight": "定期检查DNS记录，及时清理悬空CNAME。"
+  },
+  {
+   "id": 446271,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "协议行为利用",
+   "reasoning": "否。CRLF注入设置响应头，属于常见协议漏洞，无特殊绕过或链。",
+   "attack_chain": "构造恶意URL→注入CRLF→设置任意响应头。",
+   "bypass_technique": "无。",
+   "defensive_insight": "过滤用户输入中的CRLF字符。"
+  },
+  {
+   "id": 5073,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。上传文件导致路径泄露，属于常见配置错误，无绕过或链。",
+   "attack_chain": "上传特殊文件名→服务器返回错误→泄露路径。",
+   "bypass_technique": "无。",
+   "defensive_insight": "配置服务器不返回详细错误信息。"
+  },
+  {
+   "id": 696822,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "内存破坏 / 其他",
+   "reasoning": "部分。qsort对未初始化内存排序，属于内存破坏，但触发条件苛刻，需要特定cookie文件，思路有一定启发性。",
+   "attack_chain": "加载恶意cookie文件→触发未初始化内存排序→崩溃。",
+   "bypass_technique": "无实质绕过，利用未初始化内存。",
+   "defensive_insight": "使用calloc分配内存，并修复计数错误。"
+  },
+  {
+   "id": 509315,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "其他",
+   "reasoning": "部分。Billion Laughs攻击是已知XML实体扩展攻击，但针对c3p0库，且提供了完整PoC和修复建议，有一定启发性。",
+   "attack_chain": "构造恶意XML→加载配置→实体扩展→JVM崩溃。",
+   "bypass_technique": "无实质绕过，利用XML实体扩展。",
+   "defensive_insight": "禁用DOCTYPE声明，限制实体扩展。"
+  },
+  {
+   "id": 403417,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "命令注入 / 跨组件攻击链",
+   "reasoning": "是。利用ImageMagick的Postscript处理漏洞，通过Ghostscript执行任意命令，实现RCE。这是对ImageMagick配置缺陷的经典利用，但PoC完整，且可抽象为通用攻击模式。",
+   "attack_chain": "上传恶意PS文件→ImageMagick处理→Ghostscript执行→RCE。",
+   "bypass_technique": "利用ImageMagick未禁用Postscript，通过Ghostscript执行命令。",
+   "defensive_insight": "在policy.xml中禁用危险编码器，限制上传文件类型。"
+  },
+  {
+   "id": 519220,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 跨组件攻击链",
+   "reasoning": "是。利用URL编码绕过路径遍历防护，将缓存文件写入任意位置，进而覆盖ERB模板实现RCE。这是对路径遍历和缓存机制的巧妙组合，可抽象为通用攻击模式。",
+   "attack_chain": "构造编码URL→路径遍历→写入缓存文件→覆盖模板→RCE。",
+   "bypass_technique": "利用URL编码绕过路径过滤，结合缓存机制写入任意文件。",
+   "defensive_insight": "对URL进行规范化处理，严格限制缓存文件路径。"
+  },
+  {
+   "id": 421859,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "认证绕过",
+   "reasoning": "部分。通过预览链接绕过密码保护，属于业务逻辑缺陷，但利用方式简单，且需要获取预览链接。",
+   "attack_chain": "获取预览链接→访问预览URL→绕过密码保护查看内容。",
+   "bypass_technique": "利用预览链接未受密码保护。",
+   "defensive_insight": "对预览链接也实施访问控制。"
+  },
+  {
+   "id": 2047168,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过",
+   "reasoning": "是。非管理员用户可删除任意外部存储，利用了服务端未校验所有权和类型的缺陷，绕过权限控制，思路清晰且可复用。",
+   "attack_chain": "构造DELETE请求→删除任意存储→影响服务。",
+   "bypass_technique": "利用API未校验所有权，直接删除。",
+   "defensive_insight": "在API层校验用户权限和资源所有权。"
+  },
+  {
+   "id": 203515,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。上传超大文件时文件名未过滤导致XSS，属于常见漏洞，但利用场景特殊，有一定启发性。",
+   "attack_chain": "上传恶意文件名→触发错误→XSS执行。",
+   "bypass_technique": "无实质绕过，利用文件名未过滤。",
+   "defensive_insight": "对文件名进行HTML转义。"
+  },
+  {
+   "id": 1397788,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。直接访问配置文件泄露敏感信息，属于常见配置错误，无绕过或链。",
+   "attack_chain": "直接访问配置文件→获取敏感信息。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁止外部访问配置文件。"
+  },
+  {
+   "id": 96847,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。未处理异常导致信息泄露，属于常见错误处理缺陷，无绕过或链。",
+   "attack_chain": "构造异常请求→触发错误→泄露内部信息。",
+   "bypass_technique": "无。",
+   "defensive_insight": "统一异常处理，不向用户展示内部细节。"
+  },
+  {
+   "id": 1764858,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "内存破坏 / 其他",
+   "reasoning": "部分。curl代理处理中存在UAF，属于内存破坏，但触发条件复杂，需要特定协议和代理响应，有一定启发性。",
+   "attack_chain": "构造特定请求→代理返回502→触发UAF→崩溃。",
+   "bypass_technique": "无实质绕过，利用UAF。",
+   "defensive_insight": "修复内存管理，确保释放后不再使用。"
+  }
+ ]
+}

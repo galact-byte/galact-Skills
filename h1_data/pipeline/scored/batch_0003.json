@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 8,
+  "dropped": 12,
+  "avg_score": 4.6,
+  "top_n": [
+   1415820,
+   99708,
+   17512,
+   368119,
+   123339
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 146424,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少登录速率限制是常见配置问题，无绕过或创新，且报告为informative，信息不足。",
+   "attack_chain": "无攻击链，直接暴力破解登录。",
+   "bypass_technique": "无，直接利用缺失的速率限制。",
+   "defensive_insight": "实施登录速率限制和账户锁定机制。"
+  },
+  {
+   "id": 1415820,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 框架行为利用",
+   "reasoning": "是。利用Grafana插件静态文件服务的路径遍历，通过URL编码的../绕过路径规范化，实现未授权任意文件读取。技术点在于对静态文件服务的路径处理不当，可抽象为通用判断条件。",
+   "attack_chain": "未授权请求→构造编码路径→读取任意文件。",
+   "bypass_technique": "使用%2F编码的../绕过路径过滤。",
+   "defensive_insight": "对静态文件服务进行严格的路径规范化，拒绝包含..的请求。"
+  },
+  {
+   "id": 2068830,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑 / 配置错误",
+   "reasoning": "部分。支持系统无需认证即可提交工单，可导致未授权操作，但这是常见设计缺陷，且报告缺少实际利用细节，可复现性低。",
+   "attack_chain": "提交工单→支持代理处理→未授权操作。",
+   "bypass_technique": "无，直接利用缺失的认证。",
+   "defensive_insight": "支持系统应要求认证或邮件验证。"
+  },
+  {
+   "id": 97377,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。允许创建与官方账号相似的用户名是常见问题，无技术含量，且报告信息不足。",
+   "attack_chain": "无攻击链，直接创建相似用户名。",
+   "bypass_technique": "无。",
+   "defensive_insight": "保留官方用户名，禁止注册相似名称。"
+  },
+  {
+   "id": 1443567,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。邮件中的HTML注入是常见问题，无绕过或创新，且影响有限。",
+   "attack_chain": "邀请成员→注入HTML→邮件中执行。",
+   "bypass_technique": "无，直接注入HTML。",
+   "defensive_insight": "对邮件内容进行HTML编码或过滤。"
+  },
+  {
+   "id": 377264,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。DOM-based XSS，利用autofocus/onfocus执行，但技术点常见，无特殊绕过。",
+   "attack_chain": "构造URL→触发DOM XSS→执行脚本。",
+   "bypass_technique": "使用autofocus/onfocus绕过用户交互。",
+   "defensive_insight": "对DOM输出进行编码，避免使用危险函数。"
+  },
+  {
+   "id": 7868,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型XSS，使用object标签，但无绕过，常见套路。",
+   "attack_chain": "创建组→注入XSS→执行。",
+   "bypass_technique": "无，直接注入。",
+   "defensive_insight": "对用户输入进行过滤和编码。"
+  },
+  {
+   "id": 368119,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "子域名接管",
+   "reasoning": "是。DNS指向失效的ghost.io实例，通过注册同名博客接管子域名，利用CNAME验证漏洞。技术点在于对第三方服务的信任，可抽象为通用判断条件。",
+   "attack_chain": "发现失效CNAME→注册同名服务→验证并接管。",
+   "bypass_technique": "利用CNAME验证不严格，注册同名博客。",
+   "defensive_insight": "定期检查DNS记录，移除失效的CNAME。"
+  },
+  {
+   "id": 101330,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。SSL证书过期是常见配置问题，无技术含量。",
+   "attack_chain": "无攻击链。",
+   "bypass_technique": "无。",
+   "defensive_insight": "及时更新SSL证书。"
+  },
+  {
+   "id": 785120,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告内容为空，仅提及CodeQL查询，无漏洞详情。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "无。"
+  },
+  {
+   "id": 333507,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。存储型XSS，通过编辑消息触发，但技术点常见，无特殊绕过。",
+   "attack_chain": "发送消息→编辑→触发XSS。",
+   "bypass_technique": "无，利用编辑功能。",
+   "defensive_insight": "对编辑内容进行过滤和编码。"
+  },
+  {
+   "id": 272596,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少速率限制导致邮件轰炸，常见问题，无绕过。",
+   "attack_chain": "无攻击链，直接发送大量邮件。",
+   "bypass_technique": "无。",
+   "defensive_insight": "实施速率限制和验证码。"
+  },
+  {
+   "id": 123339,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "CSRF",
+   "reasoning": "部分。CSRF删除消息，但需要用户先查看消息，条件较具体，但绕过清晰。",
+   "attack_chain": "用户查看消息→访问恶意页面→删除消息。",
+   "bypass_technique": "利用GET请求触发删除。",
+   "defensive_insight": "对删除操作使用POST和CSRF令牌。"
+  },
+  {
+   "id": 17512,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 竞争条件",
+   "reasoning": "是。通过暴力破解密码重置令牌，利用无速率限制和令牌可预测性，实现账户接管。技术点在于令牌生成和验证的弱点，可抽象为通用判断条件。",
+   "attack_chain": "请求重置密码→暴力破解令牌→重置密码→登录。",
+   "bypass_technique": "暴力破解重置令牌，利用无速率限制。",
+   "defensive_insight": "使用高熵令牌，实施速率限制和锁定。"
+  },
+  {
+   "id": 1643962,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "部分。暴露调试端点导致信息泄露，但无绕过，常见配置问题。",
+   "attack_chain": "访问调试端点→获取敏感信息。",
+   "bypass_technique": "无，直接访问。",
+   "defensive_insight": "禁用生产环境的调试端点。"
+  },
+  {
+   "id": 1146600,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "认证绕过",
+   "reasoning": "部分。通过POST请求设置参数绕过认证，但细节被REDACTED，可复现性低。",
+   "attack_chain": "构造POST请求→设置参数→获得管理员访问。",
+   "bypass_technique": "利用隐藏参数覆盖认证。",
+   "defensive_insight": "对管理功能进行严格的权限验证。"
+  },
+  {
+   "id": 369447,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "开放重定向",
+   "reasoning": "否。利用X-Forwarded-Host头实现开放重定向，常见套路，无特殊绕过。",
+   "attack_chain": "构造请求→添加XFH头→重定向到恶意站点。",
+   "bypass_technique": "利用X-Forwarded-Host头。",
+   "defensive_insight": "忽略或验证X-Forwarded-Host头。"
+  },
+  {
+   "id": 99708,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 0
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 框架行为利用",
+   "reasoning": "是。通过路径遍历绕过CSRF保护，利用URL解析差异构造CSRF请求，实现OAuth集成接管。技术点在于路径遍历与CSRF保护的组合，可抽象为通用判断条件。",
+   "attack_chain": "构造恶意URL→路径遍历→绕过CSRF→添加集成。",
+   "bypass_technique": "利用路径遍历和URL编码绕过CSRF令牌验证。",
+   "defensive_insight": "严格验证URL参数，使用POST和CSRF令牌。"
+  },
+  {
+   "id": 712321,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。xmlrpc.php暴露是常见配置问题，无技术含量。",
+   "attack_chain": "无攻击链，直接访问。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁用或限制xmlrpc.php。"
+  },
+  {
+   "id": 846905,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。存储型XSS，利用javascript://协议和换行绕过，但需要用户交互，且技术点较常见。",
+   "attack_chain": "创建文档→注入恶意URL→分享链接→触发XSS。",
+   "bypass_technique": "使用javascript://协议和%0a绕过过滤。",
+   "defensive_insight": "对URL进行协议白名单验证。"
+  }
+ ]
+}

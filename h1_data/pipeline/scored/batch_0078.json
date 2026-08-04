@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 8,
+  "dropped": 12,
+  "avg_score": 4.6,
+  "top_n": [
+   1073202,
+   413388,
+   870615,
+   1636566,
+   192786
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 57692,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "否。通过修改参数触发服务器错误日志泄露，属于典型的错误处理不当导致的信息泄露，没有绕过或非预期行为，攻击链简单。",
+   "attack_chain": "修改bankAccountType参数→服务器返回错误日志→泄露内部信息。",
+   "bypass_technique": "无实质绕过，直接利用参数校验缺失。",
+   "defensive_insight": "对用户输入进行严格校验，错误响应中不包含堆栈或日志信息。"
+  },
+  {
+   "id": 409380,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。存储型XSS通过修改merge_request[source_branch]参数实现，属于常见漏洞类型，但利用点在于参数未过滤且存储后触发，步骤完整，但无特殊绕过。",
+   "attack_chain": "创建合并请求→修改source_branch参数为XSS payload→存储后触发。",
+   "bypass_technique": "无实质绕过，直接利用未过滤参数。",
+   "defensive_insight": "对用户输入进行输出编码，使用安全的API处理分支名。"
+  },
+  {
+   "id": 448524,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 其他",
+   "reasoning": "否。xmlrpc.php启用是常见配置问题，可用于DDoS和暴力破解，属于已知攻击面，无新意。",
+   "attack_chain": "检测xmlrpc.php→利用pingback.ping进行反射放大。",
+   "bypass_technique": "无绕过，直接利用默认配置。",
+   "defensive_insight": "禁用或限制xmlrpc.php访问。"
+  },
+  {
+   "id": 192786,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "是。通过第三方库的示例文件引入XSS，且该文件在发布包中意外存在，属于供应链问题。技术点在于利用CSRF触发反射型XSS，绕过了一些检查。",
+   "attack_chain": "构造CSRF表单→提交到示例端点→触发XSS。",
+   "bypass_technique": "利用CSRF绕过同源检查，通过表单提交触发XSS。",
+   "defensive_insight": "移除发布包中的示例文件，对第三方依赖进行安全审查。"
+  },
+  {
+   "id": 1992261,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。GitHub上泄露API密钥是常见问题，无技术含量。",
+   "attack_chain": "搜索GitHub→发现API密钥→利用。",
+   "bypass_technique": "无。",
+   "defensive_insight": "使用密钥管理工具，避免硬编码。"
+  },
+  {
+   "id": 1073202,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用LD_LIBRARY_PATH空条目被解释为当前目录的quirk，导致任意库加载，进而通过X11逃逸容器。这是对系统调用行为的巧妙利用，且影响广泛。",
+   "attack_chain": "创建恶意库→放入当前目录→运行snap应用→加载恶意库→X11逃逸→完全控制。",
+   "bypass_technique": "利用LD_LIBRARY_PATH空条目等价于当前目录的特性，注入恶意库。",
+   "defensive_insight": "修复脚本生成器，避免空变量；应用刷新以重新生成包装脚本。"
+  },
+  {
+   "id": 124100,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。iOS应用内嵌Podfile泄露GitHub密码，属于硬编码凭据问题，常见且无技术难度。",
+   "attack_chain": "提取应用→发现Podfile→获取凭据→访问源码。",
+   "bypass_technique": "无。",
+   "defensive_insight": "避免在客户端存储敏感凭据，使用环境变量或密钥管理。"
+  },
+  {
+   "id": 1636566,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用Windows DLL搜索顺序，在特定条件下加载恶意providers.dll，实现本地提权。这是对系统加载机制的利用，且影响广泛。",
+   "attack_chain": "放置恶意DLL→运行node.exe→加载恶意DLL→代码执行。",
+   "bypass_technique": "利用DLL搜索顺序，将恶意DLL放在当前目录。",
+   "defensive_insight": "修复Node.js的DLL加载路径，使用绝对路径或验证DLL签名。"
+  },
+  {
+   "id": 300571,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。存储型XSS在日历名称字段，通过管理员触发，属于常见漏洞，但利用点在于低权限用户可存储payload，影响管理员。",
+   "attack_chain": "低权限用户创建日历→注入XSS→管理员查看时触发。",
+   "bypass_technique": "无实质绕过，利用权限差异。",
+   "defensive_insight": "对输入进行过滤和输出编码，实施严格的权限控制。"
+  },
+  {
+   "id": 1784645,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "认证绕过 / 业务逻辑",
+   "reasoning": "是。通过点击通知绕过应用锁屏，属于业务逻辑缺陷，非预期地访问了受保护内容。",
+   "attack_chain": "设置密码→收到通知→点击通知→绕过密码访问。",
+   "bypass_technique": "利用通知点击事件绕过密码验证。",
+   "defensive_insight": "在通知点击时重新验证密码，或确保通知不包含敏感内容。"
+  },
+  {
+   "id": 863221,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "SSRF / 协议行为利用",
+   "reasoning": "是。使用八进制编码的IP地址绕过localhost限制，属于对IP解析的巧妙利用。",
+   "attack_chain": "构造八进制IP→绕过SSRF限制→访问本地服务。",
+   "bypass_technique": "使用0177.0.0.1等编码形式绕过黑名单。",
+   "defensive_insight": "对IP进行规范化解析，拒绝非标准格式。"
+  },
+  {
+   "id": 870615,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 跨组件攻击链",
+   "reasoning": "是。通过SetWindowsHookEx注入特定DLL绕过钩子，进而禁用杀软。这是对Windows消息机制的利用，且需要多步操作。",
+   "attack_chain": "注入DLL→钩子API→模拟点击→禁用杀软→执行恶意代码。",
+   "bypass_technique": "利用tiptsf.dll等特定文件名绕过注入防护。",
+   "defensive_insight": "加强DLL注入防护，验证加载的DLL签名。"
+  },
+  {
+   "id": 223948,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。暴露管理界面是常见配置错误，无技术含量。",
+   "attack_chain": "扫描目录→发现管理界面→尝试暴力破解。",
+   "bypass_technique": "无。",
+   "defensive_insight": "限制管理界面的访问，使用强认证。"
+  },
+  {
+   "id": 96115,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。登录页面无暴力破解防护是常见问题，无新意。",
+   "attack_chain": "暴力破解登录。",
+   "bypass_technique": "无。",
+   "defensive_insight": "实施账户锁定和速率限制。"
+  },
+  {
+   "id": 141174,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。开放端口和版本泄露是常见配置问题，无技术难度。",
+   "attack_chain": "端口扫描→获取版本信息→潜在攻击。",
+   "bypass_technique": "无。",
+   "defensive_insight": "关闭不必要的端口，隐藏版本信息。"
+  },
+  {
+   "id": 201489,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。使用过时WordPress版本是常见问题，无技术含量。",
+   "attack_chain": "指纹识别→发现旧版本→利用已知漏洞。",
+   "bypass_technique": "无。",
+   "defensive_insight": "及时更新软件版本。"
+  },
+  {
+   "id": 90367,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。未压缩的CSS文件泄露源码信息，属于轻微信息泄露，无技术难度。",
+   "attack_chain": "访问CSS文件→获取源码信息。",
+   "bypass_technique": "无。",
+   "defensive_insight": "生产环境使用压缩和混淆的静态资源。"
+  },
+  {
+   "id": 802896,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。tcpdump的缓冲区溢出是已知CVE，利用fuzzing发现，属于常规漏洞挖掘，无新意。",
+   "attack_chain": "构造恶意pcap→触发溢出→信息泄露。",
+   "bypass_technique": "无。",
+   "defensive_insight": "修复代码，增加边界检查。"
+  },
+  {
+   "id": 413388,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "反序列化 / 框架行为利用",
+   "reasoning": "是。利用Rails缓存raw选项的隐式Marshal加载，导致反序列化RCE。这是对框架行为的巧妙利用，且影响广泛。",
+   "attack_chain": "缓存不可信字符串→raw读取时自动Marshal.load→RCE。",
+   "bypass_technique": "利用raw: true选项的隐式反序列化。",
+   "defensive_insight": "修复缓存库，避免自动反序列化，或使用安全序列化格式。"
+  },
+  {
+   "id": 685909,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 0
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 业务逻辑",
+   "reasoning": "是。通过搜索功能泄露受限报告中的内容，属于逻辑缺陷，但复现条件不明确。",
+   "attack_chain": "构造搜索词→搜索→泄露受限报告内容。",
+   "bypass_technique": "利用搜索索引包含未公开内容。",
+   "defensive_insight": "确保搜索索引只包含公开内容。"
+  }
+ ]
+}

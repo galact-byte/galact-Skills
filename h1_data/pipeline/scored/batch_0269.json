@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1455987,
+   390346,
+   838685,
+   1553598,
+   121827
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 225555,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告描述模糊，仅提及点击劫持，但缺少具体技术细节和有效PoC，无法判断真实性。",
+   "attack_chain": "无明确攻击链。",
+   "bypass_technique": "无。",
+   "defensive_insight": "需补充完整PoC和影响分析。"
+  },
+  {
+   "id": 85615,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。参数section未转义直接反射到JavaScript函数中，属于常见反射型XSS，但PoC清晰，可复现。",
+   "attack_chain": "单点：构造恶意URL→参数反射至JS→执行alert。",
+   "bypass_technique": "无实质绕过，直接利用未转义输出。",
+   "defensive_insight": "对输出到JS上下文的参数进行编码或使用安全API。"
+  },
+  {
+   "id": 244642,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 认证绕过",
+   "reasoning": "是。密码重置令牌未失效，可重复使用，且多令牌并存，属于业务逻辑缺陷，攻击者可利用旧令牌接管账户。",
+   "attack_chain": "获取重置令牌→使用后未失效→再次使用令牌修改密码→账户接管。",
+   "bypass_technique": "利用令牌生命周期管理缺陷，重复使用已用令牌。",
+   "defensive_insight": "令牌使用后立即失效，新令牌生成时旧令牌作废。"
+  },
+  {
+   "id": 121827,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 授权绕过",
+   "reasoning": "是。通过导入Facebook照片功能生成的链接，可替换受害者绑定的FB账户，进而登录受害者账户，属于跨组件攻击链。",
+   "attack_chain": "攻击者生成链接→受害者点击并取消→FB账户被替换→攻击者用FB登录受害者账户。",
+   "bypass_technique": "利用导入功能的CSRF缺陷，替换账户绑定。",
+   "defensive_insight": "对敏感操作（如绑定社交账户）实施CSRF防护和二次验证。"
+  },
+  {
+   "id": 390346,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 信息泄露",
+   "reasoning": "是。通过修改preview.php的ID参数，可访问他人私密照片预览，且即使发送者丢弃图片，预览仍可访问，属于IDOR漏洞，但ID看似随机，利用难度较高。",
+   "attack_chain": "拦截preview.php请求→修改ID→获取他人照片CDN链接→访问私密照片。",
+   "bypass_technique": "直接遍历ID，绕过授权检查。",
+   "defensive_insight": "在服务端对preview.php进行授权校验，确保用户只能访问自己的资源。"
+  },
+  {
+   "id": 629612,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。PURGE方法未认证，属于常见缓存配置错误，可直接利用，但无绕过或攻击链。",
+   "attack_chain": "单点：发送PURGE请求→缓存失效→带宽成本增加。",
+   "bypass_technique": "无，直接利用未认证的PURGE方法。",
+   "defensive_insight": "对PURGE请求进行认证和IP白名单限制。"
+  },
+  {
+   "id": 2194928,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "认证绕过 / 信息泄露",
+   "reasoning": "是。忘记密码功能在响应中直接返回临时密码，攻击者可截获请求获取密码，实现账户接管。",
+   "attack_chain": "请求忘记密码→响应中泄露临时密码→使用密码登录。",
+   "bypass_technique": "利用响应中的明文密码泄露。",
+   "defensive_insight": "临时密码应通过安全渠道发送，且响应中不应包含敏感信息。"
+  },
+  {
+   "id": 1553598,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 业务逻辑",
+   "reasoning": "是。curl的--no-clobber和--remove-on-error组合时，错误处理会删除错误文件，而非目标文件，属于逻辑缺陷，可导致数据丢失。",
+   "attack_chain": "构造错误响应→curl删除错误文件→数据丢失。",
+   "bypass_technique": "利用curl选项组合的逻辑错误。",
+   "defensive_insight": "修复curl的错误处理逻辑，确保删除的是正确文件。"
+  },
+  {
+   "id": 15777,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。修改邮箱和密码不要求旧密码，属于常见安全设计缺陷，但无绕过或攻击链。",
+   "attack_chain": "单点：利用已登录会话修改邮箱/密码。",
+   "bypass_technique": "无。",
+   "defensive_insight": "敏感操作应要求重新认证。"
+  },
+  {
+   "id": 161659,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。缺少robots.txt导致SSO登录名被搜索引擎索引，属于常见信息泄露，无绕过或攻击链。",
+   "attack_chain": "单点：搜索引擎索引→泄露登录名。",
+   "bypass_technique": "无。",
+   "defensive_insight": "添加robots.txt并禁止索引敏感路径。"
+  },
+  {
+   "id": 838685,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 信息泄露",
+   "reasoning": "是。mod_proxy_ftp处理畸形FTP响应时使用未初始化值，导致内存信息泄露，属于协议行为利用，可导致敏感数据泄露。",
+   "attack_chain": "构造畸形FTP响应→触发未初始化值→内存泄露。",
+   "bypass_technique": "利用FTP协议响应解析缺陷。",
+   "defensive_insight": "修复mod_proxy_ftp的边界检查，确保初始化所有变量。"
+  },
+  {
+   "id": 255132,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露",
+   "reasoning": "部分。Phabricator在错误消息中泄露了包含密码的URL，属于信息泄露，但需要特定操作触发。",
+   "attack_chain": "修改仓库镜像→触发错误→泄露凭据。",
+   "bypass_technique": "利用错误处理不当泄露敏感信息。",
+   "defensive_insight": "错误消息中应过滤敏感信息。"
+  },
+  {
+   "id": 3709,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。HSTS max-age过短，属于常见配置问题，无绕过或攻击链。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "设置足够长的HSTS max-age。"
+  },
+  {
+   "id": 2387458,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / CSP绕过",
+   "reasoning": "部分。通过img标签的on-error事件绕过CSP，属于CSP绕过，但依赖特定场景。",
+   "attack_chain": "注入img标签→on-error触发脚本→执行任意代码。",
+   "bypass_technique": "利用CSP未覆盖img-src的缺陷。",
+   "defensive_insight": "完善CSP策略，覆盖所有资源类型。"
+  },
+  {
+   "id": 673273,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "子域名接管",
+   "reasoning": "部分。CNAME指向可购买的域名，属于子域名接管，但需要购买域名，条件受限。",
+   "attack_chain": "购买CNAME指向的域名→接管子域名。",
+   "bypass_technique": "利用未控制的CNAME记录。",
+   "defensive_insight": "定期检查DNS记录，确保CNAME指向可信域名。"
+  },
+  {
+   "id": 177472,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。CSRF添加购物车，属于常见漏洞，无绕过或攻击链。",
+   "attack_chain": "单点：诱导点击→添加商品到购物车。",
+   "bypass_technique": "无。",
+   "defensive_insight": "添加CSRF令牌。"
+  },
+  {
+   "id": 150156,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "SQL注入",
+   "reasoning": "部分。在base64编码的参数中发现SQL注入，属于常见类型，但注入点隐蔽，需要解码。",
+   "attack_chain": "构造base64参数→解码后注入SQL→时间盲注。",
+   "bypass_technique": "利用base64编码绕过简单过滤。",
+   "defensive_insight": "对参数进行严格校验和参数化查询。"
+  },
+  {
+   "id": 908880,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。feed.xml泄露内网IP，属于常见信息泄露，无绕过或攻击链。",
+   "attack_chain": "单点：访问feed.xml→泄露IP。",
+   "bypass_technique": "无。",
+   "defensive_insight": "过滤敏感信息，避免在公开文件中泄露内网IP。"
+  },
+  {
+   "id": 178632,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "SQL注入",
+   "reasoning": "部分。Oracle APEX的SQL注入，属于已知漏洞，但利用方式特定。",
+   "attack_chain": "构造URL→注入SQL→获取数据库信息。",
+   "bypass_technique": "利用OWA_UTIL.CELLSPRINT函数。",
+   "defensive_insight": "升级Oracle APEX并修复已知漏洞。"
+  },
+  {
+   "id": 1455987,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 框架行为利用",
+   "reasoning": "是。利用SurveyMonkey SDK的导出Activity，通过Intent Extras控制WebView加载任意内容，实现通用XSS，进而窃取Cookie，属于跨组件攻击链。",
+   "attack_chain": "恶意App启动导出Activity→注入恶意HTML→WebView加载→窃取Cookie→账户接管。",
+   "bypass_technique": "利用导出Activity和loadDataWithBaseURL的baseURL参数。",
+   "defensive_insight": "导出Activity应设置exported=false，并对Intent Extras进行严格校验。"
+  }
+ ]
+}

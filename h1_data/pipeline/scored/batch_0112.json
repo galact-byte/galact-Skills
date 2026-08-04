@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 18,
+  "kept": 10,
+  "dropped": 8,
+  "avg_score": 5.4,
+  "top_n": [
+   776017,
+   217790,
+   850775,
+   1646248,
+   204421
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1646248,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "否。这是一个典型的反射型XSS，参数直接拼接进HTML，没有过滤。虽然使用了iframe和data URI，但属于常见变形，没有绕过任何防御。",
+   "attack_chain": "构造恶意URL → 用户点击 → 执行JS",
+   "bypass_technique": "无实质绕过，直接利用未过滤参数",
+   "defensive_insight": "对用户输入进行HTML实体编码，使用CSP等"
+  },
+  {
+   "id": 204421,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "内存破坏 / 框架行为利用",
+   "reasoning": "是。通过大量参数触发mruby虚拟机栈溢出，属于对解释器内部机制的利用，非预期。",
+   "attack_chain": "构造大量参数 → 触发栈溢出 → 堆缓冲区溢出",
+   "bypass_technique": "利用参数数量超出栈容量，导致value_move越界",
+   "defensive_insight": "限制函数参数数量，增加边界检查"
+  },
+  {
+   "id": 959187,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "路径遍历",
+   "reasoning": "否。这是已知CVE的利用，属于常见套路，但复现步骤清晰，信息完整。",
+   "attack_chain": "构造路径遍历URL → 读取任意文件",
+   "bypass_technique": "利用Cisco设备对URL路径的校验缺失",
+   "defensive_insight": "升级固件，修复CVE"
+  },
+  {
+   "id": 1443211,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "认证绕过 / 业务逻辑",
+   "reasoning": "是。通过拦截请求并继续操作，绕过了OTP验证，属于业务逻辑缺陷，思路值得借鉴。",
+   "attack_chain": "使用受害者OTP → 拦截请求 → 继续流程 → 绕过验证",
+   "bypass_technique": "利用服务端未在验证后立即失效会话，通过拦截请求保持状态",
+   "defensive_insight": "OTP验证后应强制重新认证，服务端应校验验证状态"
+  },
+  {
+   "id": 1118638,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / IDOR",
+   "reasoning": "否。典型的IDOR，通过修改USERID参数访问他人数据，属于常见套路，但复现清晰。",
+   "attack_chain": "修改USERID → 下载他人CSV",
+   "bypass_technique": "直接修改对象ID，未校验所有权",
+   "defensive_insight": "服务端校验用户权限，使用不可预测ID"
+  },
+  {
+   "id": 164649,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / IDOR",
+   "reasoning": "否。通过修改owner_id参数访问他人数据，属于常见IDOR，但复现简单。",
+   "attack_chain": "修改owner_id → 查看他人视频",
+   "bypass_technique": "直接修改对象ID，未校验所有权",
+   "defensive_insight": "服务端校验用户权限，使用不可预测ID"
+  },
+  {
+   "id": 850775,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 协议行为利用",
+   "reasoning": "是。利用Windows路径分隔符反斜杠绕过路径检查，属于平台差异导致的非预期行为，通用性强。",
+   "attack_chain": "构造包含反斜杠的路径 → 绕过检查 → 读取任意文件",
+   "bypass_technique": "利用Windows反斜杠作为路径分隔符，绕过仅检查正斜杠的逻辑",
+   "defensive_insight": "统一路径规范化，同时检查正反斜杠"
+  },
+  {
+   "id": 261335,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "反序列化 / 内存破坏",
+   "reasoning": "是。利用反序列化时数组大小无效导致UAF，属于对PHP内部机制的利用，但信息较少。",
+   "attack_chain": "构造恶意序列化数据 → 触发UAF → 内存破坏",
+   "bypass_technique": "利用hash API在无效数组大小下的错误处理",
+   "defensive_insight": "升级PHP版本，修复CVE"
+  },
+  {
+   "id": 217790,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 框架行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用lodash模板转义不完整，注入twine模板，最终通过Function构造函数执行任意JS，属于框架行为利用，链路完整。",
+   "attack_chain": "恶意应用 → 触发Modal.input → 注入twine模板 → 执行JS",
+   "bypass_technique": "利用lodash模板转义不完整，注入data-define属性，twine将其作为代码执行",
+   "defensive_insight": "使用上下文感知的转义，对模板参数进行JSON编码"
+  },
+  {
+   "id": 399462,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "SSTI / XSS",
+   "reasoning": "是。通过模板注入表达式求值，并利用宏构造XSS，属于SSTI的变形，思路值得借鉴。",
+   "attack_chain": "注入模板表达式 → 执行代码 → 反射XSS",
+   "bypass_technique": "利用模板引擎的宏功能绕过过滤，构造XSS",
+   "defensive_insight": "对用户输入进行严格过滤，禁用模板引擎的宏功能"
+  },
+  {
+   "id": 776017,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "SSRF / 跨组件攻击链 / 协议行为利用",
+   "reasoning": "是。利用Kubernetes存储类中的URL参数发起SSRF，并通过重定向和HTTP走私升级为完全控制，属于跨组件攻击链，思路极具启发性。",
+   "attack_chain": "创建恶意StorageClass → 触发kube-controller-manager请求 → 利用重定向和HTTP走私 → 访问内部服务",
+   "bypass_technique": "利用#截断路径，302重定向转换POST为GET，CRLF注入构造完整请求",
+   "defensive_insight": "对存储类URL进行白名单校验，禁止访问内部网络，升级Golang版本"
+  },
+  {
+   "id": 115294,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少SPF记录是常见配置问题，无技术含量。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "添加SPF记录"
+  },
+  {
+   "id": 1912777,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 协议行为利用",
+   "reasoning": "是。利用SFTP路径中~的解析差异，导致访问非预期目录，属于协议行为利用，通用性强。",
+   "attack_chain": "构造/~2/foo路径 → 访问/home/dan2/foo",
+   "bypass_technique": "利用curl对~前缀的错误处理，绕过路径过滤",
+   "defensive_insight": "修复curl的路径解析逻辑，严格处理~符号"
+  },
+  {
+   "id": 19532,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少文件大小限制是常见配置问题，无技术含量。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "限制上传文件大小"
+  },
+  {
+   "id": 674866,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。通过特定API参数绕过会话成员检查，属于业务逻辑缺陷，思路值得借鉴。",
+   "attack_chain": "创建会话 → 离开 → 调用API并传入insertuserid → 获取会话信息",
+   "bypass_technique": "利用API参数绕过inConversation检查",
+   "defensive_insight": "统一权限检查逻辑，对所有API调用进行成员验证"
+  },
+  {
+   "id": 263733,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。SPF记录设置为neutral是常见配置问题，无技术含量。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "设置SPF记录为严格"
+  },
+  {
+   "id": 254895,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。BREACH攻击是已知漏洞，需要特定条件，报告未提供具体利用，属于常见套路。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "禁用HTTP压缩，分离秘密和用户输入"
+  },
+  {
+   "id": 767770,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。通过嵌套属性绕过对_id属性的过滤，属于业务逻辑缺陷，思路值得借鉴。",
+   "attack_chain": "导入恶意项目 → 设置attributes.issue_ids → 访问他人资源",
+   "bypass_technique": "利用嵌套属性绕过黑名单过滤",
+   "defensive_insight": "深度过滤所有属性，使用白名单"
+  },
+  {
+   "id": 242622,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。HTTPS证书无效是常见配置问题，无技术含量。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "配置有效证书"
+  },
+  {
+   "id": 962753,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。elmah.axd未授权访问是常见配置问题，无技术含量。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "限制elmah.axd访问权限"
+  }
+ ]
+}

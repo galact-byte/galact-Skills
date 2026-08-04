@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1675191,
+   127703,
+   722748,
+   925527,
+   282176
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 403822,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "子域名接管",
+   "reasoning": "否。这是典型的子域名接管，CNAME 指向未使用的服务，攻击者注册子域名。虽然涉及邮件，但技术点常见，无新意。",
+   "attack_chain": "发现 CNAME 指向 sendgrid.net → 在 sendgrid 注册子域名 → 接管子域名 → 可能获取邮件。",
+   "bypass_technique": "无绕过，直接利用未使用的 CNAME 记录。",
+   "defensive_insight": "定期审计 DNS 记录，删除不再使用的 CNAME，并确保外部服务验证域名所有权。"
+  },
+  {
+   "id": 299403,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 0
+   },
+   "verdict": "保留，普通",
+   "category": "其他",
+   "reasoning": "部分。利用 RTLO 和 URL 中的 @ 符号欺骗重定向页面的域名显示，属于 URL 解析的视觉欺骗，有一定非预期性，但 PoC 不完整，缺少截图。",
+   "attack_chain": "构造恶意链接 → 用户点击 → 重定向页面显示伪造域名 → 用户信任并点击继续 → 跳转到恶意站点。",
+   "bypass_technique": "使用 RTLO 字符和 @ 符号混淆 URL 的显示域名。",
+   "defensive_insight": "在重定向页面明确显示实际目标域名，并对 URL 进行规范化处理，防止视觉欺骗。"
+  },
+  {
+   "id": 14127,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "SSRF",
+   "reasoning": "部分。SSRF 漏洞，但利用多种协议（dict, gopher, ldap 等）进行探测，展示了协议多样性，但属于常见 SSRF 利用，无特殊绕过。",
+   "attack_chain": "构造 POST 请求 → 服务器发起请求到内网 → 探测端口和协议。",
+   "bypass_technique": "利用未过滤的 URL 参数，支持多种协议。",
+   "defensive_insight": "对 SSRF 进行协议白名单和 IP 黑名单过滤，禁止访问内网地址。"
+  },
+  {
+   "id": 1285245,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 0
+   },
+   "verdict": "保留，普通",
+   "category": "其他",
+   "reasoning": "部分。同形字攻击（Homograph）绕过重定向过滤，利用 Unicode 相似字符欺骗用户，但 PoC 不完整，缺少实际跳转的验证。",
+   "attack_chain": "构造同形字 URL → 用户点击 → 重定向到恶意域名。",
+   "bypass_technique": "使用 Unicode 同形字绕过域名白名单。",
+   "defensive_insight": "对 URL 进行 punycode 转换和规范化，阻止同形字攻击。"
+  },
+  {
+   "id": 1675191,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用 llhttp 解析器对不完整 CLRF 的宽松处理，导致 TE 头混淆，实现请求走私。这是对 HTTP 解析器行为的深入利用，可抽象为通用判断条件，且影响 Node.js 生态。",
+   "attack_chain": "构造畸形请求 → 前端代理解析为普通请求 → 后端 Node.js 解析为 chunked → 走私请求。",
+   "bypass_technique": "在 Transfer-Encoding 前插入无值且无 CLRF 的头部，造成解析分歧。",
+   "defensive_insight": "统一前后端 HTTP 解析器，严格校验头部格式，拒绝畸形请求。"
+  },
+  {
+   "id": 163464,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。WebSocket 发送用户信息，属于配置错误或设计缺陷，无绕过，无攻击链，信息量大但常见。",
+   "attack_chain": "无，直接观察 WebSocket 流量。",
+   "bypass_technique": "无。",
+   "defensive_insight": "审查 WebSocket 消息，确保不发送敏感信息。"
+  },
+  {
+   "id": 164546,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。CSRF 漏洞，token 和 referer 未验证，属于常见问题，无新意。",
+   "attack_chain": "构造恶意表单 → 受害者提交 → 触发操作。",
+   "bypass_technique": "无绕过，直接利用缺失的 CSRF 防护。",
+   "defensive_insight": "实施 CSRF token 验证和 Referer 检查。"
+  },
+  {
+   "id": 808338,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。注册后即可访问大量 PII，属于访问控制缺失，常见于配置错误，无技术亮点。",
+   "attack_chain": "注册账号 → 访问特定页面 → 查看所有用户 PII。",
+   "bypass_technique": "无绕过，直接利用不安全的访问控制。",
+   "defensive_insight": "限制敏感数据访问权限，实施最小权限原则。"
+  },
+  {
+   "id": 722748,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过",
+   "reasoning": "是。在登录过程中可以设置新的 2FA 提供者，从而绕过已配置的 2FA。这是对认证流程的巧妙利用，非预期地绕过了强制策略，可抽象为通用判断条件。",
+   "attack_chain": "用户登录 → 触发 2FA 挑战 → 访问 setupchallenge → 设置新提供者 → 绕过 2FA 登录。",
+   "bypass_technique": "利用登录流程中允许设置新 2FA 提供者的功能，绕过已配置的 2FA。",
+   "defensive_insight": "在 2FA 挑战阶段禁止设置新提供者，或要求重新认证。"
+  },
+  {
+   "id": 127703,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 认证绕过",
+   "reasoning": "是。通过 CSRF 结合信息泄露（service worker 泄露 rt 参数）实现账户接管。攻击链完整，跨组件，且利用了看似无关的静态文件泄露敏感 token，极具启发性。",
+   "attack_chain": "获取 rt 参数（通过 service worker）→ 构造恶意链接 → 受害者点击 → 链接社交账号 → 攻击者登录。",
+   "bypass_technique": "利用静态文件泄露 CSRF token，结合 CSRF 实现账户接管。",
+   "defensive_insight": "确保敏感 token 不泄露在静态资源中，实施严格的 CSRF 防护。"
+  },
+  {
+   "id": 1065186,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑",
+   "reasoning": "部分。速率限制在正确凭据下失效，属于业务逻辑缺陷，但技术点简单，无复杂绕过。",
+   "attack_chain": "触发速率限制 → 使用正确凭据登录 → 绕过限制。",
+   "bypass_technique": "利用速率限制仅对错误尝试生效的逻辑缺陷。",
+   "defensive_insight": "速率限制应在所有尝试中生效，包括成功登录。"
+  },
+  {
+   "id": 6853,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS，直接输出未过滤参数，常见套路。",
+   "attack_chain": "构造恶意 URL → 触发 XSS。",
+   "bypass_technique": "无绕过，直接利用未过滤输出。",
+   "defensive_insight": "对输出进行 HTML 编码。"
+  },
+  {
+   "id": 1599063,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误",
+   "reasoning": "部分。Undici ProxyAgent 未验证代理证书，导致 MITM，属于配置错误，但影响面广，且是框架行为利用。",
+   "attack_chain": "使用代理 → 代理可 MITM HTTPS 流量。",
+   "bypass_technique": "无绕过，直接利用未验证证书的代理。",
+   "defensive_insight": "确保代理证书验证开启。"
+  },
+  {
+   "id": 990838,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。链接格式过滤可被绕过，属于输入验证缺失，常见问题。",
+   "attack_chain": "拦截请求 → 修改链接 → 绕过过滤。",
+   "bypass_technique": "无绕过，直接利用未严格验证的输入。",
+   "defensive_insight": "严格验证链接格式，使用白名单。"
+  },
+  {
+   "id": 283847,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 状态混淆",
+   "reasoning": "部分。密码修改后会话未失效，可重放请求，属于会话管理缺陷，有一定非预期性。",
+   "attack_chain": "修改密码 → 捕获请求 → 重放 → 再次修改密码。",
+   "bypass_technique": "利用会话未失效的缺陷，重放请求。",
+   "defensive_insight": "密码修改后应使所有会话失效。"
+  },
+  {
+   "id": 925527,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 0
+   },
+   "verdict": "保留，高优先级",
+   "category": "SSRF / 跨组件攻击链",
+   "reasoning": "是。通过 DNS rebinding 和重定向绕过 SSRF 防护，利用 0.0.0.0 和 169.254.0.0/16 等未检查 IP，展示了绕过现代防御的优雅方法，可抽象为通用判断条件。",
+   "attack_chain": "控制域名 → 重定向到内网 → 访问本地服务。",
+   "bypass_technique": "利用未检查的 IP 地址和 DNS rebinding 绕过 IP 黑名单。",
+   "defensive_insight": "全面检查所有私有 IP 范围，并锁定 DNS 解析结果。"
+  },
+  {
+   "id": 447494,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过",
+   "reasoning": "部分。共享接收者可以修改过期日期，属于授权绕过，但技术点简单，无复杂绕过。",
+   "attack_chain": "接收共享 → 修改过期日期 → 延长访问。",
+   "bypass_technique": "利用未验证所有者的 API 端点。",
+   "defensive_insight": "验证请求者是否为共享所有者。"
+  },
+  {
+   "id": 282176,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 跨组件攻击链",
+   "reasoning": "是。通过 Ajax 搜索功能注入 show_hidden 参数，未授权访问隐藏组，利用了参数注入和过滤缺失，可抽象为通用判断条件。",
+   "attack_chain": "构造 Ajax 请求 → 注入 show_hidden 参数 → 显示隐藏组。",
+   "bypass_technique": "利用未过滤的 cookie 参数注入查询参数。",
+   "defensive_insight": "对用户输入进行严格过滤，并验证权限。"
+  },
+  {
+   "id": 1530898,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "部分。利用 nokogiri 不同实现的解析差异绕过 sanitizer，属于框架行为利用，有一定非预期性。",
+   "attack_chain": "构造特殊 HTML → 绕过 sanitizer → 执行 XSS。",
+   "bypass_technique": "利用 nokogiri 解析差异，使 script 标签被保留。",
+   "defensive_insight": "统一解析器行为，并加强 sanitizer 规则。"
+  },
+  {
+   "id": 1736432,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS，WAF 绕过但技术点常见，无新意。",
+   "attack_chain": "构造恶意 URL → 触发 XSS。",
+   "bypass_technique": "使用 onauxclick 事件绕过 WAF。",
+   "defensive_insight": "加强输入过滤和输出编码。"
+  }
+ ]
+}

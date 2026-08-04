@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   982291,
+   171670,
+   762271,
+   1661113,
+   212067
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 171670,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "是。利用HTML5标准实体（如&NewLine;、&colon;）绕过xss_clean()的正则过滤，因为正则未考虑实体后跟分号的情况，导致javascript:协议未被识别。这种利用标准实体绕过过滤器的思路具有通用性，且针对框架的特定实现缺陷，启发性强。",
+   "attack_chain": "构造包含HTML5实体的XSS payload → 提交至xss_clean()过滤 → 实体未被转换 → 浏览器解析为javascript:协议 → 触发XSS。",
+   "bypass_technique": "使用HTML5标准实体（如&NewLine;、&colon;）替代关键字符，绕过基于正则的过滤器。",
+   "defensive_insight": "更新正则表达式以正确匹配实体（包括分号），并对实体进行解码后再过滤。"
+  },
+  {
+   "id": 212067,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "是。通过Travis CI日志泄露GitHub token，且该token具有public_repo权限，可提交到公共仓库。这种通过CI日志泄露凭据的途径具有跨组件性（CI系统与GitHub），且泄露的token权限较大，影响严重。",
+   "attack_chain": "Travis CI构建日志泄露token → 攻击者获取token → 利用public_repo权限提交恶意代码到公共仓库。",
+   "bypass_technique": "无绕过，直接利用配置错误导致的日志泄露。",
+   "defensive_insight": "避免在CI日志中输出敏感信息，使用secret管理工具，定期轮换token。"
+  },
+  {
+   "id": 15785,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 会话管理",
+   "reasoning": "部分。密码重置后未使所有会话失效，特别是'记住我'的会话仍然有效，这违反了安全设计原则。虽然属于常见会话管理问题，但'记住我'选项的差异处理具有轻微非预期性。",
+   "attack_chain": "用户请求密码重置 → 修改密码 → 旧会话（特别是'记住我'的会话）仍然有效 → 攻击者可利用旧会话。",
+   "bypass_technique": "无绕过，直接利用会话管理缺陷。",
+   "defensive_insight": "密码更改后应使所有会话失效，包括'记住我'的会话。"
+  },
+  {
+   "id": 1987062,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。密码重置端点缺少暴力破解保护，这是常见的配置遗漏，没有非预期性。虽然影响明确，但属于成熟套路。",
+   "attack_chain": "攻击者暴力破解密码重置token → 未受限制 → 成功重置他人密码。",
+   "bypass_technique": "无绕过，直接利用缺少速率限制。",
+   "defensive_insight": "对所有认证相关端点实施速率限制和暴力破解防护。"
+  },
+  {
+   "id": 363571,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。反射型XSS通过未编码的GET参数注入JavaScript，属于常见类型，但利用闭合变量定义并重新构造对象的方式具有轻微变形，且PoC完整。",
+   "attack_chain": "构造恶意URL → 参数未编码注入JavaScript → 闭合变量定义 → 执行任意JS。",
+   "bypass_technique": "通过闭合变量定义并重新构造对象来执行任意JS。",
+   "defensive_insight": "对输出到JavaScript上下文的参数进行编码，使用CSP等防御。"
+  },
+  {
+   "id": 2053396,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "部分。第三方翻译工具的凭据泄露，导致可篡改Mozilla网站内容。虽然属于常见凭据泄露，但影响范围较大（可篡改翻译），且跨组件（第三方工具与主站）。",
+   "attack_chain": "凭据泄露 → 登录Smartling → 修改翻译内容 → 影响Mozilla网站。",
+   "bypass_technique": "无绕过，直接利用泄露的凭据。",
+   "defensive_insight": "定期轮换第三方凭据，监控泄露，限制第三方工具权限。"
+  },
+  {
+   "id": 130990,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "配置错误",
+   "reasoning": "否。SPF记录缺失是常见配置问题，且报告未提供具体利用场景，信息不足。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "配置SPF记录以防止邮件伪造。"
+  },
+  {
+   "id": 12815,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "部分。利用Markdown代码块中的类名注入，影响页面功能，属于框架行为利用，但影响有限。",
+   "attack_chain": "在Markdown代码块中注入特定类名 → 影响页面样式或功能。",
+   "bypass_technique": "利用Markdown解析器对类名的处理不当。",
+   "defensive_insight": "对Markdown中的类名进行白名单过滤。"
+  },
+  {
+   "id": 158270,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑 / 会话管理",
+   "reasoning": "否。浏览器缓存导致退出后仍可查看页面，属于常见缓存管理问题，无新意。",
+   "attack_chain": "登录 → 浏览 → 退出 → 点击后退查看缓存页面。",
+   "bypass_technique": "无绕过，直接利用浏览器缓存。",
+   "defensive_insight": "设置适当的缓存控制头，退出时清除缓存。"
+  },
+  {
+   "id": 223327,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑 / 会话管理",
+   "reasoning": "否。密码更改后会话未失效，常见会话管理缺陷，无新意。",
+   "attack_chain": "更改密码 → 旧会话仍有效 → 攻击者可利用。",
+   "bypass_technique": "无绕过，直接利用会话管理缺陷。",
+   "defensive_insight": "密码更改后应使所有会话失效。"
+  },
+  {
+   "id": 1241849,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "否。.htaccess文件可公开访问，常见配置错误，无新意。",
+   "attack_chain": "直接访问.htaccess文件获取配置信息。",
+   "bypass_technique": "无绕过，直接利用配置错误。",
+   "defensive_insight": "禁止Web服务器访问.htaccess文件。"
+  },
+  {
+   "id": 13703,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。使用HTML实体编码绕过XSS过滤器，与171670类似，但未深入分析，属于常见变形。",
+   "attack_chain": "构造实体编码的XSS payload → 过滤器未解码 → 浏览器解析为javascript:协议 → 触发XSS。",
+   "bypass_technique": "使用HTML实体编码绕过过滤器。",
+   "defensive_insight": "对实体进行解码后再过滤。"
+  },
+  {
+   "id": 1715538,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "子域名接管",
+   "reasoning": "部分。子域名接管是常见漏洞，但利用S3 bucket接管具有典型性，且PoC完整。",
+   "attack_chain": "子域名指向S3 → 创建同名bucket → 上传恶意内容 → 接管子域名。",
+   "bypass_technique": "无绕过，直接利用未配置的S3 bucket。",
+   "defensive_insight": "定期检查DNS记录，删除未使用的CNAME，配置S3 bucket所有权验证。"
+  },
+  {
+   "id": 1661113,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "IDOR / 授权绕过",
+   "reasoning": "是。通过GraphQL API修改任意用户的社交链接，利用IDOR漏洞，且攻击链完整（先获取ID再修改），影响广泛。",
+   "attack_chain": "获取目标用户ID → 构造GraphQL mutation → 修改社交链接。",
+   "bypass_technique": "无绕过，直接利用IDOR。",
+   "defensive_insight": "实施对象级授权检查，确保用户只能操作自己的资源。"
+  },
+  {
+   "id": 165136,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 0
+   },
+   "verdict": "保留，普通",
+   "category": "其他",
+   "reasoning": "部分。利用target=_blank的window.opener漏洞进行钓鱼，属于已知问题，但跨域影响具有轻微非预期性。",
+   "attack_chain": "用户点击链接 → 新页面控制opener → 替换为钓鱼页面。",
+   "bypass_technique": "利用window.opener属性。",
+   "defensive_insight": "使用rel=noopener。"
+  },
+  {
+   "id": 1457736,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "开放重定向",
+   "reasoning": "否。开放重定向是常见漏洞，无新意。",
+   "attack_chain": "构造恶意链接 → 重定向到恶意网站。",
+   "bypass_technique": "无绕过，直接利用重定向参数。",
+   "defensive_insight": "验证重定向URL的合法性。"
+  },
+  {
+   "id": 982291,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "是。通过CSS中的url(cid://)绕过HTML过滤器，利用Stimulus框架自动提交表单，实现账户接管。这种利用CSS和框架行为的组合具有高度非预期性，且攻击链完整。",
+   "attack_chain": "发送恶意HTML邮件 → CSS绕过过滤器 → 注入表单 → 利用Stimulus自动提交 → 设置邮件转发。",
+   "bypass_technique": "利用CSS url(cid://)和HTML实体编码绕过过滤器，利用Stimulus框架的data-controller自动提交表单。",
+   "defensive_insight": "加强HTML过滤器对CSS和实体的处理，限制框架自动提交行为。"
+  },
+  {
+   "id": 110655,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露",
+   "reasoning": "部分。目录列表泄露其他用户文件信息，属于常见信息泄露，但影响明确。",
+   "attack_chain": "构造请求 → 强制扫描目录 → 泄露其他用户文件结构。",
+   "bypass_technique": "无绕过，直接利用参数操纵。",
+   "defensive_insight": "限制目录扫描功能，实施访问控制。"
+  },
+  {
+   "id": 762271,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。通过GraphQL mutation绕过UI限制，修改问题机密性，即使没有权限。这种利用API与UI权限不一致的漏洞具有非预期性。",
+   "attack_chain": "被分配问题 → 构造GraphQL mutation → 修改机密性。",
+   "bypass_technique": "利用GraphQL API与UI权限不一致。",
+   "defensive_insight": "确保API和UI权限一致，实施服务端授权检查。"
+  },
+  {
+   "id": 1354382,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。密码重用是常见问题，无新意。",
+   "attack_chain": "更改密码时使用旧密码。",
+   "bypass_technique": "无绕过，直接利用密码策略缺陷。",
+   "defensive_insight": "实施密码历史记录检查。"
+  }
+ ]
+}

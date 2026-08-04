@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1824342,
+   1952978,
+   1153862,
+   641240,
+   837018
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 765318,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "认证绕过 / 业务逻辑",
+   "reasoning": "是。通过篡改响应中的 userInfo 参数从 false 改为 true 绕过邮箱验证，直接获得创建模板的权限。这种客户端信任问题虽然常见，但展示了如何通过修改响应来绕过服务端校验，思路简单但有效。",
+   "attack_chain": "注册未验证邮箱→登录拦截响应→修改 userInfo 为 true→绕过验证创建模板。",
+   "bypass_technique": "篡改响应中的布尔参数，使客户端认为已验证。",
+   "defensive_insight": "服务端必须独立验证邮箱状态，不能依赖客户端提交的参数。"
+  },
+  {
+   "id": 8224,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。CSRF 漏洞，攻击者构造表单强制受害者接受邀请，但缺少 CSRF token 验证。这是常见漏洞，没有新颖的绕过或攻击链。",
+   "attack_chain": "构造恶意表单→受害者点击→自动提交接受邀请。",
+   "bypass_technique": "无，直接利用缺少 CSRF token。",
+   "defensive_insight": "服务端必须验证 CSRF token，并确保 token 与用户会话绑定。"
+  },
+  {
+   "id": 837018,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。通过修改 POST 请求中的 group_id 和 role 参数，将自己在另一个组中的角色提升为管理员。这利用了 API 端点未正确验证用户对目标组的权限，实现了跨组提权。",
+   "attack_chain": "创建两个组→在组A中成为管理员→在组B中修改请求参数→提升为组A管理员。",
+   "bypass_technique": "直接修改 API 请求中的 group_id 和 role 参数，绕过权限检查。",
+   "defensive_insight": "服务端必须验证用户对目标组的角色权限，不能仅依赖客户端参数。"
+  },
+  {
+   "id": 111094,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "内容注入",
+   "reasoning": "否。通过 error 参数注入文本，属于内容欺骗，常见且影响有限。",
+   "attack_chain": "构造恶意 URL→用户点击→显示伪造内容。",
+   "bypass_technique": "无，直接利用未过滤参数。",
+   "defensive_insight": "对输出进行编码，避免直接反射用户输入。"
+  },
+  {
+   "id": 1153862,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "SSRF / 框架行为利用",
+   "reasoning": "是。利用 Prerender HAR Capturer 的 javascript 参数执行任意 JS，从而发起内网请求。这展示了如何通过第三方服务实现 SSRF，且可访问内网。",
+   "attack_chain": "发送带 Slackbot UA 的请求→触发 Prerender→通过 javascript 参数执行代码→访问内网。",
+   "bypass_technique": "利用 Prerender 的 javascript 参数执行任意 JS，绕过网络限制。",
+   "defensive_insight": "限制 Prerender 的 javascript 参数，或对请求进行白名单校验。"
+  },
+  {
+   "id": 799839,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS，在邮箱输入中注入 payload，未过滤。常见漏洞，无新颖性。",
+   "attack_chain": "构造恶意邮箱→提交→触发 XSS。",
+   "bypass_technique": "无，直接利用未过滤输入。",
+   "defensive_insight": "对输入进行严格过滤和输出编码。"
+  },
+  {
+   "id": 114631,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。多个 XSS 点，但都是常见反射型，无新颖绕过。",
+   "attack_chain": "在评论或搜索框注入 payload→触发 XSS。",
+   "bypass_technique": "无，直接利用未过滤输入。",
+   "defensive_insight": "统一输入过滤和输出编码。"
+  },
+  {
+   "id": 126260,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 0
+   },
+   "verdict": "保留，普通",
+   "category": "认证绕过 / 业务逻辑",
+   "reasoning": "是。通过修改请求和响应中的 allowNotActivated 和 isActivated 参数，绕过激活限制。这展示了客户端信任问题，但需要配合 Burp 的 match/replace，条件较复杂。",
+   "attack_chain": "拦截登录请求→修改 allowNotActivated→修改响应 isActivated→成功登录。",
+   "bypass_technique": "篡改请求和响应中的布尔参数，绕过激活检查。",
+   "defensive_insight": "服务端必须独立验证激活状态，不能依赖客户端参数。"
+  },
+  {
+   "id": 423546,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。通过修改请求 URL 从 /purchase_orders/submit 改为 /purchase_orders/update_checkout，绕过批发客户的审批流程。这利用了端点未正确验证权限，实现了未授权结账。",
+   "attack_chain": "作为批发客户→提交订单→拦截请求→修改 URL→绕过审批直接结账。",
+   "bypass_technique": "修改请求 URL 到另一个端点，绕过权限检查。",
+   "defensive_insight": "服务端必须对每个端点进行权限验证，不能仅依赖客户端路由。"
+  },
+  {
+   "id": 961757,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 授权绕过",
+   "reasoning": "是。分析师角色通过直接调用 API 端点获取了生产者源信息，绕过了 UI 限制。这展示了 API 端点未正确验证角色权限。",
+   "attack_chain": "添加分析师→切换账户→直接调用 API→获取源信息。",
+   "bypass_technique": "直接调用 API 端点，绕过 UI 限制。",
+   "defensive_insight": "服务端必须对 API 端点进行角色权限验证。"
+  },
+  {
+   "id": 216725,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "内存破坏 / 其他",
+   "reasoning": "是。通过构造特定的 Ruby 代码触发 mruby 的堆溢出，导致 SIGABRT。这展示了语言实现中的内存管理缺陷，但需要特定环境。",
+   "attack_chain": "构造恶意 Ruby 代码→触发堆溢出→程序崩溃。",
+   "bypass_technique": "利用 mruby 的哈希和数组操作中的内存管理缺陷。",
+   "defensive_insight": "修复 mruby 的内存管理代码，进行严格的边界检查。"
+  },
+  {
+   "id": 1824342,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "类型混淆 / 信息泄露",
+   "reasoning": "是。通过 HAQL 查询中的 WHERE 子句引用未选择的表列，利用表别名混淆，实现了跨表数据泄露。这展示了查询构建器的缺陷，可抽象为通用攻击模式。",
+   "attack_chain": "构造 HAQL 查询→引用未选择的表列→通过布尔盲注获取数据。",
+   "bypass_technique": "利用表别名混淆，引用未选择的表列。",
+   "defensive_insight": "查询构建器必须严格验证列引用，确保只允许当前表 schema 中的列。"
+  },
+  {
+   "id": 1952978,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 框架行为利用",
+   "reasoning": "是。Node.js 的 --experimental-permission 权限策略未处理路径遍历，导致可以写入限制目录之外的文件。这展示了权限检查的缺陷，可通用化。",
+   "attack_chain": "使用 --allow-fs-write 限制目录→通过 ../ 路径写入外部文件。",
+   "bypass_technique": "利用路径遍历绕过目录限制。",
+   "defensive_insight": "权限检查必须规范化路径，并确保解析后的路径在允许范围内。"
+  },
+  {
+   "id": 1947376,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "IDOR",
+   "reasoning": "否。IDOR 漏洞，通过修改 animal id 删除其他账户的动物。常见漏洞，无新颖性。",
+   "attack_chain": "登录→删除动物→拦截请求→修改 id→删除他人动物。",
+   "bypass_technique": "无，直接利用未授权对象引用。",
+   "defensive_insight": "服务端必须验证对象所有权。"
+  },
+  {
+   "id": 982510,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。Self XSS，仅影响自己，无实际危害。",
+   "attack_chain": "上传恶意文件名→触发 XSS。",
+   "bypass_technique": "无，仅影响自身。",
+   "defensive_insight": "对文件名进行过滤和编码。"
+  },
+  {
+   "id": 361106,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。修改密码不需要当前密码，属于设计缺陷，但常见且影响有限。",
+   "attack_chain": "登录后直接修改密码。",
+   "bypass_technique": "无，利用设计缺陷。",
+   "defensive_insight": "修改密码必须验证当前密码。"
+  },
+  {
+   "id": 1000567,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "ReDoS / 其他",
+   "reasoning": "是。通过构造正则表达式炸弹，导致 GraphQL 端点响应时间显著增加，造成 DoS。这展示了正则表达式注入的威力，但需要特定输入。",
+   "attack_chain": "构造恶意正则→发送到 GraphQL→触发 ReDoS→服务不可用。",
+   "bypass_technique": "利用正则表达式注入，构造灾难性回溯。",
+   "defensive_insight": "对用户输入进行正则表达式安全处理，限制回溯次数。"
+  },
+  {
+   "id": 641240,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "堆溢出 / 协议行为利用",
+   "reasoning": "是。通过发送超长的 Basic 认证头，导致 base64 解码后溢出堆缓冲区。这展示了协议处理中的缺陷，可导致 RCE。",
+   "attack_chain": "发送恶意 Basic 认证头→触发堆溢出→可能 RCE。",
+   "bypass_technique": "利用 base64 解码未检查缓冲区大小。",
+   "defensive_insight": "确保解码缓冲区足够大，或使用动态分配。"
+  },
+  {
+   "id": 44157,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "开放重定向 / 其他",
+   "reasoning": "是。通过构造 URL 同时满足过滤条件（包含 vimeocdn.com/ 和图片扩展名），但实际重定向到攻击者域名。这展示了过滤逻辑的缺陷。",
+   "attack_chain": "构造恶意 URL→用户点击→重定向到攻击者网站。",
+   "bypass_technique": "利用 URL 解析差异，绕过过滤。",
+   "defensive_insight": "使用白名单域名，并严格解析 URL。"
+  },
+  {
+   "id": 198673,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "配置错误",
+   "reasoning": "否。HTTP-Basic 认证明文传输，但报告未提供实际攻击场景，且 substate 为 informative，信息不足。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "使用 HTTPS 和更安全的认证方式。"
+  }
+ ]
+}

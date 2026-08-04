@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1595281,
+   102376,
+   356284,
+   2033005,
+   114879
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 114879,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 业务逻辑",
+   "reasoning": "是。注册时过滤了姓名，但编辑资料时未过滤，导致存储型XSS通过邮件通知传播。这种'注册与编辑不一致'的逻辑差异是常见但有效的绕过，且影响所有用户。",
+   "attack_chain": "注册→编辑资料注入XSS→关注其他用户→触发邮件通知→受害者打开邮件执行脚本。",
+   "bypass_technique": "利用注册与编辑资料时输入过滤不一致，绕过注册时的过滤。",
+   "defensive_insight": "统一所有输入点的过滤逻辑，对邮件内容进行HTML编码，禁止在邮件中渲染用户可控的HTML。"
+  },
+  {
+   "id": 102376,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "CSRF / 业务逻辑",
+   "reasoning": "是。通过st.rtu参数绕过CSRF保护，利用重定向链触发敏感操作（删除照片）。这种利用重定向参数绕过CSRF token的方式非常巧妙，且可复用。",
+   "attack_chain": "构造恶意链接→用户点击→触发重定向→携带有效token执行删除操作。",
+   "bypass_technique": "利用st.rtu参数构造重定向，使请求携带有效的CSRF token，从而绕过防护。",
+   "defensive_insight": "对重定向参数进行严格校验，确保其不包含敏感操作；CSRF token应绑定到具体操作而非可被重定向利用。"
+  },
+  {
+   "id": 1595281,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用int溢出导致越界读取，通过Lua脚本触发，实现内存搜索。这是对C语言整数溢出和字符串索引的深刻利用，且跨组件（Lua→C函数）。",
+   "attack_chain": "构造超长字符串→触发ap_strcmp_match→int溢出→越界读取内存→搜索特定字符串。",
+   "bypass_technique": "利用int溢出使索引变为负数，从而读取str指针之前的内存。",
+   "defensive_insight": "使用无符号类型或apr_size_t作为索引，避免整数溢出；对输入长度进行限制。"
+  },
+  {
+   "id": 1404789,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误",
+   "reasoning": "否。这是已知CVE的复述，无新意。但作为供应链漏洞报告，信息完整，可复现。",
+   "attack_chain": "单点：Date.parse处理不可信输入→ReDoS→DoS。",
+   "bypass_technique": "无绕过，直接利用已知漏洞。",
+   "defensive_insight": "升级date gem到修复版本，限制输入长度。"
+  },
+  {
+   "id": 2033005,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 配置错误",
+   "reasoning": "是。利用Unicode字符'İ'绕过域名黑名单，这是对Unicode规范化差异的利用，非常巧妙且通用。",
+   "attack_chain": "构造特殊字符域名→绕过黑名单→成功邀请。",
+   "bypass_technique": "使用Unicode字符'İ'代替'I'，利用服务端未进行Unicode规范化。",
+   "defensive_insight": "对输入进行Unicode规范化（NFKC），并在黑名单匹配前统一格式。"
+  },
+  {
+   "id": 815085,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。邮箱接受特殊字符是常见输入验证缺失，无绕过，无攻击链。",
+   "attack_chain": "单点：注册时输入含%或%0d%0a的邮箱→创建无效账户。",
+   "bypass_technique": "无绕过，直接利用输入验证缺失。",
+   "defensive_insight": "严格验证邮箱格式，拒绝包含特殊字符的输入。"
+  },
+  {
+   "id": 715413,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用",
+   "reasoning": "是。curl将IP地址字面量与证书CN字符串匹配，违反RFC，这是对证书验证逻辑的巧妙利用。",
+   "attack_chain": "单点：使用IP访问HTTPS→证书CN匹配IP字符串→接受无效证书。",
+   "bypass_technique": "利用curl未区分IP地址和主机名，将IP字符串作为CN匹配。",
+   "defensive_insight": "curl应优先使用SAN中的IP条目，而非CN字符串匹配。"
+  },
+  {
+   "id": 2012636,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "是。通过Crowdsignal的投票答案注入XSS，在WordPress.com中触发，跨平台传播。",
+   "attack_chain": "创建恶意投票→嵌入WordPress文章→用户点击查看结果→执行XSS。",
+   "bypass_technique": "利用Crowdsignal的输入过滤缺失，注入事件属性。",
+   "defensive_insight": "对用户输入进行上下文感知的编码，禁止事件属性。"
+  },
+  {
+   "id": 138332,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用",
+   "reasoning": "部分。CRLF注入是经典技术，但通过重定向路径触发并设置cookie，有一定变形。",
+   "attack_chain": "单点：构造含%0A的URL→服务器重定向时注入Set-Cookie头。",
+   "bypass_technique": "利用重定向路径未过滤CRLF，注入响应头。",
+   "defensive_insight": "对重定向URL进行编码，禁止在响应头中出现CRLF。"
+  },
+  {
+   "id": 312543,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XXE / 跨组件攻击链",
+   "reasoning": "部分。XXE是常见漏洞，但通过sitemap.xml触发并利用外部DTD读取文件，思路清晰。",
+   "attack_chain": "提供恶意sitemap.xml→服务器解析→外部实体读取文件→外带数据。",
+   "bypass_technique": "利用XML解析器未禁用外部实体，通过DTD外带数据。",
+   "defensive_insight": "禁用XML外部实体，使用安全的解析器配置。"
+  },
+  {
+   "id": 329399,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "反序列化",
+   "reasoning": "否。Java反序列化RCE是成熟套路，但PoC完整，影响明确。",
+   "attack_chain": "单点：发送恶意序列化对象→触发readObject→RCE。",
+   "bypass_technique": "无绕过，直接利用未验证的反序列化。",
+   "defensive_insight": "禁止反序列化不可信数据，使用白名单过滤类。"
+  },
+  {
+   "id": 115271,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。证书密钥长度不足是常见配置问题，无绕过，无攻击链。",
+   "attack_chain": "单点：证书密钥过短→可能被破解。",
+   "bypass_technique": "无。",
+   "defensive_insight": "使用2048位以上密钥。"
+  },
+  {
+   "id": 135620,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。源码泄露是常见配置错误，无绕过，无攻击链。",
+   "attack_chain": "单点：访问公开的源码文件。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁止上传目录可执行脚本，限制访问敏感文件。"
+  },
+  {
+   "id": 67161,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "命令注入",
+   "reasoning": "否。报告基于版本推断，未实际验证，信息不足。",
+   "attack_chain": "未知。",
+   "bypass_technique": "未知。",
+   "defensive_insight": "升级到修复版本。"
+  },
+  {
+   "id": 356284,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 协议行为利用",
+   "reasoning": "是。通过签名包装绕过SAML签名验证，插入新用户名，实现认证绕过。这是对XML签名验证逻辑的巧妙利用。",
+   "attack_chain": "截获SAML响应→剥离签名→修改用户名→包装回原签名→SP接受伪造身份。",
+   "bypass_technique": "利用XML解析器只验证第一个签名，将修改后的断言包裹在原始签名中。",
+   "defensive_insight": "验证所有签名，确保签名覆盖整个断言，使用安全的XML解析器。"
+  },
+  {
+   "id": 155685,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。404页面内容注入是常见配置问题，无绕过，无攻击链。",
+   "attack_chain": "单点：构造恶意URL→404页面显示注入内容。",
+   "bypass_technique": "无。",
+   "defensive_insight": "使用预定义404页面，不反射用户输入。"
+  },
+  {
+   "id": 273998,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "CSRF",
+   "reasoning": "部分。CSRF token缺失是常见问题，但通过对比其他接口的验证，展示了不一致性。",
+   "attack_chain": "单点：构造无token的评论请求→成功提交。",
+   "bypass_technique": "无绕过，直接利用缺失的CSRF保护。",
+   "defensive_insight": "所有POST请求统一验证CSRF token。"
+  },
+  {
+   "id": 2106,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "类型混淆",
+   "reasoning": "否。报告仅提及Flash类型混淆，无技术细节，信息不足。",
+   "attack_chain": "未知。",
+   "bypass_technique": "未知。",
+   "defensive_insight": "升级Flash Player。"
+  },
+  {
+   "id": 1584718,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 跨组件攻击链",
+   "reasoning": "是。通过Google Sales Channel的公开接口泄露密码保护商店的敏感信息，跨组件且绕过密码保护。",
+   "attack_chain": "获取产品ID→访问google-shopping.shopifycloud.com→泄露邮箱和渠道ID。",
+   "bypass_technique": "利用第三方渠道接口未受密码保护，直接访问。",
+   "defensive_insight": "确保所有接口都遵循商店的访问控制，对第三方集成进行权限校验。"
+  },
+  {
+   "id": 796487,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。文件名导致的存储XSS是常见套路，无绕过，无攻击链。",
+   "attack_chain": "单点：创建恶意文件名→服务器列出文件时执行XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对文件名进行HTML编码，避免在列表页直接输出。"
+  }
+ ]
+}

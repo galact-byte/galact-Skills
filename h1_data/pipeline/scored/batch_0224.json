@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   298246,
+   389076,
+   1323406,
+   182487,
+   2247457
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1323406,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。通过修改 checkout_ari 参数实现 IDOR，直接访问其他用户的订单信息，属于典型的对象级授权缺失。虽然 IDOR 是常见漏洞，但此处利用的是支付流程中的标识符，且影响严重（泄露地址、支付信息），具有实际危害。技术点在于未对对象标识符进行所有权校验，可抽象为通用判断条件。",
+   "attack_chain": "购买商品→选择Affirm支付→获取checkout_ari→修改为其他值→后端返回其他用户订单信息。",
+   "bypass_technique": "直接修改对象标识符（checkout_ari）绕过授权检查。",
+   "defensive_insight": "实施对象级访问控制，确保用户只能访问自己的资源；对敏感操作进行所有权验证。"
+  },
+  {
+   "id": 318295,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。Clickjacking 是成熟套路，仅通过 iframe 嵌入登录页面，无绕过或创新。虽然可复现，但缺乏启发性。",
+   "attack_chain": "构造恶意页面→iframe嵌入目标登录页→诱导用户点击。",
+   "bypass_technique": "无实质绕过，直接利用缺少X-Frame-Options或CSP frame-ancestors。",
+   "defensive_insight": "设置X-Frame-Options或CSP frame-ancestors禁止被嵌入。"
+  },
+  {
+   "id": 1278891,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 认证绕过",
+   "reasoning": "部分。利用已知CVE（LDAP注入）进行用户名和密码枚举，属于已知漏洞的利用，但通过Webfinger协议实现字符级枚举，具有一定技巧性。技术点在于LDAP注入的盲注方法，可复用。",
+   "attack_chain": "构造恶意Webfinger请求→LDAP注入→枚举用户名和密码。",
+   "bypass_technique": "利用LDAP注入进行盲注，通过响应差异枚举信息。",
+   "defensive_insight": "升级ForgeRock OpenAM至修复版本；对LDAP查询进行输入过滤和参数化。"
+  },
+  {
+   "id": 298246,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "类型混淆 / 框架行为利用",
+   "reasoning": "是。利用Ruby pack/unpack中的符号错误，通过负长度值触发缓冲区下读，实现信息泄露。这是对语言内部实现的深入利用，非预期性强，且可抽象为通用条件（负长度未检查）。与普通缓冲区漏洞不同，它展示了语言库的信任边界问题。",
+   "attack_chain": "构造恶意unpack格式→负长度导致指针前移→读取缓冲区外数据。",
+   "bypass_technique": "利用符号错误，传入负长度值绕过长度检查。",
+   "defensive_insight": "修复Ruby核心库，对长度参数进行严格的正数校验；开发者应避免使用用户可控的格式字符串。"
+  },
+  {
+   "id": 176116,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 会话管理",
+   "reasoning": "部分。密码重置后未使旧会话失效，属于常见的会话管理缺陷，但攻击场景（物理访问）有一定现实性。技术点在于会话固定/未失效，可复用。",
+   "attack_chain": "攻击者获取会话ID→用户重置密码→旧会话仍有效→攻击者继续访问。",
+   "bypass_technique": "利用密码重置后会话未失效的缺陷。",
+   "defensive_insight": "密码重置后应使所有旧会话失效，并重新生成会话ID。"
+  },
+  {
+   "id": 1652042,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "命令注入",
+   "reasoning": "否。引用已知CVE，无新意，属于已知漏洞的通报，缺乏技术细节和原创性。",
+   "attack_chain": "利用Active Storage的代码注入漏洞实现RCE。",
+   "bypass_technique": "无实质绕过，直接利用已知漏洞。",
+   "defensive_insight": "升级Rails至修复版本；限制用户对图片处理功能的访问。"
+  },
+  {
+   "id": 407973,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。弱密码策略是常见问题，无技术含量，属于设计缺陷而非漏洞。",
+   "attack_chain": "注册时设置与邮箱相同的密码→账户易被猜测。",
+   "bypass_technique": "无绕过，直接利用弱密码策略。",
+   "defensive_insight": "实施强密码策略，禁止密码与邮箱相同。"
+  },
+  {
+   "id": 2247457,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。通过压缩文件夹的方式绕过下载权限，属于非预期解。技术点在于压缩操作未继承权限检查，可抽象为通用判断条件（操作权限未覆盖所有路径）。",
+   "attack_chain": "创建共享文件夹→以只读用户访问→压缩整个文件夹→下载压缩包。",
+   "bypass_technique": "利用压缩功能绕过下载权限检查。",
+   "defensive_insight": "确保所有文件操作（包括压缩、下载）都执行权限验证。"
+  },
+  {
+   "id": 182487,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "CSRF / 认证绕过",
+   "reasoning": "是。CSRF token未绑定用户，导致可跨账户使用，绕过CSRF防护。技术点在于token的全局性，可抽象为通用判断条件（token应绑定会话）。",
+   "attack_chain": "获取一个账户的CSRF token→构造恶意请求→删除其他用户账户。",
+   "bypass_technique": "利用CSRF token未绑定用户，替换token绕过验证。",
+   "defensive_insight": "CSRF token应与会话绑定，并在服务端验证。"
+  },
+  {
+   "id": 176159,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。URI混淆是已知的浏览器行为，非漏洞，且无实际攻击场景。",
+   "attack_chain": "构造混淆URL→诱导用户访问→打开恶意网站。",
+   "bypass_technique": "无实质绕过，利用浏览器对URL的解析差异。",
+   "defensive_insight": "浏览器应显示完整URL或警告用户。"
+  },
+  {
+   "id": 457032,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 业务逻辑",
+   "reasoning": "部分。GitHub wiki默认允许任何人编辑，属于配置错误，但影响有限（内容篡改）。技术点在于默认配置不安全，可复用。",
+   "attack_chain": "任何登录用户→编辑wiki→植入恶意内容。",
+   "bypass_technique": "无实质绕过，直接利用默认配置。",
+   "defensive_insight": "限制wiki编辑权限，仅允许维护者。"
+  },
+  {
+   "id": 43672,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS是常见漏洞，参数未编码，无绕过，属于成熟套路。",
+   "attack_chain": "构造恶意URL→用户点击→执行脚本。",
+   "bypass_technique": "无实质绕过，直接注入事件属性。",
+   "defensive_insight": "对输出进行编码，使用CSP。"
+  },
+  {
+   "id": 417839,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "部分。低权限用户可编辑高权限功能，属于水平权限提升，但技术点在于权限检查缺失，可复用。",
+   "attack_chain": "低权限用户→访问管理端点→修改模板。",
+   "bypass_technique": "直接访问未授权端点。",
+   "defensive_insight": "实施基于角色的访问控制，确保每个端点都检查权限。"
+  },
+  {
+   "id": 1069392,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "会话管理 / 业务逻辑",
+   "reasoning": "部分。密码更改后旧会话未失效，常见缺陷，但影响明确。技术点在于会话失效逻辑缺失。",
+   "attack_chain": "攻击者持有旧会话→用户改密→旧会话仍有效→攻击者继续访问。",
+   "bypass_technique": "利用密码更改后会话未失效。",
+   "defensive_insight": "密码更改后应使所有旧会话失效。"
+  },
+  {
+   "id": 198732,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "反序列化",
+   "reasoning": "否。引用已知PHP bug，无新意，属于已知漏洞通报。",
+   "attack_chain": "利用unserialize的UAF漏洞。",
+   "bypass_technique": "无实质绕过，直接利用已知漏洞。",
+   "defensive_insight": "升级PHP，避免反序列化不可信数据。"
+  },
+  {
+   "id": 373916,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。开放重定向是常见漏洞，无绕过，属于成熟套路。",
+   "attack_chain": "构造恶意URL→用户点击→重定向到钓鱼网站。",
+   "bypass_technique": "无实质绕过，直接利用未验证的url参数。",
+   "defensive_insight": "对重定向目标进行白名单校验。"
+  },
+  {
+   "id": 845677,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。源码泄露是常见配置错误，无技术含量，但可能暴露内部信息。",
+   "attack_chain": "访问公开页面→发现未压缩源码→泄露内部信息。",
+   "bypass_technique": "无实质绕过，直接访问公开资源。",
+   "defensive_insight": "确保生产环境不暴露源码和sourcemap。"
+  },
+  {
+   "id": 389076,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 协议行为利用",
+   "reasoning": "是。利用浏览器扩展的postMessage通信漏洞，结合chrome.tabs API的权限，实现任意URL打开和无限DoS。技术点在于扩展未验证消息来源，且chrome.tabs无限制，可抽象为通用判断条件（扩展应验证消息来源）。",
+   "attack_chain": "恶意页面→postMessage→内容脚本→后台→chrome.tabs.create→打开任意URL。",
+   "bypass_technique": "利用postMessage未验证来源，发送恶意命令。",
+   "defensive_insight": "扩展应验证消息来源，限制可打开的URL，避免使用chrome.tabs打开任意URL。"
+  },
+  {
+   "id": 993582,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "其他",
+   "reasoning": "部分。通过特殊构造的括号导致服务端资源耗尽，属于正则表达式拒绝服务（ReDoS）或类似问题，但未明确根因。技术点在于输入处理不当，可复用。",
+   "attack_chain": "构造恶意搜索词→服务端处理→资源耗尽→服务不可用。",
+   "bypass_technique": "利用输入导致算法复杂度爆炸。",
+   "defensive_insight": "对输入长度和复杂度进行限制，使用安全的正则表达式。"
+  },
+  {
+   "id": 117449,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。存储型XSS，但触发条件需要管理员操作，属于常见漏洞，但影响较大。技术点在于输入未过滤，可复用。",
+   "attack_chain": "创建恶意产品名→发送草稿→管理员查看时间线→执行脚本。",
+   "bypass_technique": "无实质绕过，直接注入HTML。",
+   "defensive_insight": "对用户输入进行过滤和输出编码。"
+  }
+ ]
+}

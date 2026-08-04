@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   894170,
+   1693150,
+   151058,
+   1216203,
+   494979
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1216203,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "是。OAuth 流程中未过滤的 redirect_to 参数被直接拼接到 HTML 响应，形成反射型 XSS。技术点在于 OAuth 错误处理路径中，开发者未对重定向参数进行编码，导致 HTML 注入。虽然 XSS 类型常见，但攻击点位于 OAuth 流程，且可导致管理员账户接管，具有较高影响。",
+   "attack_chain": "构造恶意链接 → 受害者点击 → OAuth 流程触发错误 → redirect_to 参数未过滤反射 → 执行 JavaScript → 窃取会话或创建管理员。",
+   "bypass_technique": "利用 OAuth 错误处理中未对 redirect_to 参数进行 HTML 编码，直接注入 HTML/JavaScript。",
+   "defensive_insight": "对所有输出到 HTML 的参数进行上下文感知编码，尤其是在错误页面中。"
+  },
+  {
+   "id": 31255,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。报告内容主要是 README.md 的公开信息，以及 .htaccess 返回 403 的常规现象，没有实际漏洞。信息泄露程度低，且无攻击链。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "确保敏感文件不被公开访问，但此报告未展示实际敏感信息泄露。"
+  },
+  {
+   "id": 1693150,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "是。通过 GitHub 导入功能，利用 scoped label 的颜色字段注入 XSS，并绕过 CSP。技术点在于 GitLab 对 label 颜色值的过滤不完整，且 scoped label 的渲染路径未覆盖，导致存储型 XSS。该漏洞展示了绕过已修复漏洞的补丁，具有高启发性。",
+   "attack_chain": "创建恶意 GitHub 仓库 → 设置 scoped label 颜色为 payload → 通过 GitLab 导入 → 存储型 XSS 触发 → 执行任意操作。",
+   "bypass_technique": "利用 scoped label 的颜色字段，绕过 GitLab 对 label 颜色的过滤，并利用 CSP 绕过技术。",
+   "defensive_insight": "对所有用户输入进行严格过滤和编码，尤其是在导入功能中；对 scoped label 的渲染进行安全审查。"
+  },
+  {
+   "id": 280748,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。通过修改 captcha 参数导致资源消耗，属于参数篡改的常见 DoS 手法，无特殊绕过或攻击链。",
+   "attack_chain": "构造恶意请求 → 修改 captcha 参数 → 服务器生成超大图片 → 资源耗尽。",
+   "bypass_technique": "无实质绕过，直接利用参数未限制。",
+   "defensive_insight": "对 captcha 参数进行范围限制和资源使用上限。"
+  },
+  {
+   "id": 894170,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 类型混淆",
+   "reasoning": "是。这是一个完整的 CTF 攻击链，涉及多个组件：从 .git 泄露、SSRF、PHP 类型混淆、Android 逆向、CSS 注入等。技术点在于 PHP 类型混淆（hash=0）绕过认证，以及通过 SSRF 访问内部服务。该报告展示了复杂的攻击链和多种技术组合，具有极高的启发性。",
+   "attack_chain": "发现 .git 泄露 → 获取凭据 → 利用 PHP 类型混淆绕过 2FA → SSRF 访问内部服务 → 逆向 APK 获取 token → 创建管理员 → 利用 CSS 注入获取 2FA 码 → 完成支付。",
+   "bypass_technique": "PHP 类型混淆（hash=0）绕过认证；SSRF 通过 open redirect 访问内部服务；CSS 注入窃取 2FA 码。",
+   "defensive_insight": "严格验证所有输入类型；避免使用弱类型比较；对 SSRF 进行防护；对敏感操作实施多因素认证。"
+  },
+  {
+   "id": 707006,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "其他",
+   "reasoning": "部分。这是一个 use-after-free 漏洞，通过 fuzzing 发现，但触发条件较为特殊，需要特定 API 调用序列。技术点在于 Curl_flush_cookies 中未将 data->cookies 置空，导致后续清理时重复释放。虽然漏洞类型常见，但触发路径和修复建议清晰，具有一定启发性。",
+   "attack_chain": "调用 Curl_cookie_init → 设置 COOKIEJAR → 调用 Curl_flush_cookies → 调用 Curl_cookie_cleanup → 再次调用 curl_easy_cleanup 触发 UAF。",
+   "bypass_technique": "无绕过，直接利用 API 调用顺序错误。",
+   "defensive_insight": "在释放指针后置空，避免悬垂指针。"
+  },
+  {
+   "id": 2053051,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。通过修改 report_id 枚举私有项目名称，属于 IDOR 的常见变体，无特殊绕过或攻击链。",
+   "attack_chain": "创建报告 → 添加协作者 → 修改 report_id → 枚举私有项目名称。",
+   "bypass_technique": "无实质绕过，直接利用 IDOR。",
+   "defensive_insight": "对 report_id 进行访问控制验证，防止越权访问。"
+  },
+  {
+   "id": 942103,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "命令注入",
+   "reasoning": "部分。Rails 测试服务器中 render inline 直接执行用户输入，导致模板注入和 RCE。技术点在于测试代码中使用了不安全的 render inline，但影响范围有限。",
+   "attack_chain": "构造恶意请求 → 传入 content 参数 → render inline 执行 ERB → RCE。",
+   "bypass_technique": "无绕过，直接利用不安全的 render inline。",
+   "defensive_insight": "避免在测试服务器中使用 render inline 处理用户输入，或严格过滤。"
+  },
+  {
+   "id": 16315,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告内容仅为一句“Abusing VCS control on phabricator”，没有具体漏洞描述、步骤或影响，无法判断真实性。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "无"
+  },
+  {
+   "id": 494979,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "命令注入 / 框架行为利用",
+   "reasoning": "是。Notepad++ 通过环境变量展开注入命令，绕过引号转义。技术点在于 Windows 环境变量展开发生在命令执行前，导致引号被绕过。该漏洞展示了环境变量在命令注入中的利用，具有启发性。",
+   "attack_chain": "创建恶意文件夹名 → 打开文件 → 触发命令执行 → 注入命令。",
+   "bypass_technique": "利用环境变量展开，绕过引号转义。",
+   "defensive_insight": "对命令中的 % 字符进行转义，或使用安全的 API 执行命令。"
+  },
+  {
+   "id": 1033423,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。Django Debug=True 导致信息泄露，属于常见配置错误，无特殊绕过或攻击链。",
+   "attack_chain": "访问错误页面 → 获取调试信息。",
+   "bypass_technique": "无",
+   "defensive_insight": "生产环境关闭 Debug 模式。"
+  },
+  {
+   "id": 148952,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告内容仅为 URL 重定向，没有具体漏洞描述或影响，无法判断真实性。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "无"
+  },
+  {
+   "id": 149212,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。通过修改 avatar_filename 参数触发异常，泄露路径和代码，属于常见的路径泄露，无特殊绕过或攻击链。",
+   "attack_chain": "修改参数 → 触发异常 → 泄露路径。",
+   "bypass_technique": "无",
+   "defensive_insight": "对用户输入进行验证，避免异常信息泄露。"
+  },
+  {
+   "id": 107213,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误",
+   "reasoning": "部分。GlassWire 安装程序使用未限定路径调用 CertUtil.exe，导致 EXE 植入攻击。技术点在于未使用绝对路径，且 CreateProcess 不显示安全警告。虽然漏洞类型常见，但利用方式清晰。",
+   "attack_chain": "放置恶意 CertUtil.exe 到 Downloads → 运行安装程序 → 执行恶意程序。",
+   "bypass_technique": "利用未限定路径，植入恶意 EXE。",
+   "defensive_insight": "使用绝对路径调用系统程序，并设置当前工作目录。"
+  },
+  {
+   "id": 742,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。密码重置页面未验证 CSRF token，属于常见 CSRF 漏洞，无特殊绕过或攻击链。",
+   "attack_chain": "构造恶意请求 → 提交密码重置 → 未验证 token → 完成重置。",
+   "bypass_technique": "无",
+   "defensive_insight": "在服务端验证 CSRF token。"
+  },
+  {
+   "id": 146948,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。点击劫持漏洞，缺少 X-Frame-Options 头，属于常见配置问题，无特殊绕过或攻击链。",
+   "attack_chain": "构造恶意页面 → iframe 嵌入登录页 → 诱导点击。",
+   "bypass_technique": "无",
+   "defensive_insight": "添加 X-Frame-Options 头或 CSP frame-ancestors。"
+  },
+  {
+   "id": 151058,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 跨组件攻击链",
+   "reasoning": "是。通过 OAuth redirect_uri 配置不当，窃取用户 access token，进而冒充用户聊天。技术点在于 redirect_uri 白名单过宽，允许攻击者控制的子域，导致 token 泄露。该漏洞展示了 OAuth 流程中的安全配置问题，具有启发性。",
+   "attack_chain": "构造恶意链接 → 受害者点击 → OAuth 重定向到攻击者域 → 窃取 token → 冒充用户。",
+   "bypass_technique": "利用 redirect_uri 白名单过宽，将 token 重定向到攻击者控制的域。",
+   "defensive_insight": "严格限制 redirect_uri 白名单，并验证完整 URL。"
+  },
+  {
+   "id": 2375446,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用",
+   "reasoning": "部分。Node.js HTTP 服务器对 chunked 扩展处理不当，导致 DoS。技术点在于未限制 chunk 扩展长度，可消耗大量资源。虽然漏洞类型常见，但涉及协议行为，具有一定启发性。",
+   "attack_chain": "发送恶意请求 → 包含无限 chunk 扩展 → 服务器资源耗尽。",
+   "bypass_technique": "利用 chunked 扩展未限制，绕过超时和请求体大小限制。",
+   "defensive_insight": "限制 chunk 扩展长度，并加强资源使用监控。"
+  },
+  {
+   "id": 2638,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。评论功能缺少 CSRF token，属于常见 CSRF 漏洞，无特殊绕过或攻击链。",
+   "attack_chain": "构造恶意请求 → 提交评论 → 未验证 token → 伪造评论。",
+   "bypass_technique": "无",
+   "defensive_insight": "在服务端验证 CSRF token。"
+  },
+  {
+   "id": 1630073,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。Host Header 注入导致重定向，属于常见配置问题，无特殊绕过或攻击链。",
+   "attack_chain": "修改 Host 头 → 服务器重定向到恶意域。",
+   "bypass_technique": "无",
+   "defensive_insight": "验证 Host 头，避免基于 Host 的重定向。"
+  }
+ ]
+}

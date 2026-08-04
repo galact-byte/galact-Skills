@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1350444,
+   144482,
+   242354,
+   245450,
+   1041173
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1350444,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 竞争条件 / 跨组件攻击链",
+   "reasoning": "是。利用远程文件下载功能绕过限制写入PHP文件，并通过触发超时错误阻止临时目录清理，再结合uniqid()可预测性暴力破解目录名，最终实现RCE。技术点在于利用执行时间限制和错误处理逻辑，将临时文件持久化，并利用时间戳预测目录名，形成完整攻击链。",
+   "attack_chain": "管理员登录→提交恶意URL列表（含webshell和延迟请求）→触发超时错误→临时目录未被清理→暴力破解uniqid目录名→访问webshell→RCE",
+   "bypass_technique": "利用服务器120秒执行超时，通过大量延迟请求使脚本超时，从而绕过VolatileDirectory的__destruct清理；利用uniqid()前8字符为时间戳的特性，暴力破解剩余5字符。",
+   "defensive_insight": "禁止下载可执行文件类型；使用加密安全的随机目录名（如md5(uniqid())）；对临时目录设置更严格的清理机制；限制远程文件下载功能。"
+  },
+  {
+   "id": 49566,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 状态混淆",
+   "reasoning": "部分。邀请链接在用户未登录时点击，登录后自动加入团队，跳过了接受/拒绝步骤。这是状态混淆导致的逻辑漏洞，思路简单但有效，但需要特定条件（未登录），且影响有限。",
+   "attack_chain": "管理员发送邀请→用户未登录点击链接→登录后自动成为团队成员",
+   "bypass_technique": "利用未登录状态下的会话状态缺失，使邀请链接直接生效。",
+   "defensive_insight": "邀请链接应要求用户明确接受或拒绝，即使未登录也应先展示邀请详情。"
+  },
+  {
+   "id": 242354,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 类型混淆",
+   "reasoning": "是。利用Ruby的method_missing和ensure块中的异常处理，触发空指针解引用。这是对语言运行时行为的深入利用，展示了异常处理与ensure块交互的意外后果，PoC简洁且可复现。",
+   "attack_chain": "定义method_missing→在ensure块中触发异常→break导致控制流混乱→空指针解引用",
+   "bypass_technique": "利用ensure块中的break语句在异常处理中跳出，导致虚拟机状态不一致。",
+   "defensive_insight": "修复mruby虚拟机对异常处理中break的处理，确保状态一致性。"
+  },
+  {
+   "id": 180346,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。Nginx版本泄露是常见的信息泄露，通过404页面显示版本号，无绕过无链，修复简单。",
+   "attack_chain": "访问不存在页面→404页面显示Nginx版本",
+   "bypass_technique": "无",
+   "defensive_insight": "隐藏服务器版本信息，自定义错误页面。"
+  },
+  {
+   "id": 50564,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型XSS，经典payload，无绕过，无攻击链，属于常见漏洞。",
+   "attack_chain": "提交恶意payload→存储→触发执行",
+   "bypass_technique": "无",
+   "defensive_insight": "对输入进行HTML编码，输出编码。"
+  },
+  {
+   "id": 245450,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 状态混淆",
+   "reasoning": "是。密码重置链接可多次使用，且通过直接访问重置页面绕过链接失效机制。这是对密码重置流程的状态管理缺陷，展示了修复不完整导致的绕过，可抽象为通用判断条件。",
+   "attack_chain": "请求重置→使用链接设置密码→再次访问重置页面→无需链接即可再次重置",
+   "bypass_technique": "利用重置链接未失效，直接访问重置端点绕过链接验证。",
+   "defensive_insight": "密码重置链接应一次性使用，且重置页面应验证链接有效性。"
+  },
+  {
+   "id": 120288,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过",
+   "reasoning": "部分。IDOR删除终端，通过修改ID即可，属于常见授权绕过，但影响较大，PoC明确。",
+   "attack_chain": "构造请求→修改ID→删除任意终端",
+   "bypass_technique": "直接修改对象ID，未验证所有权。",
+   "defensive_insight": "实施对象级授权检查，确保用户只能操作自己的资源。"
+  },
+  {
+   "id": 1041173,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 配置错误",
+   "reasoning": "是。通过未验证的邮箱修改，导致邀请功能永久性拒绝服务。这是对邮箱验证缺失的利用，展示了配置错误导致的业务逻辑漏洞，可抽象为通用判断条件。",
+   "attack_chain": "注册账户→修改邮箱为受害者邮箱→管理员邀请该邮箱→请求失败→持续失败",
+   "bypass_technique": "利用邮箱未验证，占用他人邮箱地址，导致邀请无法发送。",
+   "defensive_insight": "邮箱修改需验证，邀请发送前检查邮箱有效性。"
+  },
+  {
+   "id": 1223575,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，经典payload，无绕过，无攻击链，属于常见漏洞。",
+   "attack_chain": "构造URL→参数反射→执行脚本",
+   "bypass_technique": "无",
+   "defensive_insight": "对输出进行编码，使用CSP。"
+  },
+  {
+   "id": 144482,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 内存破坏",
+   "reasoning": "是。利用整数溢出导致指针运算错误，从而越界读取内存。这是对C语言指针运算和整数溢出的深入利用，展示了底层内存管理的漏洞，可抽象为通用判断条件。",
+   "attack_chain": "控制limit参数→整数溢出→指针越界→读取任意内存",
+   "bypass_technique": "利用32位系统上指针+limit溢出，使指针指向错误地址。",
+   "defensive_insight": "检查整数溢出，使用安全的内存访问函数。"
+  },
+  {
+   "id": 245304,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 状态混淆",
+   "reasoning": "部分。通过第三方关联和断开操作，使两个账户共享同一邮箱，导致登录错误。这是对账户关联流程的状态管理缺陷，展示了修复不完整导致的绕过。",
+   "attack_chain": "注册两个账户→关联第三方→断开邮箱→两个账户同一邮箱→登录错误",
+   "bypass_technique": "利用第三方关联和断开操作，绕过邮箱唯一性检查。",
+   "defensive_insight": "确保邮箱唯一性，关联和断开操作需验证。"
+  },
+  {
+   "id": 42393,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，经典payload，无绕过，无攻击链，属于常见漏洞。",
+   "attack_chain": "构造URL→参数反射→执行脚本",
+   "bypass_technique": "无",
+   "defensive_insight": "对输出进行编码，使用CSP。"
+  },
+  {
+   "id": 120318,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过",
+   "reasoning": "部分。IDOR创建规则，通过修改ID即可，属于常见授权绕过，但影响较大，PoC明确。",
+   "attack_chain": "构造请求→修改ID→创建任意规则",
+   "bypass_technique": "直接修改对象ID，未验证所有权。",
+   "defensive_insight": "实施对象级授权检查，确保用户只能操作自己的资源。"
+  },
+  {
+   "id": 221163,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "内存破坏",
+   "reasoning": "部分。libsass解析单个反斜杠时触发堆缓冲区溢出，这是对解析器边界条件处理的缺陷，PoC简单，但属于常见的内存破坏类型。",
+   "attack_chain": "输入单个反斜杠→解析器越界读取→崩溃",
+   "bypass_technique": "利用解析器对特殊字符的处理缺陷。",
+   "defensive_insight": "修复解析器对边界条件的处理，增加输入验证。"
+  },
+  {
+   "id": 1050454,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。Jira信息泄露，已知CVE，无绕过，无攻击链，属于常见漏洞。",
+   "attack_chain": "访问特定端点→泄露字段名",
+   "bypass_technique": "无",
+   "defensive_insight": "升级Jira版本。"
+  },
+  {
+   "id": 132057,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑 / 类型混淆",
+   "reasoning": "部分。理论上的整数溢出导致声誉操纵，但未实际验证，且需要大量垃圾报告，可行性低。",
+   "attack_chain": "提交大量垃圾报告→声誉降至负数→溢出变为正数",
+   "bypass_technique": "利用整数溢出绕过声誉限制。",
+   "defensive_insight": "使用大整数类型，防止溢出。"
+  },
+  {
+   "id": 315037,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "内存破坏",
+   "reasoning": "部分。canvas库解析图片时存在多个漏洞，导致DoS，通过fuzzing发现，但属于常见的内存破坏类型。",
+   "attack_chain": "上传恶意图片→解析器崩溃→DoS",
+   "bypass_technique": "利用解析器对畸形图片的处理缺陷。",
+   "defensive_insight": "更新canvas库，增加输入验证。"
+  },
+  {
+   "id": 1131887,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 配置错误",
+   "reasoning": "部分。CSV注入，通过导出功能执行公式，属于常见漏洞，但展示了导出功能的安全缺陷。",
+   "attack_chain": "注入公式→导出CSV→打开执行",
+   "bypass_technique": "利用CSV公式执行功能。",
+   "defensive_insight": "对导出内容进行过滤，禁止公式开头字符。"
+  },
+  {
+   "id": 870709,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。未授权访问管理页面，属于配置错误，无绕过，无攻击链。",
+   "attack_chain": "访问管理页面→未授权访问",
+   "bypass_technique": "无",
+   "defensive_insight": "配置访问控制，确保管理页面需要认证。"
+  },
+  {
+   "id": 257335,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。OpenSSH版本过旧，属于配置错误，无绕过，无攻击链。",
+   "attack_chain": "扫描到旧版本SSH→利用已知漏洞",
+   "bypass_technique": "无",
+   "defensive_insight": "升级OpenSSH版本。"
+  }
+ ]
+}

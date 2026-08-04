@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   296991,
+   1651429,
+   470547,
+   1464396,
+   1582160
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1850065,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 其他",
+   "reasoning": "否。文件上传扩展名和大小未校验，属于常见配置缺失，无绕过技巧，攻击链简单。",
+   "attack_chain": "上传恶意文件→支持代理打开→执行恶意代码。",
+   "bypass_technique": "无实质绕过，直接利用服务端未校验。",
+   "defensive_insight": "服务端严格校验文件类型和大小，使用白名单和内容检测。"
+  },
+  {
+   "id": 7995,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。密码参数反射型XSS，经典payload，无绕过，无链。",
+   "attack_chain": "单点：密码参数→反射XSS。",
+   "bypass_technique": "无实质绕过，直接注入。",
+   "defensive_insight": "输出编码，输入验证。"
+  },
+  {
+   "id": 1651429,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 业务逻辑",
+   "reasoning": "是。利用旧版Solidity编译器不检查calldata长度，截断数据导致Metamask无法解析，用户无感知转账。这是对区块链协议行为的巧妙利用，可抽象为通用条件。",
+   "attack_chain": "构造截断calldata→Metamask解析异常→用户无感知授权转账。",
+   "bypass_technique": "利用solc<0.5.0不校验calldata长度，截断数据使钱包无法显示金额。",
+   "defensive_insight": "钱包应严格校验calldata长度，或提示异常数据。"
+  },
+  {
+   "id": 1582160,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 授权绕过",
+   "reasoning": "是。利用URL解析差异（//、/\\、\\\\）绕过域名级重定向限制，属于协议行为利用，可通用化。",
+   "attack_chain": "构造特殊URL→绕过校验→重定向到外部域名。",
+   "bypass_technique": "使用//、/\\、\\\\等变体绕过以/开头的校验。",
+   "defensive_insight": "统一URL规范化，拒绝非相对路径。"
+  },
+  {
+   "id": 470547,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 跨组件攻击链",
+   "reasoning": "是。通过拦截String.indexOf()劫持Kaspersky脚本，获取命令接口，进而控制杀软功能，甚至可能RCE。这是对浏览器扩展脚本执行上下文的巧妙利用，跨组件。",
+   "attack_chain": "网页拦截String.indexOf→劫持Kaspersky脚本→获取命令接口→禁用功能或RCE。",
+   "bypass_technique": "利用JS原型污染拦截String.indexOf，劫持扩展脚本。",
+   "defensive_insight": "扩展脚本应隔离执行环境，避免依赖可被篡改的原生方法。"
+  },
+  {
+   "id": 1444031,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。路径反射内容，属于内容欺骗，无绕过，无链，影响低。",
+   "attack_chain": "单点：路径反射→内容欺骗。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对路径参数进行编码或过滤。"
+  },
+  {
+   "id": 125000,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 开放重定向",
+   "reasoning": "部分。利用URL解析差异（//youtube.com/%2F..）实现开放重定向，属于协议行为利用，但无链，影响有限。",
+   "attack_chain": "单点：构造URL→重定向到外部。",
+   "bypass_technique": "利用//和%2F..绕过路径校验。",
+   "defensive_insight": "严格校验重定向目标，禁止外部域名。"
+  },
+  {
+   "id": 296991,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "内存破坏 / 跨组件攻击链",
+   "reasoning": "是。利用Exim的store管理缺陷和BDAT命令触发UAF，进而RCE。这是对内存管理行为的深入利用，攻击链完整，可通用化。",
+   "attack_chain": "构造BDAT命令→触发UAF→覆盖全局变量→RCE。",
+   "bypass_technique": "利用store_extend失败和store_release释放块，造成UAF。",
+   "defensive_insight": "修复store管理逻辑，确保释放后不再使用。"
+  },
+  {
+   "id": 594080,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 授权绕过",
+   "reasoning": "部分。通过删除data-upgrade属性绕过升级限制，属于前端校验绕过，思路简单但有效。",
+   "attack_chain": "单点：删除属性→使用付费功能。",
+   "bypass_technique": "删除data-upgrade属性绕过前端限制。",
+   "defensive_insight": "服务端校验权限，不依赖前端。"
+  },
+  {
+   "id": 105953,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑 / 参数污染",
+   "reasoning": "否。参数污染导致分享内容篡改，常见逻辑漏洞，无绕过。",
+   "attack_chain": "单点：参数污染→分享内容篡改。",
+   "bypass_technique": "无。",
+   "defensive_insight": "服务端过滤参数，使用白名单。"
+  },
+  {
+   "id": 506791,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XML实体扩展",
+   "reasoning": "否。Billion Laughs攻击是经典XML漏洞，无绕过，无链。",
+   "attack_chain": "单点：XML实体扩展→DoS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁用DTD，限制实体扩展。"
+  },
+  {
+   "id": 737058,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "会话固定",
+   "reasoning": "否。会话注销后未失效，常见会话管理缺陷，无绕过。",
+   "attack_chain": "单点：注销后会话仍有效→会话固定。",
+   "bypass_technique": "无。",
+   "defensive_insight": "注销时彻底销毁会话。"
+  },
+  {
+   "id": 1814824,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 其他",
+   "reasoning": "部分。利用curl写文件不检查符号链接，属于协议行为利用，但需要本地攻击者，场景受限。",
+   "attack_chain": "创建符号链接→curl下载→覆盖文件。",
+   "bypass_technique": "利用符号链接重定向文件写入。",
+   "defensive_insight": "使用O_NOFOLLOW，检查目录权限。"
+  },
+  {
+   "id": 385239,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑 / 输入验证",
+   "reasoning": "否。添加不存在的版主，输入验证缺失，影响不明，无链。",
+   "attack_chain": "单点：修改URL→添加不存在用户。",
+   "bypass_technique": "无。",
+   "defensive_insight": "服务端验证用户存在性。"
+  },
+  {
+   "id": 995122,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SQL注入",
+   "reasoning": "否。Referer头时间盲注，经典套路，无绕过。",
+   "attack_chain": "单点：Referer头→SQL注入。",
+   "bypass_technique": "无。",
+   "defensive_insight": "参数化查询。"
+  },
+  {
+   "id": 837729,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 会话管理",
+   "reasoning": "部分。注销后会话仍有效，且暴露商店密码，属于会话管理缺陷，但无绕过。",
+   "attack_chain": "注销→会话仍有效→访问密码页面。",
+   "bypass_technique": "无。",
+   "defensive_insight": "注销时销毁会话，敏感信息需重新认证。"
+  },
+  {
+   "id": 1464396,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 认证绕过",
+   "reasoning": "是。利用CGI::Cookie.parse对cookie名进行URL解码，导致前缀欺骗，绕过安全前缀。这是对协议解析行为的利用，可通用化。",
+   "attack_chain": "构造编码cookie名→解析后前缀欺骗→绕过安全限制。",
+   "bypass_technique": "URL编码cookie名中的字符，使解析后与安全前缀相同。",
+   "defensive_insight": "解析cookie时不应解码名称，或严格校验前缀。"
+  },
+  {
+   "id": 224214,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑 / 其他",
+   "reasoning": "否。修改密码/邮箱无需确认，常见逻辑缺陷，无绕过，且为duplicate。",
+   "attack_chain": "单点：修改凭据无需确认。",
+   "bypass_technique": "无。",
+   "defensive_insight": "敏感操作需二次验证。"
+  },
+  {
+   "id": 8843,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。经典CSRF，无绕过，无链。",
+   "attack_chain": "单点：CSRF→禁用订单。",
+   "bypass_technique": "无。",
+   "defensive_insight": "添加CSRF token。"
+  },
+  {
+   "id": 184857,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "内存破坏 / 框架行为利用",
+   "reasoning": "是。利用initialize_copy在未初始化时调用导致UAF，属于框架行为利用，可导致RCE。",
+   "attack_chain": "构造未初始化Proc→调用initialize_copy→UAF→可能RCE。",
+   "bypass_technique": "利用initialize_copy未检查初始化状态。",
+   "defensive_insight": "在initialize_copy中检查对象状态。"
+  }
+ ]
+}

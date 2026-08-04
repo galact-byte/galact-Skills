@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 7,
+  "dropped": 13,
+  "avg_score": 4.0,
+  "top_n": [
+   632017,
+   887462,
+   1687410,
+   683965,
+   715949
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 7936,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。Secret.ly 登录表单无 CSRF token——login CSRF 经典，附爆破提示，机制零变形。",
+   "attack_chain": "单点：诱导提交登录表单→受害者账户被绑定攻击者凭据。",
+   "bypass_technique": "无绕过，直接利用缺失 token。",
+   "defensive_insight": "登录表单 CSRF token；登录限速。"
+  },
+  {
+   "id": 128777,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "认证绕过 / 配置错误",
+   "reasoning": "否。Algolia 2FA 验证码无速率限制可爆破绕过——2FA 爆破经典，请求完整但机制零变形。",
+   "attack_chain": "单点：爆破 gauth_token→绕过 2FA。",
+   "bypass_technique": "无绕过，直接利用缺失限速。",
+   "defensive_insight": "2FA 校验限速+失败锁定+时效。"
+  },
+  {
+   "id": 632017,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / CSRF / 跨组件攻击链",
+   "reasoning": "是。Zomato 多缺陷单点击 ATO 链：with_tags_data 参数存储 XSS（WAF 对该参数失效）+ logout/login 均无 CSRF——攻击页先登出受害者→自动登录攻击者账户→跳转含 XSS 的评论页→受害者点击 Edit 触发 XSS→窃取其 Facebook/Google token 交给攻击者登录原账户。'存储 XSS+登录/登出 CSRF 的组合链'各环节独立但串联巧妙，可抽象为通用判据（登录/登出必须 CSRF 防护，否则可被用于搭建跨账户攻击环境）；payload 与 HTML 全量给出，可复现性极高。",
+   "attack_chain": "评论存 XSS→攻击页 logout CSRF→login CSRF 登录攻击者账户→跳转 XSS 页→点击 Edit→窃取受害者 FB/Google token→ATO。",
+   "bypass_technique": "WAF 对 with_tags_data 参数失效 + login/logout CSRF 无防护组合利用。",
+   "defensive_insight": "登录/登出强制 CSRF token；WAF 规则覆盖全部参数；评论编辑路径统一输出转义。"
+  },
+  {
+   "id": 17256,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。X-Powered-By/Server 头泄露 PHP/Apache 版本——banner grabbing 经典信息性发现，无技术含量。",
+   "attack_chain": "单点：读响应头获版本。",
+   "bypass_technique": "无。",
+   "defensive_insight": "隐藏服务器/框架版本头。"
+  },
+  {
+   "id": 113869,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "子域名接管 / 配置错误",
+   "reasoning": "否。engineering.zomato.com CNAME 到 Tumblr 可认领——子域接管经典，nslookup 完整但机制零变形。",
+   "attack_chain": "单点：注册 Tumblr 认领→控制子域。",
+   "bypass_technique": "无绕过，直接认领。",
+   "defensive_insight": "弃用第三方服务即删 DNS；定期审计 CNAME。"
+  },
+  {
+   "id": 790854,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "认证绕过 / 配置错误",
+   "reasoning": "否。MoPub 登录仅提交密码（无用户名）+无限速——异常登录设计+爆破风险，报告者自述页面标 SITE ADMIN，机制零变形。",
+   "attack_chain": "单点：爆破纯密码登录。",
+   "bypass_technique": "无绕过，直接利用缺失限速。",
+   "defensive_insight": "登录限速+锁定；密码-only 登录增加用户名因素。"
+  },
+  {
+   "id": 887462,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "配置错误 / 跨组件攻击链",
+   "reasoning": "是。curl -OJi 两个逻辑 bug（-Ji 组合绕过'不能与 -i 同用'检查+Content-disposition 处理流中 header 写入未经存在性校验的 rename）使服务器可覆盖本地任意文件（如 .bashrc）——'CLI 参数组合绕过覆盖检查'（CVE-2020-8177）反直觉且条件极简（服务器返回 filename 即可），借 .bashrc 覆盖可升级为下次登录 RCE；双 bug 根因定位精确。",
+   "attack_chain": "服务器返回 filename=.bashrc→curl -OJi 覆盖用户文件→下次 shell 加载恶意内容→RCE。",
+   "bypass_technique": "用 -Ji 组合绕过文件名存在性校验的代码路径。",
+   "defensive_insight": "curl -O/-J 文件名写入前必须存在性检查；升级修复版本。"
+  },
+  {
+   "id": 430291,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。just-extend 原型污染（constructor.prototype 变体）——npm 原型污染经典套路，PoC 标准，影响视调用方而定。",
+   "attack_chain": "单点：extend 注入 constructor.prototype→污染原型。",
+   "bypass_technique": "无绕过，直接利用深合并未过滤特殊键。",
+   "defensive_insight": "深合并库拒绝 __proto__/constructor 键；白名单校验。"
+  },
+  {
+   "id": 715949,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "其他 / 跨组件攻击链",
+   "reasoning": "部分。KView 拼写检查接口的 XML 输入 XXE 全读（file:///hosts+内网请求+NTLM hash）——'拼写检查 XML 端点的 XXE'（认证后），.mil 目标影响面明确；链路（XXE→读文件/内网/NTLM）完整，机制是经典 XXE 但端点特定。",
+   "attack_chain": "认证后发含外部实体的拼写检查 XML→读本地文件/内网请求/窃 NTLM。",
+   "bypass_technique": "无绕过，直接利用 XML 外部实体解析。",
+   "defensive_insight": "XML 解析禁用外部实体；升级组件并审计 XML 输入点。"
+  },
+  {
+   "id": 1103812,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。bounty splitting 字段泄露团队是否运行私有 VRP——元数据泄露，报告者自认不确定，影响轻微。",
+   "attack_chain": "单点：读公开 profile 元数据推断私有项目。",
+   "bypass_technique": "无绕过，直接利用公开字段。",
+   "defensive_insight": "公开元数据字段最小化；内部状态不外泄。"
+  },
+  {
+   "id": 1898475,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "框架行为利用 / 配置错误",
+   "reasoning": "部分。curl 的 PROTO_FAMILY_SSH 位掩码用 == 比较（应 &）致 SSH key 匹配检查永不触发，不同 key 的连接被复用——'位掩码误用使安全检查静默失效'（CVE-2023-27538）反直觉且可抽象为通用判据（位掩码必须位运算比较）；修复明确，影响是凭据边界复用。",
+   "attack_chain": "单点：同主机不同 SSH key 连接被复用→凭据串用。",
+   "bypass_technique": "无绕过，利用失效的 key 匹配检查。",
+   "defensive_insight": "协议族位掩码用 & 判断；连接复用校验与凭据绑定。"
+  },
+  {
+   "id": 344429,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。Avito 登录后 next=javascript:alert 执行——JS URL XSS 经典（登录后跳转），PoC 简洁但机制成熟。",
+   "attack_chain": "next=javascript:→登录后跳转执行。",
+   "bypass_technique": "无绕过，直接利用危险 scheme。",
+   "defensive_insight": "登录回调参数 scheme 白名单。"
+  },
+  {
+   "id": 958459,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。wp-json 反射任意 Origin+credentials——CORS 误配经典，PoC 完整但机制零变形。",
+   "attack_chain": "单点：恶意站发带凭据请求→读取响应。",
+   "bypass_technique": "无绕过，直接利用过宽 CORS。",
+   "defensive_insight": "CORS 白名单化并禁凭据通配。"
+  },
+  {
+   "id": 1687410,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "部分。Nextcloud user_oidc 为 Safari 加的 workaround 把 authorization_endpoint 直接拼进 meta refresh（url 未编码），恶意 IdP discovery 返回注入 endpoint 即存储 XSS——'浏览器兼容 workaround 引入 XSS'（Safari-only）的反直觉点明确，链路（IdP 配置→Safari 登录→meta 注入）完整；CSP 限制了实际执行（报告者自述），影响打折。",
+   "attack_chain": "配置返回注入 endpoint 的 IdP→Safari 登录→meta refresh 注入→XSS（CSP 受限）。",
+   "bypass_technique": "无绕过，利用 Safari workaround 未编码 URL 拼接。",
+   "defensive_insight": "兼容 workaround 的输出同样转义；authorization_endpoint 校验 scheme 与编码。"
+  },
+  {
+   "id": 669365,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。NCC 安全审计 PDF 公开在网站——敏感文档公开的经典信息泄露（含第三方专有协议问题），URL 完整，机制零变形。",
+   "attack_chain": "单点：直接访问公开 PDF。",
+   "bypass_technique": "无绕过，直接下载。",
+   "defensive_insight": "审计/合规文档下线或鉴权；公开目录审计。"
+  },
+  {
+   "id": 189633,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "部分。mruby 的 to_i 重定义触发 C 级递归（Ruby 栈浅 C 栈深）致进程栈溢出——解释器递归深度跟踪缺失，分析+补丁深入（栈深度公式），机制是解释器缺陷的经典变体。",
+   "attack_chain": "单点：重定义 to_i 递归→C 栈溢出→segfault。",
+   "bypass_technique": "无绕过，直接利用递归深度不受限。",
+   "defensive_insight": "解释器跟踪 C 级递归深度按栈大小限制。"
+  },
+  {
+   "id": 683965,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 跨组件攻击链",
+   "reasoning": "部分。Nexus 2.14 的 overrideLocalStorageUrl 可指向任意路径（Start Menu），上传 artifact 把 exe 写入启动文件夹——'存储路径配置无校验'使管理员上传变任意位置写，SYSTEM 进程下可写启动目录；链路由配置→上传→登录执行→SYSTEM RCE 完整；前置需管理员 API，机制是配置校验缺失。",
+   "attack_chain": "overrideLocalStorageUrl 指向启动目录→上传 calc.exe→下次登录执行→SYSTEM。",
+   "bypass_technique": "无绕过，利用存储路径配置无校验。",
+   "defensive_insight": "localStorage URL 校验在数据目录内；Nexus 低权限运行。"
+  },
+  {
+   "id": 2340833,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "授权绕过 / 信息泄露",
+   "reasoning": "否。Airflow<2.8.1 认证用户可读无权限 DAG 源码——CVE 摘要，无细节，机制零变形。",
+   "attack_chain": "单点：认证用户读无权限 DAG 源码。",
+   "bypass_technique": "无绕过，直接利用缺失校验。",
+   "defensive_insight": "升级 Airflow；DAG 源码按权限隔离。"
+  },
+  {
+   "id": 270999,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "部分。GitLab 10.0 Markdown 解析器用控制字符（%01/%03）+URL 编码组合绕过 sanitize 注入 javascript: href——'字符编码解析分歧的过滤器绕过'有反直觉性，payload 构造 esoteric（需 Burp 修改请求），机制是编码绕过 XSS 经典。",
+   "attack_chain": "编码 payload 注入 wiki→渲染 javascript: 链接→点击执行。",
+   "bypass_technique": "控制字符+URL 编码使 sanitizer 漏过 scheme 检查。",
+   "defensive_insight": "Markdown 渲染统一解码后校验；链接 scheme 白名单。"
+  },
+  {
+   "id": 197914,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。Discourse onebox 解析第三方 oembed JSON 的 description 未转义（onerror 注入）——外部数据源渲染未消毒的存储 XSS 经典，可复用（控制 oembed 数据源），机制成熟。",
+   "attack_chain": "帖子贴恶意 oembed URL→onebox 取 JSON 未转义→存储 XSS。",
+   "bypass_technique": "无绕过，利用第三方数据未转义。",
+   "defensive_insight": "onebox/embed 数据源输出统一转义；字段白名单。"
+  }
+ ]
+}

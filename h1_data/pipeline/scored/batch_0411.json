@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.4,
+  "top_n": [
+   308610,
+   1887917,
+   1765631,
+   2382120,
+   18992
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 73808,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 状态混淆",
+   "reasoning": "是。通过篡改评分值到整数极值，影响课程平均分，属于业务逻辑漏洞，但思路简单，无复杂绕过，可抽象为对输入校验缺失的利用。",
+   "attack_chain": "注册课程→提交评分→拦截请求修改rating为极大/极小值→影响平均分→误导用户购买。",
+   "bypass_technique": "直接修改API请求中的rating字段为整数边界值。",
+   "defensive_insight": "服务端对评分值进行范围校验，并限制评分数值类型。"
+  },
+  {
+   "id": 280519,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。密码重置允许使用旧密码和缺少邮件通知，属于常见安全实践缺失，无技术亮点，无绕过。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "强制新密码不能与旧密码相同，并发送密码变更通知邮件。"
+  },
+  {
+   "id": 227833,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "其他 / 配置错误",
+   "reasoning": "是。利用target=_blank未加rel=noopener导致反向tabnabbing，属于常见但易被忽视的配置问题，PoC完整，可抽象为通用判断条件。",
+   "attack_chain": "构造恶意链接→用户点击→新页面通过window.opener修改原页面→钓鱼。",
+   "bypass_technique": "利用target=_blank的window.opener特性。",
+   "defensive_insight": "所有外部链接添加rel=\"noopener noreferrer\"。"
+  },
+  {
+   "id": 1765631,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 框架行为利用",
+   "reasoning": "是。验证和规范化顺序错误导致路径遍历，利用反斜杠与正斜杠的转换差异，属于框架行为利用，可抽象为通用判断条件。",
+   "attack_chain": "构造包含反斜杠的路径→验证通过→规范化后变成/../→越权访问或覆盖文件。",
+   "bypass_technique": "利用反斜杠在验证后转换为正斜杠，绕过路径校验。",
+   "defensive_insight": "先规范化路径再进行验证，并统一处理路径分隔符。"
+  },
+  {
+   "id": 157889,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。多个XSS点均为常见存储/反射型，无绕过，无新意，且报告格式混乱。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对用户输入进行输出编码和过滤。"
+  },
+  {
+   "id": 214034,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "开放重定向",
+   "reasoning": "否。开放重定向是常见漏洞，利用params.merge导致host参数可控，无特殊绕过，但PoC清晰。",
+   "attack_chain": "构造URL→redirect_to params.merge→跳转到任意域名。",
+   "bypass_technique": "利用params.merge中的host参数。",
+   "defensive_insight": "重定向时使用白名单校验host。"
+  },
+  {
+   "id": 244766,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。CSP配置不当，属于常见配置问题，无实际利用，无绕过。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "移除script-src中的unsafe-inline。"
+  },
+  {
+   "id": 115205,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "其他 / 协议行为利用",
+   "reasoning": "是。利用markdown解析器的递归嵌套导致资源消耗，属于解析器行为利用，可抽象为通用判断条件。",
+   "attack_chain": "构造嵌套链接→解析器递归处理→CPU耗尽→服务不可用。",
+   "bypass_technique": "利用markdown解析器的递归深度限制。",
+   "defensive_insight": "限制markdown嵌套深度，并设置解析超时。"
+  },
+  {
+   "id": 7913,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。导入Gmail联系人时未过滤JS，属于存储型XSS，常见套路，无绕过。",
+   "attack_chain": "导入含JS的联系人→执行脚本。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对导入的数据进行过滤和编码。"
+  },
+  {
+   "id": 2382120,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "信息泄露 / 跨组件攻击链",
+   "reasoning": "是。通过API创建赏金，再通过GraphQL查询泄露用户邮箱，属于跨组件攻击链，利用API与GraphQL的权限不一致，可抽象为通用判断条件。",
+   "attack_chain": "创建API token→调用API给任意用户发赏金→GraphQL查询BountiesHistory→泄露邮箱。",
+   "bypass_technique": "利用API与GraphQL的权限不一致，通过API触发数据，再通过GraphQL读取。",
+   "defensive_insight": "统一API和GraphQL的权限模型，对敏感字段进行访问控制。"
+  },
+  {
+   "id": 308610,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 跨组件攻击链",
+   "reasoning": "是。通过修改extended_data中的权限字段，绕过服务端权限检查，读取未授权评论，属于授权绕过，可抽象为通用判断条件。",
+   "attack_chain": "构造POST请求→修改extended_data中的can_moderate等字段→服务端信任客户端数据→返回删除的评论。",
+   "bypass_technique": "利用客户端可控的权限字段，伪造高权限。",
+   "defensive_insight": "服务端不信任客户端提交的权限数据，基于会话进行权限校验。"
+  },
+  {
+   "id": 18992,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 状态混淆",
+   "reasoning": "是。通过篡改RegStep参数跳过注册步骤，将任意手机号绑定到目标邮箱，属于状态混淆，可抽象为通用判断条件。",
+   "attack_chain": "注册流程→篡改RegStep→跳过步骤→绑定手机号→登录邮箱。",
+   "bypass_technique": "利用客户端可控的步骤参数，跳过验证步骤。",
+   "defensive_insight": "服务端维护注册状态，不信任客户端传递的步骤参数。"
+  },
+  {
+   "id": 666557,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。内容欺骗/文本注入，常见低危问题，无技术亮点。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对URL参数进行编码和过滤。"
+  },
+  {
+   "id": 1220688,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "SSRF",
+   "reasoning": "部分。盲SSRF，通过聊天框输入URL触发，常见类型，但PoC完整，可复现。",
+   "attack_chain": "聊天框输入恶意URL→服务器请求→DNS/HTTP交互。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对用户输入的URL进行白名单校验，禁止内网地址。"
+  },
+  {
+   "id": 648298,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。反射型XSS，需要结合授权绕过才能访问，但XSS本身是常见套路，无特殊绕过。",
+   "attack_chain": "利用授权绕过访问内部页面→触发XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对输入进行编码，并修复授权绕过。"
+  },
+  {
+   "id": 1813831,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。HSTS绕过，引用已有报告，无新意，信息不足。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "正确配置HSTS。"
+  },
+  {
+   "id": 60573,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "命令注入 / 配置错误",
+   "reasoning": "部分。暴露Graphite接口，存在已知RCE，属于配置错误，但利用已知漏洞，无新意。",
+   "attack_chain": "访问Graphite→利用Pickle反序列化→RCE。",
+   "bypass_technique": "无。",
+   "defensive_insight": "不暴露管理接口，及时更新组件。"
+  },
+  {
+   "id": 629745,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "是。通过双重编码绕过WAF，在404页面注入XSS，属于WAF绕过，可抽象为通用判断条件。",
+   "attack_chain": "构造双重编码URL→WAF解码一次→服务端解码→注入XSS。",
+   "bypass_technique": "双重编码绕过WAF过滤。",
+   "defensive_insight": "服务端对输入进行规范化，并正确编码输出。"
+  },
+  {
+   "id": 1887917,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "是。利用Mastodon嵌入功能，通过恶意服务器返回javascript: URL，在iframe中执行脚本，属于跨组件攻击链，可抽象为通用判断条件。",
+   "attack_chain": "发送恶意链接→IRCCloud嵌入→请求恶意服务器→返回javascript: URL→iframe执行→窃取cookie。",
+   "bypass_technique": "利用嵌入功能信任外部数据，构造javascript: URL。",
+   "defensive_insight": "对外部嵌入内容进行白名单校验，禁止javascript:协议。"
+  },
+  {
+   "id": 1137321,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "路径遍历",
+   "reasoning": "否。CVE-2020-3452已知漏洞，直接利用，无新意。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "升级设备固件。"
+  }
+ ]
+}

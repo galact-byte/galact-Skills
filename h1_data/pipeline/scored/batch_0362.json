@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   416004,
+   202921,
+   530292,
+   57356,
+   1402249
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1238684,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。开放重定向是常见漏洞，注册后重定向到任意URL，无绕过，无攻击链，属于成熟套路。",
+   "attack_chain": "单点：注册流程中重定向参数未校验，导致跳转外部。",
+   "bypass_technique": "无实质绕过，直接利用未过滤的重定向参数。",
+   "defensive_insight": "对重定向URL进行白名单校验，禁止跳转外部域名。"
+  },
+  {
+   "id": 416004,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 反序列化 / XXE",
+   "reasoning": "是。从LFI到源码泄露，再到PHP对象注入与XXE链式利用，最终通过内部API的Python pickle反序列化实现RCE，跨多个组件和信任边界，思路极具启发性。",
+   "attack_chain": "LFI读取源码→发现import_memes.php反序列化漏洞→构造ConfigFile对象触发XXE→利用XXE探测内部服务→对内部API进行pickle反序列化→RCE。",
+   "bypass_technique": "利用LFI下载源码，结合PHP对象注入与XXE，通过内部API的pickle反序列化实现RCE。",
+   "defensive_insight": "严格验证文件路径，禁用不安全的反序列化，限制XXE，对内部API进行认证和网络隔离。"
+  },
+  {
+   "id": 36980,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "CSRF",
+   "reasoning": "否。CSRF标记通知为已读，影响极低，且无详细复现步骤，信息不足。",
+   "attack_chain": "单点：恶意页面加载Twitter通知页面，触发CSRF。",
+   "bypass_technique": "无实质绕过，直接利用CSRF。",
+   "defensive_insight": "对状态更改请求实施CSRF令牌验证。"
+  },
+  {
+   "id": 1394916,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "路径遍历",
+   "reasoning": "部分。Apache路径规范化缺陷导致路径遍历，是已知CVE，但利用方式有特定条件，且可能升级为RCE，有一定启发性。",
+   "attack_chain": "构造特殊路径绕过Alias限制→读取任意文件→若CGI启用则RCE。",
+   "bypass_technique": "利用Apache路径规范化缺陷，使用编码或特殊字符绕过目录限制。",
+   "defensive_insight": "升级Apache至修复版本，严格配置目录权限，禁用不必要的CGI。"
+  },
+  {
+   "id": 1402249,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "CRLF注入 / 配置错误",
+   "reasoning": "是。控制字符过滤不完整，允许文件名首尾包含控制字符，可能引发CRLF注入，绕过看似有效的过滤机制，思路巧妙。",
+   "attack_chain": "构造含控制字符的文件名→上传成功→若未过滤输出则CRLF注入。",
+   "bypass_technique": "利用trim()与过滤逻辑的差异，在文件名首尾插入控制字符绕过检查。",
+   "defensive_insight": "对文件名进行严格规范化，去除所有控制字符，并在输出时进行编码。"
+  },
+  {
+   "id": 604945,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 信息泄露",
+   "reasoning": "是。Tor浏览器扩展请求未代理导致IP泄露，利用浏览器内部状态差异，绕过隐私保护机制，具有通用性。",
+   "attack_chain": "用户未访问HTTP页面→扩展请求未代理→IP泄露。",
+   "bypass_technique": "利用扩展请求在特定条件下不经过代理，实现IP泄露。",
+   "defensive_insight": "确保所有扩展请求都经过代理，或在Tor模式下禁用扩展。"
+  },
+  {
+   "id": 115296,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。SSL页面可缓存是常见配置问题，无绕过，无攻击链，属于成熟套路。",
+   "attack_chain": "单点：SSL页面未设置禁止缓存，敏感信息可能被缓存。",
+   "bypass_technique": "无实质绕过，直接利用配置错误。",
+   "defensive_insight": "在SSL页面设置Cache-Control: no-store等响应头。"
+  },
+  {
+   "id": 202921,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 授权绕过",
+   "reasoning": "是。仅通过Facebook ID即可登录任意账户，完全绕过认证，利用第三方身份验证的信任缺陷，思路直接且影响巨大。",
+   "attack_chain": "构造请求替换fbid参数→服务器信任Facebook ID→登录目标账户。",
+   "bypass_technique": "利用服务器对Facebook ID的信任，直接替换ID实现账户接管。",
+   "defensive_insight": "验证Facebook token与ID的匹配，使用OAuth标准流程，不信任客户端提供的ID。"
+  },
+  {
+   "id": 125624,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。WordPress XML-RPC暴力破解放大是已知攻击，无绕过，无攻击链，属于成熟套路。",
+   "attack_chain": "单点：利用XML-RPC的system.multicall批量尝试密码。",
+   "bypass_technique": "无实质绕过，直接利用XML-RPC功能。",
+   "defensive_insight": "禁用XML-RPC或限制调用频率。"
+  },
+  {
+   "id": 168485,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "配置错误",
+   "reasoning": "否。过时nginx版本可能受CVE影响，但未确认漏洞存在，信息不足。",
+   "attack_chain": "单点：过时软件可能被利用。",
+   "bypass_technique": "无实质绕过，依赖已知CVE。",
+   "defensive_insight": "及时更新软件版本，移除不必要的模块。"
+  },
+  {
+   "id": 97452,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过",
+   "reasoning": "部分。员工无权限却可访问管理员上传的文件，通过直接URL访问绕过权限检查，思路简单但有效。",
+   "attack_chain": "员工访问特定URL→绕过权限检查→查看管理员文件。",
+   "bypass_technique": "利用未受保护的直接URL访问资源。",
+   "defensive_insight": "对所有资源访问实施统一的权限验证。"
+  },
+  {
+   "id": 442843,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "授权绕过",
+   "reasoning": "否。报告内容模糊，未提供具体技术细节，无法判断真实性。",
+   "attack_chain": "未知。",
+   "bypass_technique": "未知。",
+   "defensive_insight": "确保授权检查覆盖所有API端点。"
+  },
+  {
+   "id": 57356,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 状态混淆",
+   "reasoning": "是。利用DOM操作设置超长cookie导致DoS，绕过长度限制，思路新颖，影响广泛。",
+   "attack_chain": "构造恶意页面→设置超长cookie→用户访问Twitter时触发431错误。",
+   "bypass_technique": "利用cookie设置无长度限制，通过referrer注入额外属性。",
+   "defensive_insight": "限制cookie长度，对referrer进行转义。"
+  },
+  {
+   "id": 223609,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。密码重置未通知用户是功能缺陷，非安全漏洞，无绕过，无攻击链。",
+   "attack_chain": "单点：密码重置后无通知。",
+   "bypass_technique": "无。",
+   "defensive_insight": "在密码重置流程中增加邮件通知。"
+  },
+  {
+   "id": 146936,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。已知CVE的堆栈溢出，无新意，无绕过，无攻击链。",
+   "attack_chain": "单点：利用已知漏洞触发堆栈溢出。",
+   "bypass_technique": "无实质绕过，直接利用已知CVE。",
+   "defensive_insight": "升级PHP和libgd至修复版本。"
+  },
+  {
+   "id": 530292,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 权限提升",
+   "reasoning": "是。利用UAC机制与注册表键的信任关系，通过劫持浏览器命令实现UAC绕过，思路巧妙，影响广泛。",
+   "attack_chain": "篡改HKCU注册表键→触发VeraCryptExpander.exe打开链接→执行恶意脚本→提权。",
+   "bypass_technique": "利用HKCU注册表键的优先级，劫持浏览器打开命令。",
+   "defensive_insight": "在提权进程中避免调用外部程序，或使用安全API。"
+  },
+  {
+   "id": 403891,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "其他",
+   "reasoning": "部分。Tab nabbing是已知攻击，但利用window.opener属性，绕过部分防护，有一定启发性。",
+   "attack_chain": "用户点击链接→新页面修改原页面→钓鱼。",
+   "bypass_technique": "利用window.opener属性，在后台重定向原页面。",
+   "defensive_insight": "在链接中添加rel=\"noopener noreferrer\"。"
+  },
+  {
+   "id": 199243,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误",
+   "reasoning": "部分。扩展自动更新未确认权限变更，绕过用户同意机制，思路有启发性，但复现条件较苛刻。",
+   "attack_chain": "模拟扩展更新→权限增加→用户无感知。",
+   "bypass_technique": "利用自动更新机制，静默提升权限。",
+   "defensive_insight": "在权限变更时暂停更新并要求用户确认。"
+  },
+  {
+   "id": 540711,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。预生产服务器开放注册，是配置错误，无绕过，无攻击链。",
+   "attack_chain": "单点：预生产环境未限制访问。",
+   "bypass_technique": "无实质绕过，直接利用开放注册。",
+   "defensive_insight": "对预生产环境实施访问控制。"
+  },
+  {
+   "id": 108056,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "部分。利用IE的UXSS漏洞，绕过X-Frame-Options保护，思路有启发性，但依赖特定浏览器版本。",
+   "attack_chain": "构造恶意页面→利用IE漏洞→读取敏感数据。",
+   "bypass_technique": "利用IE的UXSS漏洞，绕过X-Frame-Options。",
+   "defensive_insight": "升级浏览器，使用现代安全特性。"
+  }
+ ]
+}

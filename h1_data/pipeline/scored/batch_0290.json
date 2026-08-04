@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   312548,
+   326040,
+   906959,
+   726364,
+   1021776
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 326040,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "SSRF / 框架行为利用",
+   "reasoning": "是。利用 OAuth 插件的图标 URI 功能，通过 consumerUri 参数直接访问云元数据服务，实现了 SSRF 到内网敏感信息泄露。技术点在于插件未对 URI 进行协议和网络限制，导致可访问内部地址。与普通 SSRF 相比，该案例展示了插件功能被滥用的典型场景，且 PoC 清晰，影响明确。",
+   "attack_chain": "构造 consumerUri 指向云元数据服务 → 插件发起请求 → 返回内部 IP 和元数据信息。",
+   "bypass_technique": "利用插件功能未过滤内部地址，直接请求云元数据服务。",
+   "defensive_insight": "对插件提供的 URL 参数进行协议白名单和网络限制，禁止访问内网和云元数据地址。"
+  },
+  {
+   "id": 355456,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "路径遍历",
+   "reasoning": "否。这是典型的路径遍历漏洞，由于未对 URL 进行规范化处理，导致可读取任意文件。技术点在于直接使用 decodeURIComponent 后的路径进行文件操作，未进行路径规范化。虽然漏洞类型常见，但 PoC 完整，且展示了 npm 模块的安全问题，有一定参考价值。",
+   "attack_chain": "构造包含 ../ 的 URL → 服务器解析路径 → 读取任意文件。",
+   "bypass_technique": "利用路径遍历序列绕过目录限制。",
+   "defensive_insight": "对用户输入的路径进行规范化，并限制在允许的目录内。"
+  },
+  {
+   "id": 1021776,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 授权绕过",
+   "reasoning": "是。攻击者仅凭 Steam ID 即可为任意用户创建支付订单，并取消订单，导致用户交易历史出现大量取消记录，甚至可能触发账户封禁。技术点在于支付创建接口未验证用户身份，且取消操作无需授权。这种逻辑漏洞展示了业务逻辑缺陷的严重性，且 PoC 清晰，影响明确。",
+   "attack_chain": "调用 /create-payment 接口 → 使用受害者 Steam ID 创建订单 → 取消订单 → 受害者交易历史出现取消记录。",
+   "bypass_technique": "利用接口未验证用户身份，直接操作他人账户。",
+   "defensive_insight": "支付创建和取消操作必须验证用户身份，并限制操作权限。"
+  },
+  {
+   "id": 112955,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。这是一个低危的开放重定向或链接注入问题，通过控制 _wp_http_referer 参数生成恶意链接。技术点在于 WordPress 失败页面未验证 referer 参数，但影响有限，且需要特定条件触发。属于常见套路，无特殊启发。",
+   "attack_chain": "构造带恶意 _wp_http_referer 的 URL → 触发失败页面 → 用户点击恶意链接。",
+   "bypass_technique": "利用参数未验证，注入外部链接。",
+   "defensive_insight": "对 _wp_http_referer 参数进行域名白名单验证。"
+  },
+  {
+   "id": 1081211,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。这是表单字段未限制长度和字符，导致可注入控制字符，可能用于邮件劫持。技术点在于输入验证不严，但影响有限，且 PoC 不完整，属于常见输入验证问题。",
+   "attack_chain": "提交包含控制字符的表单 → 服务器发送恶意邮件。",
+   "bypass_technique": "利用输入验证缺失，注入控制字符。",
+   "defensive_insight": "对表单字段进行长度和字符集限制，并过滤控制字符。"
+  },
+  {
+   "id": 1193641,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 其他",
+   "reasoning": "是。软件在首次执行时从用户 PATH 加载 DLL，未验证签名，导致任意代码执行。技术点在于利用 DLL 搜索顺序劫持，这是 Windows 应用的常见问题，但展示了供应链攻击的潜在风险。PoC 清晰，影响明确。",
+   "attack_chain": "放置恶意 DLL 到 PATH → 软件启动时加载 → 执行任意代码。",
+   "bypass_technique": "利用 DLL 搜索顺序劫持，加载恶意 DLL。",
+   "defensive_insight": "加载 DLL 时验证签名，并避免从用户 PATH 加载。"
+  },
+  {
+   "id": 44202,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。这是 TLS 配置问题，支持 SSLv3 导致 POODLE 攻击。技术点在于旧协议支持，属于常见配置错误，无特殊启发。",
+   "attack_chain": "扫描发现支持 SSLv3 → 利用 POODLE 攻击。",
+   "bypass_technique": "无实质绕过，直接利用配置错误。",
+   "defensive_insight": "禁用 SSLv3 和弱加密套件。"
+  },
+  {
+   "id": 312548,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "是。通过 MITM 和 DNS 劫持，在攻击者控制的子域设置恶意 Cookie，利用 Cookie 的 domain 属性覆盖目标域，实现存储型 XSS。技术点在于利用 Cookie 的 domain 属性覆盖和 MITM 场景，展示了跨组件攻击链的优雅性。与普通 XSS 相比，该案例展示了如何通过 Cookie 注入实现持久化攻击，且 PoC 完整。",
+   "attack_chain": "MITM 劫持 DNS → 设置恶意 Cookie → 用户访问目标域 → 触发 XSS。",
+   "bypass_technique": "利用 Cookie 的 domain 属性覆盖，注入恶意脚本。",
+   "defensive_insight": "设置 Cookie 时使用 Secure 和 SameSite 属性，并限制 domain 范围。"
+  },
+  {
+   "id": 339352,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "CSRF",
+   "reasoning": "否。这是登录 CSRF，攻击者通过表单提交将受害者登录到攻击者账户。技术点在于登录接口无 CSRF 防护，属于常见漏洞，但展示了登录 CSRF 的利用方式，有一定参考价值。",
+   "attack_chain": "构造恶意表单 → 受害者提交 → 登录到攻击者账户。",
+   "bypass_technique": "利用登录接口无 CSRF 防护，强制受害者登录。",
+   "defensive_insight": "登录接口添加 CSRF Token 验证。"
+  },
+  {
+   "id": 29839,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "命令注入",
+   "reasoning": "否。这是著名的 Shellshock 漏洞，属于已知 CVE，无新意。技术点在于 Bash 环境变量解析缺陷，但已被广泛利用，无特殊启发。",
+   "attack_chain": "构造恶意环境变量 → 触发 Bash 执行命令。",
+   "bypass_technique": "利用 Bash 函数定义后的命令执行。",
+   "defensive_insight": "升级 Bash 版本，修复 Shellshock。"
+  },
+  {
+   "id": 1046084,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SQL注入",
+   "reasoning": "否。这是典型的 UNION 注入，技术点在于参数未过滤，属于成熟套路，无特殊启发。",
+   "attack_chain": "构造 UNION 注入 payload → 获取数据库信息。",
+   "bypass_technique": "无实质绕过，直接利用未过滤参数。",
+   "defensive_insight": "使用参数化查询。"
+  },
+  {
+   "id": 145409,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。这是已知 CVE 的 Nginx 版本，属于配置错误，无特殊启发。",
+   "attack_chain": "发送畸形请求 → 触发 Nginx 崩溃。",
+   "bypass_technique": "无实质绕过，直接利用已知漏洞。",
+   "defensive_insight": "升级 Nginx 版本。"
+  },
+  {
+   "id": 134760,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。这是 TLS 配置问题，支持 CBC 加密套件导致 BEAST 攻击，属于常见配置错误，无特殊启发。",
+   "attack_chain": "扫描发现支持弱加密套件 → 利用 BEAST 攻击。",
+   "bypass_technique": "无实质绕过，直接利用配置错误。",
+   "defensive_insight": "禁用弱加密套件，优先使用 GCM 等安全套件。"
+  },
+  {
+   "id": 726364,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / DoS",
+   "reasoning": "是。利用 Handlebars 模板引擎的上下文大小未限制，通过构造超大字符串或数组导致内存耗尽。技术点在于模板引擎的上下文处理缺陷，展示了框架行为利用的典型场景。与普通 DoS 相比，该案例展示了如何通过模板引擎的合法操作触发内存耗尽，且 PoC 完整。",
+   "attack_chain": "构造包含超大字符串的模板 → 编译执行 → 内存耗尽崩溃。",
+   "bypass_technique": "利用模板引擎的上下文大小未限制，构造超大输入。",
+   "defensive_insight": "限制模板上下文的大小，并设置内存限制。"
+  },
+  {
+   "id": 291764,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "SQL注入 / 跨组件攻击链",
+   "reasoning": "是。通过 Android Content Provider 的投影和选择参数注入 SQL，导致数据库信息泄露。技术点在于 Content Provider 未对投影和选择参数进行过滤，展示了移动应用组件安全的重要性。与普通 SQL 注入相比，该案例展示了移动端组件攻击链，且 PoC 完整。",
+   "attack_chain": "通过 Drozer 扫描发现注入点 → 构造投影注入 → 读取数据库表。",
+   "bypass_technique": "利用 Content Provider 的投影参数注入 SQL。",
+   "defensive_insight": "对 Content Provider 的查询参数进行过滤和参数化。"
+  },
+  {
+   "id": 59369,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。这是输入处理缺陷，特定字符导致报告加载失败，属于低危 DoS，无特殊启发。",
+   "attack_chain": "提交包含 %40 的评论 → 报告加载失败。",
+   "bypass_technique": "利用字符编码问题触发异常。",
+   "defensive_insight": "对用户输入进行严格过滤和编码处理。"
+  },
+  {
+   "id": 204052,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。这是弱口令问题，使用 admin/admin 登录，属于常见配置错误，无特殊启发。",
+   "attack_chain": "尝试默认口令 → 登录成功 → 上传文件。",
+   "bypass_technique": "无实质绕过，直接利用弱口令。",
+   "defensive_insight": "强制使用强密码，并实施账户锁定策略。"
+  },
+  {
+   "id": 906959,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "LDAP注入 / DoS",
+   "reasoning": "是。利用 LDAP 过滤器注入，通过构造大量 (cn=*) 条件导致 LDAP 查询超时，进而引发 DoS。技术点在于 LDAP 过滤器未转义，且利用过滤器膨胀实现资源耗尽。与普通 LDAP 注入相比，该案例展示了如何将注入转化为 DoS，且 PoC 完整，展示了框架行为利用。",
+   "attack_chain": "构造恶意 LDAP 过滤器 → 服务器解析 → 查询超时 → DoS。",
+   "bypass_technique": "利用 LDAP 过滤器注入，构造大量条件导致资源耗尽。",
+   "defensive_insight": "对 LDAP 过滤器进行转义，并限制过滤器长度。"
+  },
+  {
+   "id": 673723,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。这是错误信息泄露内部 IP，属于常见信息泄露，无特殊启发。",
+   "attack_chain": "构造请求 → 触发错误 → 泄露内部 IP。",
+   "bypass_technique": "无实质绕过，直接利用错误信息。",
+   "defensive_insight": "在错误信息中隐藏内部 IP 地址。"
+  },
+  {
+   "id": 189378,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 业务逻辑",
+   "reasoning": "是。利用 Shopify 结账页面对 HTML 标签的过滤缺陷，仅允许 <html> 标签，从而注入 onmouseover 事件实现存储型 XSS。技术点在于输入过滤的不完整，展示了业务逻辑中的安全缺陷。与普通 XSS 相比，该案例展示了如何利用过滤规则的漏洞，且 PoC 完整。",
+   "attack_chain": "在结账页面注入恶意 HTML → 订单完成后触发 XSS。",
+   "bypass_technique": "利用过滤规则允许 <html> 标签，注入事件属性。",
+   "defensive_insight": "对用户输入进行严格的 HTML 标签和属性过滤。"
+  }
+ ]
+}

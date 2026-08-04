@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   2225660,
+   236349,
+   181321,
+   1160407,
+   358005
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 2225660,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 授权绕过",
+   "reasoning": "是。Node.js 权限模型本应强制文件系统访问限制，但通过覆盖内置 path.resolve 函数即可完全绕过，利用了动态属性查找的框架行为。这种'应用代码可覆盖内置函数'的思路反直觉且通用，可抽象为'信任内置模块属性不可变'的缺陷。",
+   "attack_chain": "应用代码覆盖 path.resolve → 权限模型调用被篡改的 resolve → 路径未规范化 → 读取受限文件。",
+   "bypass_technique": "覆盖 require('path').resolve 为恒等函数，使权限模型无法解析 /../，从而绕过路径限制。",
+   "defensive_insight": "在权限模型内部缓存原始 path.resolve 引用，避免动态查找；同时考虑冻结内置模块或使用不可变引用。"
+  },
+  {
+   "id": 245147,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。缺少速率限制导致邮件轰炸，是常见业务逻辑缺陷，无绕过或攻击链，思路直接。",
+   "attack_chain": "重复请求发送确认邮件接口 → 受害者邮箱被轰炸。",
+   "bypass_technique": "无实质绕过，直接利用缺少速率限制。",
+   "defensive_insight": "对邮件发送接口实施速率限制和验证码，防止滥用。"
+  },
+  {
+   "id": 236349,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 协议行为利用",
+   "reasoning": "是。利用 CSRF 结合 Flash socket policy 缓存机制，通过 toxiproxy 代理实现内网任意 TCP 读写，绕过 SOP 读取状态。攻击链跨浏览器、Flash、代理组件，思路极具启发性。",
+   "attack_chain": "恶意网页 CSRF 创建代理 → 利用 Flash 获取 socket policy 权限 → 切换代理目标 → 内网任意 TCP 通信。",
+   "bypass_technique": "利用 Flash socket policy 缓存和 CSRF 动态修改代理上游，实现跨域 TCP 访问。",
+   "defensive_insight": "API 实施认证和 CSRF 防护；限制代理监听地址；禁用 Flash 或限制 socket policy。"
+  },
+  {
+   "id": 635597,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 开放重定向",
+   "reasoning": "部分。利用 Unicode 控制字符（如 RLO）和 punycode 混淆 URL，导致警告页面显示与实际跳转不一致，属于协议行为利用，但影响有限，思路有借鉴意义。",
+   "attack_chain": "构造含 RLO 的 URL → 警告页面显示正常域名 → 点击后跳转到恶意域名。",
+   "bypass_technique": "使用 Unicode 控制字符和 punycode 混淆 URL，使显示与解析不一致。",
+   "defensive_insight": "对 URL 进行规范化处理，过滤控制字符，并显示 punycode 形式。"
+  },
+  {
+   "id": 384939,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "路径遍历",
+   "reasoning": "否。npm 模块未设置根目录导致路径遍历，是常见配置错误，无绕过或攻击链。",
+   "attack_chain": "直接请求 /../../file.txt 读取任意文件。",
+   "bypass_technique": "无实质绕过，直接利用未限制路径。",
+   "defensive_insight": "设置静态文件根目录并规范化路径，拒绝包含 .. 的请求。"
+  },
+  {
+   "id": 181321,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "类型混淆 / 内存破坏",
+   "reasoning": "是。在 to_ary 回调中修改数组长度导致越界访问，利用类型混淆和回调副作用，思路巧妙，可导致 RCE。",
+   "attack_chain": "定义恶意 to_ary 方法 → 在回调中清空数组 → 越界读取 → 内存破坏 → 潜在 RCE。",
+   "bypass_technique": "利用回调修改数组长度，使后续访问越界。",
+   "defensive_insight": "在回调后重新检查数组长度和指针有效性，避免使用过期引用。"
+  },
+  {
+   "id": 537047,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "开放重定向",
+   "reasoning": "否。next 参数未验证导致开放重定向，是常见漏洞，使用斜杠绕过是已知技巧。",
+   "attack_chain": "构造恶意 next 参数 → 用户登录后跳转到外部网站。",
+   "bypass_technique": "使用多个斜杠绕过 URL 验证。",
+   "defensive_insight": "严格验证 next 参数，仅允许相对路径或白名单域名。"
+  },
+  {
+   "id": 1160407,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 协议行为利用",
+   "reasoning": "是。利用 GCP 的 x-http-method-override 头与 Varnish 缓存键不一致，将 HEAD 响应缓存并返回给 GET 请求，导致缓存投毒 DoS。跨组件行为差异利用，思路新颖。",
+   "attack_chain": "发送带 x-http-method-override: HEAD 的 GET 请求 → 缓存空响应 → 其他用户获取空资源 → DoS。",
+   "bypass_technique": "利用后端支持方法覆盖而 CDN 不处理，导致缓存键未包含该头。",
+   "defensive_insight": "在 CDN 层禁用或规范化 x-http-method-override 头，确保缓存键包含所有影响响应的头。"
+  },
+  {
+   "id": 1584409,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过",
+   "reasoning": "部分。废弃 API 未检查对象查看策略，导致信息泄露，属于业务逻辑缺陷，但思路简单，影响有限。",
+   "attack_chain": "调用废弃的 owners.query API → 获取未授权对象信息。",
+   "bypass_technique": "利用废弃 API 绕过权限检查。",
+   "defensive_insight": "废弃 API 应移除或统一权限检查。"
+  },
+  {
+   "id": 98012,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。通过修改 input 的 name 属性注入 XSS，绕过 CloudFlare 过滤，思路有借鉴意义，但属于常见 XSS 变种。",
+   "attack_chain": "修改表单字段 name 属性 → 注入恶意代码 → 存储型 XSS。",
+   "bypass_technique": "利用参数名而非值绕过 WAF 过滤。",
+   "defensive_insight": "对所有输出进行上下文感知编码，包括属性名。"
+  },
+  {
+   "id": 194884,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "内存破坏 / 竞争条件",
+   "reasoning": "是。range_check 中 mrb_funcall 触发栈扩展，导致旧栈地址被释放后写入，形成 UAF。利用栈扩展的副作用，思路巧妙。",
+   "attack_chain": "构造大量参数触发栈扩展 → 旧栈地址被释放 → 写入已释放内存 → 崩溃或 RCE。",
+   "bypass_technique": "利用 mrb_funcall 的栈扩展改变栈地址，导致旧地址失效。",
+   "defensive_insight": "在栈扩展后重新获取栈指针，避免使用旧地址。"
+  },
+  {
+   "id": 358005,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 授权绕过",
+   "reasoning": "是。Tor Browser 中 data: URI iframe 继承父窗口 origin，违反 SOP，可访问父窗口和跨域 iframe，属于浏览器行为缺陷，影响广泛。",
+   "attack_chain": "嵌入 data: URI iframe → 继承父 origin → 访问父窗口或改写其他 iframe。",
+   "bypass_technique": "利用 data: URI 的 origin 继承行为绕过 SOP。",
+   "defensive_insight": "浏览器应给 data: URI 分配独立 origin，或禁止其访问父窗口。"
+  },
+  {
+   "id": 1416672,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。产品名称未转义导致存储型 XSS，是常见漏洞，无特殊绕过。",
+   "attack_chain": "创建恶意产品名 → 编辑问题时触发 XSS。",
+   "bypass_technique": "无实质绕过，直接利用未转义输出。",
+   "defensive_insight": "对所有用户输入进行输出编码。"
+  },
+  {
+   "id": 247027,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "空指针解引用",
+   "reasoning": "否。Irssi 空指针解引用，是常见内存错误，无绕过或攻击链。",
+   "attack_chain": "发送特定 IRC 命令 → 触发空指针解引用 → DoS。",
+   "bypass_technique": "无实质绕过，直接利用未检查空指针。",
+   "defensive_insight": "在使用前检查指针有效性。"
+  },
+  {
+   "id": 961997,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "类型混淆",
+   "reasoning": "否。提交数组作为 email 导致 500 错误，是常见类型处理缺陷，无绕过或攻击链。",
+   "attack_chain": "提交数组类型 email → 服务器处理异常 → DoS。",
+   "bypass_technique": "无实质绕过，直接利用类型不匹配。",
+   "defensive_insight": "严格验证输入类型，避免类型混淆。"
+  },
+  {
+   "id": 950299,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "内存破坏",
+   "reasoning": "部分。phar 解析中 UAF 导致释放内存作为哈希键，可泄露信息，属于内存破坏，但思路较直接。",
+   "attack_chain": "构造恶意 phar 文件 → 触发 UAF → 信息泄露。",
+   "bypass_technique": "利用缓存配置导致释放内存被使用。",
+   "defensive_insight": "修复 UAF，确保释放后不再使用。"
+  },
+  {
+   "id": 2271095,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "类型混淆 / 授权绕过",
+   "reasoning": "部分。通过目录结构伪装 ASAR 文件，绕过完整性校验，属于文件类型混淆，思路有借鉴意义，但条件受限。",
+   "attack_chain": "构造恶意目录结构 → 应用加载未验证代码。",
+   "bypass_technique": "利用文件类型混淆绕过 ASAR 完整性检查。",
+   "defensive_insight": "加强 ASAR 完整性验证，确保加载路径可信。"
+  },
+  {
+   "id": 183239,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "内存破坏",
+   "reasoning": "否。mruby 的 mark_tbl 无效内存访问导致 SIGSEGV，是常见内存错误，无特殊绕过。",
+   "attack_chain": "执行特定 Ruby 代码 → 触发无效内存访问 → DoS。",
+   "bypass_technique": "无实质绕过，直接利用内存管理缺陷。",
+   "defensive_insight": "修复内存管理，确保对象生命周期正确。"
+  },
+  {
+   "id": 261297,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。禁用用户仍可重置密码，是常见业务逻辑缺陷，无绕过或攻击链。",
+   "attack_chain": "禁用用户 → 通过密码重置页面重新激活。",
+   "bypass_technique": "无实质绕过，直接利用业务逻辑漏洞。",
+   "defensive_insight": "在密码重置流程中检查用户状态。"
+  },
+  {
+   "id": 240987,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。邮件伪造是常见配置错误，无绕过或攻击链。",
+   "attack_chain": "利用邮件伪造工具发送伪造邮件。",
+   "bypass_technique": "无实质绕过，直接利用缺少 SPF/DKIM。",
+   "defensive_insight": "配置 SPF、DKIM、DMARC 防止邮件伪造。"
+  }
+ ]
+}

@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   2188126,
+   460928,
+   409395,
+   170310,
+   55670
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1415241,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。默认口令 admin/admin 登录 Rundeck，属于常见配置错误，无绕过、无攻击链，信息完整但套路成熟。",
+   "attack_chain": "单点：访问登录页→默认口令登录→获取版本与路径信息。",
+   "bypass_technique": "无，直接使用默认凭据。",
+   "defensive_insight": "禁用默认口令，强制首次登录修改密码，并监控异常登录。"
+  },
+  {
+   "id": 2188126,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 授权绕过",
+   "reasoning": "是。Node.js 的 Module._load 和 require.extensions 可绕过实验性权限策略，这是对框架内部机制的深度利用，非预期且可通用化。区别于普通权限绕过，它揭示了策略机制的设计缺陷，可跨版本影响。",
+   "attack_chain": "构造恶意模块→利用 Module._load 绕过策略→加载受限模块→执行任意代码。",
+   "bypass_technique": "利用 Node.js 内部 API 绕过 policy.json 限制，加载未授权模块。",
+   "defensive_insight": "加固权限策略实现，避免依赖可被内部 API 绕过的机制，或禁用实验性功能。"
+  },
+  {
+   "id": 2233418,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "路径遍历",
+   "reasoning": "否。CVE-2020-3452 是已知 Cisco ASA 路径遍历，利用公开 PoC，无新意，属于成熟套路。",
+   "attack_chain": "单点：构造特殊 URL→读取任意文件。",
+   "bypass_technique": "利用路径遍历序列绕过输入验证。",
+   "defensive_insight": "升级固件，严格校验 URL 输入。"
+  },
+  {
+   "id": 460928,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。通过 URL 末尾添加换行符（%0A）绕过路径解析，导致 S3 桶列表泄露，这是对 HTTP 解析与 S3 路由的巧妙利用，非预期且可复用。区别于普通信息泄露，它展示了控制字符在 URL 处理中的意外行为。",
+   "attack_chain": "构造含 %0A 的 URL→触发 S3 桶列表→枚举文件→读取 PHP 源码。",
+   "bypass_technique": "利用换行符绕过路径规范化，访问 S3 桶管理接口。",
+   "defensive_insight": "严格过滤 URL 中的控制字符，配置 S3 桶 ACL 为私有，并验证所有请求的规范化路径。"
+  },
+  {
+   "id": 1285115,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。在测试环境发现员工邮箱泄露，属于配置错误或信息暴露，无技术绕过，套路常见。",
+   "attack_chain": "单点：登录后访问用户列表→查看敏感信息。",
+   "bypass_technique": "无，直接访问。",
+   "defensive_insight": "测试环境使用虚拟数据，限制敏感信息展示。"
+  },
+  {
+   "id": 3432,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。GWT 应用未认证可获取 JS 代码，属于客户端代码暴露，常见于 SPA，无绕过，套路成熟。",
+   "attack_chain": "单点：请求静态 JS→获取应用逻辑。",
+   "bypass_technique": "无，直接访问公开资源。",
+   "defensive_insight": "对敏感逻辑进行服务端校验，避免依赖客户端混淆。"
+  },
+  {
+   "id": 129381,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 授权绕过",
+   "reasoning": "部分。AWS 桶 ACL 配置不当，允许授权用户读写删，属于配置错误，但影响范围大，可导致数据泄露和恶意文件托管，链路简单但后果严重。",
+   "attack_chain": "枚举桶名→使用 AWS CLI 列出/下载/上传/删除文件。",
+   "bypass_technique": "无，直接利用错误配置的 ACL。",
+   "defensive_insight": "定期审计 S3 桶 ACL，遵循最小权限原则。"
+  },
+  {
+   "id": 212931,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "内存破坏 / 协议行为利用",
+   "reasoning": "是。curl 的 --write-out 格式字符串以 % 结尾时，会越界读取内存，可能泄露敏感数据。这是对格式字符串解析的边界条件利用，非预期且可导致信息泄露，但需要特定输入，场景较具体。",
+   "attack_chain": "构造以 % 结尾的 --write-out 参数→触发越界读→泄露内存数据。",
+   "bypass_technique": "利用格式字符串解析缺陷，读取越界内存。",
+   "defensive_insight": "修复 curl 的格式字符串处理，确保边界检查。"
+  },
+  {
+   "id": 1241149,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "SSRF",
+   "reasoning": "是。通过 bzIframeUrl 参数注入，可访问云元数据服务，获取 IAM 凭证等敏感信息。这是对 iframe URL 参数的未过滤利用，非预期且可访问内部资源，攻击链清晰。",
+   "attack_chain": "构造恶意 bzIframeUrl→服务端请求元数据→泄露实例信息。",
+   "bypass_technique": "利用参数注入，绕过 URL 白名单。",
+   "defensive_insight": "严格校验 iframe URL，禁止访问内网 IP，使用白名单。"
+  },
+  {
+   "id": 375352,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。CKEditor 上传接口的 CKEditorFuncNum 参数未过滤，导致反射型 XSS，需要用户交互，属于常见 XSS 变体，但利用 POST 方法绕过某些过滤，有一定启发性。",
+   "attack_chain": "构造恶意表单→诱导用户提交→执行 XSS。",
+   "bypass_technique": "利用 POST 请求和参数注入绕过过滤。",
+   "defensive_insight": "对参数进行编码和过滤，使用 CSP。"
+  },
+  {
+   "id": 13628,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。密码自动填充未禁用，属于常见安全建议，无实际攻击链，信息完整但价值低。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁用敏感表单的自动填充。"
+  },
+  {
+   "id": 14305,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。DOM XSS 通过 location.hash 注入，常见套路，无绕过，信息完整但启发性低。",
+   "attack_chain": "单点：构造恶意 URL→触发 DOM XSS。",
+   "bypass_technique": "无，直接利用未过滤的 hash。",
+   "defensive_insight": "对 DOM 操作进行编码和过滤。"
+  },
+  {
+   "id": 751604,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。忘记密码接口无速率限制，可邮件轰炸，属于常见业务逻辑缺陷，无绕过，套路成熟。",
+   "attack_chain": "单点：重复请求→发送大量邮件。",
+   "bypass_technique": "无，直接利用缺失的速率限制。",
+   "defensive_insight": "添加验证码和速率限制。"
+  },
+  {
+   "id": 300812,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。存储型 XSS 通过 ZIP 码注入，触发条件依赖搜索，属于常见存储 XSS，但利用搜索触发有一定创意，链路完整。",
+   "attack_chain": "提交恶意 ZIP 码→用户搜索时触发 XSS。",
+   "bypass_technique": "无，直接存储未过滤输入。",
+   "defensive_insight": "对输入进行编码和过滤，输出时转义。"
+  },
+  {
+   "id": 409395,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 跨组件攻击链",
+   "reasoning": "是。通过环境变量注入路径遍历，绕过 GitLab CI 的 YAML 校验，这是对修复的绕过，非预期且可导致任意代码执行。区别于普通路径遍历，它展示了修复不完整和变量展开的意外行为。",
+   "attack_chain": "设置恶意环境变量→在 .gitlab-ci.yml 中引用→触发缓存路径遍历→注入恶意代码。",
+   "bypass_technique": "利用环境变量展开绕过 YAML 校验，实现路径遍历。",
+   "defensive_insight": "对缓存路径进行规范化，禁止使用用户可控变量。"
+  },
+  {
+   "id": 661751,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "子域名接管",
+   "reasoning": "是。通过 Azure Cloud Service 接管未使用的 CNAME，属于子域名接管，非预期且可完全控制子域，但需要云服务账号，场景较具体。",
+   "attack_chain": "枚举 DNS→发现 NXDOMAIN CNAME→创建 Azure 服务→托管恶意内容。",
+   "bypass_technique": "利用未释放的云服务名称。",
+   "defensive_insight": "清理 DNS 记录，监控 CNAME 指向。"
+  },
+  {
+   "id": 170310,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 协议行为利用",
+   "reasoning": "是。通过在邮箱末尾添加 %00 空字节，绕过速率限制，这是对输入解析的巧妙利用，非预期且可通用化。区别于普通速率限制绕过，它揭示了空字节在 URL 编码中的特殊处理。",
+   "attack_chain": "触发速率限制→添加 %00→继续请求→绕过限制。",
+   "bypass_technique": "利用空字节截断或忽略，绕过速率限制。",
+   "defensive_insight": "严格校验输入，去除控制字符，基于规范化后的值进行速率限制。"
+  },
+  {
+   "id": 55670,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 状态混淆",
+   "reasoning": "是。管理员被删除后，其权限未完全撤销，仍可删除成员，这是对权限状态管理的缺陷利用，非预期且可导致持久化攻击。区别于普通 IDOR，它展示了删除操作后的权限残留。",
+   "attack_chain": "成为管理员→被删除→利用残留权限→删除其他成员。",
+   "bypass_technique": "利用权限未正确清理，通过修改请求中的 ID 实现越权。",
+   "defensive_insight": "删除用户时彻底撤销所有权限，服务端校验当前用户角色。"
+  },
+  {
+   "id": 9522,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。Flash 的 ExternalInterface 未过滤参数导致 XSS，属于老式 Flash 漏洞，常见套路，无绕过。",
+   "attack_chain": "单点：构造恶意 URL→触发 Flash XSS。",
+   "bypass_technique": "无，直接利用未过滤参数。",
+   "defensive_insight": "移除 Flash，或严格过滤参数。"
+  },
+  {
+   "id": 692252,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 信息泄露",
+   "reasoning": "是。通过组搜索可访问私有 MR、代码和提交，这是对搜索权限的绕过，非预期且可批量提取数据。区别于普通信息泄露，它展示了搜索功能未正确继承项目权限。",
+   "attack_chain": "在组搜索中构造查询→获取私有项目内容。",
+   "bypass_technique": "利用组搜索的权限检查缺陷，绕过项目级限制。",
+   "defensive_insight": "确保搜索索引遵循项目权限，定期审计。"
+  }
+ ]
+}

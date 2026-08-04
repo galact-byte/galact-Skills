@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   473252,
+   217745,
+   1509216,
+   852091,
+   145128
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1065128,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少速率限制是常见配置缺陷，无绕过或创新思路，攻击链简单。",
+   "attack_chain": "直接暴力枚举switch-serial参数。",
+   "bypass_technique": "无，利用缺少速率限制。",
+   "defensive_insight": "对敏感端点实施速率限制和账户锁定。"
+  },
+  {
+   "id": 145128,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用URL编码的CRLF注入绕过过滤，在响应中注入Set-Cookie，可组合成会话固定或CSRF绕过。技术点在于对编码和协议解析差异的利用。",
+   "attack_chain": "构造恶意URL→服务器302响应注入Set-Cookie→配合其他漏洞实现会话固定或CSRF绕过。",
+   "bypass_technique": "使用%0d%0a编码绕过输入过滤，注入CRLF。",
+   "defensive_insight": "对响应头进行严格校验，禁止未编码的CRLF字符。"
+  },
+  {
+   "id": 152834,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。TRACE方法启用是常见配置问题，无绕过或创新，影响有限。",
+   "attack_chain": "发送TRACE请求→响应回显请求头。",
+   "bypass_technique": "无，直接利用配置错误。",
+   "defensive_insight": "禁用TRACE方法，配置Web服务器拒绝。"
+  },
+  {
+   "id": 438953,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。内容嗅探XSS是常见漏洞，无绕过或创新，PoC完整但套路成熟。",
+   "attack_chain": "注入恶意内容→浏览器内容嗅探执行脚本。",
+   "bypass_technique": "无，利用内容嗅探。",
+   "defensive_insight": "设置X-Content-Type-Options: nosniff，正确设置Content-Type。"
+  },
+  {
+   "id": 1626356,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 0
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 跨组件攻击链",
+   "reasoning": "部分。CSRF导致邮箱更新，进而密码重置接管账户，链路完整但CSRF本身是常见漏洞，且缺少关键细节（如token验证）。",
+   "attack_chain": "CSRF更新邮箱→利用忘记密码功能→接收重置链接→接管账户。",
+   "bypass_technique": "无，利用缺少CSRF防护。",
+   "defensive_insight": "实施CSRF令牌，邮箱变更需验证旧邮箱。"
+  },
+  {
+   "id": 335177,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。利用已知CVE进行DoS，无新意，但复现清晰。",
+   "attack_chain": "发送大量请求到load-scripts.php→资源耗尽。",
+   "bypass_technique": "无，利用已知漏洞。",
+   "defensive_insight": "限制资源消耗，应用补丁。"
+  },
+  {
+   "id": 473252,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 竞争条件",
+   "reasoning": "是。利用TOCTOU竞态和符号链接绕过代码签名检查，结合目标路径未校验，实现任意文件覆盖提权。技术点在于对文件操作和权限检查的深入理解。",
+   "attack_chain": "创建符号链接→触发竞态→绕过签名验证→覆盖任意文件→提权。",
+   "bypass_technique": "利用竞态窗口和符号链接绕过路径验证。",
+   "defensive_insight": "在特权操作中使用安全文件操作，避免TOCTOU，校验目标路径。"
+  },
+  {
+   "id": 7862,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。点击劫持是常见配置问题，无绕过或创新。",
+   "attack_chain": "嵌入iframe→诱导点击。",
+   "bypass_technique": "无，利用缺少X-Frame-Options。",
+   "defensive_insight": "设置X-Frame-Options或CSP frame-ancestors。"
+  },
+  {
+   "id": 852091,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 竞争条件",
+   "reasoning": "是。利用Steam启动时文件完整性检查和首次流式传输时驱动安装之间的时间窗口，替换驱动实现任意内核驱动加载。技术点在于对软件更新流程和权限提升的巧妙利用。",
+   "attack_chain": "启动Steam→修改驱动文件→触发首次流式传输→安装恶意驱动→内核代码执行。",
+   "bypass_technique": "利用时间窗口替换驱动文件。",
+   "defensive_insight": "在安装前验证驱动签名，使用安全目录。"
+  },
+  {
+   "id": 546,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑",
+   "reasoning": "部分。邮箱变更无验证，可被利用接管账户，但思路常见，缺少细节。",
+   "attack_chain": "攻击者利用未锁定的会话→更改邮箱→利用忘记密码→接管。",
+   "bypass_technique": "无，利用业务逻辑缺陷。",
+   "defensive_insight": "邮箱变更需验证旧邮箱或密码。"
+  },
+  {
+   "id": 217745,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / XSS",
+   "reasoning": "是。利用window.open对javascript: URL的处理，通过document.domain共享实现跨窗口脚本执行，绕过常规XSS防护。技术点在于对浏览器API行为的深入理解。",
+   "attack_chain": "恶意应用创建按钮→点击触发window.open(javascript:)→新窗口访问opener→执行脚本。",
+   "bypass_technique": "利用window.open的javascript: URL和document.domain共享。",
+   "defensive_insight": "对href参数进行协议白名单校验，禁止javascript:协议。"
+  },
+  {
+   "id": 1509216,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 命令注入",
+   "reasoning": "是。利用SMTP协议的命令注入，通过CRLF注入绕过邮件验证，实现任意SMTP命令执行。技术点在于对SMTP协议和邮件验证的绕过。",
+   "attack_chain": "注入CRLF→SMTP命令注入→执行任意命令→信息泄露或滥用。",
+   "bypass_technique": "利用CRLF注入绕过邮件验证，注入SMTP命令。",
+   "defensive_insight": "对邮件输入进行严格验证，禁止CRLF，使用安全的邮件库。"
+  },
+  {
+   "id": 1102546,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。云存储桶公开列表是常见配置错误，无绕过或创新。",
+   "attack_chain": "直接访问CDN路径→列出对象。",
+   "bypass_technique": "无，利用配置错误。",
+   "defensive_insight": "正确配置云存储权限，避免公开列表。"
+  },
+  {
+   "id": 477897,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。已知CVE的利用，无新意，但复现清晰。",
+   "attack_chain": "发送畸形输入→触发越界读取。",
+   "bypass_technique": "无，利用已知漏洞。",
+   "defensive_insight": "更新PHP版本，修复漏洞。"
+  },
+  {
+   "id": 218570,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。沙箱逃逸导致崩溃，但无绕过或创新，PoC完整但影响有限。",
+   "attack_chain": "构造恶意输入→触发指针解引用崩溃。",
+   "bypass_technique": "无，利用沙箱漏洞。",
+   "defensive_insight": "修复沙箱漏洞，加强输入验证。"
+  },
+  {
+   "id": 1592587,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / IDOR",
+   "reasoning": "部分。IDOR删除他人技能评估结果，利用公开的profileId和可枚举的skillId，思路清晰但IDOR是常见漏洞。",
+   "attack_chain": "获取受害者profileId→枚举skillId→发送DELETE请求→删除结果。",
+   "bypass_technique": "无，直接利用IDOR。",
+   "defensive_insight": "实施对象级授权检查，验证资源所有权。"
+  },
+  {
+   "id": 474397,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。404页面内容反射是常见信息泄露，无绕过或创新。",
+   "attack_chain": "构造URL→404页面反射内容→钓鱼。",
+   "bypass_technique": "无，利用反射。",
+   "defensive_insight": "对404页面进行内容过滤。"
+  },
+  {
+   "id": 958374,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露",
+   "reasoning": "部分。GraphQL查询泄露pentester信息，绕过前端隐藏，但影响有限。",
+   "attack_chain": "构造GraphQL查询→获取pentester列表。",
+   "bypass_technique": "无，直接查询未授权字段。",
+   "defensive_insight": "对GraphQL字段进行权限控制。"
+  },
+  {
+   "id": 20049,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。邮件中的XSS是常见漏洞，无绕过或创新。",
+   "attack_chain": "注册含恶意脚本的用户名→邮件触发XSS。",
+   "bypass_technique": "无，利用未过滤输入。",
+   "defensive_insight": "对所有输出进行编码，包括邮件。"
+  },
+  {
+   "id": 911857,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过",
+   "reasoning": "部分。staff权限提升，绕过权限检查，但细节不足。",
+   "attack_chain": "邀请staff→访问协作商店→获得额外权限。",
+   "bypass_technique": "无，利用权限检查缺陷。",
+   "defensive_insight": "实施细粒度权限控制，验证每个操作。"
+  }
+ ]
+}

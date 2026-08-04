@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 5,
+  "dropped": 15,
+  "avg_score": 3.4,
+  "top_n": [
+   1154034,
+   1542510,
+   1042716,
+   253429,
+   428010
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 640781,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 业务逻辑",
+   "reasoning": "否。密码重置 OTP 发送无速率限制可致邮件轰炸——无防护重放/轰炸的经典缺陷；正文描述混乱（前置条件逻辑不清），无请求样例，技术零变形。",
+   "attack_chain": "单点：重复触发密码重置→受害邮箱被 OTP 邮件淹没。",
+   "bypass_technique": "无绕过，直接利用缺失的发送频率限制。",
+   "defensive_insight": "重置邮件/OTP 发送按账户与 IP 限流；长时效触发窗口内禁止重复发送。"
+  },
+  {
+   "id": 324491,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "命令注入",
+   "reasoning": "否。fs-path 把未转义参数拼进 execSync 命令，;rm/whoami 注入——Node 库 exec 拼接的经典命令注入，PoC 完整但机制零变形。",
+   "attack_chain": "单点：目标路径含 shell 元字符→copySync 拼入 exec 命令→执行任意命令。",
+   "bypass_technique": "无绕过，直接利用未转义的命令拼接。",
+   "defensive_insight": "文件操作 API 禁止 exec 拼接路径；用 spawn 参数数组传递。"
+  },
+  {
+   "id": 2106662,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF / 信息泄露",
+   "reasoning": "否。把密码重置链接发给受害者点击，收集其 IP/浏览器信息——CSRF 触发重置+日志信息收集的经典组合，影响轻微（非凭据泄露），无请求细节。",
+   "attack_chain": "单点：诱导受害者打开重置链接→重置邮件带其 IP/UA 发往攻击者邮箱。",
+   "bypass_technique": "无绕过，直接利用重置流程的可触发性与日志记录。",
+   "defensive_insight": "重置链接一次性+短时效；服务端日志中的 IP/UA 属敏感字段需最小化。"
+  },
+  {
+   "id": 1542510,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "部分。GitLab premium 的 ZenTao 集成把外部 API 响应（url/id）未经完整校验渲染进面包屑，攻击者自建集成服务端即可投递 javascript: URL 与 HTML 注入——'集成数据源信任缺失'（第三方 API 响应按可信数据渲染）是供应链式攻击面，链路跨 GitLab 与外部集成两个组件；javascript: URL 属老技巧且需自托管实例无严格 CSP，通用性受限。",
+   "attack_chain": "配置指向攻击者服务器的 ZenTao 集成→恶意 API 响应(url=javascript:, id=HTML)→面包屑渲染→诱导点击触发 XSS。",
+   "bypass_technique": "用 javascript: scheme 与 HTML 标签注入未校验的集成响应字段。",
+   "defensive_insight": "第三方集成响应一律按不可信数据处理：URL 协议白名单、所有字段输出编码；集成数据源统一消毒层。"
+  },
+  {
+   "id": 31171,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。genString 用 rand() 生成 token 再 md5——弱随机数生成器的教科书问题，仅有代码片段与修复建议，无任何实际利用场景或受影响功能说明。",
+   "attack_chain": "单点（理论）：token 可预测→伪造/爆破会话或重置凭据。",
+   "bypass_technique": "无绕过，直接利用可预测的 rand() 输出。",
+   "defensive_insight": "安全相关随机一律用 CSPRNG（random_bytes/openssl_random_pseudo_bytes）。"
+  },
+  {
+   "id": 1042716,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "部分。Kibana 异步搜索把请求的 Authorization 头明文存进 .async-search 索引，超管可批量读取他人凭据并横向移动（LDAP/AD 复用场景）——'功能缓存未脱敏'使缓存索引成为凭据库，'凭据进缓存即泄露面'有反直觉性；配合 XSS 打超管可自动化，但读取本身需超管权限，属高权限下的凭据泄露。",
+   "attack_chain": "触发他人 async-search→超管查 .async-search 索引→明文凭据→复用凭据横向移动。",
+   "bypass_technique": "无绕过，直接利用缓存索引未脱敏的存储设计。",
+   "defensive_insight": "缓存/索引存储前脱敏 Authorization 等敏感头；凭据类字段禁止落索引，必要时加密存储。"
+  },
+  {
+   "id": 7900,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。OAuth 的 requestTokenAndRedirect 未做域白名单，重定向到任意域且顺带泄露 OAuth token/verifier——OAuth 流程 open redirect 的经典缺陷，影响明确但机制零变形。",
+   "attack_chain": "单点：构造恶意 redirect 参数→受害者授权后跳转攻击者域且 token 可被截获。",
+   "bypass_technique": "无绕过，直接利用未校验的重定向参数。",
+   "defensive_insight": "OAuth 回调/重定向参数强制域白名单并拒绝第三方域；token 仅经授权码后端换发。"
+  },
+  {
+   "id": 253429,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 配置错误",
+   "reasoning": "部分。Tor Browser 中打开 sftp:// URI 时系统默认 SSH 客户端接管，直连（绕过 SOCKS）泄露真实 IP 并可访问本地资源——'浏览器未拦截系统协议处理器'的匿名性逃逸，反直觉点在于浏览器内导航却落到系统进程；构造 sftp:// URL 即可触发，但依赖操作系统与浏览器配置，属具体环境缺陷。",
+   "attack_chain": "诱导受害者打开 sftp:// 链接→系统 SSH 客户端绕过 Tor 代理直连→真实 IP 泄露/访问本地资源。",
+   "bypass_technique": "无绕过，利用协议处理器注册表逃逸浏览器代理配置。",
+   "defensive_insight": "匿名浏览器应拦截/重定向全部非 http(s) 协议；系统级协议处理器白名单纳入威胁模型。"
+  },
+  {
+   "id": 137503,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "授权绕过",
+   "reasoning": "否。移除页面 disabled 属性/翻转 JSON 布尔值暴露隐藏投票端点且无服务端授权——客户端状态操控发现隐藏功能的常见手法，影响不明（报告者自述不确定），无完整请求细节。",
+   "attack_chain": "改客户端状态→暴露 /reports/{id}/votes 端点→越权投票/删票。",
+   "bypass_technique": "无绕过，借客户端标记移除触发未授权端点。",
+   "defensive_insight": "所有功能端点必须服务端鉴权，客户端标记仅作 UI 提示；隐藏功能不设防即攻击面。"
+  },
+  {
+   "id": 27987,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。个人资料网站链接指向可操控 window.opener 的页面，访客 HackerOne 窗口被劫持——tabnabbing 经典问题（前修复不完整），PoC 完整但机制零变形。",
+   "attack_chain": "单点：设置恶意网站链接→访客点击后 opener 被替换→原标签被劫持。",
+   "bypass_technique": "无绕过，直接利用缺失的 rel=noopener。",
+   "defensive_insight": "用户可控外链统一加 rel=noopener noreferrer；修复需覆盖全部输出点。"
+  },
+  {
+   "id": 134894,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "框架行为利用 / 配置错误",
+   "reasoning": "部分。Anti-CSRF 库的 IP 绑定用 REMOTE_ADDR，反代部署下恒为代理 IP、XFF 可伪造——'安全库功能在常见部署下静默失效'的框架部署盲区有启发（安全功能必须感知部署拓扑），但影响仅为弱化防护而非可利用漏洞，无实际攻击场景证明（informative）。",
+   "attack_chain": "单点（理论）：反代后 IP 绑定恒真→CSRF token 可跨 IP 复用。",
+   "bypass_technique": "无绕过，利用部署拓扑使 IP 绑定失效。",
+   "defensive_insight": "IP 绑定类防护依赖可信来源判定（CDN 规范化的 XFF）；安全库应文档化部署前提。"
+  },
+  {
+   "id": 276253,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。fuzz 触发 networkstatus_parse_vote_from_string 使用未初始化值（MemorySanitizer）——fuzz 发现的经典内存缺陷，无实际利用链，informative，仅 ASAN 输出。",
+   "attack_chain": "单点：畸形 consensus 文档→解析读未初始化内存。",
+   "bypass_technique": "无绕过，直接利用解析缺陷。",
+   "defensive_insight": "解析器所有分支初始化变量；fuzz 纳入 CI 持续运行。"
+  },
+  {
+   "id": 2450215,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "授权绕过",
+   "reasoning": "否。任意用户持 scope id 即可向无权限的 pentest scoping form 上传附件——对象级授权缺失的经典 IDOR（上传通道未校验上下文归属），请求完整但机制零变形。",
+   "attack_chain": "单点：复制 pentest form id→用他人上下文类型上传附件→污染对方表单。",
+   "bypass_technique": "无绕过，直接替换上下文引用。",
+   "defensive_insight": "附件上传的 context 参数必须校验当前用户对该上下文的访问权限。"
+  },
+  {
+   "id": 126374,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。证件上传仅校验扩展名不校验内容，txt 改 .png 可被 IE 渲染为纯文本（无 JS 执行）——上传内容校验缺失的经典问题，报告者自证无法升级为 XSS，informative，影响轻微。",
+   "attack_chain": "单点：上传 txt 改名 .png→IE 渲染为明文→钓鱼载体。",
+   "bypass_technique": "无绕过，直接利用内容与扩展名不一致。",
+   "defensive_insight": "上传校验内容 magic 而非扩展名；存储响应统一 Content-Type 白名单+nosniff。"
+  },
+  {
+   "id": 170619,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。gdImageWebpCtx 的 gdMalloc(宽*4*高) 整数溢出导致堆写越界——图像库分配尺寸溢出的经典内存破坏套路，ASAN+源码分析+补丁完整但技术启发有限。",
+   "attack_chain": "单点：imagecreatetruecolor(0x8000,0x8001)→尺寸乘法溢出→小缓冲被大循环覆盖。",
+   "bypass_technique": "无绕过，直接利用尺寸计算溢出。",
+   "defensive_insight": "尺寸乘法先做溢出检查（overflow2 模式）；图像维度设上限。"
+  },
+  {
+   "id": 476439,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。OpenSSH 大密码响应时间差枚举用户名（CVE-2016-6210）——公开 CVE 的标准 PoC 套用，时间侧信道用户枚举是成熟手法，无新意；'newsletter 站点跑 OpenSSH'的资产错位倒是唯一趣味点。",
+   "attack_chain": "单点：发送超长密码→按响应时间差区分用户名是否存在→枚举有效账号。",
+   "bypass_technique": "无绕过，利用大密码处理的时间差侧信道。",
+   "defensive_insight": "升级 OpenSSH；认证失败路径统一耗时（恒定时间比较+延迟补偿）。"
+  },
+  {
+   "id": 428010,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 信息泄露",
+   "reasoning": "部分。Nextcloud Talk 密码保护房间的 API 未将'信息查询'纳入密码授权：未认证者查房间名、认证者查参与者列表——'密码只保护加入、不保护信息读取'的边界解耦有反直觉性，可抽象为通用判据（资源级密码保护必须覆盖其全部信息接口）；前置需拿到房间 token（分享链接内），条件可控。",
+   "attack_chain": "拿分享链接 token→未认证 GET room/{token} 查房名→认证后 GET participants 查成员。",
+   "bypass_technique": "无绕过，直接调用未纳入密码授权的信息端点。",
+   "defensive_insight": "密码保护资源的所有元数据/成员接口统一鉴权（先验密码再放行）；敏感字段按授权级别裁剪。"
+  },
+  {
+   "id": 1154034,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "命令注入 / 框架行为利用 / 跨组件攻击链",
+   "reasoning": "是。ActiveStorage variant()/preview() 传用户输入时经 MiniMagick 的 method_missing（任意方法→CLI 参数）与 ImageProcessing 的 send（无操作白名单）直达命令行与 Ruby 执行——'框架链式 API 的反射式命令构造'让数组参数/方法名/值都成为注入面，三个注入变体（参数注入写文件、变换名注入、send 代码执行）完整覆盖攻击路径，可抽象为通用判据（动态分派到 CLI/代码层的框架 API 必须白名单化）；链路从上传到写文件到 RCE 完整可复现。",
+   "attack_chain": "上传图片→variant(resize: params)→数组注入 -write /tmp/x.erb→或 send(eval)→写后门/RCE。",
+   "bypass_technique": "用数组参数注入额外 ImageMagick 选项（-set/-write），或借反射式方法名直达 eval/system。",
+   "defensive_insight": "框架对用户可控的变换参数做操作白名单与参数类型强校验；文档明示用户输入不得进 variant/preview。"
+  },
+  {
+   "id": 187602,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。.svn/entries 暴露 SVN 元数据（含内部仓库地址），.php.svn-base 可被执行——VCS 目录暴露的经典配置错误，响应完整但机制零变形。",
+   "attack_chain": "单点：访问 /.svn/entries→获内部 SVN 地址/结构→尝试拉源码。",
+   "bypass_technique": "无绕过，直接访问未屏蔽的版本控制目录。",
+   "defensive_insight": "部署产物排除 .svn/.git 目录；Web 服务器默认拒绝点号开头路径。"
+  },
+  {
+   "id": 390359,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "SQL注入",
+   "reasoning": "无法判断。声称 SOAP WSDL 解析器可执行自定义 SQL 并提取全部数据库名（影响 RCE），但无任何请求/响应细节，步骤仅三张截图且目标 REDACTED，无法验证。",
+   "attack_chain": "无法确认。",
+   "bypass_technique": "无法确认。",
+   "defensive_insight": "WSDL/XML 解析器禁用外部实体与动态 SQL；对外组件升级并最小化暴露。"
+  }
+ ]
+}

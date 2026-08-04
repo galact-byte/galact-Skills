@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 8,
+  "dropped": 12,
+  "avg_score": 4.6,
+  "top_n": [
+   541169,
+   1531958,
+   1619445,
+   1047125,
+   592803
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1047125,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "是。在已披露报告中未打码的API密钥仍有效，且未撤销，形成二次利用。技术点在于披露流程的疏忽导致敏感信息长期暴露，且密钥未轮换。区别于普通信息泄露：这是对披露流程本身的攻击，可抽象为'披露审查不严+密钥未轮换'的通用问题。",
+   "attack_chain": "浏览公开报告→发现未打码API密钥→验证密钥仍有效→利用密钥调用API。",
+   "bypass_technique": "无技术绕过，利用披露流程疏忽和密钥未撤销。",
+   "defensive_insight": "披露前自动扫描并打码敏感信息；密钥轮换策略；对公开报告进行定期审查。"
+  },
+  {
+   "id": 1548067,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "配置错误",
+   "reasoning": "否。直接访问URL即可进入服务器，无认证，属于典型配置错误。但报告未提供具体URL、数据内容或影响细节，信息严重不足，无法判断真实性。",
+   "attack_chain": "直接访问URL→未认证进入服务器。",
+   "bypass_technique": "无绕过，直接利用配置错误。",
+   "defensive_insight": "确保管理面板强制认证，并限制网络暴露。"
+  },
+  {
+   "id": 1065493,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。CTF题目提交flag，非真实漏洞，且正文包含占位符，无技术细节。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "无。"
+  },
+  {
+   "id": 541169,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "SSRF / 竞争条件 / 框架行为利用",
+   "reasoning": "是。利用DNS解析的ToCToU绕过IP黑名单，实现完整SSRF。技术点在于验证与请求分离导致的竞态，可抽象为通用绕过模式。区别于普通SSRF：这是对验证逻辑的优雅绕过，且影响广泛。",
+   "attack_chain": "配置DNS轮换→提交webhook URL→验证时解析为合法IP→请求时解析为内网IP→访问内网服务。",
+   "bypass_technique": "DNS rebinding（ToCToU）绕过IP验证。",
+   "defensive_insight": "验证和请求使用同一解析结果；禁止DNS重绑定；对webhook目标IP进行持久化验证。"
+  },
+  {
+   "id": 867133,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。Vote宏未过滤用户输入导致存储XSS，触发点在编辑页面，属于常见XSS变体。但利用宏功能绕过过滤，有一定启发性。",
+   "attack_chain": "编辑页面插入恶意vote宏→保存→其他用户编辑时触发XSS。",
+   "bypass_technique": "利用宏的输入处理缺陷注入HTML。",
+   "defensive_insight": "对宏输入进行严格过滤和编码；使用安全的模板引擎。"
+  },
+  {
+   "id": 102236,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "跨组件攻击链 / 框架行为利用",
+   "reasoning": "是。利用Flash的crossdomain.xml配置和Security.allowDomain('*')，通过URL参数加载恶意SWF，绕过同源策略。技术点在于Flash安全模型的错误配置，可跨域执行。",
+   "attack_chain": "构造恶意SWF URL→加载到受信任域→执行任意代码。",
+   "bypass_technique": "利用Flash的allowDomain('*')和URL参数注入。",
+   "defensive_insight": "限制crossdomain.xml的信任域；避免使用allowDomain('*')；对Flash参数进行验证。"
+  },
+  {
+   "id": 3923,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。预占用邮箱导致他人无法注册，是常见的业务逻辑缺陷，无技术含量。",
+   "attack_chain": "使用他人邮箱注册→邮箱被标记为已用→他人无法注册。",
+   "bypass_technique": "无。",
+   "defensive_insight": "邮箱确认前不标记为已用；提供申诉流程。"
+  },
+  {
+   "id": 642876,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "开放重定向",
+   "reasoning": "否。Referer头未验证导致开放重定向，经典漏洞，无新意。",
+   "attack_chain": "构造恶意Referer→服务器重定向到该URL。",
+   "bypass_technique": "无。",
+   "defensive_insight": "验证Referer头或禁止基于Referer的重定向。"
+  },
+  {
+   "id": 1531958,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用Ruby net/http中正则表达式的二次复杂度，通过恶意长头部触发ReDoS，导致Sidekiq任务卡死。技术点在于对看似安全的sub操作的分析，发现无锚点导致的回溯。可抽象为通用ReDoS模式。",
+   "attack_chain": "配置恶意webhook接收器→发送长头部→触发ReDoS→CPU耗尽。",
+   "bypass_technique": "利用正则表达式无锚点的二次复杂度。",
+   "defensive_insight": "使用rstrip代替正则；对头部长度限制；设置正则超时。"
+  },
+  {
+   "id": 106348,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。404页面反射用户输入，用于钓鱼，属于低危信息泄露，无技术含量。",
+   "attack_chain": "构造恶意URL→404页面显示攻击者文本。",
+   "bypass_technique": "无。",
+   "defensive_insight": "404页面不反射用户输入。"
+  },
+  {
+   "id": 87806,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。IE特定XSS，利用JSONP回调，属于老式浏览器漏洞，无新意。",
+   "attack_chain": "构造恶意URL→JSONP响应注入脚本。",
+   "bypass_technique": "利用IE对JSONP的处理缺陷。",
+   "defensive_insight": "对JSONP回调进行白名单验证；禁用不安全的API。"
+  },
+  {
+   "id": 592803,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 状态混淆",
+   "reasoning": "是。利用货到付款订单状态为processing但未付款，导致积分立即发放。技术点在于对订单状态语义的错误假设，可抽象为'状态与支付方式不匹配'的通用问题。",
+   "attack_chain": "下单选择货到付款→订单状态变为processing→积分立即到账→无限下单获取积分。",
+   "bypass_technique": "利用订单状态与支付方式的不一致。",
+   "defensive_insight": "积分发放应基于支付完成事件，而非订单状态。"
+  },
+  {
+   "id": 618031,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。Self-XSS，仅影响自身，无实际危害。",
+   "attack_chain": "在商品名称中注入XSS→在折扣页面触发。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对用户输入进行过滤和编码。"
+  },
+  {
+   "id": 1619445,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "是。DOM XSS通过document.write注入，可窃取管理员凭据和令牌，实现账户接管。技术点在于对URL参数未过滤直接写入DOM，且利用iframe实现钓鱼。可抽象为'DOM XSS到账户接管'的通用链。",
+   "attack_chain": "构造恶意URL→触发DOM XSS→注入脚本→窃取凭据或令牌→接管管理员账户。",
+   "bypass_technique": "利用document.write和URL参数注入。",
+   "defensive_insight": "避免使用document.write；对URL参数进行编码；实施CSP。"
+  },
+  {
+   "id": 947790,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。搜索框反射XSS，经典漏洞，无新意。",
+   "attack_chain": "构造恶意搜索词→反射XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对搜索词进行HTML编码。"
+  },
+  {
+   "id": 1200815,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。审计日志缺失操作记录，属于功能缺陷，无技术含量。",
+   "attack_chain": "接受/拒绝共享→日志无记录。",
+   "bypass_technique": "无。",
+   "defensive_insight": "确保所有关键操作记录审计日志。"
+  },
+  {
+   "id": 317125,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "是。利用模板引擎对十六进制转义的处理缺陷，绕过HTML实体编码，实现XSS。技术点在于模板引擎的转义不完整，可抽象为'模板引擎转义绕过'。",
+   "attack_chain": "构造包含\\x3c的payload→模板引擎输出未正确转义→XSS。",
+   "bypass_technique": "使用十六进制转义绕过HTML实体编码。",
+   "defensive_insight": "使用安全的模板引擎并正确配置转义；对输出进行双重编码。"
+  },
+  {
+   "id": 362601,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。重复订阅无验证，属于常见业务逻辑缺陷，无技术含量。",
+   "attack_chain": "重复发送订阅请求→订阅计数增加。",
+   "bypass_technique": "无。",
+   "defensive_insight": "在服务端进行幂等性检查。"
+  },
+  {
+   "id": 131047,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "SQL注入",
+   "reasoning": "否。仅猜测可能存在SQL注入，无实际PoC，信息不足。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "使用参数化查询。"
+  },
+  {
+   "id": 411364,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。默认配置允许无限尝试密码，属于配置错误，无技术含量。",
+   "attack_chain": "暴力破解管理员密码→获得高权限账户。",
+   "bypass_technique": "无。",
+   "defensive_insight": "限制登录尝试次数；启用账户锁定。"
+  }
+ ]
+}

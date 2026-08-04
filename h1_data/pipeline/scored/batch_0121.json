@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   2120719,
+   1551586,
+   1300802,
+   84601,
+   2230915
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1065134,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。Firebase 数据库未设置安全规则导致公开可读写，这是 Firebase 配置错误的经典案例，无绕过、无攻击链，属于成熟套路。",
+   "attack_chain": "单点：访问公开的 Firebase 数据库 URL，直接读写数据。",
+   "bypass_technique": "无绕过，直接利用配置错误。",
+   "defensive_insight": "配置 Firebase 数据库安全规则，禁止公开读写。"
+  },
+  {
+   "id": 439912,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。存储型 XSS 在应用提交的 DEMO URL 中，属于常见漏洞类型，但触发点在预览功能中，有一定业务逻辑组合，但整体思路不新颖。",
+   "attack_chain": "创建应用→在 DEMO URL 注入 XSS payload→预览时触发。",
+   "bypass_technique": "无实质绕过，直接注入未过滤的 URL 参数。",
+   "defensive_insight": "对用户输入进行输出编码，尤其是在预览功能中。"
+  },
+  {
+   "id": 1427589,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "命令注入",
+   "reasoning": "否。Log4Shell 是公开的已知漏洞，利用方式成熟，无新意，属于常见套路。",
+   "attack_chain": "单点：发送恶意字符串触发 Log4j 的 JNDI 注入。",
+   "bypass_technique": "无绕过，直接利用已知 CVE。",
+   "defensive_insight": "升级 Log4j 到安全版本，禁用 JNDI 查找。"
+  },
+  {
+   "id": 1551586,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。curl 在重定向到 FTP 时泄露凭据，利用了 HTTP 重定向和 FTP 协议交互的意外行为，绕过文档中承诺的凭据保护。技术点在于重定向跨协议且未正确处理凭据。",
+   "attack_chain": "构造 HTTP 重定向到 FTP→curl 跟随重定向并发送凭据→攻击者捕获。",
+   "bypass_technique": "利用 HTTP 重定向到 FTP 协议，绕过 curl 的凭据保护机制。",
+   "defensive_insight": "curl 应限制重定向时的凭据发送，尤其是跨协议时。"
+  },
+  {
+   "id": 537564,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 配置错误",
+   "reasoning": "部分。Web 缓存欺骗利用 .js 扩展名导致缓存服务器缓存动态页面，属于常见技巧，但结合了业务逻辑，有一定启发性。",
+   "attack_chain": "构造恶意 URL→受害者访问→缓存服务器缓存敏感页面→攻击者读取缓存。",
+   "bypass_technique": "利用 .js 扩展名使缓存服务器误判为静态资源。",
+   "defensive_insight": "缓存服务器应基于 Content-Type 而非扩展名判断是否缓存。"
+  },
+  {
+   "id": 56177,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。SPF 记录使用软失败而非硬失败，是常见的邮件安全配置问题，无绕过、无攻击链。",
+   "attack_chain": "单点：利用 SPF 软失败发送伪造邮件。",
+   "bypass_technique": "无绕过，直接利用配置错误。",
+   "defensive_insight": "SPF 记录应使用 -all 硬失败。"
+  },
+  {
+   "id": 262140,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。密码修改无相似性限制，是常见的业务逻辑问题，无技术含量。",
+   "attack_chain": "单点：修改密码时使用相似密码。",
+   "bypass_technique": "无绕过，直接利用业务逻辑缺陷。",
+   "defensive_insight": "密码修改时应检查新旧密码相似度。"
+  },
+  {
+   "id": 881891,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 其他",
+   "reasoning": "部分。利用 inotify 队列溢出导致监控失效，属于系统调用行为利用，但影响有限，且需要大量事件触发，条件较苛刻。",
+   "attack_chain": "生成大量文件事件→inotify 队列溢出→监控失效→同步异常。",
+   "bypass_technique": "利用 inotify 队列溢出，绕过文件监控。",
+   "defensive_insight": "处理 IN_Q_OVERFLOW 事件，并适当增大队列大小。"
+  },
+  {
+   "id": 1331268,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。密码重置接口无速率限制，是常见业务逻辑漏洞，无绕过、无攻击链。",
+   "attack_chain": "单点：重复请求密码重置接口。",
+   "bypass_technique": "无绕过，直接利用缺少速率限制。",
+   "defensive_insight": "对密码重置接口实施速率限制。"
+  },
+  {
+   "id": 113336,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS 在 URL 参数中，经典漏洞，无绕过，仅适用于 IE8，条件苛刻。",
+   "attack_chain": "单点：构造恶意 URL 触发 XSS。",
+   "bypass_technique": "无实质绕过，直接注入未过滤参数。",
+   "defensive_insight": "对 URL 参数进行输出编码。"
+  },
+  {
+   "id": 298218,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "框架行为利用 / XSS",
+   "reasoning": "部分。antispambot 函数随机转义字符，导致敏感字符可能未转义，利用概率性绕过，思路新颖，但条件依赖随机性。",
+   "attack_chain": "构造恶意输入→antispambot 随机转义→部分字符未转义→XSS。",
+   "bypass_technique": "利用随机转义的概率性，使敏感字符未转义。",
+   "defensive_insight": "antispambot 应始终转义敏感字符。"
+  },
+  {
+   "id": 207552,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。密码修改无验证、手机号添加无验证，是常见业务逻辑缺陷，无技术含量。",
+   "attack_chain": "单点：利用已登录会话直接修改密码或添加手机号。",
+   "bypass_technique": "无绕过，直接利用缺少验证。",
+   "defensive_insight": "敏感操作应要求二次验证。"
+  },
+  {
+   "id": 8239,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "配置错误",
+   "reasoning": "否。无通配符 DNS 导致内容差异，信息不足，无法判断是否为漏洞。",
+   "attack_chain": "无明确攻击链。",
+   "bypass_technique": "无。",
+   "defensive_insight": "确保 DNS 配置一致。"
+  },
+  {
+   "id": 2230915,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 配置错误",
+   "reasoning": "是。通过 X-Forwarded-For 头绕过 IP 限速，利用了代理信任配置，绕过看似生效的暴力破解防护，思路清晰且可复用。",
+   "attack_chain": "配置 trusted_proxy→发送 X-Forwarded-For 头→绕过 IP 限速→暴力破解。",
+   "bypass_technique": "利用 X-Forwarded-For 头伪造 IP，绕过基于 IP 的限速。",
+   "defensive_insight": "不要信任 X-Forwarded-For 头，除非代理配置正确且已验证。"
+  },
+  {
+   "id": 141212,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "类型混淆 / 内存破坏",
+   "reasoning": "是。fread/gzread 长度参数整数下溢导致任意空字节写入，利用了整数溢出和内存写入的意外行为，属于底层漏洞，思路值得借鉴。",
+   "attack_chain": "构造特殊长度参数→整数下溢→空字节写入→内存破坏。",
+   "bypass_technique": "利用整数下溢绕过长度检查。",
+   "defensive_insight": "严格检查长度参数，防止整数溢出。"
+  },
+  {
+   "id": 2120719,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 授权绕过",
+   "reasoning": "是。通过 process.binding 绕过 Node.js 依赖策略，利用了内部 API 的未预期访问，绕过强制策略，可抽象为通用判断条件。",
+   "attack_chain": "创建 policy.json→使用 process.binding('spawn_sync')→执行任意代码→绕过依赖限制。",
+   "bypass_technique": "利用 process.binding 访问内部模块，绕过依赖策略。",
+   "defensive_insight": "限制 process.binding 的访问，或禁用实验性策略。"
+  },
+  {
+   "id": 216243,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "命令注入 / 其他",
+   "reasoning": "部分。CSV 注入在导出功能中，利用公式注入，属于常见技巧，但结合了导出功能，有一定业务逻辑。",
+   "attack_chain": "创建恶意 issue 标题→导出 CSV→打开时执行公式。",
+   "bypass_technique": "利用 CSV 公式注入，绕过纯文本限制。",
+   "defensive_insight": "导出 CSV 时对公式字符进行转义。"
+  },
+  {
+   "id": 949712,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。长密码导致 DoS，是常见资源消耗问题，无绕过、无攻击链。",
+   "attack_chain": "单点：输入超长密码导致服务器资源耗尽。",
+   "bypass_technique": "无绕过，直接利用缺少长度限制。",
+   "defensive_insight": "限制密码长度，防止资源消耗。"
+  },
+  {
+   "id": 1300802,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 跨组件攻击链",
+   "reasoning": "是。通过中间件组合导致常量被修改，形成自引用 BodyProxy，最终栈溢出，利用了框架内部状态的可变性，跨组件攻击链完整。",
+   "attack_chain": "配置 exceptions_app→发送恶意请求→中间件修改常量→BodyProxy 自引用→栈溢出→DoS。",
+   "bypass_technique": "利用非冻结常量被修改，形成自引用对象。",
+   "defensive_insight": "冻结常量，避免中间件修改共享状态。"
+  },
+  {
+   "id": 84601,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 0
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "是。通过未知文件类型绕过上传限制，利用浏览器嗅探导致 XSS，再结合 AppCache 进行缓存投毒，跨组件攻击链完整，思路新颖。",
+   "attack_chain": "上传未知类型文件→浏览器嗅探为 HTML→XSS→AppCache 缓存投毒→控制页面内容。",
+   "bypass_technique": "利用未知文件类型绕过上传限制，结合浏览器嗅探和 AppCache。",
+   "defensive_insight": "上传文件应强制指定 Content-Type，并禁用浏览器嗅探。"
+  }
+ ]
+}

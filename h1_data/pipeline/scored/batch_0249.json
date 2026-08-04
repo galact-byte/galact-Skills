@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 19,
+  "kept": 12,
+  "dropped": 7,
+  "avg_score": 5.4,
+  "top_n": [
+   181910,
+   1194606,
+   293689,
+   317005,
+   153799
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 640488,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "否。这是平台改版导致的配置疏忽，泄露了原本隐藏的赏金总额，属于信息泄露的常见套路，没有技术上的巧妙绕过或攻击链。",
+   "attack_chain": "平台改版→程序页面泄露赏金总额→可推算单个研究员赏金。",
+   "bypass_technique": "无实质绕过，利用平台改版后的配置错误。",
+   "defensive_insight": "平台改版时应检查敏感信息的默认可见性，确保尊重程序设置。"
+  },
+  {
+   "id": 317005,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "子域名接管 / 配置错误",
+   "reasoning": "是。虽然子域名接管是常见漏洞，但此报告展示了完整的攻击场景：从DNS CNAME指向未认领的CloudFront，到创建新CloudFront并指定该域名，实现接管。技术点在于利用云服务商对域名所有权验证的缺失，可抽象为通用判断条件。",
+   "attack_chain": "DNS CNAME指向未认领的CloudFront→创建新CloudFront并指定域名→接管子域名。",
+   "bypass_technique": "利用云服务商对域名所有权验证的缺失，通过创建新CloudFront并指定域名实现接管。",
+   "defensive_insight": "定期审计DNS记录，移除不再使用的CNAME；使用云服务时确保域名所有权验证。"
+  },
+  {
+   "id": 153799,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。这是phplist 3.2.5的已知XSS漏洞，利用URL参数注入script标签，属于常见套路，但PoC完整，可复现。",
+   "attack_chain": "构造恶意URL→管理员点击→执行XSS。",
+   "bypass_technique": "无实质绕过，直接利用参数未过滤。",
+   "defensive_insight": "对URL参数进行输出编码，升级phplist版本。"
+  },
+  {
+   "id": 180559,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告内容模糊，PoC URL不完整，且状态为informative，无法判断真实性。",
+   "attack_chain": "无明确攻击链。",
+   "bypass_technique": "无。",
+   "defensive_insight": "无。"
+  },
+  {
+   "id": 293689,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 协议行为利用",
+   "reasoning": "是。通过重复url参数绕过签名校验，导致重定向页面渲染不安全URL，最终在IE中触发XSS。技术点在于利用HTTP参数重复时的解析差异，绕过签名保护，可抽象为通用判断条件。",
+   "attack_chain": "构造重复url参数→绕过签名校验→重定向页面渲染恶意URL→IE中触发XSS。",
+   "bypass_technique": "利用HTTP参数重复时的解析差异，绕过签名校验。",
+   "defensive_insight": "严格校验签名参数，对重定向URL进行白名单验证，避免使用重复参数。"
+  },
+  {
+   "id": 1134060,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。GitHub上泄露凭据是常见的信息泄露，没有技术上的巧妙之处。",
+   "attack_chain": "GitHub搜索→发现凭据→利用。",
+   "bypass_technique": "无。",
+   "defensive_insight": "定期扫描GitHub泄露，使用密钥管理服务。"
+  },
+  {
+   "id": 167888,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "内存破坏 / 协议行为利用",
+   "reasoning": "是。利用TIFF文件中未初始化的缩略图数据，导致内存泄漏。技术点在于缺乏对偏移量的检查，可抽象为通用判断条件。",
+   "attack_chain": "构造恶意TIFF→触发exif_process_IFD_in_TIFF→内存泄漏。",
+   "bypass_technique": "利用未检查的偏移量，导致读取越界。",
+   "defensive_insight": "在读取前验证偏移量和大小，确保数据有效性。"
+  },
+  {
+   "id": 317543,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告内容模糊，仅提供视频链接，无法判断具体漏洞细节和真实性。",
+   "attack_chain": "无明确攻击链。",
+   "bypass_technique": "无。",
+   "defensive_insight": "无。"
+  },
+  {
+   "id": 6376,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。用户枚举是常见的信息泄露，没有技术上的巧妙之处。",
+   "attack_chain": "发送忘记密码请求→根据响应判断用户是否存在。",
+   "bypass_technique": "无。",
+   "defensive_insight": "统一响应消息，避免泄露用户存在性。"
+  },
+  {
+   "id": 915073,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。存储型XSS是常见漏洞，但此报告展示了盲打XSS的利用方式，且PoC完整，有一定启发性。",
+   "attack_chain": "提交恶意评论→管理员查看→触发XSS→窃取凭据。",
+   "bypass_technique": "无实质绕过，直接利用未过滤输入。",
+   "defensive_insight": "对用户输入进行严格过滤和输出编码。"
+  },
+  {
+   "id": 300270,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。存储型XSS，但利用换行符绕过过滤，属于轻微变形，PoC完整。",
+   "attack_chain": "提交恶意表单→存储XSS→触发。",
+   "bypass_technique": "利用换行符绕过输入过滤。",
+   "defensive_insight": "对输入进行规范化处理，过滤换行符等特殊字符。"
+  },
+  {
+   "id": 761480,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。密码留在内存中是常见的安全设计问题，没有技术上的巧妙之处。",
+   "attack_chain": "启动应用→内存转储→提取密码。",
+   "bypass_technique": "无。",
+   "defensive_insight": "使用令牌代替密码，及时清除内存中的敏感数据。"
+  },
+  {
+   "id": 1537543,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "命令注入 / 配置错误",
+   "reasoning": "部分。这是已知CVE的利用，属于常见套路，但PoC完整，可复现。",
+   "attack_chain": "发送恶意请求→触发SSTI→RCE。",
+   "bypass_technique": "无实质绕过，直接利用已知漏洞。",
+   "defensive_insight": "及时更新软件版本，修复已知漏洞。"
+  },
+  {
+   "id": 252908,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 协议行为利用",
+   "reasoning": "是。通过双重URL编码绕过WAF，在canonical标签中注入XSS。技术点在于利用URL编码的解析差异，绕过WAF，可抽象为通用判断条件。",
+   "attack_chain": "构造双重编码URL→绕过WAF→注入XSS。",
+   "bypass_technique": "利用双重URL编码绕过WAF过滤。",
+   "defensive_insight": "对URL进行规范化处理，正确编码输出。"
+  },
+  {
+   "id": 1194606,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 跨组件攻击链",
+   "reasoning": "是。通过WOPI协议泄露的访问令牌，直接下载未水印文件，绕过安全视图。技术点在于利用WOPI协议的设计缺陷，可抽象为通用判断条件。",
+   "attack_chain": "获取WOPI链接→提取访问令牌→直接下载文件。",
+   "bypass_technique": "利用WOPI协议中访问令牌的泄露，直接访问文件。",
+   "defensive_insight": "对WOPI访问令牌进行严格管理，确保其只能用于特定用途。"
+  },
+  {
+   "id": 181910,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "类型混淆 / 框架行为利用",
+   "reasoning": "是。通过重定义Range类，导致类型混淆，进而崩溃。技术点在于利用运行时常量查找的缺陷，可抽象为通用判断条件。",
+   "attack_chain": "重定义Range类→使用范围字面量→触发类型混淆→崩溃。",
+   "bypass_technique": "利用运行时常量查找的缺陷，重定义核心类。",
+   "defensive_insight": "避免运行时常量查找，使用固定类引用。"
+  },
+  {
+   "id": 915585,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 跨组件攻击链",
+   "reasoning": "部分。TLS证书验证缺失是常见配置错误，但此报告展示了跨组件攻击链（ActivityPub服务器），有一定启发性。",
+   "attack_chain": "中间人攻击→伪造证书→窃取数据。",
+   "bypass_technique": "利用TLS证书验证缺失，进行中间人攻击。",
+   "defensive_insight": "启用TLS证书验证，确保连接安全。"
+  },
+  {
+   "id": 1062803,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。S3桶配置错误是常见的信息泄露，没有技术上的巧妙之处。",
+   "attack_chain": "访问S3桶→列出内容→下载敏感文件。",
+   "bypass_technique": "无。",
+   "defensive_insight": "配置S3桶权限，禁止公共访问。"
+  },
+  {
+   "id": 172609,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "信息泄露",
+   "reasoning": "否。报告内容模糊，仅提及PHP版本泄露，且状态为not-applicable，无法判断真实性。",
+   "attack_chain": "无明确攻击链。",
+   "bypass_technique": "无。",
+   "defensive_insight": "无。"
+  },
+  {
+   "id": 2341063,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 配置错误",
+   "reasoning": "部分。OCSP验证绕过是已知CVE，但此报告展示了TLS会话重用时的绕过，有一定启发性。",
+   "attack_chain": "利用TLS会话重用→绕过OCSP验证。",
+   "bypass_technique": "利用TLS会话重用，绕过OCSP验证。",
+   "defensive_insight": "确保OCSP验证在会话重用时仍然执行。"
+  }
+ ]
+}

@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   983548,
+   1049375,
+   243058,
+   286740,
+   146233
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 983548,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "反序列化 / 认证绕过 / 跨组件攻击链",
+   "reasoning": "是。利用MobileIron的认证绕过（/.;/路径解析）和Hessian反序列化实现未授权RCE，且通过替换字符串（java.util→javb.util）绕过WAF，展示了从已知CVE到实际利用的完整攻击链。技术点在于路径规范化差异和WAF规则绕过，具有通用性。",
+   "attack_chain": "利用/.;/绕过认证→访问LogService→发送恶意Hessian序列化数据→触发JNDI注入→RCE。",
+   "bypass_technique": "路径规范化绕过（/.;/）和WAF字符串替换（java.util→javb.util）。",
+   "defensive_insight": "修复路径规范化漏洞，升级MobileIron，WAF应检测编码和变体，实施最小权限。"
+  },
+  {
+   "id": 146233,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "反序列化 / 框架行为利用",
+   "reasoning": "是。利用PHP GC算法的UAF漏洞，在unserialize和serialize的简单代码模式下实现远程代码执行，展示了PHP内部机制的非预期行为。技术点在于GC算法对对象引用的处理，可抽象为通用条件。",
+   "attack_chain": "构造恶意序列化数据→触发GC UAF→代码执行。",
+   "bypass_technique": "利用PHP GC算法在unserialize时的UAF，绕过常规安全检查。",
+   "defensive_insight": "避免对不可信输入使用unserialize，使用json或白名单类限制。"
+  },
+  {
+   "id": 779442,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "子域名接管 / 配置错误",
+   "reasoning": "否。经典子域名接管，CNAME指向未认领的S3桶，注册桶即可控制。技术点在于云资源生命周期管理，但套路成熟。",
+   "attack_chain": "发现悬空CNAME→注册S3桶→启用静态托管→控制子域名。",
+   "bypass_technique": "无绕过，直接利用配置错误。",
+   "defensive_insight": "定期清理DNS记录，监控云资源所有权。"
+  },
+  {
+   "id": 406614,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 资源消耗",
+   "reasoning": "部分。通过超长cookie导致路径泄露和磁盘填充，属于配置不当和资源管理问题，但思路简单。",
+   "attack_chain": "发送超长cookie→触发错误页面泄露路径→填充磁盘→DoS。",
+   "bypass_technique": "无绕过，直接利用未限制的cookie长度。",
+   "defensive_insight": "限制cookie长度，监控磁盘使用，错误页面不泄露路径。"
+  },
+  {
+   "id": 63537,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型XSS，用户名未过滤，经典场景。",
+   "attack_chain": "设置恶意用户名→管理员查看时触发。",
+   "bypass_technique": "无绕过，直接利用未过滤输入。",
+   "defensive_insight": "输出编码，输入验证。"
+  },
+  {
+   "id": 889243,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 授权绕过",
+   "reasoning": "是。通过重新共享功能，只读用户能赋予他人写权限，绕过权限限制。技术点在于共享权限的传递和默认配置，可抽象为通用逻辑漏洞。",
+   "attack_chain": "用户A只读共享给B→B重新共享给C并添加写权限→C获得写访问。",
+   "bypass_technique": "利用重新共享功能，在共享时添加额外权限。",
+   "defensive_insight": "限制重新共享权限，强制权限继承，默认安全配置。"
+  },
+  {
+   "id": 243058,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "是。通过iframe SRC=#触发JavaScript执行，绕过邮件附件脚本限制，并利用file://域读取本地文件，实现UXSS。技术点在于iframe的奇特行为，跨组件（邮件客户端+文件系统）。",
+   "attack_chain": "发送恶意HTML附件→iframe触发脚本→读取本地文件。",
+   "bypass_technique": "使用<iframe SRC=#>绕过脚本执行限制。",
+   "defensive_insight": "严格限制附件HTML，禁用iframe，隔离文件访问。"
+  },
+  {
+   "id": 530499,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。存储型XSS，通过州/县字段，利用缺少闭合标签绕过过滤，但属于常见变体。",
+   "attack_chain": "提交恶意州/县→管理员查看用户时触发。",
+   "bypass_technique": "使用不闭合的标签绕过过滤。",
+   "defensive_insight": "输出编码，加强过滤。"
+  },
+  {
+   "id": 421009,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 业务逻辑",
+   "reasoning": "部分。通过Hypernova脚本泄露私有列表数据，结合外部数据源去匿名化，思路巧妙但依赖外部信息。",
+   "attack_chain": "查看私有列表源码→获取Hypernova JSON→结合外部数据匹配ShopID。",
+   "bypass_technique": "无绕过，利用前端数据泄露。",
+   "defensive_insight": "不要在客户端暴露敏感数据，使用服务端渲染。"
+  },
+  {
+   "id": 145552,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。目录列表和PGP泛泛而谈，无具体攻击，信息不足。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁用目录列表，加强PGP密钥管理。"
+  },
+  {
+   "id": 106305,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。通过自关闭报告提升信号分，属于业务逻辑漏洞，但影响有限。",
+   "attack_chain": "创建报告→自关闭→信号提升。",
+   "bypass_technique": "无绕过，利用业务规则。",
+   "defensive_insight": "调整信号计算逻辑。"
+  },
+  {
+   "id": 808762,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 认证绕过",
+   "reasoning": "部分。暴露的Slinky管理面板，无认证，可修改URL重定向，属于配置错误。",
+   "attack_chain": "访问管理面板→修改重定向。",
+   "bypass_technique": "无绕过，直接利用未认证面板。",
+   "defensive_insight": "管理面板应认证，限制访问。"
+  },
+  {
+   "id": 690796,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。目录列表，常见配置错误。",
+   "attack_chain": "访问目录→查看文件列表。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁用目录列表。"
+  },
+  {
+   "id": 318751,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "IDOR / 信息泄露",
+   "reasoning": "部分。IDOR泄露私有照片链接，经典但影响明确。",
+   "attack_chain": "修改ID→获取其他商店照片。",
+   "bypass_technique": "无绕过，直接枚举ID。",
+   "defensive_insight": "实施访问控制，使用不可预测ID。"
+  },
+  {
+   "id": 986365,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。通过闭合script标签绕过修复，展示了修复不完整，但属于常见绕过。",
+   "attack_chain": "构造payload→闭合script→注入新script。",
+   "bypass_technique": "闭合script标签再开新标签。",
+   "defensive_insight": "正确编码输出，使用CSP。"
+  },
+  {
+   "id": 191387,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 开放重定向",
+   "reasoning": "部分。ctx参数未过滤导致XSS，可GET触发，但属于常见反射XSS。",
+   "attack_chain": "构造恶意ctx参数→触发XSS。",
+   "bypass_technique": "无绕过，直接利用未过滤参数。",
+   "defensive_insight": "输入验证和输出编码。"
+  },
+  {
+   "id": 1049375,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 业务逻辑 / 跨组件攻击链",
+   "reasoning": "是。未认证的Meteor方法可添加SAML提供者并禁用证书验证，导致任意用户登录。技术点在于暴露内部方法且设置可被覆盖，可抽象为通用条件。",
+   "attack_chain": "调用addSamlService→添加恶意提供者→伪造SAML响应→登录为管理员。",
+   "bypass_technique": "利用未认证的Meteor方法修改SAML配置。",
+   "defensive_insight": "移除客户端可调用的敏感方法，服务端验证所有设置。"
+  },
+  {
+   "id": 1463638,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射XSS，经典payload。",
+   "attack_chain": "构造URL→触发XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "输出编码。"
+  },
+  {
+   "id": 286740,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。KRACK攻击利用WPA2握手重传导致nonce重用，突破加密。技术点在于协议状态机缺陷，可抽象为通用条件。",
+   "attack_chain": "克隆AP→阻止消息4→触发重传→nonce重用→解密流量。",
+   "bypass_technique": "利用握手重传机制重置nonce。",
+   "defensive_insight": "更新固件，AP不重传消息3，使用replay counter。"
+  },
+  {
+   "id": 148517,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。CSRF token存在但可删除，但无实际利用，信息不足。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "确保所有POST请求验证token。"
+  }
+ ]
+}

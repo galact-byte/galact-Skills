@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   826361,
+   1489077,
+   1987011,
+   384719,
+   476179
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 134880,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 配置错误",
+   "reasoning": "部分。ASN.1 长度字段被滥用导致内存过度分配，属于协议解析器的经典问题，但利用方式直接，无绕过，攻击链简单。",
+   "attack_chain": "构造恶意 ASN.1 数据 → 触发 asn1_d2i_read_bio 分配大量内存 → DoS。",
+   "bypass_technique": "利用 ASN.1 长度字段的信任，未校验实际数据长度。",
+   "defensive_insight": "解析器应分块读取并检查 EOF，避免根据长度字段盲目分配。"
+  },
+  {
+   "id": 384719,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 授权绕过",
+   "reasoning": "是。Windows 平台下 PHP 的 linkinfo 函数未实现 open_basedir 检查，导致沙箱绕过。这属于平台差异导致的框架行为利用，可抽象为通用判断条件：检查所有文件操作函数是否在平台间一致。",
+   "attack_chain": "调用 linkinfo 函数 → 绕过 open_basedir → 探测任意路径。",
+   "bypass_technique": "利用 Windows 与 Unix 实现差异，linkinfo 在 Windows 上缺少 open_basedir 检查。",
+   "defensive_insight": "确保所有文件操作函数在跨平台时都执行相同的安全检查。"
+  },
+  {
+   "id": 549831,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 状态混淆",
+   "reasoning": "部分。用户 ID 重用导致新用户继承旧用户的外部存储配置，属于业务逻辑缺陷，思路简单但影响明确。",
+   "attack_chain": "删除用户 → 创建同名用户 → 继承旧用户的外部存储配置。",
+   "bypass_technique": "利用用户 ID 重用，未清理旧数据。",
+   "defensive_insight": "删除用户时应彻底清理关联数据，或使用不可重用的唯一标识。"
+  },
+  {
+   "id": 561805,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 其他",
+   "reasoning": "否。W3 Total Cache 插件已知漏洞，无新意，信息不足。",
+   "attack_chain": "利用插件已知漏洞 → RCE/文件读取。",
+   "bypass_technique": "无。",
+   "defensive_insight": "及时更新插件，移除不必要的插件。"
+  },
+  {
+   "id": 18398,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "配置错误",
+   "reasoning": "否。仅建议启用 HSTS，无漏洞细节，信息不足。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "启用 HSTS 以增强安全性。"
+  },
+  {
+   "id": 476179,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "保留，高优先级",
+   "category": "类型混淆 / 其他",
+   "reasoning": "部分。通过畸形 magic 文件触发堆溢出，属于解析器边界检查缺失，但利用条件苛刻（需控制 magic 文件），且 PoC 完整。",
+   "attack_chain": "构造畸形 magic 文件 → finfo_open 解析 → 堆溢出 → 内存破坏。",
+   "bypass_technique": "利用 magic 文件解析中的边界检查缺失。",
+   "defensive_insight": "加强解析器的边界检查，使用安全内存分配函数。"
+  },
+  {
+   "id": 970760,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 其他",
+   "reasoning": "否。像素洪水攻击是已知 DoS 手法，无新意。",
+   "attack_chain": "上传超大图片 → 服务器资源耗尽 → DoS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "限制上传文件大小和分辨率。"
+  },
+  {
+   "id": 17160,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 其他",
+   "reasoning": "否。密码策略建议，非漏洞。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "实施更强的密码策略。"
+  },
+  {
+   "id": 547663,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / IDOR",
+   "reasoning": "部分。通过修改 transcriptId 实现 IDOR，属于常见授权绕过，但步骤清晰。",
+   "attack_chain": "捕获重命名请求 → 修改 transcriptId → 修改共享文件名称。",
+   "bypass_technique": "直接修改对象 ID，未校验所有权。",
+   "defensive_insight": "服务端校验对象所有权，使用不可预测的 ID。"
+  },
+  {
+   "id": 826361,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "SSRF / 跨组件攻击链",
+   "reasoning": "是。利用 CarrierWave 的 remote_attachment_url 属性在项目导入时触发 SSRF，绕过 AttributeCleaner 过滤，可访问内部服务甚至 RCE。属于框架行为利用，可抽象为通用判断条件：检查所有可导入模型的属性是否被清理。",
+   "attack_chain": "构造项目导出文件 → 添加 remote_attachment_url → 导入触发下载 → SSRF → 访问内部服务。",
+   "bypass_technique": "利用 CarrierWave 的远程 URL 下载功能，绕过属性清理。",
+   "defensive_insight": "在导入时清理所有非白名单属性，限制远程 URL 下载。"
+  },
+  {
+   "id": 1489077,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。通过另一个端点泄露的预览 URL 永久有效，绕过之前的修复，属于业务逻辑缺陷，思路巧妙。",
+   "attack_chain": "获取泄露的预览 URL → 绕过密码更改 → 永久访问。",
+   "bypass_technique": "利用未清理的端点泄露的静态 URL。",
+   "defensive_insight": "确保所有预览 URL 在密码更改后失效，清理所有泄露点。"
+  },
+  {
+   "id": 330721,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "信息泄露",
+   "reasoning": "否。通过调试信息泄露 IP，但影响有限，信息不足。",
+   "attack_chain": "访问调试页面 → 泄露 IP。",
+   "bypass_technique": "无。",
+   "defensive_insight": "移除调试信息或限制访问。"
+  },
+  {
+   "id": 163491,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 其他",
+   "reasoning": "否。CORS 配置错误，常见问题，无新意。",
+   "attack_chain": "利用 CORS 配置错误 → 跨域读取数据。",
+   "bypass_technique": "无。",
+   "defensive_insight": "限制 CORS 允许的域名。"
+  },
+  {
+   "id": 1073551,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。JS 文件泄露敏感信息，常见配置错误。",
+   "attack_chain": "访问 JS 文件 → 获取敏感信息。",
+   "bypass_technique": "无。",
+   "defensive_insight": "不要在客户端暴露敏感信息。"
+  },
+  {
+   "id": 159925,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。CSRF 攻击，常见类型，无新意。",
+   "attack_chain": "诱导管理员访问恶意页面 → 发送邮件。",
+   "bypass_technique": "无。",
+   "defensive_insight": "使用 CSRF 令牌并验证来源。"
+  },
+  {
+   "id": 50656,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型 XSS，常见类型，无新意。",
+   "attack_chain": "提交恶意 payload → 存储 → 执行。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对输入进行编码和过滤。"
+  },
+  {
+   "id": 944665,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "路径遍历",
+   "reasoning": "否。CVE-2020-3187 已知漏洞，无新意。",
+   "attack_chain": "利用已知 CVE → 文件删除。",
+   "bypass_technique": "无。",
+   "defensive_insight": "及时更新补丁。"
+  },
+  {
+   "id": 741683,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "IDOR",
+   "reasoning": "部分。通过修改 personId 实现 IDOR，常见但步骤清晰。",
+   "attack_chain": "捕获上传请求 → 修改 personId → 修改他人头像。",
+   "bypass_technique": "直接修改对象 ID，未校验所有权。",
+   "defensive_insight": "服务端校验对象所有权。"
+  },
+  {
+   "id": 1987011,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。通过聊天命令绕过房间权限设置，且可未认证执行，属于业务逻辑缺陷，思路巧妙。",
+   "attack_chain": "利用聊天命令 → 绕过权限 → 创建对象。",
+   "bypass_technique": "利用客户端校验缺失，直接调用命令。",
+   "defensive_insight": "服务端校验所有命令的权限。"
+  },
+  {
+   "id": 311337,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "原型污染 / 类型混淆",
+   "reasoning": "部分。原型污染攻击，常见但影响广泛，可导致 DoS 或 RCE。",
+   "attack_chain": "构造恶意 JSON → 触发 merge → 污染原型 → DoS/RCE。",
+   "bypass_technique": "利用 merge 函数未过滤 __proto__。",
+   "defensive_insight": "使用安全的合并函数，过滤 __proto__ 键。"
+  }
+ ]
+}

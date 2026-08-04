@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   921780,
+   1073780,
+   513154,
+   770504,
+   1295497
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1295497,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "子域名接管 / 配置错误",
+   "reasoning": "是。EC2 实例终止后 DNS A 记录未清理，攻击者重新注册同一 IP 即可接管域名，这是子域名接管的变体（dangling A record 而非 CNAME），展示了云资源生命周期管理不当的利用方式。技术点在于利用 AWS 的 IP 重新分配机制，可抽象为通用判断条件：检查 DNS 记录指向的云资源是否可被重新获取。",
+   "attack_chain": "发现悬垂 A 记录→注册对应 EC2 实例→接管域名→托管恶意内容/窃取会话。",
+   "bypass_technique": "利用 AWS 允许重新分配已释放 IP 的特性，接管未清理的 DNS 记录。",
+   "defensive_insight": "定期审计 DNS 记录与云资源关联，删除不再使用的记录；使用云服务商提供的资源标识符验证所有权。"
+  },
+  {
+   "id": 207710,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "内存破坏 / 框架行为利用",
+   "reasoning": "部分。通过 fuzzing 发现 mruby 虚拟机中的 use-after-free，涉及 method_missing 递归调用导致堆内存释放后重用。技术点在于利用 Ruby 的 method_missing 机制触发递归，导致 GC 回收后仍被引用。虽然这是内存破坏的常见类型，但触发路径涉及解释器内部状态管理，有一定启发性。",
+   "attack_chain": "构造特定 Ruby 代码→触发 method_missing 递归→导致堆释放后重用→崩溃或潜在 RCE。",
+   "bypass_technique": "利用 method_missing 的递归调用和 GC 行为，制造 UAF。",
+   "defensive_insight": "加强解释器内存管理，确保对象生命周期正确；使用 ASAN 等工具进行持续 fuzzing。"
+  },
+  {
+   "id": 191332,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS，通过 HTML 实体编码绕过过滤，属于常见绕过技巧，无新意。",
+   "attack_chain": "构造恶意链接→用户点击→执行脚本。",
+   "bypass_technique": "HTML 实体编码绕过输入过滤。",
+   "defensive_insight": "输出编码和输入验证结合，使用 CSP。"
+  },
+  {
+   "id": 357576,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 信息泄露",
+   "reasoning": "部分。利用沙箱程序启用 swag 奖励功能，诱导协作者提交报告后发放 swag，从而获取其 PII。这是对平台信任边界的滥用，展示了沙箱环境与生产数据隔离不足的问题。技术点在于沙箱程序所有者可以查看协作者的 swag 信息，属于业务逻辑缺陷。",
+   "attack_chain": "创建沙箱程序→启用 swag→邀请受害者→受害者提交报告→发放 swag→查看受害者 PII。",
+   "bypass_technique": "利用沙箱环境与生产数据未隔离，通过 swag 奖励机制泄露 PII。",
+   "defensive_insight": "沙箱环境应隔离生产数据，禁止访问真实用户 PII；对 swag 奖励进行权限控制。"
+  },
+  {
+   "id": 921780,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 授权绕过",
+   "reasoning": "是。通过修改 logout 请求中的 user_id 参数为受害者 ID，服务器返回受害者的 OTP token，进而登录受害者账户。这利用了服务器未验证 user_id 与当前会话的绑定，属于 IDOR 导致的认证绕过。技术点在于 logout 端点未校验用户身份，可抽象为通用判断条件：任何涉及用户标识的端点都应验证所有权。",
+   "attack_chain": "攻击者登录自己账户→构造 logout 请求并替换 user_id 为受害者→获取受害者 OTP token→使用 token 登录受害者账户。",
+   "bypass_technique": "利用 logout 端点未校验 user_id 所有权，获取受害者 OTP token。",
+   "defensive_insight": "所有涉及用户标识的端点必须验证与当前会话的绑定；对敏感操作实施二次验证。"
+  },
+  {
+   "id": 187305,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 其他",
+   "reasoning": "是。零长度 heredoc 标识符导致解析器无限循环，利用 strncmp 在长度为零时的行为缺陷。这是对 C 库函数边界行为的利用，展示了协议解析中的隐蔽陷阱。技术点在于 strncmp 在 n=0 时总是返回 0，导致错误匹配，可抽象为通用判断条件：任何使用 strncmp 比较长度可能为零的字符串时需谨慎。",
+   "attack_chain": "构造特殊 Ruby 代码→触发解析器无限循环→服务不可用。",
+   "bypass_technique": "利用 strncmp 在长度为零时的行为，制造无限循环。",
+   "defensive_insight": "修复 strncmp 调用，增加 term_len 非零检查；对解析器进行模糊测试。"
+  },
+  {
+   "id": 15802,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。直接访问配置文件导致路径泄露，属于配置错误，无技术含量。",
+   "attack_chain": "直接访问配置文件→泄露服务器路径。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁止直接访问配置文件，限制错误信息输出。"
+  },
+  {
+   "id": 770504,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 业务逻辑",
+   "reasoning": "是。通过篡改服务器响应，将密码验证失败的错误响应替换为成功响应，绕过密码确认步骤。这利用了客户端信任服务器响应的弱点，属于响应篡改攻击。技术点在于客户端未对响应进行完整性校验，可抽象为通用判断条件：任何客户端应验证服务器响应的真实性。",
+   "attack_chain": "劫持会话→尝试修改邮箱/手机→输入错误密码→拦截响应→篡改为成功响应→绕过密码验证→修改信息→重置密码→账户接管。",
+   "bypass_technique": "篡改服务器响应，伪造成功状态。",
+   "defensive_insight": "客户端应使用 HTTPS 并验证响应签名；服务器端应强制验证密码，不依赖客户端判断。"
+  },
+  {
+   "id": 152591,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 配置错误",
+   "reasoning": "部分。通过上传恶意 Flash 文件作为发票附件，利用 Flash 的 XSS 执行能力，绕过 HTML 过滤。技术点在于 Flash 对象未被过滤，可执行 JavaScript，属于旧技术遗留问题。",
+   "attack_chain": "创建发票→上传恶意 Flash→分享链接→受害者点击→执行脚本。",
+   "bypass_technique": "利用 Flash 对象执行 JavaScript，绕过 HTML 过滤。",
+   "defensive_insight": "禁止上传 Flash 文件，或对上传内容进行严格类型检查。"
+  },
+  {
+   "id": 137093,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。DNS AXFR 区域传输未限制，属于常见配置错误，无技术含量。",
+   "attack_chain": "直接发起 AXFR 请求→获取 DNS 记录。",
+   "bypass_technique": "无。",
+   "defensive_insight": "限制 AXFR 只允许授权服务器。"
+  },
+  {
+   "id": 198292,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SQL注入",
+   "reasoning": "否。时间盲注，利用 IF 和 SLEEP 函数，属于成熟套路，无新意。",
+   "attack_chain": "构造恶意请求→触发 SQL 注入→延迟响应。",
+   "bypass_technique": "无。",
+   "defensive_insight": "使用参数化查询。"
+  },
+  {
+   "id": 20305,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。删除账户功能未完全删除数据，属于业务逻辑缺陷，但无技术含量。",
+   "attack_chain": "删除账户→数据未删除。",
+   "bypass_technique": "无。",
+   "defensive_insight": "确保删除操作彻底执行。"
+  },
+  {
+   "id": 1073780,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / XSS",
+   "reasoning": "是。ESI 注入与反射型 XSS 链式利用，通过 ESI 读取 HttpOnly cookie，再通过 XSS 触发 fetch 请求窃取。技术点在于 ESI 注入可读取 HttpOnly cookie，且与 XSS 结合形成完整攻击链，可抽象为通用判断条件：任何 ESI 注入点都可能被用于窃取敏感数据。",
+   "attack_chain": "构造恶意链接→触发 XSS→XSS 发起 fetch 请求到 ESI 注入点→获取 cookie→发送到攻击者服务器。",
+   "bypass_technique": "利用 ESI 注入读取 HttpOnly cookie，结合 XSS 实现窃取。",
+   "defensive_insight": "禁用不必要的 ESI 功能，对 ESI 输入进行严格过滤；使用 CSP 限制脚本执行。"
+  },
+  {
+   "id": 513154,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "内存破坏 / 跨组件攻击链",
+   "reasoning": "是。通过未检查的武器 ID 导致数组越界写，进而覆盖函数指针实现 RCE。技术点在于利用客户端解析消息时的边界缺失，结合精心构造的武器列表覆盖关键数据结构，属于经典的内存破坏利用，但攻击链完整且可复现。",
+   "attack_chain": "恶意服务器发送 WeaponList 消息→越界写覆盖函数指针→触发 ROP 链→执行任意代码。",
+   "bypass_technique": "利用数组越界写覆盖函数指针。",
+   "defensive_insight": "对消息解析进行边界检查，使用安全函数。"
+  },
+  {
+   "id": 905679,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。未授权访问端点导致 PII 泄露，属于访问控制缺失，常见问题。",
+   "attack_chain": "直接访问端点→获取用户 PII。",
+   "bypass_technique": "无。",
+   "defensive_insight": "实施访问控制，限制敏感端点。"
+  },
+  {
+   "id": 1804128,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "其他",
+   "reasoning": "部分。ReDoS 漏洞，利用低效正则表达式导致 CPU 消耗，属于常见 DoS 类型，但影响特定库，有一定参考价值。",
+   "attack_chain": "构造恶意输入→触发正则回溯→CPU 耗尽。",
+   "bypass_technique": "利用正则表达式回溯。",
+   "defensive_insight": "使用安全正则表达式，限制输入长度。"
+  },
+  {
+   "id": 116508,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SQL注入",
+   "reasoning": "否。Union 注入，直接拼接参数，属于常见套路。",
+   "attack_chain": "构造恶意 URL→执行 SQL 注入。",
+   "bypass_technique": "无。",
+   "defensive_insight": "使用参数化查询。"
+  },
+  {
+   "id": 142096,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "子域名接管",
+   "reasoning": "部分。CNAME 指向已停用的服务，可注册用户名接管，属于常见子域名接管，但展示了服务停用后 DNS 未清理的问题。",
+   "attack_chain": "发现 CNAME 指向停用服务→注册用户名→接管子域名。",
+   "bypass_technique": "利用服务商未验证所有权。",
+   "defensive_insight": "清理不再使用的 DNS 记录。"
+  },
+  {
+   "id": 679969,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "其他",
+   "reasoning": "部分。CSS 注入导致应用无法渲染，展示了 CSS 注入的破坏性，但未实现数据窃取，影响有限。",
+   "attack_chain": "设置恶意主题→应用崩溃。",
+   "bypass_technique": "利用 CSS 注入关闭渲染。",
+   "defensive_insight": "对主题输入进行严格过滤。"
+  },
+  {
+   "id": 250386,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。CSRF 探测用户是否为管理员，利用响应差异，属于常见信息泄露。",
+   "attack_chain": "诱导用户访问恶意页面→发起 CSRF 请求→根据响应判断管理员状态。",
+   "bypass_technique": "无。",
+   "defensive_insight": "添加 CSRF token，统一响应格式。"
+  }
+ ]
+}

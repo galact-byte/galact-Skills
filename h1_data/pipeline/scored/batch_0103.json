@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   893305,
+   401136,
+   158148,
+   1104120,
+   726773
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 120143,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。CSRF token 缺失服务端校验是常见配置错误，无绕过技巧，攻击链单点。虽然复现步骤清晰，但启发性低。",
+   "attack_chain": "单点：修改密码请求移除csrfmiddlewaretoken参数，服务端未校验。",
+   "bypass_technique": "无实质绕过，直接删除CSRF token参数。",
+   "defensive_insight": "服务端必须校验CSRF token，不能依赖前端。"
+  },
+  {
+   "id": 893305,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 协议行为利用 / 认证绕过",
+   "reasoning": "是。通过信息泄露获取凭据，利用MD5挑战值可预测绕过2FA，通过路径遍历和SSRF访问内部服务，逆向APK获取硬编码token，最终利用CSS数据外泄绕过支付2FA。整个链条跨多个组件，每一步都体现非预期思维，特别是CSS属性选择器外泄数据，极具启发性。",
+   "attack_chain": "信息泄露获取凭据→2FA绕过→SSRF访问内部服务→APK逆向获取token→API枚举→权限提升→CSS数据外泄绕过支付2FA→完全接管。",
+   "bypass_technique": "MD5挑战值可预测；路径遍历绕过SSRF白名单；CSS属性选择器外泄输入值。",
+   "defensive_insight": "加强服务端验证，避免敏感信息泄露，对SSRF进行严格过滤，对APK进行加固，对2FA实施更安全的挑战机制。"
+  },
+  {
+   "id": 810320,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。只读用户通过直接调用API端点删除高权限成员，绕过UI限制。利用GraphQL查询获取成员ID，然后直接构造DELETE请求，实现权限提升。思路清晰，可抽象为对API端点缺乏服务端权限校验的通用问题。",
+   "attack_chain": "只读用户获取成员ID→直接调用DELETE端点→删除管理员/所有者。",
+   "bypass_technique": "绕过UI限制，直接调用API端点。",
+   "defensive_insight": "服务端必须对每个API端点进行权限校验，不能依赖前端隐藏。"
+  },
+  {
+   "id": 411723,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "开放重定向 / 协议行为利用",
+   "reasoning": "部分。利用大小写绕过http关键字检测，并使用十进制IP地址绕过数字限制，属于协议行为利用的轻微变形。虽然开放重定向是常见漏洞，但绕过方式有一定启发性。",
+   "attack_chain": "单点：构造next参数为Http:十进制IP，绕过过滤实现重定向。",
+   "bypass_technique": "大小写绕过关键字检测，十进制IP绕过数字限制。",
+   "defensive_insight": "使用强正则表达式验证重定向URL，避免大小写和编码绕过。"
+  },
+  {
+   "id": 2433634,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "否。DOM XSS通过msg参数注入，常见套路，但代码位置明确，复现简单。无绕过，无攻击链。",
+   "attack_chain": "单点：构造msg参数为XSS payload，注入到页面。",
+   "bypass_technique": "无实质绕过，直接利用未过滤参数。",
+   "defensive_insight": "对用户输入进行HTML编码，避免使用innerHTML。"
+  },
+  {
+   "id": 401136,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "SSRF / 跨组件攻击链",
+   "reasoning": "是。通过代理访问AWS Metadata API获取临时凭据，进而利用SSM执行任意命令。利用代理未过滤内部IP的缺陷，结合云服务特性，实现RCE。跨组件攻击链，思路清晰，可复用。",
+   "attack_chain": "代理SSRF→访问Metadata API→获取临时凭据→SSM执行命令→RCE。",
+   "bypass_technique": "利用代理未过滤内部IP，访问云Metadata服务。",
+   "defensive_insight": "代理应过滤内部IP，云服务应限制Metadata API访问。"
+  },
+  {
+   "id": 462442,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 竞争条件",
+   "reasoning": "是。利用端口抢占实现服务器冒充，绕过客户端认证。攻击者无需特权，只需在受害者启动RPC前占用端口。利用系统调用行为，思路新颖。",
+   "attack_chain": "抢占端口→冒充RPC服务器→捕获客户端命令→创建恶意钱包。",
+   "bypass_technique": "端口抢占，利用服务器启动失败但用户无感知。",
+   "defensive_insight": "RPC接口应使用TLS，并限制客户端来源。"
+  },
+  {
+   "id": 1104120,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "SQL注入 / 命令注入",
+   "reasoning": "是。在XML接口中利用DOC_ID参数注入SQL，通过分号拼接和注释绕过WAF，最终执行系统命令。虽然SQL注入是常见类型，但绕过WAF和利用xp_cmdshell实现RCE的链路完整，且复现步骤详细。",
+   "attack_chain": "XML接口→SQL注入→绕过WAF→xp_cmdshell→RCE。",
+   "bypass_technique": "使用注释符/* */绕过WAF，分号拼接多条SQL语句。",
+   "defensive_insight": "使用参数化查询，严格过滤用户输入，避免使用xp_cmdshell。"
+  },
+  {
+   "id": 155578,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "信息泄露",
+   "reasoning": "否。用户枚举和信息泄露，但报告内容简略，缺少具体技术细节和复现步骤，无法判断真实性。",
+   "attack_chain": "单点：通过JSON格式接口枚举用户。",
+   "bypass_technique": "无实质绕过。",
+   "defensive_insight": "避免在公开接口暴露用户信息。"
+  },
+  {
+   "id": 13959,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "部分。通过修改URL路径（去掉download部分）绕过文件访问控制，访问受保护文件。属于业务逻辑缺陷，思路简单但有效。",
+   "attack_chain": "获取文件链接→修改URL→绕过认证访问文件。",
+   "bypass_technique": "路径修改绕过访问控制。",
+   "defensive_insight": "服务端应验证所有文件访问请求的权限，不能依赖URL结构。"
+  },
+  {
+   "id": 1049733,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。通过直接访问端点绕过认证，属于配置错误，无绕过技巧，信息量少。",
+   "attack_chain": "单点：直接访问未受保护的端点。",
+   "bypass_technique": "无实质绕过，直接利用配置错误。",
+   "defensive_insight": "确保所有端点都有认证机制。"
+  },
+  {
+   "id": 292636,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。CSRF漏洞，session_id未验证，常见套路，无绕过。",
+   "attack_chain": "单点：构造CSRF页面诱导受害者发送请求。",
+   "bypass_technique": "无实质绕过，直接利用CSRF。",
+   "defensive_insight": "使用CSRF token并验证。"
+  },
+  {
+   "id": 115560,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，参数未过滤，常见套路，无绕过。",
+   "attack_chain": "单点：构造恶意URL，诱导用户点击。",
+   "bypass_technique": "无实质绕过，直接利用未过滤参数。",
+   "defensive_insight": "对输出进行编码。"
+  },
+  {
+   "id": 46485,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "认证绕过 / 业务逻辑",
+   "reasoning": "部分。利用OAuth流程中的会话固定，在多个浏览器中授权同一token，导致账户混淆。属于业务逻辑缺陷，思路有一定启发性。",
+   "attack_chain": "获取OAuth token→在另一浏览器授权→刷新原浏览器→登录为其他用户。",
+   "bypass_technique": "OAuth token重用，会话固定。",
+   "defensive_insight": "OAuth流程应绑定用户会话，防止token重用。"
+  },
+  {
+   "id": 693788,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 授权绕过",
+   "reasoning": "部分。利用X-Forwarded-For头伪造IP，绕过白名单。属于配置错误，但绕过方式简单，可复用。",
+   "attack_chain": "单点：添加X-Forwarded-For头为白名单IP。",
+   "bypass_technique": "伪造X-Forwarded-For头。",
+   "defensive_insight": "不要信任X-Forwarded-For头，应使用可信代理设置。"
+  },
+  {
+   "id": 158148,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 命令注入",
+   "reasoning": "是。通过子域名重定向到第三方应用，利用图片上传功能，通过精心构造的JPEG文件注入Webshell，实现RCE。跨组件攻击链，利用图片处理逻辑缺陷，思路巧妙。",
+   "attack_chain": "子域名重定向→上传恶意JPEG→注入Webshell→RCE。",
+   "bypass_technique": "利用图片缩放保留Webshell，绕过内容过滤。",
+   "defensive_insight": "避免重定向到不可信域名，上传文件应严格校验内容。"
+  },
+  {
+   "id": 1555502,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。通过授予单个应用权限，意外获得创建、编辑和安装自定义应用的权限，绕过权限模型。属于业务逻辑缺陷，思路清晰，可抽象为权限校验不完整。",
+   "attack_chain": "授予单个应用权限→直接调用API→创建自定义应用→提升权限。",
+   "bypass_technique": "利用权限组合漏洞，绕过权限检查。",
+   "defensive_insight": "权限模型应严格校验每个操作，避免权限提升。"
+  },
+  {
+   "id": 1069527,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，参数未过滤，常见套路，无绕过。",
+   "attack_chain": "单点：构造恶意URL，诱导用户点击。",
+   "bypass_technique": "无实质绕过，直接利用未过滤参数。",
+   "defensive_insight": "对输出进行编码。"
+  },
+  {
+   "id": 726773,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用前后端解析差异（CL.TE）实现请求走私，毒化受害者请求，反射攻击者域名，可能导致XSS。属于协议行为利用，可抽象为通用判据。",
+   "attack_chain": "构造走私请求→毒化socket→受害者请求被重定向→反射攻击者域名→XSS。",
+   "bypass_technique": "利用Transfer-Encoding和Content-Length解析差异。",
+   "defensive_insight": "统一前后端HTTP解析，拒绝畸形请求。"
+  },
+  {
+   "id": 221789,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。已知CVE，OOB读，无新意，信息量少。",
+   "attack_chain": "单点：利用已知漏洞。",
+   "bypass_technique": "无实质绕过。",
+   "defensive_insight": "升级OpenSSL。"
+  }
+ ]
+}

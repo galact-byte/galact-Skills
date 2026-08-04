@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 5,
+  "dropped": 15,
+  "avg_score": 3.5,
+  "top_n": [
+   783258,
+   43850,
+   395845,
+   505424,
+   129736
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 873584,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。Concrete5 文件搜索保存的过滤短语含 payload，编辑时触发——存储 XSS 经典，步骤完整但机制零变形。",
+   "attack_chain": "保存含 payload 的过滤→他人编辑该过滤→执行。",
+   "bypass_technique": "无绕过，直接利用未转义输出。",
+   "defensive_insight": "保存的过滤/短语输出统一编码。"
+  },
+  {
+   "id": 395845,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "框架行为利用 / 协议行为利用",
+   "reasoning": "部分。Node 旧版 url.parse 对 javAscript: 大小写不敏感地把 'alert(1);a=@whitelisted.com' 解析出 hostname=whitelisted.com——'URL 解析器的 hostname 欺骗'可绕过基于 hostname 的访问控制（javascript: 注入+XSS），反直觉点明确且可抽象为通用判据（安全判定不得依赖易骗解析器，必须 scheme 白名单）；库行为分析完整，node 命令复现。",
+   "attack_chain": "单点：javAscript:alert(1);a=@白名单域→parse 得 hostname 白名单→放行→XSS。",
+   "bypass_technique": "用 javascript: URI 的 @ 语法欺骗 url.parse 的 hostname 解析。",
+   "defensive_insight": "安全判定前先做 scheme 白名单（仅 http/https）；升级 WHATWG URL 或双解析校验。"
+  },
+  {
+   "id": 1834042,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。dochelper userId 参数反射 script——经典反射 XSS（CVE-2016-5682 相关），目标 REDACTED，机制零变形。",
+   "attack_chain": "单点：userId 注入→反射执行。",
+   "bypass_technique": "无绕过，直接利用未转义输出。",
+   "defensive_insight": "参数输出统一编码。"
+  },
+  {
+   "id": 1074136,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。页面已修复但 Google 缓存仍含军官 PII——缓存侧信道绕过修复的经典信息泄露（.mil），手段简单（dork+cached），影响真实但机制成熟。",
+   "attack_chain": "Google dork 找缓存→打开 cached 内容→读 PII。",
+   "bypass_technique": "无绕过，借搜索引擎缓存访问旧内容。",
+   "defensive_insight": "PII 下线后同步清理搜索引擎缓存与 noindex；公开内容脱敏先行。"
+  },
+  {
+   "id": 505424,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 协议行为利用",
+   "reasoning": "部分。developer.twitter.com 的 client-applications.json 对当前登录 ID 返回 app 列表、非当前 ID 返回 403——'认证状态经错误差异被跨站探测'（script onload/onerror），可确认任意用户是否当前登录/匹配某 ID，隐私侧信道反直觉且可通用（JSONP 风格加载+onerror 判定）；PoC 完整，影响是身份确认。",
+   "attack_chain": "恶意站加载 client-applications.json（script 标签）→onload/onerror 判定目标 ID 是否当前登录用户。",
+   "bypass_technique": "无绕过，利用响应差异做布尔侧信道。",
+   "defensive_insight": "跨站可加载的端点统一响应语义（不暴露认证状态差异）；敏感端点禁止 script 加载。"
+  },
+  {
+   "id": 583819,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。Periscope 的 create_user 参数注入 loginissignup cookie（含 CRLF 致 504）——cookie 注入经典，双影响（种 cookie+DoS），机制成熟。",
+   "attack_chain": "单点：create_user 注入 cookie 属性/CRLF→种任意 cookie 或触发 504。",
+   "bypass_technique": "无绕过，直接利用参数未过滤。",
+   "defensive_insight": "参数值进 Set-Cookie 前白名单；CRLF 过滤。"
+  },
+  {
+   "id": 116352,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。nginx 1.4.6 的 SPDY 已知 CVE（堆溢出）——版本指纹+已知漏洞，informative，无实际利用。",
+   "attack_chain": "单点：SPDY 畸形请求→堆溢出→RCE（理论）。",
+   "bypass_technique": "无绕过，直接利用已知 CVE。",
+   "defensive_insight": "nginx 升级；SPDY 模块评估。"
+  },
+  {
+   "id": 199436,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。Yelp 支持 3DES（SWEET32）——已知漏洞扫描复现，informative，机制零变形。",
+   "attack_chain": "单点：协商 3DES→SWEET32 攻击（理论）。",
+   "bypass_technique": "无绕过，直接利用弱套件。",
+   "defensive_insight": "禁用 64 位块密码套件。"
+  },
+  {
+   "id": 185907,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "反序列化",
+   "reasoning": "否。WP 插件骨架用 unserialize 无类限制——不安全反序列化经典（POP 链理论），无实际利用路径，代码位置明确。",
+   "attack_chain": "单点（理论）：控制 plugins 值→unserialize POP→RCE。",
+   "bypass_technique": "无绕过，直接利用未限制反序列化。",
+   "defensive_insight": "改用 json；unserialize 加 allowed_classes 限制。"
+  },
+  {
+   "id": 783258,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 业务逻辑",
+   "reasoning": "是。Localize 禁用 2FA 的 API 不校验当前密码（UI 有输入但后端忽略，直接 POST method=sms 即禁用）——'高敏操作的安全确认形同虚设'，攻击者拿到 cookie 即可禁用 2FA 再改密实现完整 ATO；非预期点在于 UI 层有密码校验但 API 层完全绕过（前后端校验不一致），可抽象为通用判据（2FA 禁用/凭据变更必须服务端强制密码确认）；复现完整。",
+   "attack_chain": "窃取 cookie→POST /api/user/two-factor/set（method=sms）→禁用 2FA→改密接管。",
+   "bypass_technique": "无绕过，直接调用未校验密码的 API 端点。",
+   "defensive_insight": "2FA 禁用等敏感操作服务端强制密码/令牌确认；API 与 UI 校验一致。"
+  },
+  {
+   "id": 129736,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "部分。GitLab 自定义 Issue Tracker 的 Project URL 无 scheme 校验，javascript: URL 在 Issues 页点击触发并拿 API token——'集成配置 URL 无 scheme 白名单'的存储 XSS，链路由配置→Issues 点击→token 泄露→ATO 完整；机制是 JS URL 注入经典，但集成配置字段的攻击面有场景价值。",
+   "attack_chain": "配置 javascript: URL 的 tracker→点击 Issues→执行→泄露 API token→ATO。",
+   "bypass_technique": "无绕过，直接利用未校验的 scheme。",
+   "defensive_insight": "集成 URL 字段强制 http(s) scheme 白名单；输出上下文编码。"
+  },
+  {
+   "id": 258198,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。Slack 自定义 emoji 页 flash message 反射——反射 XSS 经典，PoC 简短但机制零变形。",
+   "attack_chain": "单点：name 参数注入→flash 消息渲染执行。",
+   "bypass_technique": "无绕过，直接利用未转义 flash。",
+   "defensive_insight": "flash 消息统一转义。"
+  },
+  {
+   "id": 109699,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "子域名接管 / 配置错误",
+   "reasoning": "否。assets.goubiquiti.com 指向未配置 S3 可认领——S3 子域接管经典，机制零变形。",
+   "attack_chain": "单点：认领未配置 bucket→控制子域。",
+   "bypass_technique": "无绕过，直接认领。",
+   "defensive_insight": "S3 桶配置与 DNS 联动审计。"
+  },
+  {
+   "id": 83855,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。s2.owncloud.com 支持 TRACE（XST 理论）——模板化扫描报告，无实际利用链，机制成熟。",
+   "attack_chain": "单点（理论）：TRACE 回显凭据（需浏览器漏洞配合）。",
+   "bypass_technique": "无绕过，直接利用 TRACE 回显。",
+   "defensive_insight": "禁用 TRACE/TRACK 方法。"
+  },
+  {
+   "id": 299009,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。Semrush SSO 登录页可 iframe——clickjacking 经典，PoC 简单但机制零变形。",
+   "attack_chain": "单点：iframe 覆盖 SSO 页→诱导点击。",
+   "bypass_technique": "无绕过，直接利用缺失防框架头。",
+   "defensive_insight": "SSO 页强制 X-Frame-Options/CSP frame-ancestors。"
+  },
+  {
+   "id": 43850,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 信息泄露",
+   "reasoning": "是。Vimeo select_thumb 接口的 clip_id 无归属校验，换他人（含私密）视频 ID 即返回缩略图 URL，iterate time 可逐帧还原整个私密视频——'缩略图生成接口成为私密视频的泄露通道'，私密性被缩略图通道破坏，反直觉点明确；条件极简（换 ID），可抽象为通用判据（内容派生接口必须继承源内容的权限），复现完整。",
+   "attack_chain": "换 clip_id 为目标私密视频→取缩略图 URL→iterate time 逐帧还原内容。",
+   "bypass_technique": "无绕过，直接替换对象引用调缩略图接口。",
+   "defensive_insight": "缩略图/派生接口按源视频归属鉴权；私密内容所有派生视图统一权限。"
+  },
+  {
+   "id": 167895,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。phar_parse_zipfile 的 signature 大小无校验（<8 致 sig_len 溢出）——解析器长度校验缺失经典，PoC 完整但机制成熟。",
+   "attack_chain": "单点：构造小 signature 的 zip phar→越界→崩溃/破坏。",
+   "bypass_technique": "无绕过，直接利用长度缺陷。",
+   "defensive_insight": "签名长度与缓冲交叉校验；升级 PHP。"
+  },
+  {
+   "id": 15250,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "XSS",
+   "reasoning": "无法判断。仅称 lingvo.mail.ru 存在 Flash XSS + YouTube 视频，无任何技术细节。",
+   "attack_chain": "无法确认。",
+   "bypass_technique": "无法确认。",
+   "defensive_insight": "Flash 已废弃；外链白名单。"
+  },
+  {
+   "id": 148897,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。Nextcloud 聊天模块信息视图渲染全名 payload（IE）——存储 XSS 经典，步骤完整但机制零变形。",
+   "attack_chain": "全名存 payload→聊天信息视图触发。",
+   "bypass_technique": "无绕过，直接利用未转义输出。",
+   "defensive_insight": "用户展示字段统一转义。"
+  },
+  {
+   "id": 1563061,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 其他",
+   "reasoning": "部分。curl -L 跟随重定向时复用客户端证书访问攻击者指定站点（CWE-522）——'客户端证书跨主机复用'的设计限制，报告者自认使用模式较傻（需应用透传+指定场景），非预期性有限，复现完整。",
+   "attack_chain": "应用跟随重定向→客户端证书被用于攻击者指定站点→未授权访问。",
+   "bypass_technique": "无绕过，利用重定向后证书未重置。",
+   "defensive_insight": "客户端证书仅用于配置的主机；重定向跨主机/协议时禁用证书。"
+  }
+ ]
+}

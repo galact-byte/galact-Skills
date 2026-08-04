@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   212696,
+   1016966,
+   847452,
+   907311,
+   767482
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1434276,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。Django debug mode 开启导致信息泄露，是常见的配置错误，直接访问不存在的路径即可触发，无绕过、无攻击链。",
+   "attack_chain": "单点：访问不存在路径→Django debug 页面泄露配置信息。",
+   "bypass_technique": "无，直接利用配置错误。",
+   "defensive_insight": "生产环境禁用 DEBUG 模式，并确保错误页面不泄露敏感信息。"
+  },
+  {
+   "id": 786976,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS / 业务逻辑",
+   "reasoning": "部分。在注册流程的 firstName/lastName 参数注入 HTML，导致邮件内容被篡改，属于存储型 HTML 注入，但技术点常见，无绕过，攻击链简单。",
+   "attack_chain": "注册时注入 HTML→邮件内容被渲染→钓鱼攻击。",
+   "bypass_technique": "无，直接利用未过滤的用户输入。",
+   "defensive_insight": "对用户输入进行 HTML 编码，邮件内容使用纯文本或严格过滤。"
+  },
+  {
+   "id": 1016966,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用 Electron 应用对内部 URL 的信任和 MIME 类型白名单，通过控制子域名绕过正则校验，实现任意文件下载并自动执行。技术点在于对 Electron 下载逻辑的深入理解，绕过看似有效的域名校验。",
+   "attack_chain": "构造恶意链接→用户点击→绕过域名校验→下载并执行恶意文件→RCE。",
+   "bypass_technique": "控制子域名绕过内部域名正则，利用 text/calendar MIME 类型触发自动打开。",
+   "defensive_insight": "严格校验 URL 的完整域名，不要仅依赖正则；对下载文件进行安全扫描，限制自动打开的文件类型。"
+  },
+  {
+   "id": 157986,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。Sentry 错误页面泄露版本信息，且报告表单无验证可被滥用，属于配置错误和缺少速率限制，无绕过，无攻击链。",
+   "attack_chain": "访问错误页面→泄露版本信息→滥用报告表单进行 DoS。",
+   "bypass_technique": "无，直接利用配置错误。",
+   "defensive_insight": "限制错误页面的访问权限，对报告表单添加验证码和速率限制。"
+  },
+  {
+   "id": 500588,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少安全头是常见的配置问题，无实际攻击场景，无绕过，无攻击链。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "配置安全响应头，如 CSP、HSTS 等。"
+  },
+  {
+   "id": 534554,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "授权绕过",
+   "reasoning": "部分。通过直接构造 URL 访问未发布产品的图片，属于 IDOR 的一种，但技术点常见，无绕过，攻击链简单。",
+   "attack_chain": "构造 URL→访问未发布产品图片→信息泄露。",
+   "bypass_technique": "无，直接利用不安全的直接对象引用。",
+   "defensive_insight": "对资源访问进行授权检查，确保未发布内容不可被未授权访问。"
+  },
+  {
+   "id": 48422,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 状态混淆",
+   "reasoning": "部分。邀请链接被多次使用，且未失效，属于业务逻辑缺陷，但技术点不新颖，攻击链简单。",
+   "attack_chain": "获取邀请链接→多次使用→未授权成员加入团队。",
+   "bypass_technique": "无，利用邀请链接未失效的逻辑缺陷。",
+   "defensive_insight": "邀请链接应一次性使用，并在接受后立即失效。"
+  },
+  {
+   "id": 31188,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "部分。通过篡改 blobstore_path 参数，加载其他账户的受众列表，属于 IDOR，但需要猜测路径，且攻击链简单。",
+   "attack_chain": "上传文件→篡改 blobstore_path→加载其他账户数据→未授权访问。",
+   "bypass_technique": "直接修改参数值，绕过授权检查。",
+   "defensive_insight": "对 blobstore_path 进行所有权验证，确保用户只能访问自己的文件。"
+  },
+  {
+   "id": 212696,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "命令注入 / 框架行为利用",
+   "reasoning": "是。利用 escapeshellcmd 只转义特殊字符但不转义空格，导致可以注入命令行参数，进而利用 GraphicsMagick 的 -write 选项执行任意命令。技术点在于对 PHP 函数和图像处理工具特性的深入理解，绕过看似有效的过滤。",
+   "attack_chain": "注入参数→利用 -write 选项→执行任意命令→RCE。",
+   "bypass_technique": "利用空格注入额外参数，结合 GraphicsMagick 的管道写文件功能。",
+   "defensive_insight": "使用 escapeshellarg 对每个参数进行转义，避免使用 escapeshellcmd；对图像处理工具的输入进行严格验证。"
+  },
+  {
+   "id": 1641148,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "路径遍历",
+   "reasoning": "否。直接利用 path 参数读取任意文件，是典型的路径遍历，无绕过，无攻击链。",
+   "attack_chain": "构造路径→读取敏感文件。",
+   "bypass_technique": "无，直接利用未过滤的路径参数。",
+   "defensive_insight": "对路径参数进行规范化，并限制访问目录。"
+  },
+  {
+   "id": 519120,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 其他",
+   "reasoning": "部分。利用栈上动态分配数组导致栈溢出，属于资源消耗漏洞，但技术点较底层，攻击链简单。",
+   "attack_chain": "构造恶意区块→触发 tree_hash→栈溢出→节点崩溃。",
+   "bypass_technique": "无，利用代码缺陷。",
+   "defensive_insight": "避免在栈上分配动态大小的数组，使用堆分配。"
+  },
+  {
+   "id": 1665971,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型 XSS，payload 为常见 svg onload，无绕过，无攻击链。",
+   "attack_chain": "注入 payload→用户访问→执行脚本。",
+   "bypass_technique": "无，直接利用未过滤输入。",
+   "defensive_insight": "对用户输入进行输出编码，实施 CSP。"
+  },
+  {
+   "id": 441161,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。忘记密码接口无速率限制，可枚举邮箱，是常见问题，无绕过，无攻击链。",
+   "attack_chain": "枚举邮箱→根据响应差异判断存在性。",
+   "bypass_technique": "无，直接利用缺少速率限制。",
+   "defensive_insight": "添加速率限制和验证码，统一响应。"
+  },
+  {
+   "id": 907311,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "LDAP注入 / 其他",
+   "reasoning": "是。通过构造 LDAP 过滤器，导致服务器资源耗尽，属于 DoS。技术点在于对 LDAP 过滤器语法的深入理解，利用通配符和括号构造超长过滤器。",
+   "attack_chain": "构造恶意过滤器→LDAP 搜索→资源耗尽→服务不可用。",
+   "bypass_technique": "利用 LDAP 注入，构造超长过滤器。",
+   "defensive_insight": "对用户输入进行 LDAP 转义，限制过滤器长度。"
+  },
+  {
+   "id": 767482,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "代码注入 / 其他",
+   "reasoning": "是。调试控制台允许执行任意 Java 代码，导致 RCE。技术点在于对 JSP 执行环境的利用，直接写入代码。",
+   "attack_chain": "访问调试控制台→执行任意 Java 代码→读取文件→RCE。",
+   "bypass_technique": "无，直接利用调试功能。",
+   "defensive_insight": "禁用生产环境的调试控制台，实施严格的访问控制。"
+  },
+  {
+   "id": 182033,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS，payload 为常见 script 标签，无绕过，无攻击链。",
+   "attack_chain": "构造 URL→用户点击→执行脚本。",
+   "bypass_technique": "无，直接利用未过滤参数。",
+   "defensive_insight": "对输出进行编码，实施 CSP。"
+  },
+  {
+   "id": 314126,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "部分。盲 XSS 在管理后台执行，利用 CSP 的 unsafe-inline 绕过，属于存储型 XSS，但技术点较常见。",
+   "attack_chain": "提交恶意报告→管理员查看→执行脚本→窃取信息。",
+   "bypass_technique": "利用 CSP 的 unsafe-inline，通过 XMLHttpRequest 加载外部脚本。",
+   "defensive_insight": "严格 CSP，避免 unsafe-inline，对用户输入进行编码。"
+  },
+  {
+   "id": 847452,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 跨组件攻击链",
+   "reasoning": "是。通过篡改 POST 请求中的多个参数，实现 IDOR，进而添加恢复邮箱并重置密码，完成账户接管。技术点在于对业务逻辑的深入理解，绕过看似有效的授权检查。",
+   "attack_chain": "拦截请求→篡改参数→添加恢复邮箱→重置密码→账户接管。",
+   "bypass_technique": "直接修改参数值，绕过授权检查。",
+   "defensive_insight": "对关键操作进行服务端授权验证，确保用户只能修改自己的信息。"
+  },
+  {
+   "id": 275242,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。密码重置令牌未失效，是常见的业务逻辑缺陷，无绕过，无攻击链。",
+   "attack_chain": "请求多个重置链接→使用一个后其他仍有效。",
+   "bypass_technique": "无，利用令牌未失效的逻辑缺陷。",
+   "defensive_insight": "重置令牌应一次性使用，并在使用后立即失效。"
+  },
+  {
+   "id": 173251,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。邮件未使用 TLS 加密，是常见的配置问题，无绕过，无攻击链。",
+   "attack_chain": "中间人攻击→截获邮件→获取重置链接→账户接管。",
+   "bypass_technique": "无，直接利用配置错误。",
+   "defensive_insight": "确保邮件传输使用 TLS 加密。"
+  }
+ ]
+}

@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 8,
+  "dropped": 12,
+  "avg_score": 4.6,
+  "top_n": [
+   1130874,
+   26647,
+   3370,
+   1543584,
+   1327769
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 151475,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 其他",
+   "reasoning": "否。DLL 劫持是经典漏洞，利用 Downloads 目录的 DLL 搜索顺序，属于已知攻击模式。没有新的绕过或组合，只是常规利用。",
+   "attack_chain": "攻击者放置恶意 DLL 到 Downloads 目录，用户运行安装程序时 DLL 被加载执行。",
+   "bypass_technique": "无实质绕过，利用 DLL 搜索顺序。",
+   "defensive_insight": "安装程序应使用绝对路径加载 DLL，或验证 DLL 的签名。"
+  },
+  {
+   "id": 1327769,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "命令注入 / 框架行为利用",
+   "reasoning": "部分。OGNL 注入是已知漏洞，但利用方式（通过 queryString 参数）和绕过（使用 Unicode 编码）有一定技巧性。PoC 完整，但属于已知 CVE 的复现。",
+   "attack_chain": "未认证用户发送特制 POST 请求到 doenterpagevariables.action，触发 OGNL 表达式执行，实现 RCE。",
+   "bypass_technique": "使用 Unicode 编码绕过输入过滤，构造 OGNL 表达式。",
+   "defensive_insight": "升级 Confluence 到修复版本，或限制对受影响端点的访问。"
+  },
+  {
+   "id": 14303,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。Self-XSS 通常不被视为漏洞，且需要用户交互，影响有限。没有绕过或新颖之处。",
+   "attack_chain": "用户搜索特定 payload，触发自身浏览器中的 XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对搜索输入进行输出编码。"
+  },
+  {
+   "id": 513137,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。CSRF 漏洞是常见问题，报告仅列出端点，没有提供利用细节或绕过，且 substate 为 not-applicable，可能不适用。",
+   "attack_chain": "无具体攻击链。",
+   "bypass_technique": "无。",
+   "defensive_insight": "实施 CSRF 令牌。"
+  },
+  {
+   "id": 106293,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS 是常见漏洞，利用方式直接，没有绕过或新颖之处。",
+   "attack_chain": "构造恶意 URL，诱导用户点击，执行脚本。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对输出进行编码，使用 CSP。"
+  },
+  {
+   "id": 26647,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用 Google Analytics 的 cookie 注入和 Django 的 cookie 解析差异，绕过 CSRF 保护。这是跨组件攻击链，涉及浏览器、服务器和第三方服务，思路新颖。",
+   "attack_chain": "通过 Google Analytics 的 __utmz cookie 注入恶意 cookie，利用 Django 的解析差异设置 CSRF token，从而绕过 CSRF 保护。",
+   "bypass_technique": "利用 cookie 解析差异（逗号、方括号等作为分隔符）和浏览器对 cookie 属性的处理差异。",
+   "defensive_insight": "严格验证 cookie 来源，使用 SameSite 属性，对 cookie 解析进行规范化。"
+  },
+  {
+   "id": 781664,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "命令注入",
+   "reasoning": "部分。child_process.exec 未转义导致命令注入，是常见问题，但利用方式（通过文件名参数）和影响（RCE）有一定价值。PoC 完整。",
+   "attack_chain": "通过构造恶意文件名，注入命令执行。",
+   "bypass_technique": "无实质绕过，直接利用未转义。",
+   "defensive_insight": "使用 execFile 或对输入进行严格转义。"
+  },
+  {
+   "id": 9148,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS，仅影响 IE，常见漏洞，无新颖之处。",
+   "attack_chain": "构造恶意 URL，诱导用户点击，执行脚本。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对输出进行编码。"
+  },
+  {
+   "id": 745495,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 配置错误",
+   "reasoning": "是。Meteor 框架的 publications 未进行认证检查，导致未认证用户可访问敏感数据。这是框架行为利用，跨组件（前端和后端），影响大。",
+   "attack_chain": "未认证用户通过 Meteor.subscribe 调用 publications，获取用户数据。",
+   "bypass_technique": "利用 Meteor 框架的默认行为，未对 publications 进行认证。",
+   "defensive_insight": "在 publications 和 methods 中实施认证和授权检查。"
+  },
+  {
+   "id": 1799562,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS，常见漏洞，无新颖之处。",
+   "attack_chain": "构造恶意 URL，诱导用户点击，执行脚本。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对输出进行编码。"
+  },
+  {
+   "id": 1130874,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "NoSQL注入 / 跨组件攻击链",
+   "reasoning": "是。利用 MongoDB 的 $where 操作符进行盲注，泄露密码重置令牌和 2FA 密钥，进而接管管理员账户并实现 RCE。这是跨组件攻击链，涉及 API、数据库和服务器，思路新颖，利用优雅。",
+   "attack_chain": "通过 users.list API 的 query 参数注入 $where 操作符，盲注泄露敏感信息，接管管理员账户，创建 webhook 执行命令。",
+   "bypass_technique": "利用 MongoDB 的 $where 操作符进行盲注，绕过字段限制。",
+   "defensive_insight": "对 query 参数进行白名单校验，禁止使用危险操作符，限制可查询字段。"
+  },
+  {
+   "id": 3370,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 框架行为利用",
+   "reasoning": "是。利用 Rails 的 view resolver 和 Dir.glob 的转义行为，绕过 Rack::Protection::PathTraversal，实现目录遍历。这是框架行为利用，思路新颖。",
+   "attack_chain": "构造包含反斜杠的 URL，绕过路径遍历防护，读取任意文件。",
+   "bypass_technique": "使用反斜杠绕过 Rack::Protection::PathTraversal，利用 Dir.glob 的转义行为。",
+   "defensive_insight": "启用 Rack::Protection::PathTraversal，并修复 Dir.glob 的转义问题。"
+  },
+  {
+   "id": 2334446,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。CVE-2018-6389 是已知漏洞，利用 load-scripts.php 进行 DoS，属于常见套路。",
+   "attack_chain": "构造大量请求加载脚本，耗尽服务器资源。",
+   "bypass_technique": "无。",
+   "defensive_insight": "限制 load-scripts.php 的请求频率和大小。"
+  },
+  {
+   "id": 1543584,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "竞争条件 / 协议行为利用",
+   "reasoning": "是。利用正则表达式的多项式复杂度导致 CPU 耗尽，这是协议行为利用，思路新颖。",
+   "attack_chain": "构造特定描述，触发正则表达式回溯，导致 CPU 耗尽。",
+   "bypass_technique": "利用正则表达式的回溯行为。",
+   "defensive_insight": "使用 RE2 引擎或限制输入长度。"
+  },
+  {
+   "id": 302298,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "路径遍历 / 框架行为利用",
+   "reasoning": "部分。Tempfile 的 basename 未转义 ../，导致目录遍历，这是框架行为利用，但影响有限。",
+   "attack_chain": "通过构造文件名，在任意目录创建文件。",
+   "bypass_technique": "利用 Tempfile 的 basename 未转义。",
+   "defensive_insight": "对文件名进行规范化，禁止使用 ../。"
+  },
+  {
+   "id": 1398270,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "否。服务器日志泄露是配置错误，常见问题，无新颖之处。",
+   "attack_chain": "访问 /server-status 获取日志，泄露敏感信息。",
+   "bypass_technique": "无。",
+   "defensive_insight": "限制 /server-status 的访问权限。"
+  },
+  {
+   "id": 2476149,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。域名重定向到可购买域名，属于配置错误，无新颖之处。",
+   "attack_chain": "访问特定 URL 重定向到恶意域名。",
+   "bypass_technique": "无。",
+   "defensive_insight": "检查并修复重定向配置。"
+  },
+  {
+   "id": 1031437,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "路径遍历 / 配置错误",
+   "reasoning": "部分。CVE-2020-3187 是已知漏洞，但利用方式（通过 Cookie 头）和影响（任意文件删除）有一定价值。PoC 完整。",
+   "attack_chain": "通过构造 Cookie 头，利用目录遍历删除文件。",
+   "bypass_technique": "利用 Cookie 头中的目录遍历。",
+   "defensive_insight": "升级 Cisco ASA/FTD 软件。"
+  },
+  {
+   "id": 364964,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。CVE-2018-0732 是已知漏洞，利用大 DH 参数进行 DoS，属于常见套路。",
+   "attack_chain": "恶意服务器发送大素数，导致客户端挂起。",
+   "bypass_technique": "无。",
+   "defensive_insight": "升级 OpenSSL。"
+  },
+  {
+   "id": 7680,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。Cookie 缺少 Secure 标志是常见配置问题，无新颖之处。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "设置 Secure 标志。"
+  }
+ ]
+}

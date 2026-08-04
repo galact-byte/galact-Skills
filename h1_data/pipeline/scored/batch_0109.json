@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1730660,
+   1043480,
+   1849626,
+   1066504,
+   498845
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 217083,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "类型混淆 / 框架行为利用",
+   "reasoning": "部分。通过定义 method_missing 和 to_str 方法，使 Integer() 在转换时触发类型混淆，导致空指针解引用。利用了 Ruby 动态方法的反直觉行为，但本质是经典的类型混淆漏洞，思路有借鉴意义但不算新颖。PoC 完整，可复现性高。",
+   "attack_chain": "定义 method_missing 和 to_str → 调用 Integer(ÿ,2) → 触发 mrb_str_to_inum 空指针解引用 → 崩溃。",
+   "bypass_technique": "利用 method_missing 和 to_str 的隐式转换，使对象被错误地当作字符串处理。",
+   "defensive_insight": "在类型转换前严格检查对象类型，避免对非字符串对象调用字符串操作。"
+  },
+  {
+   "id": 1043480,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 竞争条件",
+   "reasoning": "是。GitLab 的下载链接在管理员点击后短暂时间内对未授权用户开放，利用时间窗口和自动化脚本实现未授权下载。这种'点击后短暂开放'的行为是反直觉的，且可被自动化利用，形成实际攻击链。",
+   "attack_chain": "构造下载链接 → 管理员点击 → 链接短暂公开 → 攻击者自动化刷新捕获 → 下载文件。",
+   "bypass_technique": "利用授权检查的时间窗口，通过自动化脚本持续请求，在管理员点击后立即获取访问权限。",
+   "defensive_insight": "下载链接应使用一次性签名或短期有效的临时凭证，并确保授权检查在每次请求时都强制执行。"
+  },
+  {
+   "id": 112855,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "类型混淆",
+   "reasoning": "否。报告仅指向外部链接，未提供具体细节，但类型混淆导致 EIP 控制是已知漏洞类型，无新颖绕过。信息不足，无法判断具体技术点。",
+   "attack_chain": "未知。",
+   "bypass_technique": "未知。",
+   "defensive_insight": "未知。"
+  },
+  {
+   "id": 1849626,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 竞争条件",
+   "reasoning": "是。Stripe 的 fee discount 接受接口未做幂等处理，重复调用可无限次兑换折扣，导致巨额损失。这利用了业务逻辑中'一次性操作'的假设，但接口未验证是否已使用，是典型的业务逻辑漏洞，且影响严重。",
+   "attack_chain": "获取有效 fdo_ ID → 重复调用 accept_fee_discount_offer → 无限次应用折扣。",
+   "bypass_technique": "直接重复请求，无需复杂绕过，利用缺少幂等性。",
+   "defensive_insight": "所有涉及金额或权益的操作必须实现幂等性，并限制调用次数。"
+  },
+  {
+   "id": 1168104,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。弱密码导致管理员账户被猜解，是常见的配置错误，无技术含量。",
+   "attack_chain": "猜测用户名和密码 → 登录管理员账户。",
+   "bypass_technique": "无，直接利用弱口令。",
+   "defensive_insight": "强制强密码策略，并实施账户锁定机制。"
+  },
+  {
+   "id": 1066504,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 其他",
+   "reasoning": "是。这是一个 CTF 挑战的完整 writeup，展示了多种漏洞的组合利用，包括信息泄露、IDOR、SSTI、SQLi、DNS rebinding 等，攻击链完整且跨多个组件。虽然每个漏洞单独看是常见类型，但组合起来展示了攻击者的思维过程，具有启发性。",
+   "attack_chain": "从 robots.txt 开始，逐步利用多个漏洞获取 flag，最终通过 DNS rebinding 实现 SSRF。",
+   "bypass_technique": "多种技术，包括 base64 解码、模板注入、二次注入、DNS rebinding 等。",
+   "defensive_insight": "加强输入验证、授权检查、安全配置，并定期进行安全测试。"
+  },
+  {
+   "id": 190133,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "类型混淆 / 框架行为利用",
+   "reasoning": "部分。向 values_at 传递非 Fixnum 值导致段错误，原因是 mrb_range_ptr 未检查类型就解引用。这是类型混淆的又一实例，但思路类似，启发性一般。PoC 简单，可复现。",
+   "attack_chain": "调用 values_at(true) → 传递非预期类型 → 空指针解引用 → 崩溃。",
+   "bypass_technique": "利用类型检查缺失，传递原始类型值。",
+   "defensive_insight": "在解引用前检查对象类型，确保类型安全。"
+  },
+  {
+   "id": 365853,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "子域名接管",
+   "reasoning": "部分。子域名接管是常见漏洞，但报告展示了完整的利用过程，包括在 Heroku 上认领域名并上传 PoC，影响明确。虽然技术不新颖，但报告清晰，可复现。",
+   "attack_chain": "发现 CNAME 指向未认领的 Heroku 服务 → 在 Heroku 认领域名 → 控制子域名。",
+   "bypass_technique": "利用未认领的云服务，直接接管。",
+   "defensive_insight": "定期检查 DNS 记录，确保所有子域名指向有效服务。"
+  },
+  {
+   "id": 117325,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。DMARC 记录配置错误是常见的配置问题，无技术含量。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "正确配置 DMARC 记录。"
+  },
+  {
+   "id": 434670,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。文本注入是低危漏洞，且报告未提供详细利用，无启发性。",
+   "attack_chain": "构造 URL 参数 → 页面显示注入内容。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对输出进行编码。"
+  },
+  {
+   "id": 311380,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。通过猜测 ID 查看未发布内容，是典型的 IDOR，常见套路。",
+   "attack_chain": "猜测 ID → 访问未发布内容。",
+   "bypass_technique": "无，直接利用 ID 可预测。",
+   "defensive_insight": "实施访问控制，使用不可预测的 ID。"
+  },
+  {
+   "id": 206227,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。未及时更新软件导致已知漏洞被利用，是常见的配置错误。",
+   "attack_chain": "利用已知漏洞 → 执行代码。",
+   "bypass_technique": "无，直接利用未修补的漏洞。",
+   "defensive_insight": "及时更新软件，定期进行漏洞扫描。"
+  },
+  {
+   "id": 1730660,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 认证绕过",
+   "reasoning": "是。利用 IDN 字符（如 '。'）在 Nameprep 转换后变成 '.'，导致 HSTS 检查被绕过。这是对协议行为的巧妙利用，反直觉且可通用化。PoC 清晰，可复现。",
+   "attack_chain": "构造包含 IDN 字符的域名 → 绕过 HSTS 检查 → 明文传输。",
+   "bypass_technique": "利用 IDN 转换规则，将 '。' 转换为 '.'，使域名在 HSTS 检查时被忽略。",
+   "defensive_insight": "在 HSTS 检查前进行 IDN 规范化，并确保所有字符都经过严格验证。"
+  },
+  {
+   "id": 13313,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS，通过 URL 参数注入，常见套路。",
+   "attack_chain": "构造恶意 URL → 服务器反射 → 执行脚本。",
+   "bypass_technique": "无，直接注入。",
+   "defensive_insight": "对输出进行编码，实施 CSP。"
+  },
+  {
+   "id": 498845,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 跨组件攻击链",
+   "reasoning": "是。由于两个系统的主键不一致，导致数据迁移错误，将员工 payout preference 分配给非员工。这是跨组件数据同步的经典问题，展示了系统集成时的潜在风险。报告详细，根因分析清晰。",
+   "attack_chain": "数据迁移使用错误 ID → 错误分配 payout preference → 信息泄露。",
+   "bypass_technique": "无，利用系统间 ID 不一致。",
+   "defensive_insight": "确保跨系统数据同步时使用正确的关联键，并加强代码审查。"
+  },
+  {
+   "id": 896338,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 其他",
+   "reasoning": "部分。DLL 预加载攻击利用了 Windows 的 DLL 搜索顺序，通过将恶意 DLL 放入 PATH 目录实现代码执行。这是已知的攻击技术，但报告展示了具体应用，且 PoC 完整。",
+   "attack_chain": "放置恶意 DLL 到 PATH → 运行程序 → 加载恶意 DLL → 执行代码。",
+   "bypass_technique": "利用 DLL 搜索顺序，将恶意 DLL 放在可写目录。",
+   "defensive_insight": "使用绝对路径加载 DLL，或启用 SafeDllSearchMode。"
+  },
+  {
+   "id": 289823,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 其他",
+   "reasoning": "部分。在笔记中注入 HTML 表单，实现钓鱼攻击。这是对标记清理不严的利用，但技术不新颖。PoC 完整，展示了实际攻击场景。",
+   "attack_chain": "注入 HTML 表单 → 用户填写 → 数据发送到第三方。",
+   "bypass_technique": "利用未过滤的 HTML 标签。",
+   "defensive_insight": "对用户输入进行严格的 HTML 过滤，实施 CSP。"
+  },
+  {
+   "id": 1067276,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 配置错误",
+   "reasoning": "部分。公开 API 端点未验证参数，允许任意发送邮件，且通过 SPF/DKIM 验证。这是对信任客户端逻辑的利用，但技术不复杂。报告清晰，影响明确。",
+   "attack_chain": "构造 PUT 请求 → 发送任意邮件 → 通过 SPF/DKIM。",
+   "bypass_technique": "直接调用未验证的 API。",
+   "defensive_insight": "服务端验证所有参数，不信任客户端输入。"
+  },
+  {
+   "id": 113332,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。开放重定向是常见漏洞，无技术含量。",
+   "attack_chain": "构造 URL → 重定向到恶意站点。",
+   "bypass_technique": "无。",
+   "defensive_insight": "验证重定向 URL 的合法性。"
+  },
+  {
+   "id": 138270,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "信息泄露 / 跨组件攻击链",
+   "reasoning": "是。OAuth2 实现将 Access Token 暴露给前端，且通过 JSONP 回调实现 XSSI，导致 token 泄露。这是设计缺陷与 XSSI 的组合，展示了 OAuth 实现的常见错误。",
+   "attack_chain": "用户连接 Instagram → 页面泄露 token → 攻击者通过 JSONP 获取。",
+   "bypass_technique": "利用 JSONP 回调，跨域读取敏感数据。",
+   "defensive_insight": "不要在客户端暴露 Access Token，使用代理或后端处理。"
+  }
+ ]
+}

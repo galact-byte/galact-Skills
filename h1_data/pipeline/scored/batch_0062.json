@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 10,
+  "dropped": 10,
+  "avg_score": 5.1,
+  "top_n": [
+   423218,
+   1481207,
+   544928,
+   288950,
+   1114347
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1913263,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，注入点在URL参数，无绕过，无攻击链，PoC不完整（IP被屏蔽未验证），属于常见套路。",
+   "attack_chain": "单点：URL参数注入→反射执行。",
+   "bypass_technique": "无实质绕过，直接注入。",
+   "defensive_insight": "对输出进行编码，使用CSP。"
+  },
+  {
+   "id": 2221,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。CSS源码映射泄露文件路径，属于配置错误，无绕过，无攻击链，常见。",
+   "attack_chain": "单点：CSS文件→grep提取路径。",
+   "bypass_technique": "无。",
+   "defensive_insight": "构建时移除sourcemap，或限制访问。"
+  },
+  {
+   "id": 146314,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "配置错误",
+   "reasoning": "否。报告为建议性，无漏洞证明，信息不足。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "限制目录列表。"
+  },
+  {
+   "id": 246055,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑",
+   "reasoning": "部分。利用已有文件名覆盖日历链接，导致日历不可见，属于业务逻辑缺陷，思路略有新意，但影响有限。",
+   "attack_chain": "设置用户名为已有文件名→日历链接被覆盖。",
+   "bypass_technique": "利用文件名冲突。",
+   "defensive_insight": "校验用户名唯一性，避免与系统路径冲突。"
+  },
+  {
+   "id": 423218,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "是。利用postMessage信任已通过origin校验的发送方，但未验证消息内容，恶意商店可注入任意HTML标签导致DOM XSS。绕过现代防御（origin校验），跨组件（商店与checkout域），可抽象为通用判断条件。",
+   "attack_chain": "恶意商店→iframe加载checkout页面→postMessage发送恶意payload→执行XSS。",
+   "bypass_technique": "利用postMessage的origin校验后信任所有消息，注入HTML标签。",
+   "defensive_insight": "对postMessage消息内容进行严格校验，不信任任何来源。"
+  },
+  {
+   "id": 544928,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "命令注入 / 跨组件攻击链",
+   "reasoning": "是。利用本地服务未授权API执行命令，提权至SYSTEM，且可与SSRF组合实现远程RCE。利用系统服务配置缺陷，跨组件（本地服务与用户权限）。",
+   "attack_chain": "本地用户→访问localhost:7440→调用launchprocess→以SYSTEM执行命令。",
+   "bypass_technique": "利用未授权API和SYSTEM权限。",
+   "defensive_insight": "限制本地服务访问权限，使用最小权限运行服务。"
+  },
+  {
+   "id": 1481207,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "是。利用Markdown渲染中的HTML注入，通过base标签重写相对URL，加载恶意脚本绕过CSP。绕过现代防御（CSP），利用框架行为（base标签），可抽象为通用判断条件。",
+   "attack_chain": "注入HTML→插入base标签→重写相对URL→加载恶意脚本→绕过CSP执行XSS。",
+   "bypass_technique": "利用base标签改变相对URL解析，配合CSP nonce加载恶意脚本。",
+   "defensive_insight": "过滤base标签，或使用绝对URL，加强CSP。"
+  },
+  {
+   "id": 34725,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型XSS，注入点在注册字段，无绕过，无攻击链，常见。",
+   "attack_chain": "注册时注入→存储→触发。",
+   "bypass_technique": "无。",
+   "defensive_insight": "输入过滤和输出编码。"
+  },
+  {
+   "id": 909757,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "其他",
+   "reasoning": "部分。利用正则表达式缺陷导致ReDoS，属于框架行为利用，但无绕过，单点。",
+   "attack_chain": "构造特定输入→触发正则回溯→DoS。",
+   "bypass_technique": "利用正则表达式缺陷。",
+   "defensive_insight": "使用安全正则库，限制输入长度。"
+  },
+  {
+   "id": 65808,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "CSRF / XSS",
+   "reasoning": "部分。CSRF配合存储XSS，形成攻击链，但技术点常见。",
+   "attack_chain": "CSRF创建恶意操作→存储XSS→管理员触发。",
+   "bypass_technique": "利用CSRF和XSS组合。",
+   "defensive_insight": "添加CSRF token，输出编码。"
+  },
+  {
+   "id": 288950,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "SSRF / 协议行为利用",
+   "reasoning": "是。利用0.0.0.0绕过SSRF防护，属于协议行为利用，可通用化。",
+   "attack_chain": "构造0.0.0.0地址→绕过过滤→访问内部服务。",
+   "bypass_technique": "利用0.0.0.0未被过滤。",
+   "defensive_insight": "完善IP黑名单，包括0.0.0.0。"
+  },
+  {
+   "id": 260662,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少长度限制，属于配置错误，无绕过，无攻击链。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "添加输入长度限制。"
+  },
+  {
+   "id": 457829,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。SPF记录配置不当，属于配置错误，无绕过，无攻击链。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "正确配置SPF。"
+  },
+  {
+   "id": 223333,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。CSRF重置API密钥，常见套路，无绕过。",
+   "attack_chain": "单点：CSRF请求→重置密钥。",
+   "bypass_technique": "无。",
+   "defensive_insight": "使用POST和CSRF token。"
+  },
+  {
+   "id": 962013,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "命令注入",
+   "reasoning": "否。利用已知CVE，无新意，无绕过。",
+   "attack_chain": "单点：利用CVE-2019-0193→RCE。",
+   "bypass_technique": "无。",
+   "defensive_insight": "升级版本，启用认证。"
+  },
+  {
+   "id": 1114347,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 状态混淆",
+   "reasoning": "是。邮箱变更后旧验证链接未失效，导致账户接管。利用状态混淆，可通用化。",
+   "attack_chain": "更改邮箱→旧链接未失效→攻击者验证→接管。",
+   "bypass_technique": "利用旧token未失效。",
+   "defensive_insight": "状态变更时使旧token失效。"
+  },
+  {
+   "id": 307672,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑",
+   "reasoning": "部分。正则表达式错误导致域名校验绕过，属于框架行为利用，但影响有限。",
+   "attack_chain": "构造恶意域名→绕过校验→弹出消息窗口。",
+   "bypass_technique": "利用正则表达式缺陷。",
+   "defensive_insight": "正确转义正则表达式。"
+  },
+  {
+   "id": 504509,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "开放重定向",
+   "reasoning": "否。开放重定向绕过，常见套路，无详细信息。",
+   "attack_chain": "单点：绕过过滤→重定向。",
+   "bypass_technique": "未知。",
+   "defensive_insight": "严格校验重定向URL。"
+  },
+  {
+   "id": 265161,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告为404错误，非安全漏洞，信息不足。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "无。"
+  },
+  {
+   "id": 128088,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。S3桶可写，属于配置错误，无绕过，无攻击链。",
+   "attack_chain": "单点：写入S3桶。",
+   "bypass_technique": "无。",
+   "defensive_insight": "正确配置S3权限。"
+  }
+ ]
+}

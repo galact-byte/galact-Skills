@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   458842,
+   800231,
+   419896,
+   2298922,
+   403783
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 151305,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，直接注入script标签，无绕过，无链，成熟套路。",
+   "attack_chain": "单点：URL参数注入→反射执行。",
+   "bypass_technique": "无，直接注入。",
+   "defensive_insight": "输出编码，CSP。"
+  },
+  {
+   "id": 458842,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用文件扩展名检查只检查路径中是否包含子串而非结尾，通过构造路径中间插入.HL1绕过，实现任意文件写入。进一步通过游戏内命令组合，将恶意DLL加载到内存，形成远程代码执行链。区别于普通文件上传绕过：跨组件（服务器→客户端），且可抽象为通用判断条件。",
+   "attack_chain": "恶意服务器→下载.sav→控制台命令设置目录→load解压→DLL加载→RCE。",
+   "bypass_technique": "路径中间插入.HL1绕过扩展名检查；利用游戏命令链加载DLL。",
+   "defensive_insight": "严格校验文件扩展名结尾；限制控制台命令执行；沙箱化游戏进程。"
+  },
+  {
+   "id": 800231,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 跨组件攻击链",
+   "reasoning": "是。ActiveResource未对资源标识符编码，导致GraphQL node接口可注入参数，将REST请求从单对象查询变为列表过滤，结合时序侧信道泄露信息。利用框架反直觉行为，跨GraphQL→REST组件，可通用化。",
+   "attack_chain": "GraphQL node注入→REST参数注入→时序侧信道→信息泄露。",
+   "bypass_technique": "URL编码注入查询参数，利用尾随&忽略.json。",
+   "defensive_insight": "对资源标识符进行严格编码和类型校验；后端接口限制参数。"
+  },
+  {
+   "id": 419896,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "类型混淆 / 认证绕过",
+   "reasoning": "是。利用数组包含null字节绕过present?检查，导致find_by执行IS NULL查询，加载任意未认证用户的草稿。类型混淆（数组vs字符串）导致逻辑绕过，优雅且可复用。",
+   "attack_chain": "构造数组null字节→绕过present?→IS NULL查询→加载他人草稿→上传附件。",
+   "bypass_technique": "数组+null字节绕过present?，触发IS NULL查询。",
+   "defensive_insight": "严格类型检查，禁止数组参数；对tracer进行格式验证。"
+  },
+  {
+   "id": 403783,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 类型混淆",
+   "reasoning": "是。通过设置小数数量（0.1）导致总价计算错误，以极低价格下单。利用服务端未验证数量为整数，业务逻辑缺陷，思路简单但影响直接。",
+   "attack_chain": "修改数量为小数→价格计算错误→低价下单。",
+   "bypass_technique": "小数数量绕过价格计算。",
+   "defensive_insight": "服务端严格验证数量为整数且大于0；价格由服务端计算。"
+  },
+  {
+   "id": 154275,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 其他",
+   "reasoning": "部分。CRLF注入设置Cookie，经典但可组合其他攻击，PoC完整。",
+   "attack_chain": "CRLF注入→设置Cookie→会话固定或XSS。",
+   "bypass_technique": "URL编码%0d注入头。",
+   "defensive_insight": "过滤CRLF，使用安全头。"
+  },
+  {
+   "id": 202499,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "授权绕过",
+   "reasoning": "否。仅前端隐藏发送按钮，后端未校验权限，直接POST即可，常见逻辑缺陷。",
+   "attack_chain": "直接POST消息→绕过查看权限。",
+   "bypass_technique": "直接构造请求。",
+   "defensive_insight": "后端强制权限校验。"
+  },
+  {
+   "id": 1129649,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 授权绕过",
+   "reasoning": "部分。通过GraphQL错误消息差异枚举私有项目ID，思路巧妙但影响有限，且需要未来配合。",
+   "attack_chain": "GraphQL查询→错误消息差异→枚举ID。",
+   "bypass_technique": "利用错误消息差异。",
+   "defensive_insight": "统一错误消息，加强授权检查。"
+  },
+  {
+   "id": 1293377,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "竞争条件 / 业务逻辑",
+   "reasoning": "部分。利用竞争条件绕过邮件发送限制，造成邮件轰炸，经典TOCTOU，但需要Turbo Intruder等工具，条件可控。",
+   "attack_chain": "并发请求→绕过检查→发送多封邮件。",
+   "bypass_technique": "并发请求绕过状态检查。",
+   "defensive_insight": "原子操作，加锁或幂等。"
+  },
+  {
+   "id": 124976,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。HTTPS证书配置错误，直接利用，无绕过无链。",
+   "attack_chain": "访问子域→证书警告→中间人。",
+   "bypass_technique": "无。",
+   "defensive_insight": "正确配置证书。"
+  },
+  {
+   "id": 246838,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "配置错误",
+   "reasoning": "否。描述模糊，仅说刷新绕过限速，无具体细节，无法判断真实性。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "实施有效的限速。"
+  },
+  {
+   "id": 364843,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 类型混淆",
+   "reasoning": "部分。通过负数量减少总价，业务逻辑缺陷，但类似报告较多，思路不新颖。",
+   "attack_chain": "添加负数量商品→总价降低。",
+   "bypass_technique": "负数量。",
+   "defensive_insight": "服务端验证数量为正整数。"
+  },
+  {
+   "id": 1073514,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。已知CVE的XSS，直接利用，无新意。",
+   "attack_chain": "单点：搜索参数→XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "升级mdBook。"
+  },
+  {
+   "id": 13195,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。XSS在参数名中，且需要有效凭据，条件苛刻，但注入点独特。",
+   "attack_chain": "登录请求→参数名注入→反射XSS。",
+   "bypass_technique": "参数名注入。",
+   "defensive_insight": "对所有参数名和值进行编码。"
+  },
+  {
+   "id": 2298922,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 认证绕过",
+   "reasoning": "是。利用TLS会话重用跳过OCSP验证，即使证书已吊销也通过。利用协议行为，优雅且通用。",
+   "attack_chain": "首次请求失败→会话重用→第二次请求绕过验证。",
+   "bypass_technique": "TLS会话重用跳过OCSP。",
+   "defensive_insight": "修复curl，确保每次验证OCSP。"
+  },
+  {
+   "id": 115702,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "内存破坏 / 其他",
+   "reasoning": "部分。零长度字符串导致越界读，经典边界条件，但需要特定环境。",
+   "attack_chain": "构造零长度域名→OOB读→崩溃。",
+   "bypass_technique": "零长度字符串。",
+   "defensive_insight": "检查长度。"
+  },
+  {
+   "id": 1451394,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。POST反射XSS，直接注入，无绕过。",
+   "attack_chain": "单点：POST参数→XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "输出编码。"
+  },
+  {
+   "id": 374100,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射XSS，仅IE触发，无新意。",
+   "attack_chain": "单点：POST参数→XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "输出编码。"
+  },
+  {
+   "id": 1555021,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "路径遍历",
+   "reasoning": "否。已知CVE，直接利用，无新意。",
+   "attack_chain": "单点：URL路径遍历→文件读取。",
+   "bypass_technique": "无。",
+   "defensive_insight": "升级固件。"
+  },
+  {
+   "id": 123615,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 跨组件攻击链",
+   "reasoning": "部分。引用附件ID导致原附件被删除，跨报告操作，逻辑缺陷，但影响有限。",
+   "attack_chain": "新报告引用旧附件ID→删除原附件。",
+   "bypass_technique": "引用ID。",
+   "defensive_insight": "校验附件所有权。"
+  }
+ ]
+}

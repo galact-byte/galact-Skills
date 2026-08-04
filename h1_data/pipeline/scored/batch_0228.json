@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1063627,
+   174983,
+   1257767,
+   1350755,
+   243594
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 243594,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 状态混淆",
+   "reasoning": "是。密码重置链接本应一次性使用，但通过重复请求重置流程，可以多次使用同一链接重置密码。这利用了服务端对重置令牌状态管理的缺陷，属于业务逻辑漏洞中的状态混淆。技术点在于重置链接的失效机制未正确实现，导致令牌在首次使用后仍有效。",
+   "attack_chain": "请求密码重置→点击链接设置新密码→再次请求重置→直接进入重置表单→再次设置密码→重复操作。",
+   "bypass_technique": "利用重置链接的重复使用，通过再次发起重置请求绕过一次性限制。",
+   "defensive_insight": "确保密码重置令牌在首次使用后立即失效，并在服务端验证令牌状态。"
+  },
+  {
+   "id": 114198,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 配置错误",
+   "reasoning": "是。通过CRLF注入在响应头中注入Set-Cookie，可覆盖CSRF令牌，绕过Django的CSRF保护。技术点在于未过滤的换行符导致响应头注入，属于协议行为利用。",
+   "attack_chain": "构造恶意URL→触发CRLF注入→注入Set-Cookie→覆盖CSRF令牌→绕过CSRF保护。",
+   "bypass_technique": "利用URL中的%0a注入CRLF，在响应头中注入Set-Cookie。",
+   "defensive_insight": "过滤用户输入中的CRLF字符，并正确设置HttpOnly和Secure标志。"
+  },
+  {
+   "id": 1126433,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型XSS，payload为经典onmouseover，无绕过，无攻击链，属于常见套路。",
+   "attack_chain": "单点：模块名输入→存储→触发。",
+   "bypass_technique": "无实质绕过，直接利用未过滤输入。",
+   "defensive_insight": "对用户输入进行HTML编码，并实施内容安全策略。"
+  },
+  {
+   "id": 1350755,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 框架行为利用",
+   "reasoning": "是。通过将401错误页面内容粘贴到令牌字段，绕过登录，获得匿名用户权限。这利用了Kubernetes Dashboard对错误处理的缺陷，属于框架行为利用。技术点在于错误信息被当作有效令牌处理，导致认证绕过。",
+   "attack_chain": "输入无效令牌→获取401错误→复制错误内容→粘贴到令牌字段→以匿名用户身份登录。",
+   "bypass_technique": "利用401错误页面内容作为有效令牌，绕过认证。",
+   "defensive_insight": "确保认证机制严格验证令牌格式，并正确处理错误响应。"
+  },
+  {
+   "id": 914232,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。经典CSRF，通过表单自动提交，无绕过，无攻击链，属于常见套路。",
+   "attack_chain": "单点：构造表单→诱导点击→提交评论。",
+   "bypass_technique": "无实质绕过，直接利用GET/POST请求。",
+   "defensive_insight": "使用CSRF令牌，并验证请求来源。"
+  },
+  {
+   "id": 223350,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。TLS 1.0支持，BEAST攻击，属于已知配置问题，无绕过，无攻击链。",
+   "attack_chain": "单点：扫描发现TLS 1.0→利用BEAST。",
+   "bypass_technique": "无实质绕过，直接利用弱协议。",
+   "defensive_insight": "禁用TLS 1.0，配置强加密套件。"
+  },
+  {
+   "id": 1063627,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用Transfer-Encoding头中的制表符（tab）而非空格，造成前后端解析分歧，实现请求走私。技术点在于HTTP解析器对空白字符的差异处理，属于协议行为利用。",
+   "attack_chain": "构造走私请求→毒化后端socket→重定向用户到恶意域名→窃取数据。",
+   "bypass_technique": "使用`Transfer-Encoding\t:\tchunked`（制表符）绕过前端检测。",
+   "defensive_insight": "统一前后端HTTP解析，拒绝畸形Transfer-Encoding头。"
+  },
+  {
+   "id": 593911,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "路径遍历 / 配置错误",
+   "reasoning": "部分。通过符号链接读取任意文件，属于路径遍历的变体，但利用的是服务器未禁用symlink跟随，属于配置错误。",
+   "attack_chain": "创建symlink→请求symlink→读取任意文件。",
+   "bypass_technique": "利用symlink绕过路径限制。",
+   "defensive_insight": "禁用symlink跟随，或限制静态文件目录。"
+  },
+  {
+   "id": 231267,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。配置文件暴露，属于常见信息泄露，无绕过，无攻击链。",
+   "attack_chain": "单点：访问配置文件→获取敏感信息。",
+   "bypass_technique": "无实质绕过，直接访问公开文件。",
+   "defensive_insight": "禁止生产环境暴露配置文件。"
+  },
+  {
+   "id": 1539426,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。通过修改响应中的status字段从false改为true，绕过密码重置验证，进而访问管理面板。技术点在于客户端信任服务端响应，属于业务逻辑漏洞。",
+   "attack_chain": "发送重置请求→拦截响应→修改status为true→访问重置页面→进入管理面板。",
+   "bypass_technique": "篡改响应中的布尔值，绕过验证。",
+   "defensive_insight": "服务端应独立验证状态，不信任客户端响应。"
+  },
+  {
+   "id": 1379707,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "资源消耗 / 其他",
+   "reasoning": "部分。通过传递大量参数导致节点崩溃，属于资源消耗漏洞，但利用方式简单，无绕过。",
+   "attack_chain": "构造大量参数→调用RPC→节点资源耗尽→崩溃。",
+   "bypass_technique": "无实质绕过，直接利用未限制的参数数量。",
+   "defensive_insight": "限制RPC调用参数大小和数量。"
+  },
+  {
+   "id": 416474,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "子域名接管",
+   "reasoning": "否。经典子域名接管，通过CNAME指向未注册服务，无绕过，无攻击链。",
+   "attack_chain": "单点：发现CNAME→注册服务→接管。",
+   "bypass_technique": "无实质绕过，直接利用DNS配置错误。",
+   "defensive_insight": "定期检查DNS记录，删除未使用的CNAME。"
+  },
+  {
+   "id": 1257767,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "HTML注入 / 跨组件攻击链",
+   "reasoning": "是。通过HTML注入在发票备注字段中嵌入恶意表单，利用浏览器自动填充功能窃取凭据。技术点在于结合自动填充和HTML注入，形成跨组件攻击链。",
+   "attack_chain": "注入HTML表单→受害者打开发票→浏览器自动填充→点击按钮→凭据发送到攻击者。",
+   "bypass_technique": "利用CSS隐藏输入字段，诱导点击。",
+   "defensive_insight": "对用户输入进行HTML编码，并禁用自动填充敏感字段。"
+  },
+  {
+   "id": 178057,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "SQL注入",
+   "reasoning": "部分。Oracle SQL注入，利用OWA_UTIL函数，属于常见套路，但PoC完整。",
+   "attack_chain": "构造恶意URL→注入SQL→获取数据。",
+   "bypass_technique": "利用OWA_UTIL.CELLSPRINT函数执行SQL。",
+   "defensive_insight": "使用参数化查询，限制数据库权限。"
+  },
+  {
+   "id": 323735,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。TLS 1.0支持，属于已知配置问题，无绕过，无攻击链。",
+   "attack_chain": "单点：扫描发现TLS 1.0→利用BEAST。",
+   "bypass_technique": "无实质绕过，直接利用弱协议。",
+   "defensive_insight": "禁用TLS 1.0，配置强加密套件。"
+  },
+  {
+   "id": 449818,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "资源消耗 / 其他",
+   "reasoning": "否。重复参数导致504，可能为DoS，但无绕过，无攻击链，且影响有限。",
+   "attack_chain": "单点：构造重复参数→服务器超时。",
+   "bypass_technique": "无实质绕过，直接利用参数重复。",
+   "defensive_insight": "限制参数数量，优化错误处理。"
+  },
+  {
+   "id": 1264834,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，通过文件名注入，无绕过，无攻击链，属于常见套路。",
+   "attack_chain": "单点：上传恶意文件名→触发XSS。",
+   "bypass_technique": "无实质绕过，直接利用未过滤文件名。",
+   "defensive_insight": "对文件名进行编码，并限制上传类型。"
+  },
+  {
+   "id": 174983,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "配置错误 / 跨组件攻击链",
+   "reasoning": "是。利用CNAME继承MX记录的特性，将未认领的子域添加到Mailgun，从而接收postmaster邮件。技术点在于DNS CNAME的继承行为，属于协议行为利用。",
+   "attack_chain": "发现CNAME→添加域名到Mailgun→创建postmaster列表→接收邮件→可能用于证书签发。",
+   "bypass_technique": "利用CNAME继承MX记录，认领未配置的域名。",
+   "defensive_insight": "确保所有指向Mailgun的域名都已认领，并定期检查DNS记录。"
+  },
+  {
+   "id": 2926,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型XSS，通过highlight words注入，无绕过，无攻击链，属于常见套路。",
+   "attack_chain": "单点：输入payload→存储→触发。",
+   "bypass_technique": "无实质绕过，直接利用未过滤输入。",
+   "defensive_insight": "对用户输入进行HTML编码，并实施内容安全策略。"
+  },
+  {
+   "id": 217555,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。经典CSRF，通过GET请求取消订阅，无绕过，无攻击链，属于常见套路。",
+   "attack_chain": "单点：构造图片标签→触发GET→取消订阅。",
+   "bypass_technique": "无实质绕过，直接利用GET请求。",
+   "defensive_insight": "使用POST请求和CSRF令牌。"
+  }
+ ]
+}

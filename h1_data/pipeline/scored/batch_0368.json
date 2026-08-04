@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   153776,
+   1630336,
+   684070,
+   409850,
+   1588732
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 684070,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "配置错误 / 认证绕过",
+   "reasoning": "是。暴露的 Cisco TelePresence 设备使用默认凭据，直接获得完全控制权，可添加启动脚本实现 RCE。虽然属于常见配置错误，但影响大且利用简单，具有高现实威胁。",
+   "attack_chain": "发现暴露设备→使用默认凭据登录→获得管理员权限→添加启动脚本→RCE。",
+   "bypass_technique": "利用默认凭据绕过认证。",
+   "defensive_insight": "禁用默认凭据，强制首次登录修改密码，并限制设备管理接口的暴露。"
+  },
+  {
+   "id": 153776,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "内存破坏 / 跨组件攻击链",
+   "reasoning": "是。通过 GD 库的透明色处理缺陷，实现任意空写和内存泄漏，进而控制 EIP 并执行任意代码。利用 PHP 的 GD 库内部机制，绕过常规防护，攻击链完整且可复现。",
+   "attack_chain": "构造恶意图片→触发透明色负值→任意空写/内存泄漏→控制EIP→ROP链→执行shellcode。",
+   "bypass_technique": "利用GD库对透明色索引的未检查负值，实现越界读写。",
+   "defensive_insight": "修复GD库对透明色索引的边界检查，更新PHP版本。"
+  },
+  {
+   "id": 462441,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。Android 应用将媒体存储在共享存储，导致其他应用可访问和修改，属于常见存储配置问题，无特殊绕过或攻击链。",
+   "attack_chain": "其他应用访问共享存储→读取/修改媒体→自动上传。",
+   "bypass_technique": "无，直接利用存储权限。",
+   "defensive_insight": "使用应用私有存储或加密存储，限制其他应用访问。"
+  },
+  {
+   "id": 1630336,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用 obs-fold 机制绕过 CVE-2022-32213 的修复，Node.js 解析器将折叠的头部视为有效，导致请求走私。这是对已知漏洞的优雅绕过，展示了协议解析的复杂性。",
+   "attack_chain": "构造obs-fold头部→Node.js解析为chunked→转发给后端→请求走私。",
+   "bypass_technique": "利用obs-fold（头部折叠）绕过Transfer-Encoding校验。",
+   "defensive_insight": "严格校验Transfer-Encoding头部，拒绝折叠或异常格式。"
+  },
+  {
+   "id": 219601,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。通过错误消息泄露本地路径，属于常见信息泄露，无绕过或攻击链。",
+   "attack_chain": "发送畸形请求→触发异常→泄露路径。",
+   "bypass_technique": "无。",
+   "defensive_insight": "配置错误处理，避免泄露敏感信息。"
+  },
+  {
+   "id": 439098,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "原型污染",
+   "reasoning": "部分。mergify 库存在原型污染，可注入属性到 Object.prototype，可能导致 DoS 或 RCE。虽然原型污染是已知类型，但该库的递归合并机制使其易于触发，且影响广泛。",
+   "attack_chain": "用户输入JSON→mergify递归合并→污染原型→影响全局对象。",
+   "bypass_technique": "利用__proto__属性污染原型。",
+   "defensive_insight": "使用安全合并函数，过滤__proto__等危险键。"
+  },
+  {
+   "id": 409850,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "是。Steam 聊天客户端使用 React 但未过滤 javascript: URI，导致存储型 XSS。利用 React 的渲染机制和客户端环境，可能实现 RCE。",
+   "attack_chain": "发送恶意bbcode→客户端渲染→javascript: URI执行→可能RCE。",
+   "bypass_technique": "利用React未过滤javascript: URI。",
+   "defensive_insight": "过滤所有URI协议，使用安全白名单。"
+  },
+  {
+   "id": 1588732,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / CSP绕过",
+   "reasoning": "是。GitLab 项目设置页面的部署密钥标题未过滤，通过 jQuery 渲染导致 XSS，且绕过 CSP 的 strict-dynamic。展示了现代防御的绕过。",
+   "attack_chain": "创建恶意标题→jQuery渲染→执行脚本→绕过CSP。",
+   "bypass_technique": "利用jQuery的append执行script标签，绕过CSP。",
+   "defensive_insight": "对用户输入进行HTML编码，避免使用不安全的渲染方法。"
+  },
+  {
+   "id": 833782,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过",
+   "reasoning": "部分。BuddyPress 中作者角色可以编辑、删除、添加邮件，权限控制不严。属于常见的水平权限问题，但影响明确。",
+   "attack_chain": "低权限用户→访问管理功能→执行未授权操作。",
+   "bypass_technique": "利用缺失的权限检查。",
+   "defensive_insight": "实施严格的角色权限检查。"
+  },
+  {
+   "id": 495583,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。WooCommerce 存储型 XSS，但报告仅提供通知，无具体细节，无法评估。",
+   "attack_chain": "未知。",
+   "bypass_technique": "未知。",
+   "defensive_insight": "未知。"
+  },
+  {
+   "id": 1538056,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "SSRF",
+   "reasoning": "部分。通过 X-Forwarded-For 头触发盲 SSRF，属于常见 SSRF 类型，但利用简单且可复现。",
+   "attack_chain": "发送带X-Forwarded-For的请求→服务器发起请求→DNS交互。",
+   "bypass_technique": "利用X-Forwarded-For头触发SSRF。",
+   "defensive_insight": "过滤外部请求，限制出站流量。"
+  },
+  {
+   "id": 1489892,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。管理员接口返回所有用户密码哈希，属于敏感信息泄露，但无绕过或攻击链。",
+   "attack_chain": "管理员登录→访问用户列表→获取哈希。",
+   "bypass_technique": "无。",
+   "defensive_insight": "不要在API响应中返回密码哈希。"
+  },
+  {
+   "id": 95640,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 配置错误",
+   "reasoning": "部分。通过修改 JWPlayer 配置参数实现 XSS 和重定向，利用播放器配置的信任，属于非预期配置利用。",
+   "attack_chain": "构造恶意URL→修改播放器配置→执行脚本或重定向。",
+   "bypass_technique": "利用JWPlayer配置参数注入。",
+   "defensive_insight": "对播放器配置参数进行白名单校验。"
+  },
+  {
+   "id": 1820953,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过",
+   "reasoning": "部分。Shopify 中非店主员工可以转移域名，权限控制缺失。属于业务逻辑漏洞，影响明确。",
+   "attack_chain": "低权限员工→访问域名设置→转移域名。",
+   "bypass_technique": "利用缺失的权限检查。",
+   "defensive_insight": "实施严格的权限验证。"
+  },
+  {
+   "id": 216822,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "是。通过 transloadit.com 上传恶意 HTML，利用 imageproxy 信任的 S3 存储执行 XSS。跨组件攻击链，利用信任关系。",
+   "attack_chain": "上传恶意HTML→存储到S3→imageproxy获取→执行XSS。",
+   "bypass_technique": "利用信任的S3存储和imageproxy。",
+   "defensive_insight": "对上传内容进行严格验证，限制代理访问。"
+  },
+  {
+   "id": 163467,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 认证绕过",
+   "reasoning": "部分。用户信息泄露包含邮箱令牌和密码哈希，可绕过邮箱验证。属于敏感信息泄露，但利用简单。",
+   "attack_chain": "获取用户信息→使用令牌验证邮箱→绕过验证。",
+   "bypass_technique": "利用泄露的令牌。",
+   "defensive_insight": "不要在响应中泄露敏感令牌。"
+  },
+  {
+   "id": 423286,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。Sidekiq Web UI 未认证可访问，属于常见配置错误，无绕过或攻击链。",
+   "attack_chain": "直接访问URL→控制后台。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对管理界面实施认证。"
+  },
+  {
+   "id": 218451,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "部分。利用 plupload.flash.swf 的 SOME 漏洞实现反射型 XSS，属于已知组件漏洞的利用。",
+   "attack_chain": "构造恶意URL→加载SWF→执行脚本。",
+   "bypass_technique": "利用Flash的SOME漏洞。",
+   "defensive_insight": "移除或更新易受攻击的Flash组件。"
+  },
+  {
+   "id": 90691,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。server-status 公开可访问，属于常见配置错误，无绕过或攻击链。",
+   "attack_chain": "直接访问URL→查看状态。",
+   "bypass_technique": "无。",
+   "defensive_insight": "限制server-status的访问。"
+  },
+  {
+   "id": 832217,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。Android 应用崩溃，但报告未提供具体技术细节，无法判断是否为安全漏洞。",
+   "attack_chain": "发送特定消息→应用崩溃。",
+   "bypass_technique": "未知。",
+   "defensive_insight": "未知。"
+  }
+ ]
+}

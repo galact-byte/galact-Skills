@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 6,
+  "dropped": 14,
+  "avg_score": 3.8,
+  "top_n": [
+   244504,
+   363636,
+   685552,
+   56800,
+   728110
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1067291,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "反序列化",
+   "reasoning": "否。PrimeFaces 5.3（非 5.3.8）未认证反序列化 RCE（CVE-2017-1000486）——已知 CVE 公开 PoC 套用（.mil 目标），无新技巧。",
+   "attack_chain": "单点：公开 PoC 打 primefaces→未认证 RCE（tomcat 用户）。",
+   "bypass_technique": "无绕过，直接利用公开反序列化链。",
+   "defensive_insight": "升级 PrimeFaces；对外组件版本审计。"
+  },
+  {
+   "id": 511440,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。OSINT 从 Pastebin 发现 zdev.net Basic 凭据，登录 dev 站点——公开凭据泄露经典，报告者自认影响小，凭据 REDACTED。",
+   "attack_chain": "搜索 Pastebin→获凭据→登录开发站点。",
+   "bypass_technique": "无绕过，直接复用公开凭据。",
+   "defensive_insight": "凭据泄露监控（Pastebin 等）；开发站凭据轮换与隔离。"
+  },
+  {
+   "id": 243003,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 其他",
+   "reasoning": "否。RubyGems summary 无长度限制，超长 summary 使 gem search 无响应——输入长度缺失的 DoS 经典，PoC 完整但机制零变形。",
+   "attack_chain": "推送超长 summary 的 gem→他人 gem search→响应延迟/无响应。",
+   "bypass_technique": "无绕过，直接利用缺失的长度限制。",
+   "defensive_insight": "gem 元数据字段长度上限；索引/搜索处理复杂度约束。"
+  },
+  {
+   "id": 244504,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 跨组件攻击链",
+   "reasoning": "部分。Starbucks 的 crossdomain.xml 白名单含可被接管的第三方域（且允许任意头）——'Flash 信任的可接管域'把配置错误与子域接管组合成 SOP 绕过链，攻击者接管白名单域后借 Flash 跨域读 Starbucks 数据；链路由 crossdomain 配置→接管域→Flash 请求完成，分析完整；机制是经典 crossdomain 误配+接管。",
+   "attack_chain": "接管 crossdomain 白名单内的可接管域→上传恶意 Flash→跨域读取 Starbucks 敏感数据。",
+   "bypass_technique": "无绕过，借被信任的第三方域做 Flash 跨域。",
+   "defensive_insight": "crossdomain.xml 白名单最小化并逐域审计接管风险；弃用 Flash 跨域。"
+  },
+  {
+   "id": 903740,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。twitter.com:627732462 端口号 URL 使浏览器卡死——浏览器解析缺陷现象，非 Twitter 服务漏洞，无根因确认。",
+   "attack_chain": "单点：打开带大端口号的 URL→浏览器卡死。",
+   "bypass_technique": "无绕过，直接访问触发。",
+   "defensive_insight": "站点侧难防浏览器行为缺陷；端口号 URL 展示规范。"
+  },
+  {
+   "id": 56800,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 跨组件攻击链",
+   "reasoning": "部分。Shopify POS 支付请求金额在加密 payload 之外可篡改（38.49→33338.49）、无 HMAC 可重放、无 SSL pinning——'支付金额未签名'的完整性缺陷组合有反直觉性（加密了卡号却没签金额），可抽象为通用判据（支付请求全字段签名/受保护）；测试卡全被拒未证实实际扣款，informative 使复现打折。",
+   "attack_chain": "代理截 POS 请求→改 amount→重放→商户多扣款/重复扣款。",
+   "bypass_technique": "无绕过，直接篡改未签名金额字段。",
+   "defensive_insight": "金额纳入加密/HMAC 载荷；支付请求绑定时间窗防重放；客户端强制 SSL pinning。"
+  },
+  {
+   "id": 431561,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 其他",
+   "reasoning": "否。Rack multipart 解析随 part 数超线性增长（10000 parts→12s），HTML 表单即可构造——框架解析复杂度缺陷的经典 DoS，多站点实测（GitHub/Shopify），基准完整但机制成熟。",
+   "attack_chain": "单点：发 10000 parts 的 multipart→解析耗时→占满资源。",
+   "bypass_technique": "无绕过，HTML 表单即可触发。",
+   "defensive_insight": "multipart 部分数/大小限制；解析复杂度优化（O(n) 实现）。"
+  },
+  {
+   "id": 172933,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。Yelp 显示 IDN 为 unicode（ebаy.com 同形字）——homograph 攻击的显示层缺陷经典，建议改 Punycode，机制零变形。",
+   "attack_chain": "单点：发布 IDN 同形链接→用户误信钓鱼。",
+   "bypass_technique": "无绕过，利用 unicode 显示混淆。",
+   "defensive_insight": "IDN 按 Punycode 显示；跨脚本混合域名告警。"
+  },
+  {
+   "id": 900179,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 其他",
+   "reasoning": "否。无限制上传 HTML/php 文件到可访问目录——存储 XSS+webshell 的经典上传缺陷（.mil 目标），链路（上传→访问→执行）完整但机制零变形。",
+   "attack_chain": "上传 HTML/php→直接访问→XSS/php shell。",
+   "bypass_technique": "无绕过，直接利用未限制上传。",
+   "defensive_insight": "上传白名单类型+内容校验；上传目录禁脚本执行。"
+  },
+  {
+   "id": 323975,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。PingOne 邀请用户走 GET 无 CSRF——GET 状态变更的 CSRF 经典，PoC 表单完整但机制零变形。",
+   "attack_chain": "单点：诱导登录用户提交 GET→邀请攻击者账户。",
+   "bypass_technique": "无绕过，直接利用 GET 变更。",
+   "defensive_insight": "邀请改 POST+CSRF token+权限校验。"
+  },
+  {
+   "id": 363636,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 配置错误",
+   "reasoning": "部分。RSKj 节点发现的 challenge 无过期清理，flood 随机 NodeID 完成握手后不回应 challenge ping，activeChallenges 无限累积至 OOM（~20 万崩溃 JVM）——'协议状态累积无回收'的 DoS，反直觉点在于内存被未完成的握手填满且永不清理；多主机可加速，PoC+根因分析完整；机制是状态管理缺陷的经典变体。",
+   "attack_chain": "多主机 flood 随机 NodeID→填满 distanceTable→challenge 无限累积→OOM 崩溃。",
+   "bypass_technique": "无绕过，利用 challenge 无过期的状态累积。",
+   "defensive_insight": "协议状态（challenge）加过期与容量上限；定期清理未完成握手。"
+  },
+  {
+   "id": 728110,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 认证绕过",
+   "reasoning": "部分。Oracle Access Manager 的 CBC padding oracle（CVE-2018-2879），可解密 encquery/encreply/OAMAuthnCookie 并伪造认证 cookie——经典密码学攻击（CVE 已知），oambuster 工具化 PoC 完整，链路由 oracle→解密→伪造 cookie→认证绕过；机制成熟但'加密实现缺陷的认证绕过'有技术参考价值。",
+   "attack_chain": "padding oracle 逐字节解密→恢复明文/伪造认证 cookie→绕过认证。",
+   "bypass_technique": "借 CBC padding oracle 伪造服务端信任的加密消息。",
+   "defensive_insight": "升级 OAM；加密方案改用认证加密并统一错误语义防 oracle。"
+  },
+  {
+   "id": 1623175,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "框架行为利用 / 配置错误",
+   "reasoning": "部分。Node 18 启动尝试读 /home/iojs/build/.../openssl.cnf（构建残留路径），共享主机上攻击者（用户名 iojs）可预置该文件影响 OpenSSL 配置——'运行时加载构建路径配置'的配置注入面有反直觉性（OpenSSL 3.0 引入），strace 证据完整；实际利用需共享主机且影响未证实，报告者自述推测性。",
+   "attack_chain": "单点（理论）：共享主机预置 openssl.cnf→Node 加载→影响 TLS 配置。",
+   "bypass_technique": "无绕过，利用构建路径配置文件加载。",
+   "defensive_insight": "运行时配置显式指定路径；OpenSSL 默认配置路径审计。"
+  },
+  {
+   "id": 1982099,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。SiteMinder smpwservices.fcc 参数反射 XSS（CVE-2013-5968）——已知 CVE 复现，目标 REDACTED，机制零变形。",
+   "attack_chain": "单点：参数注入 payload→反射执行。",
+   "bypass_technique": "无绕过，直接利用未转义输出。",
+   "defensive_insight": "升级 SiteMinder；参数输出转义。"
+  },
+  {
+   "id": 94584,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SQL注入",
+   "reasoning": "否。maximum.com 的 order[] 数组参数 SQL 注入——ORDER BY 注入经典，正文 99 字符无细节，机制成熟。",
+   "attack_chain": "单点：order[] 注入 SQL。",
+   "bypass_technique": "无绕过，直接利用未参数化排序。",
+   "defensive_insight": "排序字段白名单化。"
+  },
+  {
+   "id": 300301,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。updateprofile 返回 error:true 但 POST 仍生效——响应与副作用不一致的业务逻辑缺陷，informative，影响轻微。",
+   "attack_chain": "单点：错误响应下更新仍落库。",
+   "bypass_technique": "无绕过，利用响应与处理解耦。",
+   "defensive_insight": "业务处理结果与响应一致；失败分支不落库。"
+  },
+  {
+   "id": 643882,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。数百个 devmaximum 开发站点用 admin:admin，泄露 116 个邮箱——开发站暴露+默认凭据的经典配置错误组合，链路由 dev 站→邮箱列表→攻击主站；报告者自认 out of scope。",
+   "attack_chain": "枚举 dev 子域→admin:admin 登录→导出邮箱→攻击主站。",
+   "bypass_technique": "无绕过，直接使用默认凭据。",
+   "defensive_insight": "开发站内网隔离+凭据轮换；子域资产审计。"
+  },
+  {
+   "id": 685552,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "部分。Nextcloud 桌面客户端把服务器登录错误响应以 HTML 渲染（内嵌 IE 内核），注入 file:///C:/calc.exe 链接点击即本地执行——'客户端渲染服务器错误响应'使 HTML 注入升级为本地程序执行（跨 zone），反直觉点明确；需恶意/被控服务器+用户点击链接，链路（恶意响应→渲染→点击→本地执行）完整，PoC 视频。",
+   "attack_chain": "诱导连接恶意服务器→错误响应含 file:// 链接→客户端渲染→点击执行本地程序。",
+   "bypass_technique": "无绕过，利用客户端对错误响应的 HTML 渲染。",
+   "defensive_insight": "客户端错误信息以纯文本展示；渲染层禁 file:// 与脚本；CSP 约束。"
+  },
+  {
+   "id": 1609955,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "授权绕过",
+   "reasoning": "否。Judge.me 的 Ali Express Importer 会话 cookie 可复用到 Judge.me 主 app 接口读全部评论（含隐藏）——同供应商 app 间会话边界缺失的越权经典，跨 app 边界是细节，机制零变形。",
+   "attack_chain": "Importer app 获会话 cookie→复用到 judge.me index.json→读全量评论。",
+   "bypass_technique": "无绕过，直接复用跨 app 会话。",
+   "defensive_insight": "同供应商多 app 会话按权限域隔离；评论接口按应用权限裁剪。"
+  },
+  {
+   "id": 205953,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。Lyst 保存物品走 GET（加库存警报自动保存）无 CSRF，链式 return_url/1000 图片可批量添加污染列表——GET 状态变更的 CSRF 批量利用，影响为列表可用性破坏，机制成熟。",
+   "attack_chain": "诱导提交 GET/加载图片→批量添加物品到受害者保存列表。",
+   "bypass_technique": "无绕过，利用 GET 变更+链式重定向批量触发。",
+   "defensive_insight": "保存/订阅改 POST+CSRF token；重定向参数白名单。"
+  }
+ ]
+}

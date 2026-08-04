@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   501,
+   826026,
+   565883,
+   260632,
+   1808596
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 501,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用TLS证书覆盖多域名与HTTP服务器默认虚拟主机行为，结合DNS控制实现跨域完全冒充，属于协议行为利用。区别于普通XSS或子域名接管，它揭示了HTTPS信任模型的系统性缺陷，可抽象为通用判断条件（未识别Host应拒绝），影响广泛。",
+   "attack_chain": "攻击者控制DNS→将域名A解析到共享证书的服务器B→B的默认虚拟主机处理请求→冒充A或窃取cookie/令牌。",
+   "bypass_technique": "利用服务器对未识别Host的默认处理，绕过证书域名绑定，实现HTTP级冒充。",
+   "defensive_insight": "服务器对TLS上未识别Host的请求应默认拒绝；配置默认虚拟主机仅返回错误；避免使用覆盖未知域名的通配符证书。"
+  },
+  {
+   "id": 2299069,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 其他",
+   "reasoning": "否。xmlrpc.php和wp-cron.php启用是WordPress常见配置问题，利用pingback进行SSRF/反射DDoS是已知技术，无新意。",
+   "attack_chain": "利用xmlrpc.php的pingback功能发起SSRF或放大DDoS；利用wp-cron.php进行自DoS。",
+   "bypass_technique": "无实质绕过，直接利用默认启用的功能。",
+   "defensive_insight": "禁用不需要的xmlrpc.php和wp-cron.php，或限制外部访问；实施速率限制。"
+  },
+  {
+   "id": 260632,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 授权绕过",
+   "reasoning": "是。通过直接操作API参数绕过审核流程、伪造投票、修改类型，属于业务逻辑漏洞，展示了参数校验缺失的多种后果。",
+   "attack_chain": "构造恶意请求→设置state/public/votes/type字段→绕过审核或伪造投票。",
+   "bypass_technique": "直接修改API请求中的状态字段，绕过服务端校验。",
+   "defensive_insight": "服务端必须强制校验关键字段，不允许客户端指定状态、投票等敏感属性。"
+  },
+  {
+   "id": 826026,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "竞争条件 / 内存破坏",
+   "reasoning": "是。利用setsockopt选项缺少锁导致UAF，进而获得内核读写原语，属于系统调用行为利用。区别于普通UAF，它展示了从沙箱逃逸到内核提权的完整链。",
+   "attack_chain": "WebKit沙箱→触发setsockopt竞争→UAF→劫持指针→内核R/W→提权。",
+   "bypass_technique": "利用竞争条件在释放后使用对象，劫持结构体指针。",
+   "defensive_insight": "确保setsockopt等系统调用对共享结构体的访问加锁；使用安全的内存管理。"
+  },
+  {
+   "id": 565883,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 业务逻辑",
+   "reasoning": "是。通过SCIM API创建用户时直接标记邮箱为已验证，绕过邮箱验证流程，进而访问依赖邮箱域名的内部服务。属于身份提供商逻辑缺陷，可抽象为通用判断条件。",
+   "attack_chain": "利用SCIM API创建用户→指定任意邮箱→邮箱被标记为已验证→登录依赖邮箱域名的服务。",
+   "bypass_technique": "利用SCIM API的信任关系，直接设置邮箱验证状态。",
+   "defensive_insight": "SCIM创建的用户必须经过正常验证流程；对邮箱验证状态进行二次确认。"
+  },
+  {
+   "id": 114698,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。仅改变uid参数导致服务器重启，但未提供具体原因或复现细节，信息不足。",
+   "attack_chain": "无明确攻击链。",
+   "bypass_technique": "无。",
+   "defensive_insight": "需进一步调查服务器重启原因，可能涉及资源耗尽或异常处理。"
+  },
+  {
+   "id": 764335,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "配置错误",
+   "reasoning": "否。报告称密码重置功能缺乏速率限制导致邮件洪水，但未提供具体请求或复现步骤，信息不足。",
+   "attack_chain": "无明确攻击链。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对密码重置功能实施速率限制和验证码。"
+  },
+  {
+   "id": 409230,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，参数未过滤直接回显，经典套路，无新意。",
+   "attack_chain": "构造恶意URL→参数注入→浏览器执行脚本。",
+   "bypass_technique": "无绕过，直接利用未过滤参数。",
+   "defensive_insight": "对输入进行严格验证和输出编码。"
+  },
+  {
+   "id": 514577,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。密码修改后未销毁其他会话，常见会话管理缺陷，无新意。",
+   "attack_chain": "攻击者持有旧密码登录→用户修改密码→攻击者会话仍有效。",
+   "bypass_technique": "无绕过，利用会话未失效。",
+   "defensive_insight": "密码修改后应销毁所有会话，或提供选项。"
+  },
+  {
+   "id": 34112,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。SPF记录使用?all导致邮件伪造，常见配置错误，无新意。",
+   "attack_chain": "利用SPF宽松策略发送伪造邮件。",
+   "bypass_technique": "无绕过，直接利用配置错误。",
+   "defensive_insight": "SPF应使用-all，并配置DKIM和DMARC。"
+  },
+  {
+   "id": 1808596,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 其他",
+   "reasoning": "是。Node.js未清除OpenSSL错误栈，导致后续操作误报错误，影响JWT签名等。属于框架行为利用，可抽象为通用判断条件。",
+   "attack_chain": "证书验证失败→错误栈残留→后续签名操作失败→拒绝服务。",
+   "bypass_technique": "利用错误栈未清除，导致后续操作失败。",
+   "defensive_insight": "在每次OpenSSL操作后清除错误栈；使用ClearErrorOnReturn模式。"
+  },
+  {
+   "id": 156387,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 业务逻辑",
+   "reasoning": "是。通过创建包含XSS payload的属性名，在显示设置中触发存储型XSS，属于业务逻辑组合。",
+   "attack_chain": "创建恶意属性名→在显示设置中选择该属性→保存时触发XSS。",
+   "bypass_technique": "利用属性名作为XSS载体，绕过输入过滤。",
+   "defensive_insight": "对属性名进行严格验证和输出编码。"
+  },
+  {
+   "id": 353310,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露",
+   "reasoning": "部分。通过旧报告泄露候选人信息，属于信息泄露，但技术含量低。",
+   "attack_chain": "访问旧报告→枚举候选人信息。",
+   "bypass_technique": "无绕过，直接访问未清理的数据。",
+   "defensive_insight": "及时清理敏感数据，限制访问权限。"
+  },
+  {
+   "id": 1084865,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过",
+   "reasoning": "是。最低权限用户可取消订阅，属于授权绕过，展示了权限校验缺失。",
+   "attack_chain": "低权限用户调用API→取消订阅。",
+   "bypass_technique": "直接调用API，未校验权限。",
+   "defensive_insight": "服务端必须校验用户权限，敏感操作需二次确认。"
+  },
+  {
+   "id": 206109,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "内存破坏 / 其他",
+   "reasoning": "是。mruby中的UAF漏洞，通过特定Ruby代码触发，属于内存破坏，展示了脚本引擎的潜在风险。",
+   "attack_chain": "执行恶意Ruby代码→触发UAF→内存破坏。",
+   "bypass_technique": "利用对象生命周期管理缺陷。",
+   "defensive_insight": "修复对象引用计数，使用ASan等工具检测。"
+  },
+  {
+   "id": 146707,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。混合内容问题，常见配置错误，无新意。",
+   "attack_chain": "HTTPS页面加载HTTP资源→MITM注入脚本。",
+   "bypass_technique": "无绕过，直接利用配置错误。",
+   "defensive_insight": "确保所有资源通过HTTPS加载。"
+  },
+  {
+   "id": 201314,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。通过枚举邮箱取消订阅，常见业务逻辑漏洞，无新意。",
+   "attack_chain": "枚举邮箱→取消订阅。",
+   "bypass_technique": "无绕过，直接利用接口。",
+   "defensive_insight": "取消订阅需验证身份，防止滥用。"
+  },
+  {
+   "id": 228873,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "配置错误",
+   "reasoning": "否。缺少自定义错误页，信息泄露风险低，且报告为informative，信息不足。",
+   "attack_chain": "无明确攻击链。",
+   "bypass_technique": "无。",
+   "defensive_insight": "配置自定义错误页，避免泄露内部信息。"
+  },
+  {
+   "id": 119808,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。DROWN攻击是已知漏洞，利用SSLv2和EXPORT密码套件，属于配置错误，无新意。",
+   "attack_chain": "利用SSLv2漏洞解密TLS流量。",
+   "bypass_technique": "无绕过，直接利用配置错误。",
+   "defensive_insight": "禁用SSLv2和EXPORT密码套件。"
+  },
+  {
+   "id": 1321407,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。存储型XSS，但payload和触发方式常见，无新意。",
+   "attack_chain": "上传文档→标题注入XSS→触发。",
+   "bypass_technique": "无绕过，直接利用未过滤输入。",
+   "defensive_insight": "对输入进行严格验证和输出编码。"
+  }
+ ]
+}

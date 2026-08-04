@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   258578,
+   391385,
+   676581,
+   915940,
+   663729
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 915940,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 状态混淆",
+   "reasoning": "是。预览令牌在应用卸载后仍有效，且通过零宽字符清空脚本名导致无法从订单时间线编辑脚本，形成隐蔽的持久折扣。技术点在于令牌生命周期未与应用状态绑定，以及空字符绕过UI链接。区别于普通逻辑漏洞，它结合了令牌失效缺失和字符规范化问题，可抽象为'资源生命周期与授权状态脱钩'的通用模式。",
+   "attack_chain": "创建未发布脚本→获取预览令牌→卸载应用→令牌仍有效→购物车折扣持续生效；或清空脚本名→管理员无法编辑/发现。",
+   "bypass_technique": "利用预览令牌无过期时间，以及零宽空格字符绕过脚本名显示和链接生成。",
+   "defensive_insight": "预览令牌应绑定应用安装状态并设置短期过期；对脚本名进行规范化，拒绝空字符或不可见字符。"
+  },
+  {
+   "id": 950700,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。典型的ASP.NET反射型XSS，通过URL参数注入onmouseover事件，无绕过，无攻击链，成熟套路。",
+   "attack_chain": "单点：构造恶意URL→用户访问→XSS执行。",
+   "bypass_technique": "无实质绕过，直接利用未过滤参数。",
+   "defensive_insight": "对输出进行HTML编码，使用安全框架。"
+  },
+  {
+   "id": 145452,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "部分。共享链接权限在取消'can share'后仍保留，且自动创建公共链接，属于权限状态未同步的逻辑漏洞。技术点在于权限变更未影响已生成的令牌，可抽象为'权限撤销不彻底'。",
+   "attack_chain": "创建共享链接→取消can share权限→链接仍有效→泄露文件夹内容。",
+   "bypass_technique": "利用权限变更未级联到已生成的共享令牌。",
+   "defensive_insight": "权限变更时应使相关令牌失效或重新验证。"
+  },
+  {
+   "id": 167906,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。仅提供bug链接，无具体细节，无法判断真实性。",
+   "attack_chain": "未知。",
+   "bypass_technique": "未知。",
+   "defensive_insight": "无。"
+  },
+  {
+   "id": 258578,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用浏览器拖放操作读取内部对象'x-brave-tab'，泄露历史记录。技术点在于拖放事件暴露了内部数据结构，且攻击者完全控制流程。区别于普通信息泄露，它利用了浏览器UI交互的信任边界，可抽象为'用户交互触发内部对象暴露'。",
+   "attack_chain": "恶意页面→诱导拖放→读取tab对象→提取历史记录。",
+   "bypass_technique": "利用拖放事件绕过同源策略，读取内部对象。",
+   "defensive_insight": "限制拖放数据暴露，对内部对象进行访问控制。"
+  },
+  {
+   "id": 175958,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "其他",
+   "reasoning": "部分。地址栏欺骗，利用setInterval快速跳转导致URL与内容不一致。技术点在于浏览器渲染时序问题，但类似漏洞在移动浏览器中常见，启发性中等。",
+   "attack_chain": "恶意页面→快速跳转→地址栏显示合法URL但内容为攻击者控制。",
+   "bypass_technique": "利用setInterval高频跳转造成渲染不一致。",
+   "defensive_insight": "浏览器应确保URL更新与内容加载同步。"
+  },
+  {
+   "id": 391385,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 业务逻辑",
+   "reasoning": "是。通过iframe嵌入可点击的购买页面，利用点击劫持实现未授权信用卡支付。技术点在于可框架化页面与用户已登录状态的结合，形成跨组件攻击链。区别于普通CSRF，它利用了UI欺骗和用户交互，可抽象为'可嵌入敏感操作页面'的通用风险。",
+   "attack_chain": "恶意页面→iframe嵌入购买页→诱导点击→完成支付。",
+   "bypass_technique": "利用iframe嵌入和点击劫持绕过用户确认。",
+   "defensive_insight": "对敏感操作页面设置X-Frame-Options或CSP frame-ancestors，并增加二次确认。"
+  },
+  {
+   "id": 582349,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 信息泄露",
+   "reasoning": "部分。内部端点未正确检查管道可见性，导致未授权用户可获取管道状态。技术点在于端点级授权缺失，可抽象为'内部API未继承资源级权限'。",
+   "attack_chain": "直接请求内部端点→获取管道状态。",
+   "bypass_technique": "利用未受保护的内部端点绕过权限检查。",
+   "defensive_insight": "确保所有端点执行一致的授权检查。"
+  },
+  {
+   "id": 218465,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。公开的.git目录，经典配置错误，无绕过，无链。",
+   "attack_chain": "直接访问.git目录→泄露源码。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁止Web服务器暴露.git目录。"
+  },
+  {
+   "id": 663729,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。WebTorrent本地服务器不校验Host头，结合DNS rebinding可读取下载文件。技术点在于本地服务信任所有主机名，可抽象为'本地服务缺乏Host验证'。区别于普通DNS rebinding，它针对浏览器扩展，跨组件。",
+   "attack_chain": "恶意网站→DNS rebinding→访问本地WebTorrent服务器→读取文件。",
+   "bypass_technique": "利用DNS rebinding绕过同源策略，访问本地服务。",
+   "defensive_insight": "本地服务器应验证Host头为localhost或127.0.0.1。"
+  },
+  {
+   "id": 2264982,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。SMTP开放端口允许内部邮件发送，常见配置错误，无绕过，无链。",
+   "attack_chain": "直接连接SMTP→发送邮件。",
+   "bypass_technique": "无。",
+   "defensive_insight": "限制SMTP访问，启用认证和加密。"
+  },
+  {
+   "id": 31166,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。使用Math.random()生成认证令牌，已知弱点，无绕过，无链。",
+   "attack_chain": "预测令牌→伪造认证。",
+   "bypass_technique": "无。",
+   "defensive_insight": "使用加密安全随机数生成器。"
+  },
+  {
+   "id": 1224660,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SQL注入",
+   "reasoning": "否。时间盲注，经典payload，无绕过，无链。",
+   "attack_chain": "单点：登录参数注入→时间延迟。",
+   "bypass_technique": "无。",
+   "defensive_insight": "参数化查询。"
+  },
+  {
+   "id": 1620170,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 其他",
+   "reasoning": "部分。上传特殊GIF导致内存耗尽，技术点在于图像解码未限制尺寸，可抽象为'资源消耗未限制'。",
+   "attack_chain": "上传恶意GIF→解码→内存耗尽。",
+   "bypass_technique": "利用图像解码的放大效应。",
+   "defensive_insight": "限制图像尺寸和内存使用。"
+  },
+  {
+   "id": 7886,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型XSS，项目名未过滤，经典套路。",
+   "attack_chain": "创建恶意项目名→触发XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "输出编码。"
+  },
+  {
+   "id": 676581,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 授权绕过",
+   "reasoning": "是。通过公开文档的connection id，未认证即可调用Github pack搜索私有仓库代码。技术点在于连接ID未绑定文档权限，可抽象为'资源ID可预测且未授权'。区别于普通IDOR，它跨组件（Coda→Github）。",
+   "attack_chain": "获取公开文档ID→获取connection id→构造请求→搜索私有代码。",
+   "bypass_technique": "利用未认证的gRPC端点，替换connection id。",
+   "defensive_insight": "验证调用者身份和文档权限，连接ID应绑定用户。"
+  },
+  {
+   "id": 792998,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "部分。404页面反射所有请求头，包括cookie，但需配合XSS才能利用。技术点在于调试信息泄露，可抽象为'错误页面泄露敏感数据'。",
+   "attack_chain": "触发404→读取debugData→获取cookie（需XSS配合）。",
+   "bypass_technique": "无直接绕过，利用调试信息。",
+   "defensive_insight": "生产环境禁用调试信息，设置安全响应头。"
+  },
+  {
+   "id": 223625,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "子域名接管 / 配置错误",
+   "reasoning": "部分。尾随点导致DNS解析差异，实现子域名接管。技术点在于DNS解析对尾随点的处理差异，可抽象为'DNS配置歧义'。",
+   "attack_chain": "注册GitBook域名→利用尾随点接管子域。",
+   "bypass_technique": "利用尾随点绕过域名验证。",
+   "defensive_insight": "DNS配置应规范化，避免尾随点。"
+  },
+  {
+   "id": 207576,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "子域名接管 / 配置错误",
+   "reasoning": "部分。CNAME指向未注册的S3 bucket，可被接管。技术点在于DNS记录未清理，可抽象为'悬空DNS记录'。",
+   "attack_chain": "注册S3 bucket→控制子域内容。",
+   "bypass_technique": "利用未注册的S3 bucket。",
+   "defensive_insight": "定期清理DNS记录，验证CNAME目标。"
+  },
+  {
+   "id": 779656,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。WordPress用户枚举和CORS配置错误，常见套路，无绕过，无链。",
+   "attack_chain": "访问wp-json→获取用户信息。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁用用户枚举，正确配置CORS。"
+  }
+ ]
+}

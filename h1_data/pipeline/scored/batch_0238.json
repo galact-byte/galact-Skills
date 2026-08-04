@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   946728,
+   1533976,
+   461308,
+   1369312,
+   1626210
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 461308,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 跨组件攻击链",
+   "reasoning": "是。利用 ActivityPub 协议中 keyId 指向的 Actor 文档未校验 id 与来源域一致，攻击者可以伪造任意用户的公钥，从而在共享收件箱上冒充受害者发帖。这属于协议行为利用，且攻击链跨多个组件（远程 Actor 下载、签名验证、消息发布），思路新颖，可抽象为通用判断条件：验证签名时需确保公钥与声称的 Actor 绑定且来源可信。",
+   "attack_chain": "生成攻击者密钥对→构造伪造的 Actor JSON（id 指向受害者域，公钥为攻击者）→通过 keyId 触发下载并缓存→用攻击者密钥签名 Create 活动→共享收件箱验证通过→以受害者身份发布消息。",
+   "bypass_technique": "利用 keyId 下载 Actor 时未校验 id 与来源域一致，将攻击者公钥绑定到受害者域，从而通过签名验证。",
+   "defensive_insight": "在下载远程 Actor 时，必须校验返回的 id 与请求的 keyId 来源一致，且公钥必须属于该 Actor；签名验证时应基于 Actor 的规范公钥，而非任意来源。"
+  },
+  {
+   "id": 1538669,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "授权绕过",
+   "reasoning": "否。这是典型的 IDOR，直接修改支付 ID 查看他人支付状态，无任何绕过或创新，属于成熟套路。",
+   "attack_chain": "单点：修改支付 ID→查看他人支付状态。",
+   "bypass_technique": "无实质绕过，直接利用未校验对象归属。",
+   "defensive_insight": "对资源访问进行对象级授权检查，确保用户只能访问自己的支付记录。"
+  },
+  {
+   "id": 687325,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告为个人电脑上的恶意软件报告，无法确认与目标程序相关，且无复现步骤，信息严重不足。",
+   "attack_chain": "无明确攻击链。",
+   "bypass_technique": "无。",
+   "defensive_insight": "无。"
+  },
+  {
+   "id": 946728,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 跨组件攻击链",
+   "reasoning": "是。SafeParamsHelper 只过滤了 host、port、protocol，但 Rails 的 RESERVED_OPTIONS 中还有 domain、script_name 等危险键，导致开放重定向和 XSS。这属于框架行为利用，且通过 script_name 注入 javascript: 协议，再结合 blob viewer 实现 CSP 绕过，攻击链完整，可抽象为通用判断条件：过滤参数时应覆盖所有保留选项。",
+   "attack_chain": "构造 URL 添加 domain 参数→触发开放重定向；或添加 script_name 参数→注入 javascript: 协议→结合 blob viewer 实现 XSS。",
+   "bypass_technique": "利用 Rails 保留参数中未过滤的 domain 和 script_name，绕过安全过滤。",
+   "defensive_insight": "过滤所有 Rails 保留参数，而不仅仅是 host、port、protocol；对 url_for 生成的 URL 进行严格校验。"
+  },
+  {
+   "id": 777942,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "授权绕过",
+   "reasoning": "否。这是典型的越权访问，通过修改 packId 安装付费包，无绕过或创新，属于常见业务逻辑漏洞。",
+   "attack_chain": "单点：修改 packId→安装付费包。",
+   "bypass_technique": "无实质绕过，直接利用未校验对象归属。",
+   "defensive_insight": "服务端校验用户是否有权限安装指定 pack，并检查 pack 的付费状态。"
+  },
+  {
+   "id": 947725,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。S3 桶配置错误导致公开访问，属于常见配置错误，无绕过或创新。",
+   "attack_chain": "单点：访问公开 S3 桶→下载敏感文件。",
+   "bypass_technique": "无。",
+   "defensive_insight": "正确配置 S3 桶权限，定期审计公开访问。"
+  },
+  {
+   "id": 327088,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。通过 JSON 响应泄露内部指标，属于信息泄露，但无绕过或创新，常见于 API 过度暴露。",
+   "attack_chain": "单点：访问程序 JSON 端点→获取敏感指标。",
+   "bypass_technique": "无。",
+   "defensive_insight": "审查 API 响应，仅返回必要字段，敏感数据需授权。"
+  },
+  {
+   "id": 496293,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "框架行为利用",
+   "reasoning": "部分。url-parse 在浏览器环境下对 javascript: 协议处理不当，导致验证绕过，属于框架行为利用，但影响有限，且 PoC 不完整。",
+   "attack_chain": "单点：构造 javascript: URL→绕过验证。",
+   "bypass_technique": "利用浏览器与 Node.js 环境差异，导致协议解析不一致。",
+   "defensive_insight": "统一 URL 解析逻辑，避免环境差异；对协议进行白名单校验。"
+  },
+  {
+   "id": 899954,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。Rocket.Chat 附件字段未过滤直接渲染 HTML，导致存储型 XSS，属于常见 XSS 类型，但攻击链完整（可蠕虫），且 PoC 清晰。",
+   "attack_chain": "构造恶意附件→发送消息→受害者查看→XSS 执行→窃取 Cookie 或 RCE。",
+   "bypass_technique": "无实质绕过，直接利用未过滤的 HTML 渲染。",
+   "defensive_insight": "对用户输入进行 HTML 编码，使用 CSP 等防御措施。"
+  },
+  {
+   "id": 1369312,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "SSRF / 协议行为利用",
+   "reasoning": "是。利用 DNS rebinding 绕过 SSRF 防护，访问 AWS 元数据服务，属于协议行为利用，且可通用化，思路新颖。",
+   "attack_chain": "构造恶意 URL→DNS rebinding→绕过 SSRF 防护→访问元数据服务→获取 IAM 密钥。",
+   "bypass_technique": "利用 DNS rebinding 使 IP 地址在解析时变化，绕过基于 IP 的过滤。",
+   "defensive_insight": "对 SSRF 防护使用 DNS 解析结果校验，并禁止访问内网 IP；使用代理或防火墙限制出站请求。"
+  },
+  {
+   "id": 507957,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。网站被垃圾内容污染，属于配置错误或内容管理问题，无技术含量。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "加强内容审核和访问控制。"
+  },
+  {
+   "id": 11625,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。订阅功能可重复提交，属于业务逻辑漏洞，但无绕过或创新，常见。",
+   "attack_chain": "单点：重复提交订阅请求。",
+   "bypass_technique": "无。",
+   "defensive_insight": "服务端对订阅请求进行幂等性校验。"
+  },
+  {
+   "id": 173175,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。S3 同步元数据泄露用户名，属于配置错误，无绕过或创新。",
+   "attack_chain": "单点：访问 S3 桶→获取元数据头。",
+   "bypass_technique": "无。",
+   "defensive_insight": "使用 --no-preserve 参数，避免存储敏感元数据。"
+  },
+  {
+   "id": 1618100,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "IDOR / 业务逻辑",
+   "reasoning": "部分。通过 forOrder 端点，使用随机邮箱和订单号即可关联订单并注册账号，导致 PII 泄露，属于业务逻辑漏洞，但思路有一定启发性，且 PoC 完整。",
+   "attack_chain": "获取订单号→构造请求→注册关联账号→登录查看 PII。",
+   "bypass_technique": "利用订单号与邮箱的弱关联，绕过身份验证。",
+   "defensive_insight": "订单关联应验证邮箱所有权，或使用一次性令牌。"
+  },
+  {
+   "id": 44727,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。Android 应用明文存储敏感数据，属于常见移动端漏洞，无绕过或创新。",
+   "attack_chain": "单点：读取应用数据库。",
+   "bypass_technique": "无。",
+   "defensive_insight": "使用加密存储，避免明文保存敏感信息。"
+  },
+  {
+   "id": 14570,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。登录接口无速率限制，属于常见配置错误，无绕过或创新。",
+   "attack_chain": "单点：暴力破解密码。",
+   "bypass_technique": "无。",
+   "defensive_insight": "实施速率限制和账户锁定策略。"
+  },
+  {
+   "id": 17105,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "状态混淆",
+   "reasoning": "部分。密码修改后未清除缓存，导致用户切换后看到上一用户页面，属于状态混淆，但影响有限，且无绕过。",
+   "attack_chain": "单点：修改密码→切换账号→看到上一用户页面。",
+   "bypass_technique": "无。",
+   "defensive_insight": "登出时清除所有会话和缓存。"
+  },
+  {
+   "id": 1626210,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 配置错误",
+   "reasoning": "是。通过路径遍历读取任意文件，且绕过了简单的路径检查（仅检查包含 data_products），属于配置错误和路径遍历的组合，思路清晰，可复用。",
+   "attack_chain": "构造路径→绕过检查→读取任意文件。",
+   "bypass_technique": "利用路径遍历和检查逻辑缺陷（仅检查包含，未检查起始）。",
+   "defensive_insight": "使用规范化路径并严格校验前缀，避免使用字符串包含检查。"
+  },
+  {
+   "id": 352869,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "子域名接管",
+   "reasoning": "部分。CloudFront 子域名接管，属于常见漏洞，但 PoC 完整，且可链式攻击。",
+   "attack_chain": "注册未使用的 CloudFront 分发→接管子域名→钓鱼或窃取 Cookie。",
+   "bypass_technique": "无。",
+   "defensive_insight": "定期检查 DNS 记录，删除未使用的 CNAME。"
+  },
+  {
+   "id": 1533976,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 框架行为利用",
+   "reasoning": "是。利用 Jira 集成中的 HTML 注入，结合 DOMPurify 的 gadget 和浏览器缓存行为，实现任意 POST 请求，导致账户接管和创建管理员。攻击链跨 Jira、GitLab、浏览器等多个组件，且利用了浏览器缓存和 History API 的行为，思路极其新颖，可抽象为通用判断条件：任何用户可控的 HTML 注入点都可能被利用为 CSRF 攻击。",
+   "attack_chain": "在 Jira 创建恶意标题→GitLab 渲染未过滤→利用 gadget 和 CSS 覆盖→诱导点击→利用浏览器缓存触发→发送任意 POST 请求→账户接管或创建管理员。",
+   "bypass_technique": "利用 DOMPurify 的 gadget 绕过 XSS 过滤，结合浏览器缓存和 History API 触发延迟执行的 JavaScript。",
+   "defensive_insight": "对所有用户输入进行严格 HTML 编码，使用 CSP 和 SRI，避免使用不安全的 v-safe-html，并审查第三方集成。"
+  }
+ ]
+}

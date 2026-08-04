@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1212822,
+   753939,
+   5928,
+   250688,
+   728664
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 5928,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用XMPP应用层压缩（XEP-0138）的zlib高压缩比，构造4GB空白字符的'xmppbomb'，压缩后仅4MB，导致服务器解压时资源耗尽。这利用了协议压缩特性与资源限制缺失的反直觉行为，且影响多个实现，可抽象为通用攻击模式。",
+   "attack_chain": "协商压缩→发送高度压缩的XML元素→服务器解压时内存/CPU耗尽→DoS。",
+   "bypass_technique": "利用zlib压缩比，发送极小体积但解压后巨大的数据，绕过流量限制。",
+   "defensive_insight": "限制解压后数据大小，设置压缩比阈值，在认证前禁用压缩。"
+  },
+  {
+   "id": 120312,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "授权绕过 / IDOR",
+   "reasoning": "否。典型的IDOR，通过修改parent参数选择任意父级，属于常见授权缺失，无特殊绕过或链。",
+   "attack_chain": "创建Venue时修改parent参数→选择任意父级→越权操作。",
+   "bypass_technique": "直接修改参数，无绕过。",
+   "defensive_insight": "服务端校验用户权限，确保只能选择有权访问的父级。"
+  },
+  {
+   "id": 1182864,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "子域名接管 / 配置错误",
+   "reasoning": "部分。子域名接管是常见套路，但通过接管AWS EC2 IP并运行自己的实例，展示了云资源释放后的风险，有一定启发性。",
+   "attack_chain": "发现DNS指向已释放的EC2 IP→申请该IP→控制子域名→服务恶意内容。",
+   "bypass_technique": "利用云IP释放后的重新分配。",
+   "defensive_insight": "清理不再使用的DNS记录，监控子域名解析。"
+  },
+  {
+   "id": 43770,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 授权绕过",
+   "reasoning": "部分。通过将付费曲目的track_id移植到免费下载接口，绕过支付，属于业务逻辑漏洞，思路简单但有效，可抽象为参数重用。",
+   "attack_chain": "获取付费曲目ID→替换到免费下载接口→未支付下载。",
+   "bypass_technique": "参数重用，利用接口间信任。",
+   "defensive_insight": "服务端校验购买状态，接口间共享状态需严格验证。"
+  },
+  {
+   "id": 250688,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 状态混淆",
+   "reasoning": "是。会话cookie在注销后未失效，且重新登录后旧cookie被重新激活并可能关联到其他用户，形成后门。这利用了会话生命周期管理的缺陷，可跨用户复用，思路优雅。",
+   "attack_chain": "获取合法cookie→注销→重新登录→旧cookie重新有效→可访问其他用户会话。",
+   "bypass_technique": "利用会话未正确销毁，重新登录后复用旧会话。",
+   "defensive_insight": "注销时彻底销毁会话，登录时生成新会话ID。"
+  },
+  {
+   "id": 5205,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "配置错误",
+   "reasoning": "否。仅报告加载外部iframe，无实际漏洞证明，且substate为informative，信息不足。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "限制iframe来源，使用CSP。"
+  },
+  {
+   "id": 1212822,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 跨组件攻击链 / 框架行为利用",
+   "reasoning": "是。利用Mermaid的配置指令覆盖htmlLabels为字符串'false'，绕过安全设置，结合CSP绕过（利用同域工件作为脚本）实现RCE。这利用了框架的配置覆盖机制和类型混淆，攻击链完整，可抽象为通用模式。",
+   "attack_chain": "创建仓库→上传恶意工件→在Markdown中嵌入Mermaid图表→利用配置覆盖触发XSS→加载工件脚本→绕过CSP→RCE。",
+   "bypass_technique": "覆盖Mermaid的htmlLabels为字符串'false'，绕过消毒；利用同域工件作为脚本源绕过CSP。",
+   "defensive_insight": "严格限制Mermaid配置覆盖，对工件内容类型进行白名单，使用沙箱iframe。"
+  },
+  {
+   "id": 196458,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "信息泄露 / 跨组件攻击链",
+   "reasoning": "是。通过Google Analytics泄露CSRF token，利用重定向链将token放入URL，再通过第三方分析获取。这利用了第三方服务与业务逻辑的组合，跨组件，思路新颖。",
+   "attack_chain": "诱导受害者访问恶意页面→重定向到登录→登录后URL携带token→通过GA实时分析窃取token→伪造请求。",
+   "bypass_technique": "利用URL参数传递敏感信息，借助第三方分析平台窃取。",
+   "defensive_insight": "避免在URL中传递敏感token，使用POST或自定义头，限制第三方脚本。"
+  },
+  {
+   "id": 665651,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "认证绕过 / 开放重定向",
+   "reasoning": "部分。OAuth redirect_uri开放重定向是常见漏洞，但可导致token泄露，属于标准攻击，无特殊绕过。",
+   "attack_chain": "构造恶意redirect_uri→诱导受害者授权→token发送到攻击者。",
+   "bypass_technique": "利用OAuth实现未严格校验redirect_uri。",
+   "defensive_insight": "严格校验redirect_uri白名单，禁止通配符。"
+  },
+  {
+   "id": 1179241,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。HackerOne平台自身通知泄露私有项目名称，属于平台逻辑缺陷，但无技术绕过，常见。",
+   "attack_chain": "观察通知→发现私有项目。",
+   "bypass_technique": "无。",
+   "defensive_insight": "平台应过滤通知中的敏感信息。"
+  },
+  {
+   "id": 378209,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。通过大小写变化绕过邮箱唯一性检查，属于常见输入验证缺失，无特殊价值。",
+   "attack_chain": "使用大小写变体添加已存在邮箱→绕过唯一性。",
+   "bypass_technique": "大小写混淆。",
+   "defensive_insight": "邮箱比较前规范化。"
+  },
+  {
+   "id": 1256371,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。通过公开报告中的链接和参数泄露PII，属于信息泄露，但无技术绕过，常见。",
+   "attack_chain": "访问公开报告→找到swag链接→添加参数→获取PII。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对敏感链接进行访问控制，避免在公开内容中暴露。"
+  },
+  {
+   "id": 753939,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "HTTP请求走私 / 跨组件攻击链",
+   "reasoning": "是。利用CL.TE走私，导致后端S3错误泄露HMAC密钥和内部信息，并可能造成缓存投毒DoS。这利用了前后端解析差异，跨组件，可抽象为通用走私模式。",
+   "attack_chain": "发送走私请求→后端解析错误→泄露敏感信息→进一步DoS。",
+   "bypass_technique": "使用`Transfer-Encoding: chunked`前加空格，造成解析分歧。",
+   "defensive_insight": "统一前后端HTTP解析，拒绝畸形TE头，限制错误信息泄露。"
+  },
+  {
+   "id": 1213765,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 状态混淆",
+   "reasoning": "是。通过替换PayPal订单ID，以低价购买高价商品，利用了订单与支付金额的关联缺陷，可抽象为参数篡改。",
+   "attack_chain": "创建低价订单→获取order_id→创建高价订单→替换order_id→支付低价→获得高价商品。",
+   "bypass_technique": "参数替换，利用订单状态未绑定。",
+   "defensive_insight": "服务端校验订单金额与商品匹配，绑定订单与支付。"
+  },
+  {
+   "id": 1818163,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。反射型XSS，通过闭合JS上下文执行，属于常见类型，但利用`[7].map(alert)`有点变形，PoC完整。",
+   "attack_chain": "构造恶意URL→参数反射到JS→执行alert。",
+   "bypass_technique": "闭合引号，利用map函数。",
+   "defensive_insight": "对输出进行编码，使用CSP。"
+  },
+  {
+   "id": 116512,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。Markdown解析允许插入链接，属于常见配置问题，无特殊绕过。",
+   "attack_chain": "在个人资料中插入恶意链接→用户点击→跳转。",
+   "bypass_technique": "无。",
+   "defensive_insight": "限制Markdown标签，对链接进行过滤。"
+  },
+  {
+   "id": 1091380,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过",
+   "reasoning": "部分。GraphQL接口未正确实施权限检查，导致无权限员工可访问财务数据，属于常见授权缺失，但通过GraphQL查询绕过，有一定启发性。",
+   "attack_chain": "登录无权限账号→构造GraphQL查询→获取财务数据。",
+   "bypass_technique": "直接调用GraphQL接口，绕过前端权限控制。",
+   "defensive_insight": "服务端对GraphQL字段进行权限校验。"
+  },
+  {
+   "id": 44652,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。crossdomain.xml配置为*，允许任意域访问，属于常见配置错误，无技术含量。",
+   "attack_chain": "利用Flash跨域策略读取数据。",
+   "bypass_technique": "无。",
+   "defensive_insight": "限制crossdomain.xml中的域。"
+  },
+  {
+   "id": 728664,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "缓存投毒 / 跨组件攻击链",
+   "reasoning": "是。利用Cloud Foundry的X-CF-APP-INSTANCE头，强制返回404，进而污染CDN缓存，实现DoS。这利用了平台特定头的行为，跨组件，可抽象为CPDoS模式。",
+   "attack_chain": "发送带恶意X-CF-APP-INSTANCE的请求→gorouter返回404→CDN缓存404→用户访问被拒绝。",
+   "bypass_technique": "利用平台调试头触发错误，污染缓存。",
+   "defensive_insight": "在边缘节点剥离调试头，不缓存错误响应。"
+  },
+  {
+   "id": 866433,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。反射型XSS，通过文件名参数注入，属于常见类型，但利用错误页面反射，有一定变形。",
+   "attack_chain": "构造恶意文件名→触发错误→反射XSS。",
+   "bypass_technique": "利用错误页面反射参数。",
+   "defensive_insight": "对错误消息中的参数进行编码。"
+  }
+ ]
+}

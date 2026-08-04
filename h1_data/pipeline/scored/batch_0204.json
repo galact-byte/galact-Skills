@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   470520,
+   878779,
+   1077136,
+   387544,
+   735638
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 477,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 配置错误",
+   "reasoning": "部分。注册用户名与服务器资源名冲突（如robots.txt）导致账户功能异常，属于业务逻辑缺陷，思路有启发性但影响有限，且无绕过或攻击链。",
+   "attack_chain": "注册特殊用户名→账户功能异常→影响可用性。",
+   "bypass_technique": "无实质绕过，利用命名冲突。",
+   "defensive_insight": "避免将用户资源直接映射到根路径，使用子路径或唯一标识。"
+  },
+  {
+   "id": 470520,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用Steam服务器查询协议中的A2S_PLAYER响应，通过超长玩家名触发栈溢出，结合unicode ROP链绕过ASLR，实现远程代码执行。区别于普通缓冲区溢出：利用协议解析差异和unicode转换，且可跨平台（Windows/Linux），攻击链完整。",
+   "attack_chain": "恶意服务器响应→Steam客户端解析→栈溢出→ROP链→执行shellcode→RCE。",
+   "bypass_technique": "利用unicode转换和ROP链绕过ASLR，通过steam://协议自动触发。",
+   "defensive_insight": "对协议输入进行边界检查，启用栈保护，避免使用危险函数。"
+  },
+  {
+   "id": 374907,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。通过响应头泄露服务器运行用户信息，属于配置错误，无绕过或攻击链，信息泄露程度低。",
+   "attack_chain": "单点：GET请求→响应头泄露root信息。",
+   "bypass_technique": "无实质绕过，直接利用配置错误。",
+   "defensive_insight": "避免在响应头中暴露敏感元数据，使用最小权限运行服务。"
+  },
+  {
+   "id": 737578,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "开放重定向",
+   "reasoning": "否。通过修改Referer头实现开放重定向，属于常见漏洞，无绕过或攻击链，影响有限。",
+   "attack_chain": "单点：修改Referer→重定向到任意域名。",
+   "bypass_technique": "无实质绕过，直接利用未验证的Referer。",
+   "defensive_insight": "对重定向目标进行白名单校验，避免信任用户可控的Referer。"
+  },
+  {
+   "id": 271950,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "业务逻辑",
+   "reasoning": "否。密码强度检查器实现缺陷，但描述模糊，无具体复现步骤，无法判断真实性。",
+   "attack_chain": "无明确攻击链。",
+   "bypass_technique": "无。",
+   "defensive_insight": "确保密码强度检查在服务端强制执行，并同步更新。"
+  },
+  {
+   "id": 224572,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。弱密码策略，允许重复使用旧密码，属于常见配置问题，无绕过或攻击链。",
+   "attack_chain": "单点：密码策略不严格→允许重复使用。",
+   "bypass_technique": "无实质绕过，直接利用配置缺陷。",
+   "defensive_insight": "实施密码历史记录，禁止近期重复使用。"
+  },
+  {
+   "id": 219203,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "认证绕过 / 授权绕过",
+   "reasoning": "部分。通过任意Slack账号登录，未验证团队归属，导致越权访问内部旅行计划。思路有启发性，但属于常见OAuth配置缺陷，攻击链简单。",
+   "attack_chain": "使用任意Slack账号→登录成功→访问内部数据。",
+   "bypass_technique": "利用OAuth未验证团队成员身份。",
+   "defensive_insight": "验证OAuth提供方的团队/组织信息，确保只有授权成员可访问。"
+  },
+  {
+   "id": 345152,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。公开可访问的Datadog链接泄露内部统计信息，属于配置错误，无绕过或攻击链。",
+   "attack_chain": "单点：访问公开链接→泄露内部数据。",
+   "bypass_technique": "无实质绕过，直接利用配置错误。",
+   "defensive_insight": "确保内部监控工具不公开暴露，使用访问控制。"
+  },
+  {
+   "id": 39069,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。经典反射型XSS，无绕过或攻击链，成熟套路。",
+   "attack_chain": "单点：构造URL→反射XSS。",
+   "bypass_technique": "无实质绕过，直接利用未过滤参数。",
+   "defensive_insight": "对输出进行编码，使用CSP等防御。"
+  },
+  {
+   "id": 2012131,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 其他",
+   "reasoning": "部分。利用ActiveSupport的underscore方法中的ReDoS漏洞，属于已知CVE，但报告提供了详细影响和利用条件，可复现性高。",
+   "attack_chain": "构造恶意字符串→触发正则回溯→CPU/内存耗尽→DoS。",
+   "bypass_technique": "无实质绕过，利用正则表达式缺陷。",
+   "defensive_insight": "升级依赖库，使用安全正则表达式，限制输入长度。"
+  },
+  {
+   "id": 878779,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "SSRF / 跨组件攻击链",
+   "reasoning": "是。利用Grafana的avatar端点URL解码缺陷，结合gravatar和i0.wp.com的开放重定向，实现未认证的完整SSRF。区别于普通SSRF：通过URL解码和重定向链绕过限制，可读取内部资源，攻击链复杂且可复用。",
+   "attack_chain": "构造恶意URL→Grafana解码→重定向到任意主机→SSRF读取内部资源。",
+   "bypass_technique": "利用URL解码和开放重定向链绕过SSRF防护。",
+   "defensive_insight": "对SSRF目标进行严格校验，禁止重定向，或使用代理。"
+  },
+  {
+   "id": 1077136,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 其他",
+   "reasoning": "是。利用HTML注入覆盖document对象函数，导致应用崩溃。区别于普通XSS：利用DOM clobbering技术，可导致DoS，且影响桌面和移动端。",
+   "attack_chain": "注入恶意HTML→覆盖document函数→应用崩溃→DoS。",
+   "bypass_technique": "利用DOM clobbering覆盖document方法。",
+   "defensive_insight": "对用户输入进行严格过滤，避免使用document对象直接调用，使用安全API。"
+  },
+  {
+   "id": 389454,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。备份文件泄露源码，属于常见配置错误，无绕过或攻击链。",
+   "attack_chain": "单点：访问备份文件→泄露源码。",
+   "bypass_technique": "无实质绕过，直接利用备份文件。",
+   "defensive_insight": "删除备份文件，禁止访问备份目录。"
+  },
+  {
+   "id": 387544,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "是。利用postMessage origin验证不完整，通过构造相似域名绕过，实现XSS。区别于普通XSS：利用origin验证缺陷，可跨域攻击，且可结合CSRF。",
+   "attack_chain": "恶意页面→postMessage→绕过origin验证→XSS→窃取数据。",
+   "bypass_technique": "利用origin验证不完整，构造相似域名。",
+   "defensive_insight": "严格验证postMessage的origin，使用精确匹配。"
+  },
+  {
+   "id": 735638,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "是。利用AutoLinker和Markdown组合，通过属性注入绕过过滤，实现存储型XSS，进而账户接管。区别于普通XSS：利用解析器组合和属性逃逸，攻击链完整。",
+   "attack_chain": "注入恶意Markdown→解析器逃逸→XSS→窃取token→账户接管。",
+   "bypass_technique": "利用AutoLinker和Markdown组合，属性注入。",
+   "defensive_insight": "对Markdown输出进行严格过滤，使用白名单属性。"
+  },
+  {
+   "id": 804080,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "子域名接管",
+   "reasoning": "否。域名过期导致可接管，属于常见配置错误，无绕过或攻击链。",
+   "attack_chain": "单点：域名过期→接管→钓鱼。",
+   "bypass_technique": "无实质绕过，直接利用过期域名。",
+   "defensive_insight": "及时续费域名，监控域名状态。"
+  },
+  {
+   "id": 50552,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型XSS，经典漏洞，无绕过或攻击链。",
+   "attack_chain": "单点：注入XSS→存储→执行。",
+   "bypass_technique": "无实质绕过，直接利用未过滤输入。",
+   "defensive_insight": "对输入进行过滤和输出编码。"
+  },
+  {
+   "id": 177508,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / CSRF",
+   "reasoning": "部分。通过CSRF将自XSS转化为反射XSS，利用CSRF漏洞提升XSS影响，思路有启发性但属于常见组合。",
+   "attack_chain": "CSRF→提交恶意评论→XSS执行。",
+   "bypass_technique": "利用CSRF绕过同源策略。",
+   "defensive_insight": "添加CSRF token，对评论内容进行过滤。"
+  },
+  {
+   "id": 439021,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "部分。利用Web缓存欺骗，通过路径附加.css使动态页面被缓存，泄露用户信息。思路有启发性，但属于已知攻击技术，且substate为informative，可复现性受限。",
+   "attack_chain": "诱导用户访问恶意URL→缓存动态页面→公开泄露。",
+   "bypass_technique": "利用缓存规则和路径解析差异。",
+   "defensive_insight": "配置缓存规则，避免缓存动态内容，使用Vary头。"
+  },
+  {
+   "id": 30567,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "内存破坏 / 其他",
+   "reasoning": "部分。利用Flash解析mp4时的UAF漏洞，属于已知CVE，但报告提供了详细分析和PoC，可复现性高。",
+   "attack_chain": "播放恶意mp4→UAF→崩溃或代码执行。",
+   "bypass_technique": "无实质绕过，利用内存管理缺陷。",
+   "defensive_insight": "及时更新Flash，使用安全内存管理。"
+  }
+ ]
+}

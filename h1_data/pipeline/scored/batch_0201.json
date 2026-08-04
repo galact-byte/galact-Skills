@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   771666,
+   895202,
+   506412,
+   1219011,
+   1129996
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1219011,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。通过批量端点操作已披露报告，绕过权限限制，实现未授权操作。技术点在于批量端点未校验报告ID归属，导致越权。",
+   "attack_chain": "构造批量请求→修改report_id为已披露报告→服务端未校验→执行取消披露操作。",
+   "bypass_technique": "利用批量端点未校验报告ID，直接指定任意报告ID。",
+   "defensive_insight": "服务端必须校验操作者权限及资源归属，批量端点需逐项校验。"
+  },
+  {
+   "id": 1129996,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。创建别名接口未校验账户ID归属，可越权为他人创建别名。技术点在于IDOR，但影响明确。",
+   "attack_chain": "构造请求→指定他人账户ID→服务端未校验→创建别名。",
+   "bypass_technique": "直接修改账户ID参数，未校验归属。",
+   "defensive_insight": "服务端必须校验资源归属，使用会话中的用户ID而非客户端提供。"
+  },
+  {
+   "id": 1343733,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。断链劫持是已知套路，无新意，且未实际利用。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "定期检查外部链接有效性。"
+  },
+  {
+   "id": 506412,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 协议行为利用",
+   "reasoning": "是。利用Node.js EventEmitter的error事件未监听导致进程崩溃，属于框架行为利用。技术点在于未捕获异常导致DoS。",
+   "attack_chain": "恶意CA返回空响应→SDK解析异常→未捕获异常→进程退出。",
+   "bypass_technique": "利用Node.js事件机制，未注册error监听器导致崩溃。",
+   "defensive_insight": "为EventEmitter添加error监听器，或使用try-catch捕获异步异常。"
+  },
+  {
+   "id": 1069467,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "跨组件攻击链 / 其他",
+   "reasoning": "部分。CTF writeup，包含多种漏洞利用，但多为常见套路，启发性一般。",
+   "attack_chain": "多步CTF挑战，涉及信息泄露、SQL注入、SSRF等。",
+   "bypass_technique": "多种，如路径遍历、类型混淆等。",
+   "defensive_insight": "综合防御，输入验证、权限控制等。"
+  },
+  {
+   "id": 225243,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 业务逻辑",
+   "reasoning": "是。通过修改状态参数触发错误信息泄露手机号，属于业务逻辑缺陷。",
+   "attack_chain": "提交UUID→修改state为SIGN_IN→服务端返回错误信息含手机号。",
+   "bypass_technique": "利用状态参数未校验，触发错误信息泄露。",
+   "defensive_insight": "错误信息不应包含敏感数据，状态参数需严格校验。"
+  },
+  {
+   "id": 398400,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "部分。Jenkins未授权访问导致AWS凭证泄露，属于配置错误，但影响严重。",
+   "attack_chain": "注册Jenkins→脚本控制台→读取凭证→访问S3。",
+   "bypass_technique": "利用Jenkins默认配置，未限制注册。",
+   "defensive_insight": "限制Jenkins注册，最小权限原则，定期轮换凭证。"
+  },
+  {
+   "id": 2370578,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。Drupal文件泄露，常见配置错误，无新意。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "禁止敏感文件公开访问。"
+  },
+  {
+   "id": 1605962,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露",
+   "reasoning": "是。通过shop参数泄露内部邮箱，属于IDOR，但影响有限。",
+   "attack_chain": "构造请求→指定shop参数→响应泄露邮箱。",
+   "bypass_technique": "直接修改shop参数，未校验归属。",
+   "defensive_insight": "服务端校验shop参数归属，避免泄露敏感信息。"
+  },
+  {
+   "id": 2144868,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过",
+   "reasoning": "是。通过拦截请求修改Conf参数，绕过前端禁用，属于客户端校验绕过。",
+   "attack_chain": "编辑DAG Run→拦截请求→修改Conf→服务端未校验→成功修改。",
+   "bypass_technique": "绕过前端限制，直接修改请求参数。",
+   "defensive_insight": "服务端必须校验权限，不能依赖前端。"
+  },
+  {
+   "id": 692068,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。域名过期未续费，常见问题，无技术含量。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "及时续费域名，监控过期。"
+  },
+  {
+   "id": 20873,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 其他",
+   "reasoning": "是。利用rsync的MD5碰撞和滚动校验和碰撞，实现文件篡改，属于协议行为利用。",
+   "attack_chain": "构造恶意文件→利用碰撞→绕过校验→篡改文件。",
+   "bypass_technique": "利用MD5碰撞和滚动校验和碰撞。",
+   "defensive_insight": "使用更强哈希，如SHA-256，或增加完整性校验。"
+  },
+  {
+   "id": 311776,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。邮件系统未限制收件人数量，导致垃圾邮件，常见业务逻辑缺陷。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "限制收件人数量，防止滥用。"
+  },
+  {
+   "id": 89081,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，经典payload，无新意。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "输入输出编码。"
+  },
+  {
+   "id": 798686,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 0
+   },
+   "verdict": "保留，普通",
+   "category": "CRLF注入",
+   "reasoning": "是。x-request-id头反射未过滤，可导致CRLF注入，但复现细节不足。",
+   "attack_chain": "构造请求→设置x-request-id→响应头注入。",
+   "bypass_technique": "利用未过滤的请求头反射。",
+   "defensive_insight": "服务端设置该头，不信任客户端输入。"
+  },
+  {
+   "id": 895202,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 其他",
+   "reasoning": "是。CTF writeup，包含多步攻击链，从信息泄露到SSRF再到CSS注入，技术点丰富。",
+   "attack_chain": "信息泄露→2FA绕过→SSRF→目录遍历→APK分析→CSS注入。",
+   "bypass_technique": "多种，如路径遍历、CSS注入等。",
+   "defensive_insight": "综合防御，输入验证、权限控制、安全配置。"
+  },
+  {
+   "id": 771666,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用CL.TE请求走私，配合开放重定向窃取会话令牌，技术点在于前后端解析差异。",
+   "attack_chain": "构造走私请求→毒化socket→劫持受害者请求→重定向到攻击者→窃取令牌。",
+   "bypass_technique": "利用Transfer-Encoding和Content-Length解析差异。",
+   "defensive_insight": "统一前后端HTTP解析，拒绝畸形请求。"
+  },
+  {
+   "id": 43440,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。Action Pack文件存在性泄露，已知漏洞，无新意。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "升级框架，修复已知漏洞。"
+  },
+  {
+   "id": 722919,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "文件上传",
+   "reasoning": "否。任意文件上传，常见漏洞，无新意。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "限制上传类型，校验文件内容。"
+  },
+  {
+   "id": 773313,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 0
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / SSRF",
+   "reasoning": "是。curl的'*'通配符可访问localhost，绕过IP过滤，属于协议行为利用。",
+   "attack_chain": "构造URL为'*'→curl解析为localhost→访问内部服务。",
+   "bypass_technique": "利用curl的通配符解析。",
+   "defensive_insight": "过滤'*'等特殊字符，使用白名单。"
+  }
+ ]
+}

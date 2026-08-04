@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   425314,
+   97295,
+   1884159,
+   1058015,
+   269458
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1818172,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。该XSS通过注入到JavaScript代码的Analytics.trackEvent函数中，利用参数注入和数组map方法执行alert，属于非典型反射型XSS，但本质仍是常见的参数未编码问题。技术点在于利用JavaScript上下文中的对象字面量注入，但整体思路较为直接。",
+   "attack_chain": "构造恶意q参数→注入到Analytics.trackEvent的JavaScript代码→执行alert。",
+   "bypass_technique": "利用参数值直接拼接到JavaScript对象字面量中，通过闭合引号和逗号注入新属性。",
+   "defensive_insight": "对输出到JavaScript上下文的用户输入进行严格编码，避免直接拼接；使用CSP等安全策略。"
+  },
+  {
+   "id": 142569,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 配置错误",
+   "reasoning": "部分。通过添加额外参数kind=1绕过投票限制，属于业务逻辑漏洞，思路巧妙但依赖API设计缺陷。同时暴露了Swagger文档，但主要价值在于逻辑绕过。",
+   "attack_chain": "构造带kind=1的投票请求→绕过IP限制→无限投票。",
+   "bypass_technique": "利用API未验证额外参数，绕过服务端限制。",
+   "defensive_insight": "严格验证所有请求参数，对未知参数进行拒绝；隐藏内部API文档。"
+  },
+  {
+   "id": 1884159,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 其他",
+   "reasoning": "是。利用Node.js处理畸形X509证书时未检查公钥有效性，导致断言失败进程崩溃。技术点在于对框架内部假设的利用，属于框架行为利用，可导致DoS。",
+   "attack_chain": "构造恶意X509证书→Node.js解析时触发断言→进程崩溃。",
+   "bypass_technique": "利用证书中无效公钥信息，触发CreateAsymmetric中的CHECK断言。",
+   "defensive_insight": "在解析证书时增加对公钥有效性的检查，避免直接断言；对不可信输入进行更健壮的错误处理。"
+  },
+  {
+   "id": 4931,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。通过清空cookie触发PHP错误信息泄露，属于常见的配置错误导致的信息泄露，无绕过或攻击链。",
+   "attack_chain": "清空CONCRETE5 cookie→触发session_start错误→泄露路径。",
+   "bypass_technique": "无实质绕过，直接利用错误处理不当。",
+   "defensive_insight": "在生产环境禁用错误显示，记录日志而非输出。"
+  },
+  {
+   "id": 140548,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "部分。上传音频时未验证playlist_id归属，导致可向他人播放列表添加文件，属于IDOR，但思路常见。技术点在于对对象属主校验缺失。",
+   "attack_chain": "构造上传请求→指定他人playlist_id→文件被添加到他人列表。",
+   "bypass_technique": "直接修改playlist_id参数，未验证所有权。",
+   "defensive_insight": "服务端校验资源所有权，确保用户只能操作自己的资源。"
+  },
+  {
+   "id": 2310620,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "部分。通过Hacktivity的过滤器泄露隐藏的赏金金额，属于功能设计缺陷，但利用简单，无复杂绕过。",
+   "attack_chain": "使用过滤器total_awarded_amount→查看隐藏赏金。",
+   "bypass_technique": "利用过滤器参数直接查询隐藏信息。",
+   "defensive_insight": "对过滤器参数进行权限校验，确保用户只能访问可见数据。"
+  },
+  {
+   "id": 425314,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用API签名缓存时间窗口和客户端时钟偏差，重放签名但修改payload，实现权限提升。技术点在于签名未包含payload，且缓存时间与时间戳校验存在间隙，可抽象为通用重放攻击。",
+   "attack_chain": "截获合法请求→等待缓存过期→重放签名但修改payload→创建高权限API密钥。",
+   "bypass_technique": "利用签名缓存与时间戳校验的时间差，重放签名并修改数据。",
+   "defensive_insight": "签名应包含payload和完整请求数据；增加缓存时间并严格校验时间戳。"
+  },
+  {
+   "id": 161301,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 其他",
+   "reasoning": "否。通过修改文件扩展名绕过上传限制，属于常见文件类型校验绕过，无新意。",
+   "attack_chain": "将.svg改为.png→上传→SVG内容被渲染。",
+   "bypass_technique": "修改扩展名绕过白名单。",
+   "defensive_insight": "基于文件内容而非扩展名进行校验。"
+  },
+  {
+   "id": 265160,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。TabNabbing是已知问题，缺少rel=noopener，属于常见配置错误，无新意。",
+   "attack_chain": "点击链接→新标签页打开→恶意页面修改父页面。",
+   "bypass_technique": "无绕过，直接利用缺失的rel属性。",
+   "defensive_insight": "为所有target=_blank链接添加rel=noopener noreferrer。"
+  },
+  {
+   "id": 541020,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "部分。API方法缺少发布状态检查，泄露未发布游戏成就，属于逻辑缺陷，但利用简单。",
+   "attack_chain": "调用GetGlobalAchievementPercentagesForApp→获取未发布游戏成就。",
+   "bypass_technique": "直接调用未受保护的API方法。",
+   "defensive_insight": "对所有API方法统一实施发布状态检查。"
+  },
+  {
+   "id": 1058015,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 业务逻辑",
+   "reasoning": "是。密码更改请求未绑定会话，可重放至任意邮箱，实现账户接管。技术点在于密码重置流程缺乏一次性令牌绑定，属于业务逻辑漏洞，可抽象为通用条件。",
+   "attack_chain": "截获密码更改请求→修改目标邮箱→发送请求→接管账户。",
+   "bypass_technique": "利用密码更改请求未验证会话所有权，直接指定受害者邮箱。",
+   "defensive_insight": "密码更改必须验证当前会话或一次性令牌，并绑定用户身份。"
+  },
+  {
+   "id": 97295,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 框架行为利用",
+   "reasoning": "是。Android应用组件暴露导致Intent欺骗、通知伪造和权限重委托，跨组件攻击链完整。技术点在于利用Android组件导出和隐式Intent，可抽象为通用移动安全模式。",
+   "attack_chain": "恶意应用发送Intent→启动合法Activity或接收通知→伪造消息或利用权限重委托发送HTTP请求。",
+   "bypass_technique": "利用未导出的组件和隐式Intent，绕过权限检查。",
+   "defensive_insight": "设置android:exported=false，使用显式Intent，并保护敏感组件权限。"
+  },
+  {
+   "id": 819863,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 配置错误",
+   "reasoning": "部分。利用过时的PDF.js库中的已知CVE，属于依赖漏洞利用，但需要特定环境，且无新意。",
+   "attack_chain": "构造恶意PDF→PDF.js解析→执行JavaScript。",
+   "bypass_technique": "利用已知CVE-2018-5158。",
+   "defensive_insight": "及时更新第三方库，避免使用过时版本。"
+  },
+  {
+   "id": 269458,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 协议行为利用",
+   "reasoning": "是。通过CSS样式中的转义字符绕过过滤，在邮件中执行XSS。技术点在于利用CSS解析器的转义行为，绕过输入过滤，属于协议行为利用。",
+   "attack_chain": "构造恶意style标签→转义字符绕过过滤→执行JavaScript。",
+   "bypass_technique": "利用CSS转义序列绕过HTML过滤。",
+   "defensive_insight": "对邮件内容进行严格过滤，特别是style标签，使用白名单。"
+  },
+  {
+   "id": 634312,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 信息泄露",
+   "reasoning": "部分。通过HTML注入在支持面板中执行，并泄露管理员IP，属于存储型XSS，但利用简单。",
+   "attack_chain": "提交恶意表单→支持面板渲染→执行HTML→泄露IP。",
+   "bypass_technique": "直接注入HTML标签。",
+   "defensive_insight": "对用户输入进行HTML编码，并限制支持面板的访问。"
+  },
+  {
+   "id": 179426,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，但CSP阻止了JavaScript执行，属于常见漏洞，无新意。",
+   "attack_chain": "构造恶意URL→反射到页面→HTML注入。",
+   "bypass_technique": "无实质绕过，仅HTML注入。",
+   "defensive_insight": "对URL参数进行编码，并加强CSP。"
+  },
+  {
+   "id": 1927499,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。硬编码密钥在CI工作流中，属于常见配置错误，无新意。",
+   "attack_chain": "访问仓库→提取密钥→滥用DeepSource。",
+   "bypass_technique": "无绕过，直接利用硬编码。",
+   "defensive_insight": "使用环境变量或密钥管理服务，避免硬编码。"
+  },
+  {
+   "id": 118688,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "路径遍历 / 信息泄露",
+   "reasoning": "部分。通过timezone参数进行路径遍历，枚举文件，但仅能枚举，无法读取内容，属于信息泄露。",
+   "attack_chain": "构造timezone参数→路径遍历→枚举文件。",
+   "bypass_technique": "利用未过滤的路径参数。",
+   "defensive_insight": "对路径参数进行白名单校验，避免用户控制文件路径。"
+  },
+  {
+   "id": 78012,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。异常导致敏感信息泄露，属于常见错误处理不当，无新意。",
+   "attack_chain": "构造异常请求→触发错误→泄露信息。",
+   "bypass_technique": "无绕过，直接利用错误处理。",
+   "defensive_insight": "在生产环境隐藏详细错误信息，记录日志。"
+  },
+  {
+   "id": 621308,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "类型混淆 / 其他",
+   "reasoning": "是。在mruby中对整数调用remove_instance_variable，导致空指针解引用，属于类型混淆。技术点在于利用Ruby对象的类型混淆，可导致DoS和潜在信息泄露。",
+   "attack_chain": "构造整数对象→调用remove_instance_variable→触发空指针解引用。",
+   "bypass_technique": "利用类型混淆，将整数当作对象处理。",
+   "defensive_insight": "在方法调用前检查对象类型，避免类型混淆。"
+  }
+ ]
+}

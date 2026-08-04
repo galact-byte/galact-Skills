@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   608620,
+   263718,
+   982130,
+   202354,
+   941178
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 202354,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 配置错误 / 跨组件攻击链",
+   "reasoning": "是。通过端口扫描发现受htaccess保护的站点暴露了未受保护的NodeBB实例，且上传API未正确消毒文件名和MIME类型，结合EXIF注入和.html扩展名实现存储型XSS。技术点在于利用服务端对文件类型校验的缺陷（仅检查扩展名而非内容）以及EXIF数据作为XSS载体，绕过预期限制。",
+   "attack_chain": "端口扫描发现暴露的NodeBB实例→利用上传API上传含恶意EXIF的.html文件→存储型XSS在管理员浏览器执行→可能进一步利用（如RCE）。",
+   "bypass_technique": "利用上传API对文件名和MIME类型校验不严，通过修改文件扩展名为.html并注入EXIF数据绕过图片上传限制。",
+   "defensive_insight": "严格校验上传文件的内容和MIME类型，对文件名进行白名单过滤，并确保上传目录不可执行脚本。"
+  },
+  {
+   "id": 608620,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用HTTP明文传输依赖包，通过MITM篡改下载内容，影响整个JVM生态。技术点在于供应链攻击的广泛性和简单性，以及通过社区推动修复的行业影响。",
+   "attack_chain": "MITM截获HTTP依赖下载→篡改包内容→注入恶意代码→下游消费者感染。",
+   "bypass_technique": "利用HTTP明文传输，通过中间人攻击替换下载的依赖包。",
+   "defensive_insight": "强制使用HTTPS下载依赖，实施完整性校验，并推动行业禁用HTTP。"
+  },
+  {
+   "id": 263718,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 框架行为利用",
+   "reasoning": "是。利用同源iframe脚本，将XSS提升为RCE，展示了编辑器角色到管理员权限的跨越。技术点在于同源策略下iframe的完全DOM控制，以及WordPress插件编辑器的滥用。",
+   "attack_chain": "编辑器用户上传恶意HTML→管理员访问触发XSS→iframe加载插件编辑器→修改PHP文件→RCE。",
+   "bypass_technique": "利用同源iframe脚本，在XSS中嵌入对插件编辑器的操作，实现权限提升。",
+   "defensive_insight": "限制编辑器角色权限，对关键操作实施额外验证，考虑使用X-Frame-Options或CSP。"
+  },
+  {
+   "id": 1940002,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告仅提供复现步骤和影响，但缺少漏洞细节、触发条件和边界分析，无法判断是否为真实漏洞或利用价值。",
+   "attack_chain": "无明确攻击链。",
+   "bypass_technique": "无。",
+   "defensive_insight": "需要更多信息以评估和修复。"
+  },
+  {
+   "id": 3227,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑 / 配置错误",
+   "reasoning": "部分。利用控制字符绕过用户名唯一性校验，但影响有限，且属于常见输入验证缺陷。",
+   "attack_chain": "注册时在用户名后添加控制字符→绕过唯一性检查→创建重复用户名账户。",
+   "bypass_technique": "在用户名后添加换行符等控制字符，绕过服务端校验。",
+   "defensive_insight": "对用户名进行规范化处理，去除控制字符，并严格校验输入格式。"
+  },
+  {
+   "id": 151039,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "类型混淆 / 内存破坏",
+   "reasoning": "是。利用未初始化内存的TimedEvent.parent字段，通过构造恶意对象实现类型混淆，导致内存破坏。技术点在于对未初始化内存的利用，属于经典内存破坏类型。",
+   "attack_chain": "构造恶意TimedEvent对象→触发未初始化内存访问→类型混淆→代码执行。",
+   "bypass_technique": "利用未初始化内存，通过构造特定对象实现类型混淆。",
+   "defensive_insight": "确保所有对象字段正确初始化，使用安全内存管理函数。"
+  },
+  {
+   "id": 982130,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 配置错误",
+   "reasoning": "是。利用HTTP明文获取更新JSON，结合代理设置和目录猜测，实现RCE。技术点在于更新机制的不安全设计，以及时间戳预测。",
+   "attack_chain": "设置恶意代理→篡改更新JSON→下载恶意更新包→解压到可预测目录→执行恶意代码。",
+   "bypass_technique": "通过HTTP明文传输和代理篡改，结合时间戳预测目录名。",
+   "defensive_insight": "使用HTTPS进行更新，验证更新包签名，避免使用可预测的目录名。"
+  },
+  {
+   "id": 96337,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。通过多个输入点组合触发存储型XSS，但复现依赖特定步骤和时机，且属于常见XSS变体。",
+   "attack_chain": "在多个输入点注入XSS payload→触发存储→管理员访问时执行。",
+   "bypass_technique": "利用多个输入点组合，绕过单个点的过滤。",
+   "defensive_insight": "对所有用户输入进行严格过滤和输出编码，实施CSP。"
+  },
+  {
+   "id": 2143411,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "认证绕过",
+   "reasoning": "否。单引号注入绕过登录，属于经典SQL注入或逻辑缺陷，无新意。",
+   "attack_chain": "在登录字段输入单引号→绕过认证→访问门户。",
+   "bypass_technique": "利用SQL注入或逻辑错误，通过单引号绕过认证。",
+   "defensive_insight": "使用参数化查询，严格验证输入。"
+  },
+  {
+   "id": 491668,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 跨组件攻击链",
+   "reasoning": "部分。利用已知CVE和公开工具，通过暴力破解机器密钥实现RCE，属于已知漏洞利用，但攻击链完整。",
+   "attack_chain": "利用Telerik漏洞→暴力破解机器密钥→访问文件管理器→上传ASPX→RCE。",
+   "bypass_technique": "利用已知CVE和公开工具，暴力破解机器密钥。",
+   "defensive_insight": "及时更新组件，禁用不必要的功能，实施强密钥管理。"
+  },
+  {
+   "id": 2188569,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。利用API端点未验证用户权限，从最低权限提升到管理员，展示了业务逻辑漏洞的严重性。技术点在于API权限校验缺失。",
+   "attack_chain": "以Contributor身份调用API→修改自身角色→提升为管理员。",
+   "bypass_technique": "直接调用未授权API端点，绕过权限检查。",
+   "defensive_insight": "对所有API端点实施严格的权限验证，遵循最小权限原则。"
+  },
+  {
+   "id": 1260823,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，经典payload，无绕过，无新意。",
+   "attack_chain": "构造恶意URL→触发反射XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对输出进行编码，实施CSP。"
+  },
+  {
+   "id": 941178,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "SSRF / 跨组件攻击链",
+   "reasoning": "是。利用Kubernetes admission webhook触发SSRF，访问云元数据服务，展示了云环境下的攻击面。技术点在于webhook配置的SSRF利用。",
+   "attack_chain": "创建恶意webhook→apiserver请求攻击者服务器→重定向到元数据服务→泄露凭据。",
+   "bypass_technique": "利用webhook的URL配置，通过重定向实现SSRF。",
+   "defensive_insight": "限制webhook的URL，实施网络策略，禁止访问元数据服务。"
+  },
+  {
+   "id": 1256375,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 信息泄露",
+   "reasoning": "部分。利用预览链接绕过密码保护，访问博客feed，属于配置错误导致的授权绕过。",
+   "attack_chain": "构造预览链接→绕过密码保护→访问atom feed。",
+   "bypass_technique": "利用预览链接的访问控制缺陷。",
+   "defensive_insight": "确保所有访问路径都实施相同的认证和授权。"
+  },
+  {
+   "id": 1695472,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "竞争条件 / 配置错误",
+   "reasoning": "部分。通过大量连接耗尽节点资源，属于DoS攻击，但技术点在于资源限制的缺失。",
+   "attack_chain": "发送大量请求→耗尽连接数→拒绝服务。",
+   "bypass_technique": "利用资源限制缺失，进行资源耗尽攻击。",
+   "defensive_insight": "实施连接数限制，使用防火墙规则，增加资源弹性。"
+  },
+  {
+   "id": 150905,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。目录列表和未认证API，属于常见配置错误，无新意。",
+   "attack_chain": "访问目录列表→泄露敏感信息。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁用目录列表，对API实施认证。"
+  },
+  {
+   "id": 724217,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "其他",
+   "reasoning": "部分。tcpdump缓冲区溢出，属于已知CVE，但报告提供了详细分析，可复现。",
+   "attack_chain": "构造恶意输入→触发缓冲区溢出→可能代码执行。",
+   "bypass_technique": "利用缓冲区溢出漏洞。",
+   "defensive_insight": "及时更新软件，使用安全编译选项。"
+  },
+  {
+   "id": 1177287,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 协议行为利用",
+   "reasoning": "部分。利用Referer头泄露密码重置令牌，属于常见信息泄露，但展示了第三方脚本的风险。",
+   "attack_chain": "点击重置链接→第三方脚本请求→Referer泄露令牌→重置密码。",
+   "bypass_technique": "利用Referer头泄露敏感信息。",
+   "defensive_insight": "在敏感页面禁止Referer泄露，使用Referrer-Policy。"
+  },
+  {
+   "id": 120324,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型XSS，经典payload，无绕过，无新意。",
+   "attack_chain": "在表单注入XSS→存储→触发。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对输入进行过滤，对输出进行编码。"
+  },
+  {
+   "id": 799895,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "CSRF",
+   "reasoning": "部分。CSRF修改用户设置，属于常见漏洞，但影响严重，可导致账户接管。",
+   "attack_chain": "构造恶意表单→诱导用户点击→修改设置→账户接管。",
+   "bypass_technique": "利用CSRF漏洞，无token验证。",
+   "defensive_insight": "实施CSRF令牌，验证请求来源。"
+  }
+ ]
+}

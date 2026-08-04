@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   2384833,
+   703058,
+   1825377,
+   1727044,
+   277534
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1825377,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "配置错误 / 框架行为利用",
+   "reasoning": "是。libcurl 的 CURLOPT_SSH_HOST_PUBLIC_KEY_SHA256 在 libssh 后端被静默忽略，导致 SSH 主机密钥验证被绕过。这属于框架行为利用，因为文档虽注明仅支持 libssh2，但静默忽略而非报错是反直觉的。技术点在于后端差异导致的验证缺失，可抽象为'配置了安全选项但后端不支持时静默降级'的通用问题。",
+   "attack_chain": "配置 libcurl 使用 libssh → 设置 CURLOPT_SSH_HOST_PUBLIC_KEY_SHA256 → 发起 SFTP 连接 → 即使指纹不匹配也连接成功。",
+   "bypass_technique": "利用 libssh 后端不支持该选项而静默忽略，绕过主机密钥验证。",
+   "defensive_insight": "当安全选项不被后端支持时，应显式报错而非静默忽略；或实现完整的指纹验证支持。"
+  },
+  {
+   "id": 186462,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。存储型 XSS 通过产品变体名称注入，触发点在 Buy Button 页面，属于常见 XSS 类型，但触发路径涉及多步（创建产品、添加变体、切换变体），有一定业务逻辑组合。技术点在于变体名称未过滤且在前端渲染时未编码。",
+   "attack_chain": "创建产品 → 添加变体并注入 payload → 保存 → 在 Buy Button 页面切换变体触发 XSS。",
+   "bypass_technique": "利用变体名称字段未过滤，注入 HTML 事件属性。",
+   "defensive_insight": "对所有用户输入进行输出编码，特别是在前端渲染时。"
+  },
+  {
+   "id": 928816,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型 XSS 通过自定义变量注入，在邮件编辑器中触发，属于常见 XSS 套路，无特殊绕过或攻击链。",
+   "attack_chain": "添加恶意自定义变量 → 在邮件编辑器中使用该变量触发 XSS。",
+   "bypass_technique": "无实质绕过，直接利用未过滤输入。",
+   "defensive_insight": "对自定义变量进行输入验证和输出编码。"
+  },
+  {
+   "id": 145896,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 状态混淆",
+   "reasoning": "是。密码重置令牌在用户更改邮箱后仍然有效，这违反了令牌应随敏感信息变更而失效的预期。技术点在于令牌生命周期管理不当，属于业务逻辑漏洞，可抽象为'敏感操作令牌未与用户状态绑定'的通用问题。",
+   "attack_chain": "用户请求密码重置 → 令牌发送至旧邮箱 → 用户更改邮箱 → 旧令牌仍有效 → 攻击者若获取旧邮箱可重置密码。",
+   "bypass_technique": "利用令牌未在邮箱变更时失效，延长其有效性。",
+   "defensive_insight": "在邮箱变更等敏感操作后，应使所有相关令牌失效。"
+  },
+  {
+   "id": 50941,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 授权绕过",
+   "reasoning": "是。通过篡改请求中的 track_id，将免费曲目替换为付费曲目，从而绕过付费。这属于业务逻辑漏洞，利用服务器未验证曲目是否已购买。技术点在于参数篡改导致授权绕过，可抽象为'未验证资源所有权'的通用问题。",
+   "attack_chain": "选择免费曲目 → 拦截请求 → 修改 track_id 为付费曲目 ID → 服务器接受并生成视频。",
+   "bypass_technique": "直接修改请求参数，绕过付费验证。",
+   "defensive_insight": "服务器端应验证用户是否有权使用该资源，而不仅仅是信任客户端参数。"
+  },
+  {
+   "id": 2384833,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 配置错误",
+   "reasoning": "是。curl 的 --proto 参数在指定 -all 后，如果只移除协议而不添加任何协议，会导致所有协议被启用，这完全违背了文档描述。技术点在于协议解析逻辑的边界条件处理错误，可抽象为'黑名单模式下的默认允许'的通用问题。",
+   "attack_chain": "使用 --proto -all 或 --proto -all,-http 等参数 → curl 反而允许所有协议 → 可能发送敏感数据到不安全的通道。",
+   "bypass_technique": "利用协议解析逻辑的缺陷，使 -all 失效。",
+   "defensive_insight": "修复协议解析逻辑，确保 -all 正确禁用所有协议；增加测试覆盖边界条件。"
+  },
+  {
+   "id": 134061,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "是。通过控制 lf-content 参数，加载攻击者控制的 JSON 数据，注入 HTML/脚本，实现反射型 XSS。这利用了第三方 Livefyre 组件的信任，属于跨组件攻击链。技术点在于参数直接控制外部资源加载，且未验证内容来源。",
+   "attack_chain": "构造恶意 URL → 控制 lf-content 指向攻击者服务器 → 加载恶意 JSON → 注入脚本执行。",
+   "bypass_technique": "利用参数直接加载外部 JSON，绕过同源策略。",
+   "defensive_insight": "对外部资源加载进行白名单验证，并对返回内容进行严格过滤。"
+  },
+  {
+   "id": 244967,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。点击劫持是常见漏洞，缺少 X-Frame-Options 头，属于配置错误，无特殊绕过或攻击链。",
+   "attack_chain": "无，直接利用缺少 X-Frame-Options 的页面。",
+   "bypass_technique": "无。",
+   "defensive_insight": "添加 X-Frame-Options 或 CSP frame-ancestors 头。"
+  },
+  {
+   "id": 703058,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 协议行为利用",
+   "reasoning": "是。利用 ASP.NET 的路径解析特性，在 .aspx/.ashx 后追加 /membership/ 路径，绕过封禁重定向规则。这属于框架行为利用，因为 ASP.NET 会忽略扩展名后的路径。技术点在于路径规范化差异，可抽象为'路径解析不一致'的通用问题。",
+   "attack_chain": "被封禁用户访问 https://www.roblox.com/my/money.aspx/membership/ → 绕过重定向 → 访问受限 API 执行操作。",
+   "bypass_technique": "利用 ASP.NET 忽略扩展名后路径的行为，构造 URL 绕过规则。",
+   "defensive_insight": "在应用层统一路径规范化，并确保重定向规则基于完整路径匹配。"
+  },
+  {
+   "id": 770508,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。CVE-2018-6389 是已知的 WordPress DoS 漏洞，利用 load-scripts.php 生成大量数据，属于常见套路，无特殊绕过或攻击链。",
+   "attack_chain": "单点：请求 load-scripts.php 带大量脚本名 → 服务器生成大量数据 → DoS。",
+   "bypass_technique": "无实质绕过，直接利用已知漏洞。",
+   "defensive_insight": "应用补丁，限制请求大小或添加速率限制。"
+  },
+  {
+   "id": 340580,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "子域名接管",
+   "reasoning": "是。通过 Fastly 注册未使用的子域名，实现子域名接管。这利用了 Fastly 不验证 DNS 所有权的行为，属于配置错误和第三方服务滥用。技术点在于子域名指向第三方服务但未正确配置。",
+   "attack_chain": "发现子域名指向 Fastly → 在 Fastly 注册该域名 → 控制子域名 → 可能分发恶意内容。",
+   "bypass_technique": "利用 Fastly 的注册机制，无需验证所有权。",
+   "defensive_insight": "定期检查 DNS 记录，删除不再使用的 CNAME，或确保第三方服务正确配置。"
+  },
+  {
+   "id": 1904097,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误",
+   "reasoning": "部分。Django multipart 解析器 DoS 是已知漏洞，但报告提供了详细的技术分析和影响，属于框架行为利用。技术点在于未限制 multipart 部分数量，导致资源耗尽。",
+   "attack_chain": "发送包含大量空/文件部分的 multipart 请求 → 服务器打开大量临时文件 → 内存和文件描述符耗尽。",
+   "bypass_technique": "无实质绕过，直接利用未限制的资源消耗。",
+   "defensive_insight": "限制 multipart 部分数量和大小，及时关闭临时文件。"
+  },
+  {
+   "id": 71614,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型 XSS 通过客户分组名称注入，在折扣页面触发，属于常见 XSS 套路，无特殊绕过或攻击链。",
+   "attack_chain": "创建恶意客户分组 → 在折扣中使用该分组 → 触发 XSS。",
+   "bypass_technique": "无实质绕过，直接利用未过滤输入。",
+   "defensive_insight": "对用户输入进行输出编码。"
+  },
+  {
+   "id": 1727044,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "IDOR / 信息泄露",
+   "reasoning": "是。通过伪造迁移请求，利用服务器自动填充目标用户的邮箱地址，导致信息泄露。这属于 IDOR，因为未验证当前用户是否有权查看目标邮箱。技术点在于服务器在响应中直接暴露敏感数据，可抽象为'未授权访问'的通用问题。",
+   "attack_chain": "构造 POST /migrate?step=2 请求，指定目标用户名 → 服务器返回包含目标邮箱的 HTML → 提取邮箱。",
+   "bypass_technique": "利用迁移流程的漏洞，无需授权即可获取邮箱。",
+   "defensive_insight": "在响应中避免暴露敏感数据，使用 ID 而非邮箱作为标识。"
+  },
+  {
+   "id": 2146691,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。CVE-2023-38039 是已知的 curl 头分配 DoS，属于常见套路，无特殊绕过或攻击链。",
+   "attack_chain": "单点：恶意服务器发送大量头 → curl 分配过多内存 → DoS。",
+   "bypass_technique": "无实质绕过，直接利用已知漏洞。",
+   "defensive_insight": "应用补丁，限制头数量或大小。"
+  },
+  {
+   "id": 167947,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "内存破坏",
+   "reasoning": "部分。OpenJPEG 的越界读取是已知 CVE，但报告提供了详细的 PoC 和 ASAN 输出，属于经典内存破坏漏洞。技术点在于 sycc422_to_rgb 函数未正确检查边界。",
+   "attack_chain": "单点：解析恶意 JPEG 2000 文件 → 触发越界读取。",
+   "bypass_technique": "无实质绕过，直接利用漏洞。",
+   "defensive_insight": "修复边界检查，使用安全函数。"
+  },
+  {
+   "id": 2688,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。OAuth 缺少 state 参数是常见 CSRF 漏洞，属于配置错误，无特殊绕过或攻击链。",
+   "attack_chain": "无，直接利用缺少 state 的 OAuth 流程。",
+   "bypass_technique": "无。",
+   "defensive_insight": "在 OAuth 流程中添加 state 参数并验证。"
+  },
+  {
+   "id": 277534,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 协议行为利用",
+   "reasoning": "是。使用不安全的比较操作符（===）而非 hash_equals()，导致时序攻击，可暴力破解应用密码。这属于协议行为利用，因为时序差异可被利用。技术点在于密码比较未使用恒定时间算法，可抽象为'密码比较不安全'的通用问题。",
+   "attack_chain": "攻击者发送大量密码尝试 → 通过响应时间差异推断正确密码 → 登录账户。",
+   "bypass_technique": "利用时序差异进行暴力破解。",
+   "defensive_insight": "使用 hash_equals() 进行密码比较，确保恒定时间。"
+  },
+  {
+   "id": 297803,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。开放重定向是常见漏洞，通过双斜杠绕过，属于配置错误，无特殊绕过或攻击链。",
+   "attack_chain": "单点：构造 URL //example.com → 服务器重定向到外部。",
+   "bypass_technique": "无实质绕过，直接利用未过滤的路径。",
+   "defensive_insight": "验证重定向目标，避免使用用户输入直接构造 Location。"
+  },
+  {
+   "id": 708820,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 信息泄露",
+   "reasoning": "是。启用 Elastic Search 后，组搜索泄露了其他组的私有 MR 和活动。这属于授权绕过，因为搜索未正确过滤权限。技术点在于搜索索引未考虑 ACL，可抽象为'搜索权限隔离'的通用问题。",
+   "attack_chain": "在组内搜索特定模式 → 返回其他组的私有 MR → 泄露信息。",
+   "bypass_technique": "利用搜索功能未正确过滤权限。",
+   "defensive_insight": "确保搜索索引和查询结果遵循 ACL，定期审计搜索权限。"
+  }
+ ]
+}

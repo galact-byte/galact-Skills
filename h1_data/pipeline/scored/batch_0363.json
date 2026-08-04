@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   165969,
+   28640,
+   115978,
+   1069080,
+   3930
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 856588,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。这是典型的存储型XSS，由于未对文件名进行HTML转义导致，属于常见漏洞类型，无特殊绕过或创新点。",
+   "attack_chain": "创建恶意文件名→服务器在目录列表页面未转义输出→浏览器执行脚本。",
+   "bypass_technique": "无，直接利用未转义输出。",
+   "defensive_insight": "对文件名进行HTML实体编码，使用安全的模板引擎。"
+  },
+  {
+   "id": 1428207,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 业务逻辑",
+   "reasoning": "部分。通过删除产品使问题出现在编辑界面，绕过原有过滤，属于业务逻辑组合，但整体仍是存储XSS的变体。",
+   "attack_chain": "创建恶意产品名→提问时引用→删除产品→编辑问题时触发XSS。",
+   "bypass_technique": "利用产品删除后的状态变化绕过过滤。",
+   "defensive_insight": "对所有用户输入进行统一输出编码，不依赖上下文过滤。"
+  },
+  {
+   "id": 248588,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "部分。利用URL片段绕过服务器端过滤，实现DOM XSS，但受限于X-Frame-Options，实际利用受限。",
+   "attack_chain": "构造恶意URL→参数解析错误→HTML注入或DOM XSS。",
+   "bypass_technique": "使用#片段绕过服务器端检查。",
+   "defensive_insight": "对DOM操作进行输入验证，使用CSP等安全头。"
+  },
+  {
+   "id": 503821,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 其他",
+   "reasoning": "部分。通过远程流式数据触发客户端断言失败，属于协议行为利用，但需要模糊测试，可复现性一般。",
+   "attack_chain": "远程发送恶意数据→触发终端重设→断言失败→客户端崩溃。",
+   "bypass_technique": "利用终端控制序列的边界条件。",
+   "defensive_insight": "对终端输入进行严格验证，避免断言失败。"
+  },
+  {
+   "id": 257276,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。公开的S3桶是常见配置错误，无技术含量。",
+   "attack_chain": "直接访问公开桶。",
+   "bypass_technique": "无。",
+   "defensive_insight": "配置桶策略为私有。"
+  },
+  {
+   "id": 504951,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "其他 / 协议行为利用",
+   "reasoning": "部分。利用游戏文件解析漏洞实现栈溢出，但需要客户端重启，利用条件受限。",
+   "attack_chain": "构造恶意playlist.txt→游戏加载时触发溢出→RCE。",
+   "bypass_technique": "利用文件格式解析缺陷。",
+   "defensive_insight": "对游戏资源文件进行严格校验。"
+  },
+  {
+   "id": 28640,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "类型混淆 / 内存破坏",
+   "reasoning": "是。利用整数溢出导致类型混淆，将Binary结构解释为MagicBinary，进而控制析构函数指针，实现RCE。这是对内存管理机制的深度利用，非典型。",
+   "attack_chain": "构造大尺寸参数→整数溢出→内存分配不足→类型混淆→控制析构函数→RCE。",
+   "bypass_technique": "利用整数溢出和联合体类型混淆。",
+   "defensive_insight": "检查整数溢出，避免类型混淆。"
+  },
+  {
+   "id": 115978,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "SSRF / 协议行为利用",
+   "reasoning": "是。利用ffmpeg对m3u8播放列表的处理，绕过内容类型检查，实现SSRF和文件枚举。这是对第三方库行为的巧妙利用。",
+   "attack_chain": "上传伪装视频→ffmpeg解析m3u8→发起内部请求→SSRF/文件枚举。",
+   "bypass_technique": "利用ffmpeg对播放列表的支持，绕过内容类型验证。",
+   "defensive_insight": "对上传文件进行严格内容验证，限制ffmpeg的协议。"
+  },
+  {
+   "id": 118737,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "认证绕过 / 业务逻辑",
+   "reasoning": "部分。利用OAuth state参数未验证，实现登录CSRF，属于认证逻辑缺陷。",
+   "attack_chain": "攻击者获取授权码→诱导受害者使用→受害者登录攻击者账户。",
+   "bypass_technique": "利用state参数缺失验证。",
+   "defensive_insight": "严格验证OAuth state参数。"
+  },
+  {
+   "id": 1120982,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "部分。经典的CL.TE请求走私，但报告缺乏具体利用场景，仅证明存在。",
+   "attack_chain": "发送走私请求→毒化后端socket→影响后续请求。",
+   "bypass_technique": "利用前后端解析差异。",
+   "defensive_insight": "统一前后端HTTP解析，拒绝歧义请求。"
+  },
+  {
+   "id": 133322,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 其他",
+   "reasoning": "部分。利用空字节使时间线活动消失，属于业务逻辑缺陷，但影响有限。",
+   "attack_chain": "在评论中使用空字节→活动记录消失。",
+   "bypass_technique": "利用空字节绕过输入验证。",
+   "defensive_insight": "过滤空字节，确保日志完整性。"
+  },
+  {
+   "id": 165969,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 配置错误",
+   "reasoning": "是。利用HKCU注册表键可被低权限用户篡改，劫持安装程序打开链接的行为，实现提权。这是对Windows信任模型的颠覆，影响广泛。",
+   "attack_chain": "篡改HKCU注册表→安装程序触发链接→执行恶意代码→提权。",
+   "bypass_technique": "利用注册表键的权限配置错误。",
+   "defensive_insight": "安装程序应使用HKLM，避免信任用户可写的注册表。"
+  },
+  {
+   "id": 3930,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 协议行为利用",
+   "reasoning": "是。利用OAuth重定向URI的解析差异，实现令牌窃取，无需用户交互。",
+   "attack_chain": "构造恶意OAuth链接→重定向到攻击者→窃取令牌。",
+   "bypass_technique": "利用redirect_uri参数解析差异。",
+   "defensive_insight": "严格验证redirect_uri，使用精确匹配。"
+  },
+  {
+   "id": 1069080,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 其他",
+   "reasoning": "是。CTF writeup展示了多种漏洞组合，包括IDOR、模板注入、SQL注入等，攻击链完整，思路清晰。",
+   "attack_chain": "多步骤利用多个漏洞获取flag。",
+   "bypass_technique": "多种技术组合。",
+   "defensive_insight": "全面加固应用，避免逻辑漏洞。"
+  },
+  {
+   "id": 47940,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过",
+   "reasoning": "部分。团队管理员可以添加计费联系人，属于水平权限提升，但技术简单。",
+   "attack_chain": "管理员直接调用API添加计费联系人。",
+   "bypass_technique": "利用API未检查角色。",
+   "defensive_insight": "在API层实施严格的角色检查。"
+  },
+  {
+   "id": 357858,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "命令注入 / 配置错误",
+   "reasoning": "部分。通过修改文件扩展名上传shell，属于常见上传绕过，但利用exiftool嵌入代码有一定技巧。",
+   "attack_chain": "嵌入代码→改扩展名→上传→执行。",
+   "bypass_technique": "利用扩展名和内容不一致。",
+   "defensive_insight": "验证文件内容，禁止脚本执行。"
+  },
+  {
+   "id": 185051,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "类型混淆 / 内存破坏",
+   "reasoning": "是。通过重新定义Decimal类，导致类型混淆，进而内存破坏。这是对动态语言特性的利用。",
+   "attack_chain": "重新定义类→类型混淆→内存破坏。",
+   "bypass_technique": "利用类重定义。",
+   "defensive_insight": "避免在关键路径使用可变类。"
+  },
+  {
+   "id": 230863,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。典型的CSRF漏洞，无绕过，直接利用GET请求。",
+   "attack_chain": "诱导用户访问恶意链接→删除字典。",
+   "bypass_technique": "无。",
+   "defensive_insight": "使用CSRF令牌，对状态改变请求使用POST。"
+  },
+  {
+   "id": 832593,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少X-Frame-Options是常见配置问题，且无实际影响。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "添加X-Frame-Options或CSP frame-ancestors。"
+  },
+  {
+   "id": 262262,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。信息泄露和会话管理问题，常见且影响有限。",
+   "attack_chain": "直接访问公开页面获取邮箱。",
+   "bypass_technique": "无。",
+   "defensive_insight": "避免在公开页面泄露敏感信息，实现正确的会话失效。"
+  }
+ ]
+}

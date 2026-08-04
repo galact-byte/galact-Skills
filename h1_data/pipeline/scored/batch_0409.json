@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   890272,
+   781253,
+   113424,
+   1043360,
+   1763817
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1763817,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "子域名接管 / 配置错误",
+   "reasoning": "是。利用 Cloudflare 的 CDN 域名（*.cdn.cloudflare.net）未绑定到实际账户，导致子域名可被接管。技术点在于对 CDN 泛解析域名的错误配置，而非传统 CNAME 指向失效服务。",
+   "attack_chain": "发现 undici.nodejs.org 解析到 cdn.cloudflare.net → 验证未绑定 → 在 Cloudflare 添加该域名 → 完全控制子域名。",
+   "bypass_technique": "利用 Cloudflare 的泛解析域名未绑定账户的配置缺陷，直接接管子域名。",
+   "defensive_insight": "定期审计 DNS 记录，确保所有 CNAME 指向的服务已正确绑定；对不再使用的域名及时删除记录。"
+  },
+  {
+   "id": 296645,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "路径遍历",
+   "reasoning": "部分。lactate 静态服务器未对 URL 编码的路径进行规范化，导致目录遍历。技术点在于对编码后的点分号处理不当，但属于常见路径遍历变体。",
+   "attack_chain": "构造 %2e%2e/ 序列 → 绕过路径检查 → 读取任意文件。",
+   "bypass_technique": "使用 URL 编码的 ../ 绕过简单的路径过滤。",
+   "defensive_insight": "对用户输入进行规范化，拒绝包含 .. 的路径；使用安全的文件路径解析库。"
+  },
+  {
+   "id": 214571,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。登录表单未强制 HTTPS，可被 sslstrip 降级攻击。技术点在于混合内容与缺少 HSTS，属于常见配置问题。",
+   "attack_chain": "用户访问 HTTP 页面 → sslstrip 拦截 → 获取明文凭据。",
+   "bypass_technique": "利用 HTTP 与 HTTPS 混合内容，通过 sslstrip 降级。",
+   "defensive_insight": "全站启用 HTTPS 并配置 HSTS，避免混合内容。"
+  },
+  {
+   "id": 2012125,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 拒绝服务",
+   "reasoning": "是。Rack 的 multipart 边界解析存在 ReDoS，利用 Ruby 正则表达式的回溯行为导致 CPU 耗尽。技术点在于对 RFC2183 边界解析的正则表达式缺乏防护。",
+   "attack_chain": "构造恶意 multipart 请求 → 触发正则回溯 → CPU 耗尽。",
+   "bypass_technique": "利用正则表达式的灾难性回溯，无需特殊条件。",
+   "defensive_insight": "使用安全的正则表达式，避免嵌套量词；限制请求大小和解析时间。"
+  },
+  {
+   "id": 890272,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 业务逻辑 / 认证绕过",
+   "reasoning": "是。从 .git 泄露到日志文件获取凭据，再到 2FA 绕过、SSRF、移动端逆向、权限提升，最终通过 CSS 注入提取 2FA 码。技术点在于多个组件的组合利用，尤其是 CSS 注入提取敏感信息。",
+   "attack_chain": "发现 .git 泄露 → 获取日志中的凭据 → 绕过 2FA（MD5 碰撞）→ 利用 SSRF 访问内部子域 → 逆向 APK 获取 token → 利用 IDOR 和事件冒泡提权 → CSS 注入提取 2FA 码。",
+   "bypass_technique": "利用 MD5 碰撞绕过 2FA；路径遍历 + SSRF 访问内部服务；事件冒泡触发特权函数；CSS 注入外带数据。",
+   "defensive_insight": "严格保护敏感文件，实施最小权限原则，对 2FA 使用强随机数，防止 SSRF 和 IDOR，对用户输入进行严格过滤。"
+  },
+  {
+   "id": 1044869,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 配置错误",
+   "reasoning": "部分。GraphQL 端点缺少权限检查，无权限员工可访问计费促销接口。技术点在于内部 API 未正确实施访问控制。",
+   "attack_chain": "构造 GraphQL 请求 → 绕过权限检查 → 列出/接受促销。",
+   "bypass_technique": "直接调用未受保护的 GraphQL 端点。",
+   "defensive_insight": "对所有 GraphQL 端点实施统一的权限验证，定期审计内部 API。"
+  },
+  {
+   "id": 99969,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 状态混淆",
+   "reasoning": "是。用户权限被撤销后，仍可通过重放旧请求执行操作。技术点在于服务端未验证当前权限状态，仅依赖客户端隐藏选项。",
+   "attack_chain": "用户获得权限 → 创建索引 → 权限被撤销 → 重放旧请求 → 重命名索引。",
+   "bypass_technique": "重放旧请求，利用服务端未重新验证权限。",
+   "defensive_insight": "每次请求都进行权限验证，不依赖客户端 UI 状态。"
+  },
+  {
+   "id": 487656,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。HTTP PUT 方法启用，可直接上传文件。技术点在于服务器配置错误，无绕过。",
+   "attack_chain": "发送 PUT 请求 → 上传文件 → 通过 GET 访问。",
+   "bypass_technique": "无，直接利用配置错误。",
+   "defensive_insight": "禁用不必要的 HTTP 方法，限制上传目录的执行权限。"
+  },
+  {
+   "id": 781253,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 认证绕过 / SSRF",
+   "reasoning": "是。通过邮箱验证漏洞注册特殊字符邮箱，利用 QR 码生成时字符剥离获得有效恢复码，进而接管账户。随后利用 CSP 白名单绕过执行脚本，通过 IDOR 注入 HTML，最终利用 headless Chrome 的调试端口获取内部文档。技术点在于多个环节的巧妙组合。",
+   "attack_chain": "注册特殊邮箱 → 利用 QR 码生成剥离字符 → 接管账户 → 利用 CSP 绕过执行脚本 → 获取 reviewer 链接 → IDOR 修改用户名 → 注入 HTML → SSRF 探测内部 → 访问 Chrome 调试端口 → 获取 secret 文档。",
+   "bypass_technique": "邮箱字符剥离绕过验证；CSP 白名单追加仓库路径；IDOR 修改任意用户；headless Chrome 调试端口未授权访问。",
+   "defensive_insight": "严格验证邮箱格式，QR 码生成时避免字符剥离；CSP 白名单应精确匹配；实施 IDOR 防护；禁用调试端口或限制访问。"
+  },
+  {
+   "id": 449478,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "协议行为利用",
+   "reasoning": "部分。Flash 可以绕过 CORS 预检发送跨域请求，但报告为 informative，且缺少详细复现步骤。",
+   "attack_chain": "Flash 发送跨域 POST → 绕过预检 → 发送非简单 Content-Type。",
+   "bypass_technique": "利用 Flash 的跨域策略缺陷。",
+   "defensive_insight": "禁用 Flash，或服务端严格校验 Origin 和 Content-Type。"
+  },
+  {
+   "id": 1988560,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 认证绕过",
+   "reasoning": "是。通过 javascript: 协议绕过 URL 安全检查，实现反射型 XSS。技术点在于协议检查缺失，可抽象为通用绕过。",
+   "attack_chain": "构造 redirect=javascript:alert(1);//://[REDACTED]/ → 绕过 isSafeHost → 执行脚本。",
+   "bypass_technique": "利用 javascript: 协议和注释符绕过主机名检查。",
+   "defensive_insight": "严格校验 URL 协议，使用白名单而非黑名单。"
+  },
+  {
+   "id": 675578,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。PHP EXIF 解析存在越界读取，属于已知 CVE，无新意。",
+   "attack_chain": "构造恶意图片 → 触发越界读取 → 信息泄露或崩溃。",
+   "bypass_technique": "无，直接利用已知漏洞。",
+   "defensive_insight": "升级 PHP 版本，对图片解析进行沙箱处理。"
+  },
+  {
+   "id": 390848,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "命令注入",
+   "reasoning": "是。ps 包未对 PID 参数进行过滤，导致命令注入。技术点在于使用 exec 而非 spawn，属于常见注入模式。",
+   "attack_chain": "控制 PID 参数 → 注入命令 → 执行任意命令。",
+   "bypass_technique": "利用 shell 元字符注入。",
+   "defensive_insight": "使用 spawn 而非 exec，对输入进行严格校验。"
+  },
+  {
+   "id": 14803,
+   "value_score": 0,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "配置错误",
+   "reasoning": "否。仅指出使用 HTTP 协议，无具体漏洞细节，信息不足。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "全站启用 HTTPS。"
+  },
+  {
+   "id": 113424,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 拒绝服务",
+   "reasoning": "是。利用 libevent bufferevents 模式下 control 连接解析的缺陷，导致无限循环。技术点在于不同代码路径对 data_len 的处理不一致，可跨协议利用。",
+   "attack_chain": "发送超长数据 + 换行 → 触发无限循环 → DoS。",
+   "bypass_technique": "利用 bufferevents 模式下 data_len 未更新，导致循环。",
+   "defensive_insight": "统一代码路径，确保 data_len 正确更新；限制输入长度。"
+  },
+  {
+   "id": 181225,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少 rel=noopener 导致钓鱼攻击，属于常见 Web 安全问题。",
+   "attack_chain": "用户点击链接 → 新页面修改 opener 位置 → 钓鱼。",
+   "bypass_technique": "无，直接利用缺失属性。",
+   "defensive_insight": "为所有 target=_blank 链接添加 rel=noopener noreferrer。"
+  },
+  {
+   "id": 1043360,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 拒绝服务",
+   "reasoning": "是。Node.js http2 服务器在 unknownProtocol 事件处理中未正确关闭 socket，导致文件描述符和内存泄漏。技术点在于事件处理不当，可被低复杂度攻击利用。",
+   "attack_chain": "建立大量连接 → 触发 unknownProtocol → 不响应 → 资源耗尽。",
+   "bypass_technique": "利用服务器未及时销毁 socket 的缺陷。",
+   "defensive_insight": "在 unknownProtocol 事件中强制销毁 socket，设置超时。"
+  },
+  {
+   "id": 147570,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "路径遍历 / 框架行为利用",
+   "reasoning": "是。利用反斜杠与正斜杠的混用绕过路径过滤，技术点在于不同操作系统对路径分隔符的解析差异。",
+   "attack_chain": "构造 ../\\ 或 \\.. 等变体 → 绕过过滤 → 读取文件。",
+   "bypass_technique": "使用反斜杠和正斜杠的混合变体绕过 strpos 检查。",
+   "defensive_insight": "统一路径分隔符，使用规范化函数。"
+  },
+  {
+   "id": 840285,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。CSRF 删除账户，属于常见漏洞，无新意。",
+   "attack_chain": "诱导用户访问恶意页面 → 发送删除请求。",
+   "bypass_technique": "无，直接利用 CSRF。",
+   "defensive_insight": "实施 CSRF 令牌，验证请求来源。"
+  },
+  {
+   "id": 218680,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS / 内容注入",
+   "reasoning": "否。参数 code 存在内容注入，但未提供具体利用，属于常见问题。",
+   "attack_chain": "构造恶意 code 参数 → 注入内容。",
+   "bypass_technique": "无，直接注入。",
+   "defensive_insight": "对输出进行编码，过滤用户输入。"
+  }
+ ]
+}

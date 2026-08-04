@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 8,
+  "dropped": 12,
+  "avg_score": 4.6,
+  "top_n": [
+   379049,
+   700831,
+   2429894,
+   1150799,
+   128685
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1150799,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XML注入 / SSRF",
+   "reasoning": "是。XML外部实体（XXE）通过schemaLocation触发外部服务交互，且无需完整XXE即可达到DNS/HTTP外带，展示了XXE的另一种利用方式。技术点在于利用XML Schema加载外部资源，而非传统实体引用。",
+   "attack_chain": "构造恶意XML payload → 服务器解析时加载外部schema → 发起DNS/HTTP请求到攻击者服务器 → 确认漏洞并可能用于内网探测或DDoS放大。",
+   "bypass_technique": "利用XML Schema的schemaLocation属性触发外部实体加载，绕过传统XXE过滤。",
+   "defensive_insight": "禁用XML外部实体解析，使用安全XML解析器配置，对用户输入进行严格过滤。"
+  },
+  {
+   "id": 128685,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "SSRF / 配置错误",
+   "reasoning": "是。通过URL参数直接访问内网服务，包括OpenStack metadata和VestaCP管理面板，展示了SSRF的典型利用。技术点在于利用十六进制IP（0x7f.1）绕过简单的IP过滤，且能访问云元数据服务。",
+   "attack_chain": "构造请求URL参数为内网地址 → 服务器发起请求 → 访问OpenStack metadata或内网管理面板 → 获取敏感信息或进一步攻击。",
+   "bypass_technique": "使用十六进制IP表示法（0x7f.1）绕过基于点分十进制的过滤。",
+   "defensive_insight": "严格限制服务器端请求的URL，禁止访问内网IP段，使用白名单机制。"
+  },
+  {
+   "id": 1977222,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "开放重定向",
+   "reasoning": "否。典型的开放重定向，通过base64解码redirect_url参数后直接跳转，无任何校验。技术点在于base64编码绕过简单过滤，但整体是常见套路。",
+   "attack_chain": "构造恶意链接 → 用户点击 → 解码redirect_url → 跳转到攻击者网站。",
+   "bypass_technique": "使用base64编码绕过对redirect_url的简单过滤。",
+   "defensive_insight": "对重定向URL进行白名单校验，或使用安全的重定向函数。"
+  },
+  {
+   "id": 1195423,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。公开的RPC端点泄露内部端口和IP，属于配置错误，无绕过或攻击链。",
+   "attack_chain": "直接访问公开的RPC端点 → 获取内部网络信息。",
+   "bypass_technique": "无，直接利用配置错误。",
+   "defensive_insight": "限制RPC端点的公开访问，使用防火墙或认证。"
+  },
+  {
+   "id": 1092125,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "部分。CORS配置错误允许任意域读取WordPress用户信息，虽然wp-json本身公开，但结合CORS可被恶意网站利用。技术点在于CORS与公开API的组合，但整体是常见配置问题。",
+   "attack_chain": "恶意网站 → 利用CORS漏洞 → 读取目标域用户信息。",
+   "bypass_technique": "利用CORS配置错误，通过JavaScript跨域读取。",
+   "defensive_insight": "正确配置CORS白名单，避免使用通配符。"
+  },
+  {
+   "id": 20081,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。明文HTTP传输密码，属于基础配置错误，无技术含量。",
+   "attack_chain": "无，直接利用HTTP明文传输。",
+   "bypass_technique": "无。",
+   "defensive_insight": "强制使用HTTPS并启用HSTS。"
+  },
+  {
+   "id": 198249,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。通过POST参数注入到HTML属性，形成反射型XSS，但需要用户交互（提交表单），且是经典属性注入。技术点在于对引号转义不严，但整体常见。",
+   "attack_chain": "构造恶意POST请求 → 服务器反射到页面 → 执行脚本。",
+   "bypass_technique": "利用未转义的引号闭合属性。",
+   "defensive_insight": "对输出进行HTML实体编码，特别是属性值。"
+  },
+  {
+   "id": 1561377,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。Django DEBUG模式开启导致信息泄露，属于配置错误，无绕过或攻击链。",
+   "attack_chain": "触发异常 → 显示详细错误页面 → 泄露配置信息。",
+   "bypass_technique": "无。",
+   "defensive_insight": "生产环境关闭DEBUG模式。"
+  },
+  {
+   "id": 178384,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。典型的CSRF漏洞，删除广告操作无CSRF保护，利用表单自动提交。技术点在于无token，但属于常见套路。",
+   "attack_chain": "诱导用户访问恶意页面 → 自动提交删除请求 → 删除广告。",
+   "bypass_technique": "无，直接利用缺少CSRF token。",
+   "defensive_insight": "添加CSRF token并验证。"
+  },
+  {
+   "id": 998981,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。S3 Bucket配置错误导致公开读写，属于常见云配置问题，无技术含量。",
+   "attack_chain": "直接使用AWS CLI访问公开的S3 Bucket。",
+   "bypass_technique": "无。",
+   "defensive_insight": "正确配置S3 Bucket策略，限制公开访问。"
+  },
+  {
+   "id": 1051192,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "反序列化 / 代码注入",
+   "reasoning": "部分。使用不安全的yaml.load()导致代码注入，属于已知的反序列化漏洞，但报告详细分析了不同PyYAML版本下的利用条件，展示了版本差异对利用的影响。技术点在于yaml.load的固有风险，但整体是常见套路。",
+   "attack_chain": "构造恶意YAML文件 → 加载时执行任意命令。",
+   "bypass_technique": "利用yaml.load的Python对象构造功能。",
+   "defensive_insight": "使用safe_load()替代load()。"
+  },
+  {
+   "id": 41939,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。通过cookie值注入XSS，属于反射型XSS，但需要用户cookie可控，且是经典注入。技术点在于cookie值未过滤，但整体常见。",
+   "attack_chain": "设置恶意cookie → 访问页面 → 执行脚本。",
+   "bypass_technique": "利用cookie值未过滤。",
+   "defensive_insight": "对cookie值进行输出编码。"
+  },
+  {
+   "id": 751904,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "DoS",
+   "reasoning": "否。通过调整地图大小参数导致服务器资源耗尽，属于参数篡改导致的DoS，无技术含量。",
+   "attack_chain": "构造大尺寸参数 → 服务器处理超时 → 服务不可用。",
+   "bypass_technique": "无。",
+   "defensive_insight": "限制参数范围，实施资源配额。"
+  },
+  {
+   "id": 220116,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。SSLv3 POODLE漏洞，属于过时协议支持，无技术含量。",
+   "attack_chain": "无，直接利用SSLv3漏洞。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁用SSLv3。"
+  },
+  {
+   "id": 379049,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 状态混淆",
+   "reasoning": "是。利用Monero交易中的替代公钥（alternative tx_pub_keys）导致钱包重复扫描输出，报告金额翻倍，展示了加密货币协议中的逻辑漏洞。技术点在于利用额外字段绕过已修补的重复公钥检查，实现资金翻倍，影响交易所自动化钱包。",
+   "attack_chain": "构造恶意交易 → 包含dummy和替代公钥 → 钱包重复扫描 → 报告金额翻倍 → 攻击者提取额外资金。",
+   "bypass_technique": "利用alternative tx_pub_keys特性，绕过对重复tx_pub_key的修补。",
+   "defensive_insight": "在扫描输出时跟踪所有已使用的公钥，确保不重复计算。"
+  },
+  {
+   "id": 700831,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 信息泄露",
+   "reasoning": "是。通过Flow应用泄露的Access Token，即使员工被移除，仍可访问商店所有数据，展示了第三方应用权限管理缺陷。技术点在于应用将敏感token返回给前端，且权限未随员工移除而撤销。",
+   "attack_chain": "员工获取Flow应用的Access Token → 被移除后仍使用token调用API → 访问和修改商店数据。",
+   "bypass_technique": "利用应用泄露的token，绕过员工权限撤销。",
+   "defensive_insight": "确保敏感token不返回前端，并在员工移除时撤销所有相关权限。"
+  },
+  {
+   "id": 469668,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露",
+   "reasoning": "部分。密码明文记录在日志中，属于敏感信息泄露，但技术点在于异常处理未过滤所有敏感参数，导致密码泄露。整体是常见问题，但影响较大。",
+   "attack_chain": "触发异常 → 日志记录密码 → 攻击者获取日志 → 泄露密码。",
+   "bypass_technique": "无，直接利用日志记录缺陷。",
+   "defensive_insight": "在日志中过滤所有敏感参数，使用脱敏技术。"
+  },
+  {
+   "id": 120,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少SPF记录，属于DNS配置问题，无技术含量。",
+   "attack_chain": "无，直接利用缺少SPF。",
+   "bypass_technique": "无。",
+   "defensive_insight": "添加SPF记录。"
+  },
+  {
+   "id": 2429894,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / SSRF",
+   "reasoning": "是。libuv的域名解析漏洞导致SSRF，影响所有Node.js版本，展示了底层库的缺陷。技术点在于libuv的域名解析行为可被利用，绕过常规SSRF防护，且影响广泛。",
+   "attack_chain": "构造恶意域名 → libuv解析异常 → 访问内网资源。",
+   "bypass_technique": "利用libuv的域名解析漏洞，绕过IP过滤。",
+   "defensive_insight": "更新libuv到修复版本，实施严格的SSRF防护。"
+  },
+  {
+   "id": 412988,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "授权绕过",
+   "reasoning": "否。通过直接构造URL请求调解功能，属于端点未授权访问，但影响低，且是常见逻辑缺陷。",
+   "attack_chain": "构造POST请求到调解端点 → 触发未授权操作。",
+   "bypass_technique": "无，直接利用端点未授权。",
+   "defensive_insight": "对敏感操作进行权限验证。"
+  }
+ ]
+}

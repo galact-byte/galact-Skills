@@ -1,0 +1,334 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 2,
+  "dropped": 18,
+  "avg_score": 2.7,
+  "top_n": [
+   57603,
+   139192
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 241950,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。bridge.cspr.ng HTTP 不自动升级 HTTPS——传输层配置缺陷经典（同 164419 类型），informative，无实际利用。",
+   "attack_chain": "单点：诱导访问 http→明文表单提交→窃听。",
+   "bypass_technique": "无绕过，依赖明文通道。",
+   "defensive_insight": "HTTP 全量 301 到 HTTPS；表单 action 强制 https。"
+  },
+  {
+   "id": 57603,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 授权绕过 / 协议行为利用",
+   "reasoning": "是。Vimeo 撤销应用后 access_token 失效但此前签发的 authorization code 仍可兑换新 token——'OAuth2 撤销语义不完整'（code 未随撤销失效），被撤销的应用凭保存的旧 code 即可恢复对用户账户的访问，且用户无法再管理该应用；反直觉点在于'撤销只清了 token 没清 code'，可抽象为通用判据（撤销操作必须级联失效该授权关系下全部凭证）；复现步骤极完整。",
+   "attack_chain": "授权拿 code→用户撤销应用→旧 code 仍兑换新 token→恢复访问。",
+   "bypass_technique": "无绕过，利用撤销未级联失效 authorization code。",
+   "defensive_insight": "OAuth2 撤销须同时失效 code 与 token；授权记录生命周期统一管理。"
+  },
+  {
+   "id": 135944,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "无法判断。正文仅一行 OpenSSL commit 链接（CVE-2016-2105），无技术细节。",
+   "attack_chain": "无法确认。",
+   "bypass_technique": "无法确认。",
+   "defensive_insight": "升级 OpenSSL；编码长度校验。"
+  },
+  {
+   "id": 219323,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "命令注入",
+   "reasoning": "否。Gratipay 支付历史导出 CSV 未防公式前缀（=cmd|calc）——CSV 公式注入经典，PoC 完整但机制成熟。",
+   "attack_chain": "名字注入公式→导出 CSV→Excel 打开执行。",
+   "bypass_technique": "无绕过，直接利用公式前缀。",
+   "defensive_insight": "CSV 导出对 =+-@ 前缀转义。"
+  },
+  {
+   "id": 162336,
+   "value_score": 0,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "配置错误",
+   "reasoning": "无法判断。仅建议加 X-XSS-Protection 头——纯安全头建议，无漏洞论证。",
+   "attack_chain": "无法确认。",
+   "bypass_technique": "无法确认。",
+   "defensive_insight": "响应头统一加安全基线（按需）。"
+  },
+  {
+   "id": 120305,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "授权绕过",
+   "reasoning": "无法判断。声称改 venue_id 拿任意组织场地数据，正文 244 字符无请求/响应细节，仅截图。",
+   "attack_chain": "无法确认。",
+   "bypass_technique": "无法确认。",
+   "defensive_insight": "场地接口校验组织归属。"
+  },
+  {
+   "id": 118925,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "授权绕过",
+   "reasoning": "无法判断。声称 API key 索引限制失效（限单索引可操作全部），正文极短无请求细节。",
+   "attack_chain": "无法确认。",
+   "bypass_technique": "无法确认。",
+   "defensive_insight": "API key 索引权限服务端强制。"
+  },
+  {
+   "id": 144147,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。Uber newsroom 的 WP postpass 表单无 CSRF——CSRF 经典（低影响密码表单），informative，机制零变形。",
+   "attack_chain": "单点：诱导提交表单→猜测密码进受限页。",
+   "bypass_technique": "无绕过，直接利用缺失防护。",
+   "defensive_insight": "postpass 表单加 CSRF token。"
+  },
+  {
+   "id": 1121771,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。Acronis 公开 S3 桶含 sysinfo ZIP（JWT token）——敏感文件公开经典，URL 完整但机制零变形。",
+   "attack_chain": "单点：下载公开 ZIP→读内部信息/token。",
+   "bypass_technique": "无绕过，直接下载。",
+   "defensive_insight": "S3 桶私有化；敏感文件清理。"
+  },
+  {
+   "id": 81736,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。WordPress 编辑器 audio 标签 XSS——编辑器内容 XSS 经典，PoC 完整但机制零变形。",
+   "attack_chain": "单点：编辑器输入 audio 标签→可视化切换触发。",
+   "bypass_technique": "无绕过，直接利用未消毒标签。",
+   "defensive_insight": "富文本编辑器标签白名单。"
+  },
+  {
+   "id": 223374,
+   "value_score": 0,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "无法判断。建议强制强密码——产品建议，无漏洞论证。",
+   "attack_chain": "无法确认。",
+   "bypass_technique": "无法确认。",
+   "defensive_insight": "密码策略（如属产品要求）。"
+  },
+  {
+   "id": 1340650,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 其他",
+   "reasoning": "否。重置邮件无速率限制可轰炸——邮件轰炸经典，步骤完整但机制零变形。",
+   "attack_chain": "单点：循环触发重置→受害者邮箱被淹。",
+   "bypass_technique": "无绕过，直接利用缺失限速。",
+   "defensive_insight": "重置邮件按账户/IP 限流。"
+  },
+  {
+   "id": 241619,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。Starbucks UK 的 jQuery tabs 把 hash 传 parseHTML/innerHTML sink（IE11 双访问触发）——DOM XSS 经典（组件 sink），多域受影响，堆栈完整但机制成熟。",
+   "attack_chain": "单点：hash 注入 payload→tabs parseHTML→执行（IE11）。",
+   "bypass_technique": "无绕过，直接利用组件 DOM sink。",
+   "defensive_insight": "hash/URL 数据不进 innerHTML；组件升级+输出转义。"
+  },
+  {
+   "id": 204628,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。mruby sprintf 宽度参数整型溢出致 CHECK 宏越界 segfault——格式化溢出经典，PoC 一行+根因分析，机制成熟。",
+   "attack_chain": "单点：sprintf 宽度传 MAX_INT→溢出→崩溃。",
+   "bypass_technique": "无绕过，直接利用宽度溢出。",
+   "defensive_insight": "CHECK 宏用差值比较防溢出。"
+  },
+  {
+   "id": 6935,
+   "value_score": 0,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "配置错误",
+   "reasoning": "无法判断。仅建议加 X-Content-Type-Options 头——纯安全头建议，无漏洞论证。",
+   "attack_chain": "无法确认。",
+   "bypass_technique": "无法确认。",
+   "defensive_insight": "统一加 nosniff 头。"
+  },
+  {
+   "id": 14485,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。hi-tech.mail.ru 的 Flash audio-player.swf playerID 参数 XSS——Flash 参数注入经典，payload 完整但机制成熟。",
+   "attack_chain": "单点：playerID 注入→Flash 执行。",
+   "bypass_technique": "无绕过，直接利用 Flash 参数。",
+   "defensive_insight": "Flash 已废弃；外链 SWF 加固。"
+  },
+  {
+   "id": 1051369,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS / 信息泄露",
+   "reasoning": "否。盲存储 XSS 经 XSSHunter 在 admin 后端触发，泄露 cookie 与 DB 凭据——盲 XSS 经典（后端触发影响大），链路由输入存 payload→admin 操作触发→凭据回连完整；但细节多 REDACTED，机制成熟。",
+   "attack_chain": "输入存 XSSHunter payload→admin 后端触发→cookie/DB 凭据回连。",
+   "bypass_technique": "无绕过，直接利用后端未消毒渲染。",
+   "defensive_insight": "后端渲染统一转义；管理后台输入 sanitize。"
+  },
+  {
+   "id": 259390,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "无法判断。正文仅 CVE-2017-10672（XML::LibXML replaceChild UAF）链接，无技术细节。",
+   "attack_chain": "无法确认。",
+   "bypass_technique": "无法确认。",
+   "defensive_insight": "升级 XML::LibXML；节点替换生命周期管理。"
+  },
+  {
+   "id": 765664,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。curl ourWriteOut 配置文件越界读（fuzz 触发）——fuzz 经典发现，informative，ASAN 完整但无实际利用。",
+   "attack_chain": "单点：畸形配置文件→ourWriteOut 越界读。",
+   "bypass_technique": "无绕过，直接利用解析缺陷。",
+   "defensive_insight": "配置解析边界校验；升级 curl。"
+  },
+  {
+   "id": 139192,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 协议行为利用",
+   "reasoning": "部分。Badoo 的 chrome-service-worker.js 含当前登录用户 ID，任意网站可 script 加载并读取识别访问者身份——'公开脚本随登录状态变化泄露身份'的跨站身份识别侧信道，反直觉点在于'公开资源即身份探针'；条件极简（script 标签），PoC 完整，广告定向滥用场景详尽；影响是隐私识别而非数据破坏。",
+   "attack_chain": "恶意站加载 service-worker.js→读 user_id→识别访问者→定向广告/骚扰。",
+   "bypass_technique": "无绕过，直接利用公开脚本的登录态差异。",
+   "defensive_insight": "公开脚本不含会话相关数据；身份信息经认证接口按 origin 放行。"
+  }
+ ]
+}

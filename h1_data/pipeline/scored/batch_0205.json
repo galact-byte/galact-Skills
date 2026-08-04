@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1431042,
+   146416,
+   518669,
+   231524,
+   365093
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 231524,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 配置错误",
+   "reasoning": "是。上传任意文件作为logo，利用IE11对SVG onload和IMG onerror的CSP绕过，实现存储型XSS。技术点在于CSP在IE11下的绕过，以及上传功能未验证文件类型。区别于普通上传XSS，此案例展示了CSP的浏览器兼容性缺陷，具有启发性。",
+   "attack_chain": "管理员上传恶意HTML文件作为logo→受害者访问logo URL→IE11下CSP绕过→执行JavaScript。",
+   "bypass_technique": "利用IE11对SVG onload和IMG onerror的CSP绕过。",
+   "defensive_insight": "严格验证上传文件类型，仅允许图片；加强CSP策略，避免依赖浏览器兼容性。"
+  },
+  {
+   "id": 146416,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 命令注入",
+   "reasoning": "是。Ruby net/http库未对请求路径进行CRLF过滤，导致HTTP头注入，可构造任意请求。技术点在于库函数对用户输入的不安全处理，属于框架行为利用。区别于普通头注入，此案例展示了标准库的缺陷，可抽象为通用判断条件。",
+   "attack_chain": "用户输入路径包含CRLF→net/http未过滤→注入任意HTTP头或构造恶意请求。",
+   "bypass_technique": "利用CRLF注入绕过输入验证，构造额外请求头。",
+   "defensive_insight": "库函数应严格验证输入，过滤CRLF；开发者应避免将用户输入直接传入网络请求。"
+  },
+  {
+   "id": 277213,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "业务逻辑",
+   "reasoning": "否。两个账户使用相同密码，攻击者猜测密码后登录，属于弱密码问题，无技术含量。信息不足，无具体PoC，无法判断真实性。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "强制密码复杂度，实施账户锁定和异常检测。"
+  },
+  {
+   "id": 518669,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / SQL注入",
+   "reasoning": "是。FileContentProvider的投影映射限制仅应用于ROOT_DIRECTORY，导致通过构造projection参数绕过URI匹配限制，实现SQL注入。技术点在于条件判断不完整，属于授权绕过。区别于普通SQL注入，此案例展示了内容提供者暴露面的风险，可抽象为通用判断条件。",
+   "attack_chain": "构造恶意content query URI→绕过URI匹配限制→注入SQL查询→泄露数据库信息。",
+   "bypass_technique": "利用projection参数注入SQL，绕过URI限制。",
+   "defensive_insight": "对所有URI类型应用一致的投影映射限制；使用参数化查询。"
+  },
+  {
+   "id": 207983,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "其他",
+   "reasoning": "部分。Perl正则引擎的堆缓冲区溢出，属于底层库漏洞，技术点在于正则匹配的边界条件处理。虽然非预期性中等，但PoC完整，可复现。",
+   "attack_chain": "构造特定正则表达式→触发S_regmatch越界读取→崩溃或信息泄露。",
+   "bypass_technique": "无绕过，直接利用库缺陷。",
+   "defensive_insight": "更新Perl版本，限制正则表达式复杂度。"
+  },
+  {
+   "id": 164684,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "SQL注入",
+   "reasoning": "部分。密码重置功能中的SQL注入，通过错误消息泄露数据库版本，属于经典注入。技术点在于错误处理不当，但无绕过，套路常见。",
+   "attack_chain": "注入SQL到登录字段→触发错误→泄露数据库信息。",
+   "bypass_technique": "无实质绕过，直接利用未过滤输入。",
+   "defensive_insight": "参数化查询，统一错误消息。"
+  },
+  {
+   "id": 1403176,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。价格篡改是常见业务逻辑漏洞，通过拦截请求修改价格参数，无技术难度。",
+   "attack_chain": "拦截购买请求→修改价格参数→低价购买。",
+   "bypass_technique": "无绕过，直接修改参数。",
+   "defensive_insight": "服务端验证价格，不信任客户端输入。"
+  },
+  {
+   "id": 134216,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。phpinfo页面泄露是常见配置错误，无技术含量。",
+   "attack_chain": "访问phpinfo页面→获取系统信息。",
+   "bypass_technique": "无",
+   "defensive_insight": "禁用phpinfo，限制调试信息暴露。"
+  },
+  {
+   "id": 209368,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 竞争条件",
+   "reasoning": "部分。2FA代码无限重发，导致短信轰炸，属于业务逻辑缺陷。技术点在于未限制重发次数，但无绕过，套路常见。",
+   "attack_chain": "触发2FA代码发送→无限重发→短信轰炸。",
+   "bypass_technique": "无绕过，直接利用未限制的重发机制。",
+   "defensive_insight": "限制2FA代码重发频率和次数。"
+  },
+  {
+   "id": 1913110,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。仅提及CVE-2023-27537双释放，无具体细节，信息不足。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "更新相关库。"
+  },
+  {
+   "id": 995936,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。反射型XSS，通过countryRedirect参数绕过重定向，技术点在于参数组合，但整体套路常见。",
+   "attack_chain": "构造恶意URL→触发XSS→窃取cookie。",
+   "bypass_technique": "利用countryRedirect参数避免重定向，使payload生效。",
+   "defensive_insight": "对输出进行编码，过滤恶意参数。"
+  },
+  {
+   "id": 1421804,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "认证绕过 / 配置错误",
+   "reasoning": "部分。通过添加.php扩展名绕过认证，访问管理面板，技术点在于URL解析差异，但属于常见配置错误。",
+   "attack_chain": "访问admin.php→绕过认证→查看管理信息。",
+   "bypass_technique": "利用扩展名差异绕过认证。",
+   "defensive_insight": "统一URL解析，加强认证检查。"
+  },
+  {
+   "id": 365093,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 信息泄露",
+   "reasoning": "是。通过邮箱信息泄露，在添加联系人时触发存储型XSS，技术点在于信息泄露与XSS的组合，形成攻击链。区别于普通XSS，此案例展示了信息泄露如何辅助攻击。",
+   "attack_chain": "获取目标邮箱→添加联系人触发XSS→执行脚本窃取信息。",
+   "bypass_technique": "利用信息泄露预置恶意脚本，用户添加邮箱时触发。",
+   "defensive_insight": "过滤用户输入，防止信息泄露。"
+  },
+  {
+   "id": 1431042,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "原型污染 / 框架行为利用",
+   "reasoning": "是。console.table的properties参数未过滤__proto__，导致原型污染，技术点在于框架内部逻辑缺陷。区别于普通原型污染，此案例展示了标准库的意外行为，可抽象为通用判断条件。",
+   "attack_chain": "控制console.table的properties参数→污染Object.prototype→DoS或潜在提权。",
+   "bypass_technique": "利用__proto__键污染原型。",
+   "defensive_insight": "过滤特殊键，使用安全数据结构。"
+  },
+  {
+   "id": 810778,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "命令注入",
+   "reasoning": "否。WebLogic反序列化RCE是已知CVE，直接利用，无新意。",
+   "attack_chain": "发送恶意SOAP请求→触发反序列化→执行命令。",
+   "bypass_technique": "无绕过，直接利用已知漏洞。",
+   "defensive_insight": "及时更新补丁。"
+  },
+  {
+   "id": 263681,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。错误消息不明确，属于低危问题，无技术含量。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "改进错误消息。"
+  },
+  {
+   "id": 152692,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。WooCommerce存储型XSS，常见插件漏洞，无新意。",
+   "attack_chain": "提交恶意内容→存储→触发XSS。",
+   "bypass_technique": "无绕过，直接利用未过滤输入。",
+   "defensive_insight": "过滤输入，更新插件。"
+  },
+  {
+   "id": 220494,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "部分。浏览器扩展未过滤HTML，导致GitHub.com上的XSS，技术点在于扩展与网站的信任边界。区别于普通XSS，此案例展示了扩展的额外攻击面。",
+   "attack_chain": "搜索恶意字符串→扩展渲染未过滤HTML→触发XSS。",
+   "bypass_technique": "利用扩展的DOM操作绕过网站过滤。",
+   "defensive_insight": "扩展应严格过滤HTML，避免信任网站内容。"
+  },
+  {
+   "id": 919859,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。存储型XSS，通过输入payload触发，套路常见，但PoC完整。",
+   "attack_chain": "在输入框注入payload→存储→触发XSS。",
+   "bypass_technique": "无绕过，直接利用未过滤输入。",
+   "defensive_insight": "过滤输入，输出编码。"
+  },
+  {
+   "id": 148741,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。CMS Airship存储型XSS，通过作者名称注入，技术点在于CSP可能阻止，但无绕过。",
+   "attack_chain": "创建恶意作者名称→其他用户编辑时触发XSS。",
+   "bypass_technique": "无绕过，直接利用未过滤输入。",
+   "defensive_insight": "过滤输入，加强CSP。"
+  }
+ ]
+}

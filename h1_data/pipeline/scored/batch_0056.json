@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   661051,
+   1501679,
+   463915,
+   268228,
+   186194
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 268228,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。通过修改POST请求中的userId参数，绕过前端权限控制，实现跨组账户接管。技术点在于服务端未对userId进行归属校验，仅依赖前端隐藏。区别于普通IDOR，这里结合了密码重置流程，形成完整攻击链。",
+   "attack_chain": "收集用户ID→构造密码重置请求→修改userId为其他组用户→接收重置链接→接管账户。",
+   "bypass_technique": "修改POST请求中的userId参数，绕过前端权限控制。",
+   "defensive_insight": "服务端必须校验userId是否属于当前管理员可管理的组，不能信任前端传递的ID。"
+  },
+  {
+   "id": 186230,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "部分。通过导出zip功能，仍可访问已删除的附件，属于修复不完整。技术点在于导出功能未同步删除操作，导致信息残留。思路有借鉴性，但属于常见的信息泄露变种。",
+   "attack_chain": "导出报告zip→解压查看已删除附件。",
+   "bypass_technique": "利用导出功能未同步删除操作，访问已删除附件。",
+   "defensive_insight": "导出功能应实时检查附件状态，删除后立即失效。"
+  },
+  {
+   "id": 57163,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "开放重定向",
+   "reasoning": "否。利用URL编码绕过路径校验，实现开放重定向，属于常见套路。技术点在于对%2F的处理，但无特殊绕过，启发性低。",
+   "attack_chain": "构造编码URL→服务器解析后重定向。",
+   "bypass_technique": "使用%2F编码斜杠绕过路径校验。",
+   "defensive_insight": "对重定向目标进行白名单校验，拒绝编码混淆。"
+  },
+  {
+   "id": 1245048,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。CVE-2020-3580是已知漏洞，直接利用公开PoC，无新意。技术点在于SAMLResponse参数未过滤，但属于成熟套路。",
+   "attack_chain": "构造恶意SAMLResponse→触发XSS。",
+   "bypass_technique": "利用已知CVE，无新绕过。",
+   "defensive_insight": "升级Cisco产品，对SAMLResponse进行输入验证。"
+  },
+  {
+   "id": 172289,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 跨组件攻击链",
+   "reasoning": "部分。通过点击劫持和社工，诱导用户授权OAuth，属于设计缺陷。技术点在于集成功能缺乏确认步骤，可被恶意利用。思路有借鉴性，但依赖用户交互。",
+   "attack_chain": "社工诱导点击→自动提交OAuth授权→账户被绑定攻击者。",
+   "bypass_technique": "利用点击劫持和自动提交表单，绕过用户确认。",
+   "defensive_insight": "集成功能应增加二次确认和密码验证，防止CSRF。"
+  },
+  {
+   "id": 194065,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。CVE-2016-2161是已知漏洞，直接引用，无新意。技术点在于mod_auth_digest的崩溃，但属于已知CVE，无绕过。",
+   "attack_chain": "发送恶意请求→触发崩溃。",
+   "bypass_technique": "无，直接利用已知CVE。",
+   "defensive_insight": "升级Apache，应用补丁。"
+  },
+  {
+   "id": 197877,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。WordPress版本过旧，属于配置错误，无技术含量。",
+   "attack_chain": "检测版本→利用已知漏洞。",
+   "bypass_technique": "无。",
+   "defensive_insight": "及时更新软件版本。"
+  },
+  {
+   "id": 485748,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。存储型XSS，但注入点在报告名称，属于常见位置。技术点在于未过滤HTML标签，但无特殊绕过。",
+   "attack_chain": "提交恶意名称→触发XSS。",
+   "bypass_technique": "直接注入img标签。",
+   "defensive_insight": "对输入进行HTML编码，使用CSP。"
+  },
+  {
+   "id": 108288,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，参数直接注入，无绕过。",
+   "attack_chain": "构造URL→触发XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对参数进行编码。"
+  },
+  {
+   "id": 475098,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 配置错误",
+   "reasoning": "部分。通过注册特定用户名，导致路由冲突，隐藏用户页面。技术点在于路由解析顺序，有启发性，但影响有限。",
+   "attack_chain": "注册特殊用户名→访问个人页面被重定向。",
+   "bypass_technique": "利用路由优先级，注册与静态页面同名的用户名。",
+   "defensive_insight": "路由设计应避免用户输入与静态路径冲突。"
+  },
+  {
+   "id": 1501679,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用多行Transfer-Encoding头，导致前后端解析分歧，实现请求走私。技术点在于obs-fold处理不当，可抽象为通用判据。区别于普通走私，这是对已知修复的不完整绕过。",
+   "attack_chain": "构造多行TE头→前端解析为chunked，后端为identity→走私请求。",
+   "bypass_technique": "使用多行TE头，利用obs-fold解析差异。",
+   "defensive_insight": "严格按RFC处理obs-fold，统一前后端解析。"
+  },
+  {
+   "id": 167206,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "部分。API未授权访问用户信息，属于IDOR。技术点在于ID可枚举，但无特殊绕过。",
+   "attack_chain": "遍历ID→获取用户信息。",
+   "bypass_technique": "直接枚举ID。",
+   "defensive_insight": "API应进行权限校验，防止未授权访问。"
+  },
+  {
+   "id": 134434,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，参数直接注入，无绕过。",
+   "attack_chain": "构造URL→触发XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对参数进行编码。"
+  },
+  {
+   "id": 2278865,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 业务逻辑",
+   "reasoning": "部分。退出私有项目后，仍可通过收藏访问部分信息。技术点在于收藏功能未同步权限，有启发性。",
+   "attack_chain": "收藏项目→退出后访问收藏→获取信息。",
+   "bypass_technique": "利用收藏功能绕过权限检查。",
+   "defensive_insight": "权限变更时应同步所有关联数据。"
+  },
+  {
+   "id": 8082,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 业务逻辑",
+   "reasoning": "是。密码重置链接在邮箱和密码更改后仍然有效，导致账户接管。技术点在于重置令牌未失效，属于状态混淆。区别于普通密码重置，这里结合了邮箱变更，形成完整攻击链。",
+   "attack_chain": "获取重置链接→更改邮箱和密码→使用旧链接重置→接管账户。",
+   "bypass_technique": "利用重置链接未失效，在邮箱变更后仍可使用。",
+   "defensive_insight": "密码重置令牌应在邮箱或密码变更后立即失效。"
+  },
+  {
+   "id": 661051,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用MAC密钥拼接的歧义性，实现块覆盖而不破坏签名。技术点在于字符串拼接无分隔符，导致位置和版本混淆。可抽象为通用判据，影响加密完整性。",
+   "attack_chain": "构造文件→上传→创建版本→覆盖块→下载验证。",
+   "bypass_technique": "利用MAC密钥拼接歧义，覆盖文件块。",
+   "defensive_insight": "MAC密钥应使用明确分隔符或长度前缀，避免歧义。"
+  },
+  {
+   "id": 111078,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "子域名接管",
+   "reasoning": "否。子域名接管，常见套路，无特殊绕过。",
+   "attack_chain": "发现未使用子域→注册服务→接管。",
+   "bypass_technique": "无。",
+   "defensive_insight": "定期清理DNS记录，监控子域状态。"
+  },
+  {
+   "id": 184712,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "其他",
+   "reasoning": "部分。mruby解析器崩溃，属于语言实现漏洞。技术点在于语法解析导致类型混淆，有启发性，但影响范围有限。",
+   "attack_chain": "构造恶意脚本→触发崩溃。",
+   "bypass_technique": "利用语法解析缺陷。",
+   "defensive_insight": "修复mruby解析器，增加类型检查。"
+  },
+  {
+   "id": 463915,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "是。通过postMessage未验证来源，结合点击劫持，实现Universal XSS。技术点在于KIS组件以第一方内容嵌入所有网站，导致任意域XSS。可抽象为通用判据，影响所有网站。",
+   "attack_chain": "恶意网站→postMessage→修改链接→点击劫持→执行JS。",
+   "bypass_technique": "利用postMessage未验证来源，结合点击劫持。",
+   "defensive_insight": "验证postMessage来源，避免第一方嵌入。"
+  },
+  {
+   "id": 186194,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 框架行为利用",
+   "reasoning": "是。通过public_send调用未过滤参数，实现delete_all，删除所有数据。技术点在于Rails的public_send可调用任意方法，且作用域未应用。可抽象为通用判据，影响所有使用类似模式的框架。",
+   "attack_chain": "构造state参数→public_send调用delete_all→删除所有数据。",
+   "bypass_technique": "利用public_send未过滤参数，调用危险方法。",
+   "defensive_insight": "对用户输入进行白名单校验，避免直接传入public_send。"
+  }
+ ]
+}

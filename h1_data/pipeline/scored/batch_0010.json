@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 9,
+  "dropped": 11,
+  "avg_score": 4.4,
+  "top_n": [
+   2326194,
+   295740,
+   1018336,
+   889795,
+   885539
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 480984,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。解析 stylers.xml 配置文件的 isInList 函数对 word[64] 无边界检查，超长 ext 字段触发栈溢出——解析器边界校验缺失的成熟套路，唯一轻微变形是攻击面在本地配置文件而非网络输入；且需本地访问配置文件，非远程，影响受限。",
+   "attack_chain": "单点：本地修改 stylers.xml 的 ext 字段→重开 Notepad++→栈溢出崩溃。",
+   "bypass_technique": "无绕过，直接利用本地配置解析缺少边界检查。",
+   "defensive_insight": "解析不可信配置文件时对定长缓冲区做边界检查；配置文件视为攻击面做输入校验。"
+  },
+  {
+   "id": 175091,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "类型混淆 / 反序列化 / 框架行为利用",
+   "reasoning": "部分。CPython 内置模块 itertools.chain 的 __setstate__ 未校验参数为迭代器，攻击者可通过 pickle 反序列化路径注入任意对象，使 PyIter_Next 在非法指针上调用导致 DEP 访问违例，可能升级为代码执行——利用解释器内部契约（setstate 信任输入）而非业务逻辑，具备反直觉性。但报告仅演示到崩溃级，未给出完整可利用 PoC，代码执行仅为推断，链路单组件。",
+   "attack_chain": "构造恶意 pickle→反序列化触发 chain.__setstate__→source 指向非迭代器→迭代时 PyIter_Next 非法调用→内存破坏。",
+   "bypass_technique": "利用 pickle 的 __setstate__ 钩子注入未校验类型的参数，触发 CPython 内部类型混淆。",
+   "defensive_insight": "解释器/框架的 setstate 类接口必须校验类型契约；不可信 pickle 输入一律拒绝。"
+  },
+  {
+   "id": 1018336,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 授权绕过",
+   "reasoning": "是。Shopify Chat 的 storefront API 里 skip_customer_creation 布尔标志翻转（true→false）即让服务端返回目标客户全名——设计上'跳过客户创建'的开关同时控制了 PII 的返回，单参数即可把查询接口变成全名枚举器，思路值得借鉴。区别于普通信息泄露：绕过条件为零（仅改一个字段）、可抽象为'客户端可控布尔标志破坏数据最小化策略'的通用判据，且复现步骤完整。",
+   "attack_chain": "匿名访问 ?chat→输入目标邮箱构造消息→拦截请求翻转 skip_customer_creation→响应 conversations.name 泄露客户全名。",
+   "bypass_technique": "将 skip_customer_creation:true 改为 false，绕过'不创建客户记录'策略，使接口返回完整 PII。",
+   "defensive_insight": "布尔开关只应控制其命名语义（是否落库），不得连带改变返回字段的权限面；查询接口的字段级授权与创建策略解耦。"
+  },
+  {
+   "id": 152958,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "XSS",
+   "reasoning": "无法判断。正文仅描述'Ticket 页面 XSS + coupons 页面 self-XSS'并附 Google Drive 视频链接，无具体 URL、无 payload、无注入点分析、无触发条件，无法验证真实性或边界条件。",
+   "attack_chain": "无法确认。",
+   "bypass_technique": "无法确认。",
+   "defensive_insight": "插件输出上下文正确转义；self-XSS 与存储型统一按输出编码修复。"
+  },
+  {
+   "id": 889795,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 授权绕过 / 路径遍历",
+   "reasoning": "是。把分享接口的 path 参数改为 \".\" 即可共享管理员根目录：服务端权限检查基于未规范化的前端路径，而分享动作对规范化后的根目录实际生效，且返回 403 与副作用脱钩——'看似已拒绝'的策略实际已被绕过，还叠加了管理员侧无共享图标的静默性（后续新建文件也持续泄露）。区别于普通越权：单参数变更、可抽象为'路径归一化后等价根目录、权限按原始路径判定'的通用判据。",
+   "attack_chain": "创建低权用户→加入 Talk 会话→发起分享请求→path 改为 \".\"→403 响应但根目录已共享→持续窥探管理员全部文件。",
+   "bypass_technique": "path:\".\" 指向根目录绕过'仅可分享可见文件夹'的授权判定；利用响应码与副作用不一致误导管理员。",
+   "defensive_insight": "权限判定与文件解析必须基于同一规范化路径；分享副作用应原子化，失败不得残留部分生效状态；共享目录应在所有侧展示标记。"
+  },
+  {
+   "id": 58679,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。会话 cookie 缺 Secure flag，经典 HTTPS 会话配置缺陷，无变形、无绕过、无链；报告仅提供完整抓包展示，技术启发为零。",
+   "attack_chain": "单点：会话 cookie 无 Secure 标志→可被明文通道携带→被中间人截获。",
+   "bypass_technique": "无绕过，直接利用配置缺失。",
+   "defensive_insight": "所有携带会话凭据的 cookie 必须设置 Secure + HttpOnly + SameSite。"
+  },
+  {
+   "id": 1067533,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 业务逻辑",
+   "reasoning": "部分。限速基于客户端可控的 X-Forwarded-For 头判定，攻击者换一个 IP 值即重置计数——信任客户端输入作为信任边界是成熟套路，非预期性有限；但'限速绕过可级联放大为邮件轰炸/OTP 爆破/登录爆破'的影响面与'可抽象为不可信头参与安全判定'的通用判据使其值得保留。",
+   "attack_chain": "触发限速→追加 X-Forwarded-For:127.0.0.1→重置计数→循环换 IP 无限请求→轰炸/爆破。",
+   "bypass_technique": "伪造 X-Forwarded-For 头使服务端误判来源 IP，逐个更换地址绕过限速。",
+   "defensive_insight": "限速键必须基于可信来源（CDN 传递的规范化头或连接层 IP），绝不信任客户端直传头；对 XFF 做白名单校验。"
+  },
+  {
+   "id": 150083,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 协议行为利用",
+   "reasoning": "部分。参数污染（重复 hostname 参数取不同值）+ JS 注释组合技巧绕过强 XSS 过滤器：利用 /* 与 // 注释把过滤后残留的引号/标签片段拼接进可执行上下文，'注释即 payload 拼图'的思路有启发；但绕过依赖该站点特定过滤器的具体行为，通用性一般。",
+   "attack_chain": "构造重复 hostname 参数→前后端取值分歧注入属性上下文→注释拼接闭合→JS 执行。",
+   "bypass_technique": "HPP 制造解析分歧，再用 JS 注释（/*...// 组合）绕过过滤器的黑名单片段匹配。",
+   "defensive_insight": "过滤不是修复——输出按上下文编码；参数解析策略全局唯一（拒绝重复参数或明确首/末值语义）。"
+  },
+  {
+   "id": 295740,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 信息泄露 / 跨组件攻击链",
+   "reasoning": "是。Garlic 消息里 I2NP 长度字段未校验即按该长度转发，把堆内存（最多 16KB，含会话/私钥）原样打包发送给攻击者——heartbleed 式'逻辑触发、无内存错误、可无限重复'的泄露，这是利用协议层对未校验长度字段信任的教科书案例。区别于普通缓冲区问题：不崩溃而是主动外发数据，跨 i2pd/kovri 两个实现（共享代码），并经隧道转发形成完整跨组件链，波及 I2P 匿名性与 Monero 等加密货币。",
+   "attack_chain": "构造恶意 Garlic clove（伪造 DeliveryTypeTunnel + 超长长度字段）→受害路由按未校验长度打包堆内存→经出站隧道转发→攻击者路由收到泄露 RAM 数据→提取密钥/会话。",
+   "bypass_technique": "伪造内嵌 I2NP 消息的长度字段使转发逻辑以超出实际缓冲区的长度读取堆内存。",
+   "defensive_insight": "解析协议嵌套消息时，长度字段必须与实际缓冲区边界交叉校验且校验先于使用；共享代码库需同步审计同一逻辑的所有派生实现。"
+  },
+  {
+   "id": 674741,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。Tomcat 默认 examples 目录未删除导致会话操纵/源码泄露/内网 IP 泄露——公开示例目录是经典部署配置错误，四个暴露面同源于一个配置失误，无绕过无链；目标 URL 被 [REDACTED] 进一步降低可复现价值。",
+   "attack_chain": "单点：访问公开 examples 目录→利用示例 servlet 操纵会话/读源码/探内网。",
+   "bypass_technique": "无绕过，直接利用默认示例组件暴露。",
+   "defensive_insight": "生产环境移除/禁用框架默认示例与调试组件；示例 servlet 不应参与生产会话上下文。"
+  },
+  {
+   "id": 67389,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "SSRF",
+   "reasoning": "部分。Insert Image 的 src 参数经 HTTP 重定向绕过 scheme/port 白名单（302 到内网任意端口），并把 SSRF 侧信道化为端口扫描器——'用 500 vs 422 响应码差异判定端口开闭'是优雅的二次利用，思路值得借鉴；但重定向绕过依赖攻击者自控中间服务器，属于已知模式的实战变体，通用判据一般。",
+   "attack_chain": "提交 src 指向攻击者服务器→服务器 302 重定向到内网 host:port→按响应码(500开/422关)逐端口扫描内网。",
+   "bypass_technique": "用自控服务器的 HTTP 重定向规避 scheme/port 校验，响应码差异作端口探测侧信道。",
+   "defensive_insight": "SSRF 防护需在最终请求落地处校验（跟随重定向后重新校验目标）；禁止回显基于目标响应的差异，统一错误语义。"
+  },
+  {
+   "id": 280500,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 其他",
+   "reasoning": "否。target=\"_blank\" 未加 noopener 导致 tabnabbing——教科书级经典问题，window.opener 替换原标签页，无变形无绕过无链，仅 PoC 完整。",
+   "attack_chain": "单点：用户点击 target=_blank 外链→新标签页脚本改写原页面为钓鱼页。",
+   "bypass_technique": "无绕过，直接利用缺失的 rel=noopener。",
+   "defensive_insight": "所有 target=_blank 外链必须加 rel=\"noopener noreferrer\"；统一由前端框架的链接组件强制注入。"
+  },
+  {
+   "id": 74147,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。Buy/Sell Fee 可提交负值并覆盖站点级设置导致非预期资金流转——典型的金额字段缺少范围校验，直接利用而非绕过，无攻击链；财务影响真实但技术思路一眼即明。",
+   "attack_chain": "单点：用户设置接口提交负值费用→服务端接受并覆盖全局设置→资金流转异常。",
+   "bypass_technique": "无绕过，直接提交越界负值（缺少边界校验的金额字段）。",
+   "defensive_insight": "金额/费率字段必须做范围与符号校验（含服务端二次校验）；覆盖性设置需校验与继承语义一致。"
+  },
+  {
+   "id": 2326194,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "CSRF / 跨组件攻击链 / 协议行为利用",
+   "reasoning": "是。三个现代认知的优雅叠加：SameSite=Lax 在'同父域不同子域'下完全失效（marketing.victim.com 打 argocd.internal.victim.com）、服务端不校验 Content-Type 使 text/plain 跨域 POST 免于 CORS preflight、以及 CSRF 从'状态篡改'升级为'K8s 集群沦陷'——把被普遍视为低危的 CSRF 通过组件链放大到集群接管，且零前置知识（cluster 位置、project 默认值）。区别于普通 CSRF：这是'现代浏览器防御失效条件'的系统性论证，可抽象为通用判据（同父域+不校验 CT=CSRF 仍可利用）。",
+   "attack_chain": "控制同父域任意子域（如存 XSS）→注入 XHR POST 到 Argo CD API（text/plain+withCredentials）→创建指向恶意仓库的 Application→Argo 自动同步部署高权限 SA/Pod→反弹 shell 接管集群。",
+   "bypass_technique": "利用 SameSite=Lax 对子域隔离的盲区 + 服务端不校验 Content-Type（text/plain 免 preflight），跨域完成带凭据的状态型请求。",
+   "defensive_insight": "高敏系统（能触达基础设施的 API）必须独立实现 CSRF 防护（token/自定义头校验），不依赖浏览器默认策略；服务端应强制校验 Content-Type 并拒绝跨域裸 POST。"
+  },
+  {
+   "id": 233099,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。挂失/停用卡片流程的 POST 请求无 CSRF token，经典 CSRF，PoC（window.open+表单+pushState）完整但技术点零变形；影响虽是卡片注销，攻击机制仍是成熟套路。",
+   "attack_chain": "单点：诱导登录用户访问攻击页→自动提交停用表单→卡片被注销。",
+   "bypass_technique": "无绕过，直接利用缺失的 CSRF 防护。",
+   "defensive_insight": "所有改变状态的请求强制 CSRF token/自定义头校验；高影响操作（注销类）增加二次确认或 One-time token。"
+  },
+  {
+   "id": 1570591,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "子域名接管",
+   "reasoning": "无法判断。正文仅含域名与 PoC 链接本身，无 CNAME 指向、无接管服务商、无接管证明截图或 DNS 记录，无法验证是否为真实子域名接管。",
+   "attack_chain": "无法确认。",
+   "bypass_technique": "无法确认。",
+   "defensive_insight": "子域名必须建立 DNS 资产台账，定期审计 CNAME 指向已失效第三方服务的记录并清除。"
+  },
+  {
+   "id": 223337,
+   "value_score": 0,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "配置错误",
+   "reasoning": "无法判断。正文仅泛泛描述'登录页无暴力破解防护'并建议加锁定，无任何实际测试、请求数据或证明登录确实无防护，属于通用建议而非漏洞证据。",
+   "attack_chain": "无法确认。",
+   "bypass_technique": "无法确认。",
+   "defensive_insight": "登录/OTP/密码重置等接口应实施速率限制与账号锁定，限速键基于可信来源。"
+  },
+  {
+   "id": 115230,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露 / 其他",
+   "reasoning": "否。404 页面回显用户输入用于内容欺骗（注入伪公告/钓鱼文案），无脚本执行，属反射型回显的轻微变形；PoC 用大量斜杠构造长路径技巧有一定趣味但技术含量低。",
+   "attack_chain": "单点：构造含恶意文案的 404 URL→页面回显渲染→诱导用户访问钓鱼站点。",
+   "bypass_technique": "无绕过，直接利用 not-found 页面对输入的反射。",
+   "defensive_insight": "错误页绝不回显用户输入；如需展示路径应做 HTML 实体编码。"
+  },
+  {
+   "id": 724944,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。报告参与者可通过 report JSON 与 GraphQL 节点查询拿到 team-only 内部讨论的 latest_activity_id/时间戳——泄露的是'内部讨论活跃度'元数据，攻击者可据此推断内部对报告的关注时机；信息泄露类型中影响最轻的一档，无绕过（本就有权限者查多余字段），无链，仅复现完整。",
+   "attack_chain": "单点：参与报告→请求 report.json 取 latest_activity_id→GraphQL 查 latest_activity_at→推断内部讨论时机。",
+   "bypass_technique": "无绕过，直接利用响应/查询中暴露的多余字段。",
+   "defensive_insight": "字段级最小化：内部活动元数据不得通过参与者可见的接口/对象返回；GraphQL 按角色裁剪字段。"
+  },
+  {
+   "id": 885539,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 信息泄露 / 业务逻辑",
+   "reasoning": "是。Twitter 的 GraphQL ListMembers 端点只校验'查询是否在允许列表'却不校验'对象所有权'，替换 listId 即读出他人私有列表成员——对象级授权缺失的典型，亮点在于用 snowflake 可预测性（worker id 2^10 × 时间戳）把'私有 ID'变成可暴力枚举空间，约 6144 万请求即可覆盖一分钟内创建的列表。区别于普通 IDOR：'可预测 ID + 端点级而非对象级校验'的组合可抽象为通用判据（GraphQL BOLA 扫描范式），复现路径完整。",
+   "attack_chain": "账户 B 触发 ListMembers→拦截替换为账户 A 的私有列表 snowflake→snowflake 枚举(1024×1000/秒)→命中后读出私有列表成员。",
+   "bypass_technique": "直接替换 GraphQL 查询中的 listId 参数；利用 snowflake 结构可枚举性暴力猜测目标 ID。",
+   "defensive_insight": "GraphQL resolver 必须做对象级授权（校验资源属主），不能只校验查询名白名单；不可枚举性不足的 ID 需叠加授权检查。"
+  }
+ ]
+}

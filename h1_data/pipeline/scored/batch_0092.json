@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   783877,
+   407319,
+   1166943,
+   50829,
+   1675674
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 489483,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SQL注入",
+   "reasoning": "否。时间盲注，sleep+sqlmap，成熟套路，无绕过无链。",
+   "attack_chain": "单点：参数注入→时间盲注。",
+   "bypass_technique": "无实质绕过，直接利用未过滤参数。",
+   "defensive_insight": "参数化查询，输入验证。"
+  },
+  {
+   "id": 245334,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。缺少邮箱修改确认，常见设计缺陷，攻击链简单。",
+   "attack_chain": "公共电脑→修改邮箱→忘记密码→接管。",
+   "bypass_technique": "无绕过，利用缺少确认步骤。",
+   "defensive_insight": "敏感操作需二次验证。"
+  },
+  {
+   "id": 200909,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "框架行为利用",
+   "reasoning": "部分。PHP unserialize 越界读，利用反序列化机制，但无具体利用链，信息有限。",
+   "attack_chain": "单点：unserialize→越界读。",
+   "bypass_technique": "利用反序列化解析差异。",
+   "defensive_insight": "升级PHP，限制反序列化输入。"
+  },
+  {
+   "id": 50658,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。Reflected File Download，利用响应头与内容生成可执行文件，绕过下载沙箱，可抽象为通用攻击模式。",
+   "attack_chain": "构造标题→诱导下载.bat→执行。",
+   "bypass_technique": "利用反射内容生成可执行文件，绕过下载安全机制。",
+   "defensive_insight": "限制响应Content-Disposition，严格MIME类型。"
+  },
+  {
+   "id": 7369,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。2FA绕过，通过特定操作路径，常见设计缺陷。",
+   "attack_chain": "发送到纸钱包→绕过2FA。",
+   "bypass_technique": "利用业务逻辑漏洞绕过2FA。",
+   "defensive_insight": "所有敏感操作强制2FA。"
+  },
+  {
+   "id": 1278050,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "LDAP注入",
+   "reasoning": "部分。CVE-2021-29156，已知漏洞，但利用Webfinger协议，有一定启发性。",
+   "attack_chain": "单点：Webfinger→LDAP注入。",
+   "bypass_technique": "利用协议特性注入LDAP。",
+   "defensive_insight": "升级ForgeRock，输入过滤。"
+  },
+  {
+   "id": 1023572,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "部分。Salesforce Aura API 未授权访问，利用默认配置，可跨租户，但属配置错误。",
+   "attack_chain": "构造Aura请求→获取Event对象数据。",
+   "bypass_technique": "利用默认宽松权限。",
+   "defensive_insight": "配置RLS，最小权限。"
+  },
+  {
+   "id": 13567,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。密码复杂度低，常见配置问题。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "强制强密码策略。"
+  },
+  {
+   "id": 403402,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 命令注入",
+   "reasoning": "部分。Jenkins script console 暴露，可直接RCE，但属配置错误，无绕过。",
+   "attack_chain": "访问/script→执行命令→访问云元数据。",
+   "bypass_technique": "无绕过，直接利用开放控制台。",
+   "defensive_insight": "禁用script console，网络隔离。"
+  },
+  {
+   "id": 1166943,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "SSRF / 信息泄露",
+   "reasoning": "是。SSRF 自动携带用户cookie，利用Snoopy库行为，可窃取会话，优雅且通用。",
+   "attack_chain": "构造URL→SSRF→携带cookie发送到攻击者。",
+   "bypass_technique": "利用库自动携带cookie。",
+   "defensive_insight": "SSRF防护，禁止携带cookie。"
+  },
+  {
+   "id": 1675674,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 授权绕过",
+   "reasoning": "是。通过修改ID报告草稿职位，泄露未发布信息，绕过状态检查，可抽象为IDOR变体。",
+   "attack_chain": "拦截报告请求→替换ID→提交→收到通知泄露。",
+   "bypass_technique": "利用ID可预测和状态检查缺失。",
+   "defensive_insight": "服务端校验状态和权限。"
+  },
+  {
+   "id": 55033,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "反序列化",
+   "reasoning": "部分。PHP unserialize UAF，但无细节，仅链接。",
+   "attack_chain": "未知。",
+   "bypass_technique": "未知。",
+   "defensive_insight": "升级PHP。"
+  },
+  {
+   "id": 50829,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 状态混淆",
+   "reasoning": "是。重放请求绕过权限检查，利用状态变化，优雅且通用。",
+   "attack_chain": "添加评论→设为私有→重放请求→评论成功。",
+   "bypass_technique": "重放旧请求绕过权限。",
+   "defensive_insight": "服务端每次请求校验权限。"
+  },
+  {
+   "id": 1096609,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 配置错误",
+   "reasoning": "部分。Host头缓存投毒，利用缓存键未包含Host，可导致DoS，通用。",
+   "attack_chain": "发送恶意Host→缓存污染→用户访问受影响。",
+   "bypass_technique": "利用缓存键缺失。",
+   "defensive_insight": "缓存键包含Host，验证Host。"
+  },
+  {
+   "id": 224287,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "部分。邮箱验证链接使用HTTP，可被MITM，常见但可导致账户接管。",
+   "attack_chain": "拦截HTTP链接→获取token→接管。",
+   "bypass_technique": "利用明文传输。",
+   "defensive_insight": "强制HTTPS，避免自动登录。"
+  },
+  {
+   "id": 232371,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "路径遍历",
+   "reasoning": "部分。双重URL编码绕过过滤，经典但有效，可读任意文件。",
+   "attack_chain": "单点：双重编码→读取文件。",
+   "bypass_technique": "双重URL编码绕过路径过滤。",
+   "defensive_insight": "规范化路径，拒绝异常编码。"
+  },
+  {
+   "id": 407319,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用ActiveStorage签名URL参数未签名，结合AppCache和Cookie轰炸，跨组件攻击链，优雅且通用。",
+   "attack_chain": "上传恶意文件→修改URL参数→AppCache→Cookie轰炸→窃取URL。",
+   "bypass_technique": "利用未签名参数和AppCache回退。",
+   "defensive_insight": "签名所有响应参数，限制AppCache。"
+  },
+  {
+   "id": 969988,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。未验证邮箱泄露，常见设计缺陷。",
+   "attack_chain": "邀请→泄露邮箱。",
+   "bypass_technique": "无。",
+   "defensive_insight": "显示用户名而非邮箱。"
+  },
+  {
+   "id": 783877,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 框架行为利用",
+   "reasoning": "是。利用HTML注入+Electron对象泄露实现RCE，绕过CSP，跨组件，优雅且通用。",
+   "attack_chain": "HTML注入→重定向→RCE payload→执行命令。",
+   "bypass_technique": "利用area/map标签和Electron特性。",
+   "defensive_insight": "严格CSP，禁用nodeIntegration。"
+  },
+  {
+   "id": 671749,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 跨组件攻击链",
+   "reasoning": "是。CVE-2019-11510，路径遍历读取敏感文件，进而获取明文密码，可导致RCE，跨组件。",
+   "attack_chain": "路径遍历→读取data.mdb→获取密码→登录→RCE。",
+   "bypass_technique": "利用路径规范化缺陷。",
+   "defensive_insight": "升级Pulse Secure，限制文件访问。"
+  }
+ ]
+}

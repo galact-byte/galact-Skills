@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 8,
+  "dropped": 12,
+  "avg_score": 4.6,
+  "top_n": [
+   638635,
+   736867,
+   1193062,
+   723175,
+   2231019
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 147203,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。缺少旧密码验证的密码修改功能是常见的业务逻辑缺陷，没有绕过或非预期行为，属于成熟套路。",
+   "attack_chain": "单点：登录后直接修改密码，无需旧密码。",
+   "bypass_technique": "无实质绕过，直接利用缺失的旧密码验证。",
+   "defensive_insight": "密码修改必须要求旧密码或二次验证。"
+  },
+  {
+   "id": 1607601,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。依赖过时的 ansi-regex 导致 ReDoS，属于供应链依赖漏洞，常见且无绕过，PoC 清晰但启发性低。",
+   "attack_chain": "单点：依赖漏洞库，构造恶意字符串触发 ReDoS。",
+   "bypass_technique": "无实质绕过，直接利用已知漏洞。",
+   "defensive_insight": "定期更新依赖，使用 SCA 工具扫描。"
+  },
+  {
+   "id": 2231019,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "命令注入 / 跨组件攻击链",
+   "reasoning": "是。CVE-2023-5528 是 Kubernetes 存储插件中的代码注入，导致 Windows 节点上的权限提升，涉及 kubelet 上下文到 SYSTEM 权限的跨越，属于跨组件攻击链。",
+   "attack_chain": "利用存储插件输入未净化→注入代码→在 kubelet 上下文执行→提升至 SYSTEM 权限。",
+   "bypass_technique": "利用存储插件对输入过滤不足，注入恶意代码。",
+   "defensive_insight": "严格验证存储插件输入，最小化 kubelet 权限。"
+  },
+  {
+   "id": 1122513,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型 XSS 通过修改 City 字段注入，属于常见漏洞类型，无绕过或非预期行为。",
+   "attack_chain": "单点：注册→修改 City 字段→注入 XSS→触发。",
+   "bypass_technique": "无实质绕过，直接利用未过滤输入。",
+   "defensive_insight": "对用户输入进行输出编码和输入验证。"
+  },
+  {
+   "id": 723175,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 信息泄露",
+   "reasoning": "是。利用跨站事件泄漏（xsleaks）通过 onload/onerror 事件推断用户状态，实现登录检测和去匿名化，属于协议行为利用，可通用化。",
+   "attack_chain": "攻击页面嵌入 imgur 资源→根据事件触发推断状态→去匿名化用户。",
+   "bypass_technique": "利用浏览器事件泄漏，通过资源加载状态差异推断信息。",
+   "defensive_insight": "对敏感端点返回一致状态码，使用 SameSite 和 CSP 限制跨站请求。"
+  },
+  {
+   "id": 180074,
+   "value_score": 0,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告内容为无意义情绪化描述，无实际漏洞信息，无法判断真实性。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "忽略此类报告。"
+  },
+  {
+   "id": 2055081,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 配置错误",
+   "reasoning": "部分。通过 Google dork 发现未授权退订端点，可退订任意用户，属于授权绕过，但思路较直接，无复杂绕过。",
+   "attack_chain": "Google dork 发现端点→构造退订请求→退订任意用户。",
+   "bypass_technique": "利用未受保护的端点，直接调用。",
+   "defensive_insight": "对退订等操作实施身份验证和授权检查。"
+  },
+  {
+   "id": 167904,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "内存破坏",
+   "reasoning": "否。PHP substr_replace 堆溢出，属于已知漏洞，无绕过或非预期行为，PoC 不完整。",
+   "attack_chain": "单点：调用 substr_replace 触发堆溢出。",
+   "bypass_technique": "无实质绕过，直接利用已知漏洞。",
+   "defensive_insight": "更新 PHP 版本，修复已知漏洞。"
+  },
+  {
+   "id": 638635,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 配置错误",
+   "reasoning": "是。客户端生成 JWT 且密钥硬编码在 JS 中，可任意伪造 JWT 冒充任意用户，绕过 Zendesk SSO 认证，属于框架行为利用，可通用化。",
+   "attack_chain": "提取硬编码密钥→伪造 JWT→访问 Zendesk 冒充用户。",
+   "bypass_technique": "利用客户端硬编码密钥，直接签名 JWT。",
+   "defensive_insight": "JWT 生成必须在服务端，密钥保密。"
+  },
+  {
+   "id": 341074,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少速率限制的暴力破解，常见配置问题，无绕过或非预期行为。",
+   "attack_chain": "单点：暴力破解登录。",
+   "bypass_technique": "无实质绕过，直接利用无速率限制。",
+   "defensive_insight": "实施速率限制和账户锁定。"
+  },
+  {
+   "id": 146911,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。支持 SSLv3 导致 POODLE 攻击，常见配置问题，无绕过。",
+   "attack_chain": "单点：利用 SSLv3 漏洞。",
+   "bypass_technique": "无实质绕过，直接利用协议漏洞。",
+   "defensive_insight": "禁用 SSLv3，启用 TLS1.2+。"
+  },
+  {
+   "id": 324548,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。HTML 注入在弹窗中，但无法执行 JS，属于常见 XSS 变体，无绕过。",
+   "attack_chain": "单点：构造 URL 触发 HTML 注入。",
+   "bypass_technique": "无实质绕过，直接利用未过滤输入。",
+   "defensive_insight": "对输出进行编码，使用 CSP。"
+  },
+  {
+   "id": 73260,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "内存破坏",
+   "reasoning": "部分。Python json 模块整数溢出导致崩溃，属于已知漏洞，但 PoC 清晰，可复现，启发性中等。",
+   "attack_chain": "单点：构造特定字符串触发整数溢出。",
+   "bypass_technique": "无实质绕过，直接利用漏洞。",
+   "defensive_insight": "更新 Python 版本，修复已知漏洞。"
+  },
+  {
+   "id": 260278,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。TabNabbing 问题，常见安全配置缺失，无绕过。",
+   "attack_chain": "单点：利用 target=_blank 无 rel 属性。",
+   "bypass_technique": "无实质绕过，直接利用配置缺失。",
+   "defensive_insight": "添加 rel=\"noopener noreferrer\"。"
+  },
+  {
+   "id": 736867,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "SSRF / 协议行为利用",
+   "reasoning": "是。利用 IPv6/IPv4 地址嵌入绕过 SSRF 过滤器，属于协议行为利用，可通用化。",
+   "attack_chain": "构造 IPv6 映射地址→绕过过滤器→访问内网资源。",
+   "bypass_technique": "使用 IPv6 映射地址如 [::ffff:127.0.0.1] 绕过 IP 黑名单。",
+   "defensive_insight": "SSRF 过滤器应解析所有 IP 形式，包括 IPv6 映射。"
+  },
+  {
+   "id": 189023,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。S3 ACL 配置错误，常见配置问题，无绕过。",
+   "attack_chain": "单点：利用公开 ACL 访问和复制文件。",
+   "bypass_technique": "无实质绕过，直接利用配置错误。",
+   "defensive_insight": "正确配置 S3 ACL，使用最小权限。"
+  },
+  {
+   "id": 1193062,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 0
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 跨组件攻击链",
+   "reasoning": "是。外部用户通过创建项目令牌获得内部权限，绕过外部用户限制，属于跨组件攻击链，可通用化。",
+   "attack_chain": "外部用户获得 Maintainer→创建项目令牌→令牌具有内部权限→访问内部项目。",
+   "bypass_technique": "利用项目令牌的权限继承，绕过外部用户限制。",
+   "defensive_insight": "项目令牌应继承创建者的外部状态，限制权限。"
+  },
+  {
+   "id": 1305766,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少速率限制导致可批量注册，常见配置问题，无绕过。",
+   "attack_chain": "单点：批量注册请求。",
+   "bypass_technique": "无实质绕过，直接利用无速率限制。",
+   "defensive_insight": "实施速率限制和验证码。"
+  },
+  {
+   "id": 1220747,
+   "value_score": 0,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告为功能公告，非漏洞，无安全影响。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "无"
+  },
+  {
+   "id": 145612,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少验证码导致垃圾邮件，常见配置问题，无绕过。",
+   "attack_chain": "单点：利用无验证码发送垃圾邮件。",
+   "bypass_technique": "无实质绕过，直接利用配置缺失。",
+   "defensive_insight": "添加验证码和速率限制。"
+  }
+ ]
+}

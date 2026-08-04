@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 13,
+  "dropped": 7,
+  "avg_score": 5.6,
+  "top_n": [
+   2244229,
+   1547048,
+   1910810,
+   724134,
+   870001
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 228648,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 其他",
+   "reasoning": "是。利用恶意软件依赖的域名未注册这一假设，通过注册域名使HTTP请求成功，从而触发killswitch，意外阻止全球勒索软件传播。技术点在于理解恶意软件的执行逻辑和域名注册的可用性，形成非预期的防御手段。与普通漏洞不同，这是通过基础设施控制实现防御，极具启发性。",
+   "attack_chain": "恶意软件执行→发送HTTP请求到随机域名→若失败则加密文件并传播→注册域名使请求成功→恶意软件退出→阻止传播。",
+   "bypass_technique": "注册恶意软件依赖的未注册域名，使HTTP请求成功，触发killswitch。",
+   "defensive_insight": "恶意软件设计时应避免依赖外部域名，或使用固定IP；防御者可监控此类域名注册并主动注册。"
+  },
+  {
+   "id": 2244229,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "信息泄露 / 跨组件攻击链",
+   "reasoning": "是。利用同源策略不适用于JavaScript文件导入的特性，通过跨域导入动态生成的JS文件窃取用户ID，进而获取用户名。技术点在于动态JS文件内容依赖认证cookie，且SOP对脚本导入的豁免，形成跨域信息泄露。与普通信息泄露不同，这是利用浏览器机制和动态内容生成的组合，可抽象为通用攻击模式。",
+   "attack_chain": "受害者访问恶意网站→导入twitter.com/sw.js→JS内容包含用户ID→提取ID→调用API获取用户名→精确识别用户。",
+   "bypass_technique": "利用SOP对脚本导入的豁免，跨域导入动态JS文件窃取敏感信息。",
+   "defensive_insight": "避免在JS文件中包含敏感信息，或对JS文件设置严格的CORS策略；对动态内容进行访问控制。"
+  },
+  {
+   "id": 331752,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 跨组件攻击链",
+   "reasoning": "部分。开发遗留的localhost脚本引用，利用非特权端口可被本地用户占用，实现同机用户间的网页篡改。技术点在于本地服务抢占和浏览器信任，但场景较具体，需多用户共享计算机。",
+   "attack_chain": "攻击者在本机运行服务占用8021端口→受害者访问mathfacts.khanacademy.org→浏览器加载恶意脚本→网页被篡改。",
+   "bypass_technique": "利用开发遗留的localhost引用，在非特权端口运行恶意服务。",
+   "defensive_insight": "移除开发遗留的本地引用，或使用特权端口并验证来源。"
+  },
+  {
+   "id": 507303,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。文件名存储型XSS，经典输出编码缺失，无绕过无链，成熟套路。",
+   "attack_chain": "创建恶意文件名→浏览文件→XSS执行。",
+   "bypass_technique": "无实质绕过，直接利用未编码输出。",
+   "defensive_insight": "对文件名进行HTML编码，或使用安全的模板引擎。"
+  },
+  {
+   "id": 1168528,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 配置错误",
+   "reasoning": "是。UI页面正确限制了低权限用户，但API端点未同步限制，导致任何认证用户可访问所有API密钥。技术点在于前后端权限控制不一致，绕过UI限制直接调用API。与普通越权不同，这是权限控制在不同层级的脱节，可抽象为通用检查点。",
+   "attack_chain": "创建低权限用户→直接调用API端点→获取所有API密钥→提升权限。",
+   "bypass_technique": "绕过UI限制，直接访问未受保护的API端点。",
+   "defensive_insight": "确保API端点和UI页面使用相同的权限控制逻辑，进行统一授权检查。"
+  },
+  {
+   "id": 1348504,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "子域名接管",
+   "reasoning": "否。经典子域名接管，CNAME指向未认领服务，无新意。",
+   "attack_chain": "子域名指向未认领服务→攻击者认领→控制子域名。",
+   "bypass_technique": "无实质绕过，直接利用未认领的CNAME。",
+   "defensive_insight": "定期检查DNS记录，及时删除或认领未使用的CNAME。"
+  },
+  {
+   "id": 724134,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "竞争条件 / 框架行为利用",
+   "reasoning": "是。libcurl的CURL_LOCK_DATA_CONNECT存在竞争条件，导致多个线程共享同一连接指针，引发UAF。技术点在于锁的使用不当，连接未标记inuse时被多个线程复用。与普通UAF不同，这是并发控制缺陷，可抽象为通用线程安全模式。",
+   "attack_chain": "多线程使用CURL_LOCK_DATA_CONNECT→竞争条件→共享连接指针→UAF/双重释放。",
+   "bypass_technique": "利用锁的检查与使用之间的竞态窗口。",
+   "defensive_insight": "确保连接在使用前正确标记inuse，或使用更细粒度的锁。"
+  },
+  {
+   "id": 870001,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 状态混淆",
+   "reasoning": "是。合作伙伴账户删除或更改邮箱后，原邮箱仍保留访问权限，导致权限未撤销。技术点在于账户状态变更未级联到关联权限，形成状态混淆。与普通越权不同，这是生命周期管理缺陷，可抽象为通用账户生命周期检查。",
+   "attack_chain": "合作伙伴更改邮箱→原邮箱账户仍可访问协作商店→权限未撤销。",
+   "bypass_technique": "利用账户变更后权限未同步撤销的漏洞。",
+   "defensive_insight": "账户变更或删除时，应级联撤销所有关联权限。"
+  },
+  {
+   "id": 229498,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 配置错误",
+   "reasoning": "部分。通过修改Referer头，使邮件中的链接指向恶意站点，实现钓鱼。技术点在于信任Referer头并用于生成邮件链接，但需结合邮件客户端行为。",
+   "attack_chain": "构造恶意Referer→提交订阅→邮件链接被替换→受害者点击→跳转恶意站点。",
+   "bypass_technique": "利用Referer头未验证，注入恶意URL。",
+   "defensive_insight": "不信任Referer头，使用固定域名生成链接。"
+  },
+  {
+   "id": 2180018,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。FrontPage配置信息泄露，直接访问已知路径，无绕过无链。",
+   "attack_chain": "访问_vti_inf.html→获取版本和脚本路径。",
+   "bypass_technique": "无实质绕过，直接访问公开文件。",
+   "defensive_insight": "禁用或删除不必要的FrontPage扩展，限制访问。"
+  },
+  {
+   "id": 15492,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 配置错误",
+   "reasoning": "部分。nginx配置不当导致CRLF注入，可设置cookie，结合其他漏洞利用。技术点在于重定向时未过滤CRLF，但需配合其他漏洞。",
+   "attack_chain": "构造CRLF请求→设置cookie→结合XSS或CSRF。",
+   "bypass_technique": "利用重定向URL中的CRLF注入。",
+   "defensive_insight": "对重定向URL进行编码或过滤，禁止CRLF字符。"
+  },
+  {
+   "id": 47349,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。存储型XSS通过用户名注入，在受害者查看请求时触发。技术点在于用户名未过滤，但触发条件需受害者操作。",
+   "attack_chain": "攻击者设置恶意用户名→受害者查看请求→XSS执行。",
+   "bypass_technique": "无实质绕过，直接利用未过滤输入。",
+   "defensive_insight": "对用户名进行输出编码，或限制特殊字符。"
+  },
+  {
+   "id": 1547048,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。curl在重定向时未剥离Authorization和Cookie头，导致通过HTTP泄露。技术点在于重定向处理逻辑缺陷，可被中间人利用。与普通信息泄露不同，这是客户端行为缺陷，可抽象为通用重定向安全规则。",
+   "attack_chain": "配置恶意重定向→curl跟随→发送敏感头到非HTTPS端口→泄露。",
+   "bypass_technique": "利用curl重定向时未剥离敏感头的缺陷。",
+   "defensive_insight": "重定向时若协议或端口变化，应剥离敏感头。"
+  },
+  {
+   "id": 125505,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 配置错误",
+   "reasoning": "部分。邀请码可暴力破解，无速率限制，且响应长度可区分有效性。技术点在于缺乏防护，但攻击需大量请求。",
+   "attack_chain": "拦截请求→暴力破解邀请码→获取免费乘车。",
+   "bypass_technique": "无实质绕过，直接利用无速率限制。",
+   "defensive_insight": "添加验证码或速率限制，统一响应长度。"
+  },
+  {
+   "id": 172711,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。参数反射导致内容欺骗，经典输入未过滤，无绕过无链。",
+   "attack_chain": "构造恶意参数→响应中反射文本→用户被欺骗。",
+   "bypass_technique": "无实质绕过，直接利用未过滤参数。",
+   "defensive_insight": "对参数进行验证和编码，避免反射用户输入。"
+  },
+  {
+   "id": 1910810,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。mod_proxy_uwsgi对特殊字符处理不当，导致HTTP响应拆分，安全头被截断。技术点在于代理模块对响应头的解析缺陷，可导致客户端忽略安全头。与普通响应拆分不同，这是代理层漏洞，可抽象为通用代理安全规则。",
+   "attack_chain": "构造恶意响应头→代理转发→响应拆分→安全头失效。",
+   "bypass_technique": "利用代理对特殊字符的解析差异。",
+   "defensive_insight": "代理应严格验证响应头，禁止特殊字符。"
+  },
+  {
+   "id": 832858,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "SSRF",
+   "reasoning": "部分。SSRF通过link参数，未验证URL，可扫描内网。技术点在于URL验证缺失，但攻击需认证。",
+   "attack_chain": "构造恶意URL→服务器发起请求→内网扫描。",
+   "bypass_technique": "无实质绕过，直接利用未验证URL。",
+   "defensive_insight": "对URL进行白名单验证，限制协议和端口。"
+  },
+  {
+   "id": 504514,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 配置错误",
+   "reasoning": "是。Web缓存投毒通过X-Forwarded-Host头，改变页面链接，导致CSRF和敏感信息泄露。技术点在于缓存键未包含该头，且页面动态生成链接。与普通缓存投毒不同，这是缓存与动态内容的组合，可抽象为通用缓存安全规则。",
+   "attack_chain": "注入X-Forwarded-Host→缓存恶意页面→受害者访问→链接指向恶意站点→CSRF。",
+   "bypass_technique": "利用缓存键未包含X-Forwarded-Host。",
+   "defensive_insight": "缓存键应包含所有影响响应的头，或忽略不可信头。"
+  },
+  {
+   "id": 294891,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。许可证验证缺陷，旧版本可复用密钥，无技术含量。",
+   "attack_chain": "获取密钥→在旧版本激活。",
+   "bypass_technique": "无实质绕过，直接利用版本差异。",
+   "defensive_insight": "加强许可证验证，禁止旧版本使用新密钥。"
+  },
+  {
+   "id": 180388,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。弱密码批量登录，无技术含量，仅凭弱口令。",
+   "attack_chain": "枚举用户名→尝试弱密码→登录。",
+   "bypass_technique": "无实质绕过，直接利用弱密码。",
+   "defensive_insight": "强制强密码策略，实施账户锁定。"
+  }
+ ]
+}

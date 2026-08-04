@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1698316,
+   781175,
+   3921,
+   247028,
+   111915
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 205360,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，通过参数注入闭合标签，经典套路，无绕过，无攻击链。",
+   "attack_chain": "单点：构造URL触发反射XSS。",
+   "bypass_technique": "无实质绕过，直接注入HTML/JS。",
+   "defensive_insight": "对输出进行HTML实体编码，实施CSP。"
+  },
+  {
+   "id": 247028,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 状态混淆",
+   "reasoning": "是。通过IRC协议中WHO命令的畸形参数触发Irssi的use-after-free，利用nicklist哈希表在channel销毁时的生命周期管理缺陷。区别于普通UAF：需要精确构造IRC消息序列，且是协议解析层面的状态混淆。",
+   "attack_chain": "发送CAP LS/NICK/USER/MODE/WHOIS/WHO序列→触发nicklist_remove_hash中的UAF→崩溃。",
+   "bypass_technique": "利用WHO命令的畸形掩码参数导致nicklist哈希表操作顺序错误。",
+   "defensive_insight": "修复nicklist_remove_hash中的释放顺序，确保在channel销毁时正确清理。"
+  },
+  {
+   "id": 1337624,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 信息泄露",
+   "reasoning": "部分。Tor隐私窗口未剥离Referer，违反隐私预期，属于浏览器功能缺陷。技术点在于Tor网络下Referer泄露.onion地址，但绕过不复杂，场景特定。",
+   "attack_chain": "用户从恶意页面点击链接→Referer泄露源地址。",
+   "bypass_technique": "无绕过，直接利用浏览器未剥离Referer。",
+   "defensive_insight": "在Tor模式下强制Referrer Policy为no-referrer。"
+  },
+  {
+   "id": 168458,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 配置错误",
+   "reasoning": "部分。利用JSONP回调参数缺失导致Content-Type缺失，浏览器按text/html解析，从而存储型XSS。技术点在于响应头缺失与浏览器默认行为，属于配置错误与XSS的组合。",
+   "attack_chain": "创建含XSS payload的产品→通过无callback参数的URL访问→浏览器按HTML解析→执行。",
+   "bypass_technique": "利用缺失Content-Type头导致浏览器MIME嗅探。",
+   "defensive_insight": "始终设置正确的Content-Type，对JSONP回调进行白名单校验。"
+  },
+  {
+   "id": 781175,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。GraphQL授权检查中，CLAIMER角色通过子查询判断，当user_id为NULL时匿名用户自动获得该角色，导致未授权访问Checklist对象。技术点在于SQL子查询对NULL值的处理，属于逻辑漏洞，优雅且可抽象为通用判断条件。",
+   "attack_chain": "匿名查询GraphQL节点→利用NULL user_id获得CLAIMER角色→访问Checklist信息。",
+   "bypass_technique": "利用子查询中NULL值导致条件恒真。",
+   "defensive_insight": "使用INNER JOIN替代子查询，或显式检查user_id非空。"
+  },
+  {
+   "id": 774872,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。直接访问公开URL泄露配置信息，无绕过，无攻击链，属于配置错误。",
+   "attack_chain": "单点：访问/config泄露配置。",
+   "bypass_technique": "无。",
+   "defensive_insight": "限制敏感配置的访问权限。"
+  },
+  {
+   "id": 104018,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "反序列化",
+   "reasoning": "否。PHP反序列化UAF，已知CVE，无新意，无绕过。",
+   "attack_chain": "单点：触发unserialize导致UAF。",
+   "bypass_technique": "无。",
+   "defensive_insight": "升级PHP版本，限制反序列化输入。"
+  },
+  {
+   "id": 1081994,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。上传HTML文件触发存储XSS，经典套路，无绕过。",
+   "attack_chain": "上传含JS的HTML文件→访问触发。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对上传文件进行内容过滤，禁止HTML执行。"
+  },
+  {
+   "id": 108645,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑",
+   "reasoning": "部分。邮件地址加号折叠绕过限流，属于业务逻辑缺陷，思路可借鉴，但场景特定。",
+   "attack_chain": "利用+别名绕过邮件轰炸限制。",
+   "bypass_technique": "利用邮件地址规范化差异。",
+   "defensive_insight": "基于用户而非to字段限流，或规范化邮件地址。"
+  },
+  {
+   "id": 3921,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 类型混淆",
+   "reasoning": "是。用户名中注入%0a导致注册后无法访问，且可伪装其他用户。技术点在于控制字符在用户名中的处理，属于输入验证缺陷，可抽象为通用判断条件。",
+   "attack_chain": "注册含%0a的用户名→伪装其他用户。",
+   "bypass_technique": "利用控制字符绕过用户名唯一性检查。",
+   "defensive_insight": "对用户名进行严格字符白名单校验。"
+  },
+  {
+   "id": 26482,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。存储XSS，参数site_index未过滤，经典套路，但PoC完整。",
+   "attack_chain": "POST注入XSS→管理员访问触发。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对输入进行HTML编码，实施CSP。"
+  },
+  {
+   "id": 1018270,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "CSRF / 授权绕过",
+   "reasoning": "部分。CSRF修改邮箱导致账户接管，经典漏洞，但攻击链完整。",
+   "attack_chain": "诱导受害者点击恶意页面→修改邮箱→重置密码接管。",
+   "bypass_technique": "无CSRF防护。",
+   "defensive_insight": "实施CSRF令牌和敏感操作二次验证。"
+  },
+  {
+   "id": 315906,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 协议行为利用",
+   "reasoning": "部分。利用GIF解析差异泄露服务器信息，属于侧信道攻击，技术点在于图像处理的不确定性，可借鉴但场景特定。",
+   "attack_chain": "上传恶意GIF→服务器处理差异→恢复信息。",
+   "bypass_technique": "利用图像处理器的非确定性。",
+   "defensive_insight": "限制上传文件大小和类型，使用确定性处理。"
+  },
+  {
+   "id": 1074613,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 配置错误",
+   "reasoning": "部分。URL中编码引号导致缓存损坏，属于输入处理缺陷，可导致应用崩溃，思路简单但有效。",
+   "attack_chain": "打开恶意URL→缓存损坏→应用崩溃。",
+   "bypass_technique": "利用编码字符绕过URL解析。",
+   "defensive_insight": "对URL进行规范化处理，避免缓存键冲突。"
+  },
+  {
+   "id": 164945,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SQL注入",
+   "reasoning": "否。limit参数注入，经典套路，无绕过。",
+   "attack_chain": "单点：注入limit参数。",
+   "bypass_technique": "无。",
+   "defensive_insight": "参数化查询。"
+  },
+  {
+   "id": 240083,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。支付方式变更未通知用户，属于设计缺陷，无绕过。",
+   "attack_chain": "单点：添加支付方式无通知。",
+   "bypass_technique": "无。",
+   "defensive_insight": "所有敏感操作发送通知。"
+  },
+  {
+   "id": 1698316,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 配置错误",
+   "reasoning": "是。利用缓存欺骗泄露会话cookie，进而获取crumb token实现账户接管。技术点在于缓存键未考虑文件扩展名，导致动态页面被缓存，属于配置错误与缓存机制的组合，攻击链完整。",
+   "attack_chain": "构造带.jpeg的URL→缓存动态页面→获取会话cookie→获取crumb→接管账户。",
+   "bypass_technique": "利用缓存键忽略扩展名，使动态内容被缓存。",
+   "defensive_insight": "缓存规则应基于Content-Type而非扩展名，敏感页面禁止缓存。"
+  },
+  {
+   "id": 12453,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少HSTS头，常见配置问题，无绕过。",
+   "attack_chain": "单点：缺少HSTS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "配置HSTS。"
+  },
+  {
+   "id": 111915,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 业务逻辑",
+   "reasoning": "是。HTML注入中data-method属性未被过滤，可诱导管理员点击创建新管理员，实现账户接管。技术点在于HTML属性过滤不完整，属于XSS变体，攻击链完整。",
+   "attack_chain": "注入含data-method的链接→管理员点击→创建恶意管理员。",
+   "bypass_technique": "利用data-method属性触发POST请求。",
+   "defensive_insight": "过滤所有HTML属性，实施CSP。"
+  },
+  {
+   "id": 260221,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。目录列表泄露，常见配置错误，无绕过。",
+   "attack_chain": "单点：访问/static/目录。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁用目录浏览。"
+  }
+ ]
+}

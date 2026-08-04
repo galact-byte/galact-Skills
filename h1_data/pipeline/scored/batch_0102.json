@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1647287,
+   1372216,
+   824771,
+   824753,
+   1354335
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1647287,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用 Electron 的 renderer 漏洞，通过未授权 frame 调用内部 API 禁用 context isolation 和 nodeIntegrationInSubFrames，从而提升权限并可能实现 RCE。这展示了框架安全边界被绕过，且攻击链跨 renderer 和 main process，具有通用性。",
+   "attack_chain": "利用 renderer 漏洞 → 通过未授权 frame 调用内部 API → 禁用 context isolation 和 nodeIntegrationInSubFrames → 泄露 IPC 模块 → 与 main process 通信 → 若存在敏感 IPC handler 则 RCE。",
+   "bypass_technique": "利用 Electron 内部 API 和 frame 的信任边界，绕过 context isolation 和 nodeIntegrationInSubFrames 的安全设置。",
+   "defensive_insight": "严格验证 frame 来源，限制内部 API 的调用权限，确保 context isolation 和 nodeIntegration 设置不可被运行时修改。"
+  },
+  {
+   "id": 430029,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。存储型 XSS 通过 language 参数注入，虽然 XSS 是常见类型，但注入点在语言设置且能绕过过滤，有一定变形。PoC 完整，但技术点不新颖。",
+   "attack_chain": "修改 profile 的 language 参数 → 注入 XSS payload → 用户访问公开 profile 时执行脚本 → 窃取信息。",
+   "bypass_technique": "利用 language 参数未充分过滤，直接注入 HTML/JS。",
+   "defensive_insight": "对所有用户输入进行输出编码，尤其是语言等非典型字段。"
+  },
+  {
+   "id": 1372216,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / IDOR",
+   "reasoning": "是。通过修改 external_status_check_id 参数，未授权访问其他项目的状态检查信息，泄露敏感数据。这展示了 IDOR 的典型利用，但影响范围广且可跨项目，思路清晰。",
+   "attack_chain": "创建项目并配置状态检查 → 获取合法 ID → 修改 ID 为其他项目的 ID → 获取敏感信息。",
+   "bypass_technique": "直接修改对象 ID，未校验归属。",
+   "defensive_insight": "服务端必须校验对象所有权，使用不可预测的 ID 或访问控制列表。"
+  },
+  {
+   "id": 11951,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。SSH 端口开放是常见配置问题，无绕过或攻击链，信息量低。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "限制 SSH 访问来源，使用防火墙规则。"
+  },
+  {
+   "id": 719631,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。公开的演示文稿泄露 PII，属于配置错误，无技术含量。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "敏感文件应设置访问控制，定期审计公开内容。"
+  },
+  {
+   "id": 175587,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "类型混淆 / 内存破坏",
+   "reasoning": "是。利用 size_t 到 int 的隐式转换导致负数，进而触发栈缓冲区溢出。这展示了类型混淆在内存安全中的危害，且 PoC 完整，具有通用性。",
+   "attack_chain": "构造超长字符串 → 传入 imagecreatefromstring → 触发类型转换 → 栈溢出 → 可能 RCE。",
+   "bypass_technique": "利用整数溢出绕过长度检查。",
+   "defensive_insight": "避免隐式类型转换，使用安全函数并检查长度。"
+  },
+  {
+   "id": 824771,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用 URN 请求处理中的缓冲区长度计算错误，导致堆溢出，并可控制指针实现任意内存释放，配合缓存管理器绕过可 RCE。这展示了协议解析中的边界条件利用，攻击链完整。",
+   "attack_chain": "构造恶意 URN 请求 → 触发堆溢出 → 控制指针 → 任意 free → 配合地址泄露 → RCE。",
+   "bypass_technique": "利用 URN 响应长度与缓冲区大小不匹配，溢出相邻内存。",
+   "defensive_insight": "严格校验响应长度，使用安全的内存拷贝函数。"
+  },
+  {
+   "id": 211283,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "认证绕过",
+   "reasoning": "否。CSWSH 是已知漏洞类型，未验证 Origin 头，但影响取决于配置，无新颖绕过。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "验证 Origin 头，使用 CSRF token。"
+  },
+  {
+   "id": 178345,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "开放重定向",
+   "reasoning": "部分。通过双斜杠绕过外部链接警告，是常见绕过技巧，但展示了 URL 解析差异，有一定启发性。",
+   "attack_chain": "构造双斜杠 URL → 绕过警告 → 重定向到恶意站点。",
+   "bypass_technique": "利用 URL 解析差异，双斜杠绕过过滤。",
+   "defensive_insight": "使用严格的 URL 规范化，统一解析规则。"
+  },
+  {
+   "id": 664200,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。使用假邮箱注册绕过验证，是常见业务逻辑缺陷，无技术含量。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "邮箱验证必须严格，使用可验证的邮箱格式。"
+  },
+  {
+   "id": 469803,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "开放重定向",
+   "reasoning": "否。路径型开放重定向，常见套路。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "限制重定向目标，使用白名单。"
+  },
+  {
+   "id": 1063256,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "命令注入",
+   "reasoning": "否。利用已知 CVE 进行 RCE，属于配置错误，无新颖性。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "及时更新软件版本。"
+  },
+  {
+   "id": 752073,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。xmlrpc.php 启用是常见配置问题，无技术含量。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁用不必要的功能。"
+  },
+  {
+   "id": 824753,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用 URL 解码差异导致缓存投毒，可跨域影响。这展示了协议解析中的不一致性，攻击链完整，可抽象为通用判断条件。",
+   "attack_chain": "构造编码 URL → 缓存投毒 → 用户访问真实域名时获取恶意内容。",
+   "bypass_technique": "利用 URL 解码差异，使不同 URL 映射到同一缓存键。",
+   "defensive_insight": "统一 URL 规范化，缓存键使用原始 URL。"
+  },
+  {
+   "id": 209765,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "内存破坏",
+   "reasoning": "部分。mruby 的 value_move 堆溢出，是 fuzzing 发现，但修复被回滚，展示了供应链问题，有一定启发性。",
+   "attack_chain": "构造恶意 Ruby 代码 → 触发堆溢出 → 可能 RCE。",
+   "bypass_technique": "利用数组操作中的边界错误。",
+   "defensive_insight": "加强内存安全，回归测试。"
+  },
+  {
+   "id": 296994,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用",
+   "reasoning": "是。利用 BDAT 命令处理不当，导致函数指针未重置，引发无限循环和 DoS。这展示了协议状态机错误，可导致资源耗尽。",
+   "attack_chain": "发送 BDAT 命令 → 触发状态错误 → 无限循环 → DoS。",
+   "bypass_technique": "利用 BDAT 与点号结束符的冲突，使状态机进入错误状态。",
+   "defensive_insight": "正确管理协议状态，重置函数指针。"
+  },
+  {
+   "id": 277163,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。通过 CSS 转义绕过过滤，在 style 标签中注入 XSS，展示了编码绕过技巧。",
+   "attack_chain": "在 style 标签中注入转义字符 → 绕过过滤 → 执行脚本。",
+   "bypass_technique": "利用 CSS 转义序列绕过输入过滤。",
+   "defensive_insight": "对 style 内容进行严格过滤，使用 CSP。"
+  },
+  {
+   "id": 1354335,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "SSRF / 跨组件攻击链",
+   "reasoning": "是。通过 SSRF 结合 Gopher 协议攻击 FastCGI，实现 RCE。这展示了 SSRF 的深度利用，攻击链完整，可抽象为通用技术。",
+   "attack_chain": "构造 SSRF 请求 → 重定向到 Gopher → 攻击 FastCGI → 执行命令。",
+   "bypass_technique": "利用 Gopher 协议扩展 SSRF 攻击面。",
+   "defensive_insight": "限制 SSRF 目标，禁止重定向到非 HTTP 协议。"
+  },
+  {
+   "id": 324005,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "SSRF",
+   "reasoning": "部分。SAML 元数据导入功能存在 SSRF，可探测内部服务，但影响有限，思路常规。",
+   "attack_chain": "构造 URL → 触发 SSRF → 探测内部服务。",
+   "bypass_technique": "利用 URL 导入功能直接请求内部地址。",
+   "defensive_insight": "限制导入 URL 的协议和 IP 范围。"
+  },
+  {
+   "id": 1710564,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "UI 误导 / 其他",
+   "reasoning": "部分。利用 CSS 的 RTL 方向属性，使域名显示顺序颠倒，造成 UI 欺骗。这展示了前端渲染细节的安全影响，有一定启发性。",
+   "attack_chain": "注册特殊域名 → 利用 RTL 显示 → 用户误认来源。",
+   "bypass_technique": "利用 CSS 的 direction: rtl 属性改变文本显示顺序。",
+   "defensive_insight": "避免对用户输入使用 RTL 样式，或进行规范化显示。"
+  }
+ ]
+}
