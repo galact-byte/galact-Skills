@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   144782,
+   398054,
+   330351,
+   1573634,
+   397792
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 215967,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "其他",
+   "reasoning": "部分。通过极短输入触发 mruby 调试信息断言失败，导致 SIGABRT。这属于解析器/编译器的边界条件处理缺陷，非预期性中等，但攻击链简单，且需要本地执行环境，通用性有限。",
+   "attack_chain": "构造特殊输入 → 触发 mrb_debug_info_append_file 断言 → 进程崩溃。",
+   "bypass_technique": "利用极短代码块导致 irep->lines 未初始化。",
+   "defensive_insight": "在调试信息生成前检查 irep->lines 是否已分配，避免断言失败。"
+  },
+  {
+   "id": 536341,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。典型的反射型 XSS，通过 textarea 标签闭合注入，无绕过，无攻击链，属于成熟套路。",
+   "attack_chain": "构造恶意 URL → 参数未过滤 → 反射执行脚本。",
+   "bypass_technique": "无实质绕过，直接注入 HTML 标签。",
+   "defensive_insight": "对用户输入进行 HTML 编码，使用 CSP。"
+  },
+  {
+   "id": 1624670,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "路径遍历",
+   "reasoning": "部分。利用 Oracle EBS 的 bispgraph.jsp 参数 ifl 进行目录遍历，读取任意文件。虽然路径遍历是常见漏洞，但利用特定参数和 .jsp%0D%0A.js 后缀绕过，有一定非预期性。",
+   "attack_chain": "构造 URL → 参数 ifl 指定路径 → 读取服务器文件。",
+   "bypass_technique": "利用 .jsp%0D%0A.js 后缀绕过文件类型限制。",
+   "defensive_insight": "对文件路径参数进行白名单校验，禁止包含特殊字符。"
+  },
+  {
+   "id": 1074930,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。Keybase 未清理缓存文件，导致敏感信息泄露。这属于配置错误或清理逻辑缺陷，无绕过，无攻击链，常见于客户端应用。",
+   "attack_chain": "本地访问缓存目录 → 获取残留图片。",
+   "bypass_technique": "无实质绕过，直接利用缓存清理不彻底。",
+   "defensive_insight": "确保缓存文件在会话结束后被安全删除，并加密存储。"
+  },
+  {
+   "id": 215381,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 跨组件攻击链",
+   "reasoning": "是。OAuth 授权端点缺少 CSRF 保护，攻击者可强制受害者授权恶意应用，进而获取访问令牌并操作账户。这利用了 OAuth 流程中的信任假设，攻击链完整，可导致账户接管。",
+   "attack_chain": "构造恶意授权页面 → 受害者点击 → 授权码发送给攻击者 → 换取令牌 → 操作账户。",
+   "bypass_technique": "利用 OAuth 授权端点无 CSRF 令牌，诱导受害者授权。",
+   "defensive_insight": "在授权端点添加 CSRF 令牌和 Origin 验证。"
+  },
+  {
+   "id": 397792,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 配置错误",
+   "reasoning": "是。通过注册 RFC2142 保留的邮箱地址（如 trouble@wearehackerone.com），攻击者可控制这些地址，可能用于接收敏感邮件或影响 SSL 证书签发。这利用了 RFC 规范与实现之间的差异，非预期性高。",
+   "attack_chain": "注册保留用户名 → 控制对应邮箱 → 接收敏感信息或影响证书验证。",
+   "bypass_technique": "利用 RFC2142 保留地址未被完全屏蔽。",
+   "defensive_insight": "在用户名注册时屏蔽所有 RFC2142 保留地址。"
+  },
+  {
+   "id": 896522,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。通过重命名文件为恶意名称，再触发错误信息反射，导致 XSS。需要用户交互且需绕过 CSP，但思路有一定非预期性。",
+   "attack_chain": "重命名文件为恶意名称 → 触发错误 → 反射执行脚本。",
+   "bypass_technique": "利用错误信息中的文件名未编码。",
+   "defensive_insight": "对错误信息中的文件名进行 HTML 编码。"
+  },
+  {
+   "id": 330008,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "开放重定向 / XSS",
+   "reasoning": "部分。通过拼接 URL 绕过开放重定向保护，并进一步实现 XSS。利用了 URL 解析差异，非预期性中等，但攻击链简单。",
+   "attack_chain": "构造特殊 URL → 绕过重定向校验 → 跳转到恶意网站或执行脚本。",
+   "bypass_technique": "利用 URL 拼接导致解析器误判。",
+   "defensive_insight": "严格校验重定向 URL 的协议和域名。"
+  },
+  {
+   "id": 128041,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "信息泄露",
+   "reasoning": "否。仅暴露 Python 版本信息，属于低危信息泄露，无攻击链，无绕过，且报告信息不足。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "隐藏服务器版本信息。"
+  },
+  {
+   "id": 330351,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "类型混淆 / 信息泄露",
+   "reasoning": "是。byte 模块使用 allocUnsafe 分配未初始化缓冲区，且读取时未验证长度，导致内存泄露。这利用了 Node.js 的 Buffer 行为，非预期性高，可抽象为通用判断条件。",
+   "attack_chain": "创建 ByteBuffer → 写入数据 → 读取超出长度 → 泄露内存。",
+   "bypass_technique": "利用 allocUnsafe 未初始化内存和读取边界检查缺失。",
+   "defensive_insight": "使用 Buffer.alloc 代替 allocUnsafe，并在读取时检查边界。"
+  },
+  {
+   "id": 1573634,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "配置错误 / 协议行为利用",
+   "reasoning": "是。curl 在更新 cookie 文件时未保留原文件权限，导致敏感信息可能被其他用户读取。这利用了文件替换时的权限处理缺陷，非预期性高，且可通用化。",
+   "attack_chain": "创建受限权限文件 → curl 更新 → 权限被重置为 0666 → 其他用户可读。",
+   "bypass_technique": "利用文件替换时未保留权限。",
+   "defensive_insight": "在替换文件时保留原文件权限，或使用安全创建方式。"
+  },
+  {
+   "id": 144782,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。smtplib 在 STARTTLS 协商时未正确处理异常响应，导致 TLS 剥离攻击。这利用了协议实现缺陷，非预期性高，且影响广泛，可抽象为通用判断条件。",
+   "attack_chain": "中间人注入 SMTP 响应 → smtplib 静默放弃 TLS → 明文传输。",
+   "bypass_technique": "利用 smtplib 未检查 STARTTLS 响应状态。",
+   "defensive_insight": "在 STARTTLS 协商时严格检查响应码，失败则中止连接。"
+  },
+  {
+   "id": 97535,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过",
+   "reasoning": "部分。受限账户可直接访问设备列表接口，未进行权限校验。这属于典型的 IDOR/越权，但非预期性中等，攻击链简单。",
+   "attack_chain": "受限账户 → 直接请求接口 → 获取设备列表。",
+   "bypass_technique": "利用接口未校验权限。",
+   "defensive_insight": "在服务端对每个请求进行权限校验。"
+  },
+  {
+   "id": 1369806,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "开放重定向",
+   "reasoning": "否。典型的开放重定向，无绕过，无攻击链，成熟套路。",
+   "attack_chain": "构造恶意 URL → 重定向到外部网站。",
+   "bypass_technique": "无。",
+   "defensive_insight": "校验重定向 URL 的域名白名单。"
+  },
+  {
+   "id": 398054,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "是。通过 postMessage 向 Marketo 表单发送恶意消息，控制 followUpUrl 实现 XSS。这利用了消息监听器未验证来源，非预期性高，且可跨组件利用。",
+   "attack_chain": "攻击者页面 → 发送恶意消息 → 控制 location.href → 执行脚本。",
+   "bypass_technique": "利用 postMessage 未验证来源和 followUpUrl 未校验。",
+   "defensive_insight": "验证消息来源，并限制 followUpUrl 为 HTTP/HTTPS。"
+  },
+  {
+   "id": 450006,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 0
+   },
+   "verdict": "保留，普通",
+   "category": "跨组件攻击链",
+   "reasoning": "部分。恶意 npm 包通过供应链传播，影响广泛。这属于供应链攻击，非预期性中等，但报告信息不足，无法复现。",
+   "attack_chain": "恶意包被依赖 → 安装时执行恶意代码 → 影响下游应用。",
+   "bypass_technique": "利用包管理器的信任链。",
+   "defensive_insight": "加强 npm 包审核，使用锁文件。"
+  },
+  {
+   "id": 1607756,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过",
+   "reasoning": "部分。用户被降级后仍可通过重放请求执行操作，这属于会话状态与权限不同步，非预期性中等。",
+   "attack_chain": "用户获得权限 → 被降级 → 重放旧请求 → 操作成功。",
+   "bypass_technique": "利用服务端未实时校验权限。",
+   "defensive_insight": "每次请求都校验当前权限，而非依赖会话状态。"
+  },
+  {
+   "id": 1354444,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "配置错误",
+   "reasoning": "否。仅版权年份过时，无安全影响，信息不足。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "更新版权信息。"
+  },
+  {
+   "id": 255651,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 跨组件攻击链",
+   "reasoning": "是。通过未授权接口更新商户信息，可能导致商户接管。这利用了接口未校验权限，且可与其他漏洞组合，攻击链完整。",
+   "attack_chain": "构造请求 → 更新商户信息 → 接管商户账户。",
+   "bypass_technique": "利用接口未校验权限。",
+   "defensive_insight": "对敏感操作进行权限校验和审计。"
+  },
+  {
+   "id": 217007,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "是。通过修改状态参数注入 XSS，影响所有聊天用户，无需交互。这利用了状态更新未过滤，且影响范围广，攻击链完整。",
+   "attack_chain": "修改状态参数 → 注入脚本 → 其他用户触发 → 窃取信息。",
+   "bypass_technique": "利用状态参数未过滤。",
+   "defensive_insight": "对状态参数进行编码和过滤。"
+  }
+ ]
+}

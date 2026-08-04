@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   876192,
+   403083,
+   1040166,
+   617896,
+   910300
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 97501,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "SSRF / 配置错误",
+   "reasoning": "是。SVG 上传时服务端解析器主动加载外部资源，形成 SSRF，且能探测内网。技术点在于 SVG 的 xlink:href 被服务端解析，而非仅客户端渲染。虽然 SSRF 常见，但利用 SVG 上传触发服务端请求的思路有启发性，且 PoC 完整。",
+   "attack_chain": "上传恶意 SVG → 服务端解析器加载外部资源 → 发起 GET 请求到攻击者服务器 → 探测内网/窃取信息。",
+   "bypass_technique": "利用 SVG 的 xlink:href 属性，使服务端解析器发起外部请求。",
+   "defensive_insight": "上传文件时禁用外部实体加载，对 SVG 进行白名单校验，或使用安全的解析库。"
+  },
+  {
+   "id": 157750,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少速率限制是常见配置问题，攻击者可通过暴力破解密码，但无新颖绕过或攻击链。属于成熟套路，启发性低。",
+   "attack_chain": "无攻击链，直接暴力破解密码。",
+   "bypass_technique": "无绕过，利用缺少速率限制。",
+   "defensive_insight": "对敏感操作实施速率限制和账户锁定机制。"
+  },
+  {
+   "id": 837256,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。通过修改活动 ID 实现跨组操作，绕过组成员资格检查。技术点在于 IDOR 与业务逻辑结合，未验证用户是否属于目标组。虽然 IDOR 常见，但针对社交功能的跨组操作有启发性。",
+   "attack_chain": "创建活动 → 拦截请求 → 修改活动 ID → 跨组删除/回复。",
+   "bypass_technique": "直接修改资源 ID，绕过权限检查。",
+   "defensive_insight": "服务端必须验证用户对目标资源的权限，而不仅仅是登录状态。"
+  },
+  {
+   "id": 876192,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 配置错误",
+   "reasoning": "是。利用 FileProvider 的 root-path 配置错误，通过 content URI 诱导浏览器下载内部文件，实现跨应用数据窃取。技术点在于 Android 组件间交互和 FileProvider 的路径配置，绕过权限模型。与普通信息泄露不同，这是跨组件攻击链，且 PoC 完整。",
+   "attack_chain": "恶意应用发送 content URI → Brave 解析并下载 Cookies 文件到公共目录 → 恶意应用读取。",
+   "bypass_technique": "利用 FileProvider 的 root-path 指向根目录，通过 content URI 访问内部文件。",
+   "defensive_insight": "FileProvider 应限制路径范围，避免使用 root-path 指向根目录，并实施路径校验。"
+  },
+  {
+   "id": 1627995,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SQL注入",
+   "reasoning": "否。sqlmap 自动检测的 SQL 注入，无新颖绕过或攻击链，属于成熟套路。",
+   "attack_chain": "单点注入，直接拖库。",
+   "bypass_technique": "无绕过，直接利用未过滤参数。",
+   "defensive_insight": "使用参数化查询，对输入进行严格过滤。"
+  },
+  {
+   "id": 403083,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "反序列化 / 跨组件攻击链",
+   "reasoning": "是。利用 Phar 反序列化，通过 CSV 导入功能触发，实现代码执行。技术点在于 Phar 文件被当作图像上传，再通过 phar:// 包装器触发反序列化。这是跨组件攻击链，且利用了 PHP 的 phar 协议行为。",
+   "attack_chain": "上传恶意 Phar 文件（伪装为图片）→ 导入 CSV 时指定 phar:// 路径 → 触发反序列化 → 代码执行。",
+   "bypass_technique": "利用 phar:// 包装器，绕过文件类型检查。",
+   "defensive_insight": "对文件上传进行严格校验，禁止 phar:// 协议，对反序列化输入进行过滤。"
+  },
+  {
+   "id": 263743,
+   "value_score": 0,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告内容为个人登录问题，无漏洞细节，无法判断真实性。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "无"
+  },
+  {
+   "id": 1631471,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。CGI 环境变量泄露是常见配置错误，无新颖绕过或攻击链。",
+   "attack_chain": "直接访问 URL 获取环境变量。",
+   "bypass_technique": "无绕过，利用配置错误。",
+   "defensive_insight": "禁用 CGI 环境变量显示，限制敏感信息暴露。"
+  },
+  {
+   "id": 107718,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型 XSS，经典 payload，无绕过或新颖之处。",
+   "attack_chain": "提交恶意主题 → 触发 XSS。",
+   "bypass_technique": "无绕过，直接注入。",
+   "defensive_insight": "对用户输入进行 HTML 编码，实施 CSP。"
+  },
+  {
+   "id": 8104,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。通过猜测 deleteGroup[id] 实现跨项目删除，未验证权限。技术点在于 IDOR 与业务逻辑结合，但需要猜测 ID，条件较具体。",
+   "attack_chain": "创建组 → 拦截请求 → 修改组 ID → 删除其他组的组。",
+   "bypass_technique": "直接修改资源 ID，绕过权限检查。",
+   "defensive_insight": "服务端必须验证用户对目标资源的权限，使用不可预测的 ID。"
+  },
+  {
+   "id": 1040166,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / SSRF",
+   "reasoning": "是。利用 curl 默认信任 FTP PASV 响应，通过恶意 FTP 服务器进行端口扫描。技术点在于 FTP 协议行为与 curl 配置的结合，可抽象为通用 SSRF 探测方法。",
+   "attack_chain": "控制 SSRF 目标 → 设置恶意 FTP 服务器 → 通过 PASV 响应探测内网端口。",
+   "bypass_technique": "利用 curl 的 CURLOPT_FTP_SKIP_PASV_IP 默认关闭，通过 PASV 响应指定内网 IP。",
+   "defensive_insight": "启用 CURLOPT_FTP_SKIP_PASV_IP，对 FTP 响应进行严格校验。"
+  },
+  {
+   "id": 194761,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。OpenSSL 漏洞和弱密码套件是已知配置问题，无新颖绕过或攻击链。",
+   "attack_chain": "无攻击链，直接利用已知漏洞。",
+   "bypass_technique": "无绕过，利用配置错误。",
+   "defensive_insight": "升级 OpenSSL，配置强密码套件。"
+  },
+  {
+   "id": 1326352,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "路径遍历 / 授权绕过",
+   "reasoning": "是。通过路径遍历访问管理资源，绕过认证。技术点在于路径遍历与授权绕过结合，但细节被 REDACTED，可复现性一般。",
+   "attack_chain": "登录后访问特定路径 → 绕过认证 → 访问管理功能。",
+   "bypass_technique": "利用路径遍历绕过访问控制。",
+   "defensive_insight": "实施严格的路径校验和访问控制。"
+  },
+  {
+   "id": 2301565,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "SSRF / 协议行为利用",
+   "reasoning": "是。利用 IPv6 映射 IPv4 地址绕过 SSRF 过滤，访问云元数据。技术点在于 IPv6 地址的表示形式绕过黑名单，可抽象为通用绕过方法。",
+   "attack_chain": "创建 webhook → 设置恶意 PHP 服务器 → 重定向到 IPv6 映射地址 → 访问云元数据。",
+   "bypass_technique": "使用 IPv6 映射 IPv4 地址（如 ::ffff:a9fe:a9fe）绕过过滤。",
+   "defensive_insight": "SSRF 防护应同时考虑 IPv4 和 IPv6，对重定向进行严格校验。"
+  },
+  {
+   "id": 694449,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "缓冲区溢出 / 协议行为利用",
+   "reasoning": "是。DNS over HTTP 编码时缓冲区溢出，技术点在于对长度计算不准确，但需要特定条件，且影响有限。",
+   "attack_chain": "构造超长主机名 → 触发缓冲区溢出。",
+   "bypass_technique": "利用长度计算错误，溢出 1 字节。",
+   "defensive_insight": "修复长度计算，增加边界检查。"
+  },
+  {
+   "id": 1007988,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。通过修改 ticket ID 实现跨用户评论和查看，未验证权限。技术点在于 IDOR 与业务逻辑结合，但需要拦截请求。",
+   "attack_chain": "创建工单 → 拦截请求 → 修改工单 ID → 评论/查看他人工单。",
+   "bypass_technique": "直接修改资源 ID，绕过权限检查。",
+   "defensive_insight": "服务端必须验证用户对目标资源的权限。"
+  },
+  {
+   "id": 617896,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 跨组件攻击链",
+   "reasoning": "是。利用 Salesforce 集成允许任意邮箱注册，绕过 GitLab 的邮箱验证。技术点在于第三方身份提供商与本地验证逻辑的脱节，可抽象为通用问题。",
+   "attack_chain": "通过 Salesforce 登录 → 创建任意邮箱账户 → 绕过邮箱验证。",
+   "bypass_technique": "利用第三方 IdP 的信任，绕过本地邮箱验证。",
+   "defensive_insight": "对第三方 IdP 提供的邮箱进行验证，确保与本地策略一致。"
+  },
+  {
+   "id": 910300,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 业务逻辑",
+   "reasoning": "是。通过修改邮箱和上传图片的交互，利用会话状态绕过邮箱验证，实现账户接管。技术点在于业务逻辑的竞态和状态混淆，可抽象为通用验证绕过。",
+   "attack_chain": "修改邮箱为受害者 → 上传图片触发验证 → 修改回自己邮箱 → 点击验证链接 → 上传图片 → 接管账户。",
+   "bypass_technique": "利用上传图片操作触发验证，结合邮箱修改的竞态。",
+   "defensive_insight": "邮箱验证应基于当前邮箱，避免状态混淆。"
+  },
+  {
+   "id": 361951,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 业务逻辑",
+   "reasoning": "是。JSONP 回调绕过隐私设置，泄露用户数据。技术点在于 JSONP 与认证检查的结合，可抽象为通用问题。",
+   "attack_chain": "构造恶意页面 → 调用 JSONP 回调 → 获取用户数据。",
+   "bypass_technique": "利用 JSONP 回调绕过隐私设置。",
+   "defensive_insight": "避免使用 JSONP，或对回调进行严格校验。"
+  },
+  {
+   "id": 384112,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS，经典 payload，无绕过或新颖之处。",
+   "attack_chain": "构造恶意链接 → 触发 XSS。",
+   "bypass_technique": "无绕过，直接注入。",
+   "defensive_insight": "对用户输入进行 HTML 编码，实施 CSP。"
+  }
+ ]
+}

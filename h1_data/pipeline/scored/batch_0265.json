@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   731878,
+   44513,
+   134299,
+   302338,
+   985150
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 134299,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。通过多态关联的noteable_id引用其他项目的对象，绕过了项目级别的访问控制，实现了跨项目未授权操作。技术点在于API未对noteable_id所属项目进行校验，导致对象引用混乱。区别于普通IDOR，这里利用了多态关联的特性，且影响多个对象类型，可抽象为通用判断条件。",
+   "attack_chain": "攻击者构造请求，将noteable_id指向其他项目的issue/MR/snippet，通过自己项目的API端点创建笔记。",
+   "bypass_technique": "利用多态关联，未校验noteable_id所属项目，直接引用跨项目对象。",
+   "defensive_insight": "在API层面对noteable_id进行归属校验，确保操作对象属于当前用户有权限的项目。"
+  },
+  {
+   "id": 329209,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑 / 竞争条件",
+   "reasoning": "部分。通过预测验证码序号并提前访问，导致后续用户注册失败，属于业务逻辑缺陷。但该攻击需要预测下一个用户的验证码序号，且影响有限，思路不算新颖。",
+   "attack_chain": "注册后获取验证码序号，递增访问下一序号，导致下一用户注册时验证码失效。",
+   "bypass_technique": "利用验证码序号可预测，提前消耗。",
+   "defensive_insight": "验证码序号应随机化，且验证失败不应影响后续注册流程。"
+  },
+  {
+   "id": 731878,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用邮件服务器对From头解析的差异（冒号前空格）绕过严格验证，实现DKIM签名重放和同域欺骗。技术点在于邮件服务器和客户端对From头的解析不一致，导致DKIM验证通过但显示伪造地址。区别于普通邮件欺骗，这里利用了协议解析差异，且可跨多个邮件服务商复用。",
+   "attack_chain": "攻击者发送带DKIM签名的邮件，然后添加伪造From头并利用解析差异绕过验证，发送给受害者。",
+   "bypass_technique": "在From头冒号前插入空格，使服务器验证第二个From头，而客户端显示第一个。",
+   "defensive_insight": "邮件服务器和客户端应统一解析规则，或采用oversign方案防止重放。"
+  },
+  {
+   "id": 1691603,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 授权绕过",
+   "reasoning": "部分。通过直接调用API绕过UI限制，创建未验证用户本不该创建的Newsletter。技术点在于前端UI限制了功能，但后端API未校验用户验证状态。思路清晰，但属于常见的API与UI不一致问题。",
+   "attack_chain": "捕获已验证用户创建Newsletter的请求，用未验证用户的cookie重放。",
+   "bypass_technique": "直接调用后端API，绕过前端UI限制。",
+   "defensive_insight": "后端应对所有API请求进行完整的权限和状态校验，不依赖前端限制。"
+  },
+  {
+   "id": 339237,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "否。存储型XSS，通过构造恶意链接利用onmouseover事件触发，属于常见XSS变种，但PoC完整，复现简单。",
+   "attack_chain": "发送恶意链接消息，受害者悬停触发XSS。",
+   "bypass_technique": "利用引号闭合属性，注入事件处理器。",
+   "defensive_insight": "对用户输入进行上下文感知的编码和过滤，尤其是链接属性。"
+  },
+  {
+   "id": 44513,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 认证绕过",
+   "reasoning": "是。利用Rails框架中IP解析的差异，通过X-Forwarded-For头中的IPv6地址变体绕过Web Console的IP白名单。技术点在于正则表达式与IPAddr类的解析不一致，导致看似有效的IP绕过。区别于普通IP绕过，这里利用了框架内部解析差异，可抽象为通用判断条件。",
+   "attack_chain": "发送X-Forwarded-For: 0000::1，绕过白名单，访问Web Console执行任意代码。",
+   "bypass_technique": "利用IPv6地址的多种表示形式，绕过正则匹配。",
+   "defensive_insight": "统一IP解析逻辑，使用标准库函数，避免正则与解析器不一致。"
+  },
+  {
+   "id": 279717,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。域名拼写错误导致可被注册，属于配置错误，无技术含量。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "检查并修正域名拼写，避免使用未注册的TLD。"
+  },
+  {
+   "id": 125849,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，通过URL参数注入，但需要移动端UA，属于常见XSS，但PoC完整。",
+   "attack_chain": "构造恶意URL，诱导受害者点击，执行脚本。",
+   "bypass_technique": "利用未过滤的username参数，注入HTML标签。",
+   "defensive_insight": "对输出进行编码，尤其是meta标签和属性。"
+  },
+  {
+   "id": 47235,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，通过URL路径注入，导致JavaScript代码执行，属于常见XSS，但PoC详细。",
+   "attack_chain": "构造恶意URL，诱导受害者访问，执行脚本。",
+   "bypass_technique": "利用路径参数未过滤，注入JavaScript代码。",
+   "defensive_insight": "对URL参数进行编码和过滤，避免直接拼接到JavaScript。"
+  },
+  {
+   "id": 302338,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 路径遍历",
+   "reasoning": "是。Ruby的Dir类方法未检查NULL字符，导致路径截断，可能访问非预期目录。技术点在于系统调用对NULL字符的处理与Ruby不一致，属于框架行为利用。区别于普通路径遍历，这里利用了语言层面的缺陷，可抽象为通用判断条件。",
+   "attack_chain": "传入包含NULL字符的路径，Dir方法截断路径，访问预期外的目录。",
+   "bypass_technique": "利用NULL字符截断路径，绕过路径检查。",
+   "defensive_insight": "在语言层面统一处理NULL字符，或对输入进行严格校验。"
+  },
+  {
+   "id": 926222,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "部分。报告描述了一个设计缺陷，但缺少具体攻击细节，无法判断真实性。",
+   "attack_chain": "未提供。",
+   "bypass_technique": "未提供。",
+   "defensive_insight": "需进一步分析。"
+  },
+  {
+   "id": 967284,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。开放重定向，通过fallback参数控制跳转，属于常见漏洞，无技术含量。",
+   "attack_chain": "构造恶意URL，诱导受害者点击，跳转到恶意网站。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对重定向参数进行白名单校验。"
+  },
+  {
+   "id": 25191,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。SPF记录配置不当，属于常见配置错误，无技术含量。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "正确配置SPF、DKIM、DMARC。"
+  },
+  {
+   "id": 92111,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。自XSS，通过用户名注入到邮件中，但影响有限，属于常见XSS。",
+   "attack_chain": "注册含payload的用户名，邮件触发XSS。",
+   "bypass_technique": "利用用户名未过滤，注入HTML。",
+   "defensive_insight": "对用户输入进行编码，尤其是在邮件模板中。"
+  },
+  {
+   "id": 163599,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。S3桶公开可读，属于配置错误，无技术含量。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "配置S3桶为私有。"
+  },
+  {
+   "id": 163501,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。邮件伪造，由于SPF配置不当，属于常见配置错误。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "正确配置SPF、DKIM、DMARC。"
+  },
+  {
+   "id": 325594,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。通过GraphQL查询获取禁用用户的徽章信息，属于信息泄露，但影响有限，且需要枚举用户ID。",
+   "attack_chain": "枚举用户ID，查询禁用用户的徽章。",
+   "bypass_technique": "利用GraphQL接口未对禁用用户进行过滤。",
+   "defensive_insight": "对禁用用户的数据进行访问控制。"
+  },
+  {
+   "id": 289330,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，在安装界面数据库名字段注入，属于常见XSS，但PoC完整。",
+   "attack_chain": "在安装过程中，数据库名字段注入payload，执行脚本。",
+   "bypass_technique": "利用字段未过滤，注入HTML。",
+   "defensive_insight": "对安装界面的输入进行严格校验和编码。"
+  },
+  {
+   "id": 258318,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。通过接口泄露用户邮箱，属于信息泄露，但无技术含量。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对敏感信息进行访问控制。"
+  },
+  {
+   "id": 985150,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 跨组件攻击链",
+   "reasoning": "是。通过POS应用中的嵌套链接，从低权限角色导航到高权限管理页面，实现权限提升。技术点在于应用间信任边界模糊，未对内部链接进行权限校验。区别于普通越权，这里利用了跨应用导航，链路完整。",
+   "attack_chain": "POS低权限用户通过嵌套链接进入Plan & Permissions页面，获得店主权限。",
+   "bypass_technique": "利用应用内导航链接，绕过权限检查。",
+   "defensive_insight": "对跨应用导航进行权限校验，确保每个页面都验证用户权限。"
+  }
+ ]
+}

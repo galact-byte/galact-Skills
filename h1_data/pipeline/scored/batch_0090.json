@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 8,
+  "dropped": 12,
+  "avg_score": 4.6,
+  "top_n": [
+   2442008,
+   970869,
+   397545,
+   370094,
+   1127455
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1127455,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 信息泄露",
+   "reasoning": "是。通过观察报告表单中严重性选项的差异（是否可手动设置严重性）来推断程序是否为私有，这是一种非预期的侧信道。技术点在于利用程序配置的细微差别（severity_options）作为信息泄露的载体，无需直接访问私有数据。区别于普通信息泄露，它展示了如何通过功能差异推断隐藏状态，具有通用性。",
+   "attack_chain": "创建新账户→访问hacktivity发布表单→选择外部程序→观察严重性选项→若只有单一选项则推断为私有程序。",
+   "bypass_technique": "利用程序配置差异（severity_options）作为侧信道，绕过直接访问限制。",
+   "defensive_insight": "统一所有程序的严重性选项配置，或在非公开场景下隐藏配置差异。"
+  },
+  {
+   "id": 280509,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。用户枚举通过忘记密码功能，是常见的信息泄露类型，无绕过或创新。",
+   "attack_chain": "单点：忘记密码→提交邮箱→响应差异判断存在性。",
+   "bypass_technique": "无实质绕过，直接利用响应差异。",
+   "defensive_insight": "统一响应消息，避免用户枚举。"
+  },
+  {
+   "id": 256647,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 信息泄露",
+   "reasoning": "是。利用CSS line-height的默认值差异来识别Tor浏览器的平台，这是一种非预期的侧信道。技术点在于浏览器渲染引擎的默认样式差异，可被JavaScript探测。虽然需要先识别Tor浏览器，但思路巧妙，可复用。",
+   "attack_chain": "识别Tor浏览器→测量CSS line-height→对照默认值表→确定平台。",
+   "bypass_technique": "利用CSS默认值差异作为指纹，绕过平台伪装。",
+   "defensive_insight": "Tor浏览器应显式设置line-height以统一平台差异。"
+  },
+  {
+   "id": 246042,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。弱密码策略是常见配置问题，无绕过或创新。",
+   "attack_chain": "单点：注册→设置弱密码→成功。",
+   "bypass_technique": "无实质绕过，直接利用弱策略。",
+   "defensive_insight": "实施强密码策略，包括黑名单和复杂度要求。"
+  },
+  {
+   "id": 2126039,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "部分。Jira未认证API访问是已知CVE，但报告展示了多个端点组合，形成信息泄露链。技术点在于利用已知漏洞的多个入口，但整体是成熟套路。",
+   "attack_chain": "未认证访问多个Jira REST端点→收集项目类别、用户名等敏感信息。",
+   "bypass_technique": "直接利用未认证API，无绕过。",
+   "defensive_insight": "限制匿名访问，应用feature flags。"
+  },
+  {
+   "id": 7915,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。未初始化变量导致错误信息泄露，是常见编程错误，无绕过或链。",
+   "attack_chain": "单点：POST创建项目→触发未初始化变量→错误信息在响应中。",
+   "bypass_technique": "无实质绕过，直接触发错误。",
+   "defensive_insight": "初始化所有变量，避免错误信息泄露。"
+  },
+  {
+   "id": 226518,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。信息不足，仅一句话描述，无细节。",
+   "attack_chain": "未知。",
+   "bypass_technique": "未知。",
+   "defensive_insight": "密码修改后应使旧会话失效。"
+  },
+  {
+   "id": 224186,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。DMARC策略配置不当是常见问题，无绕过或创新。",
+   "attack_chain": "单点：利用DMARC p=none→伪造邮件。",
+   "bypass_technique": "无实质绕过，直接利用配置错误。",
+   "defensive_insight": "设置DMARC p=reject。"
+  },
+  {
+   "id": 216700,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "类型混淆 / 内存破坏",
+   "reasoning": "是。通过递归调用new触发堆释放后使用，利用mruby VM的栈扩展逻辑，属于框架行为利用。技术点在于递归构造导致对象生命周期管理错误，可导致任意代码执行。区别于普通UAF，它展示了语言实现层面的非预期行为。",
+   "attack_chain": "构造递归new调用→触发栈扩展→释放对象→后续访问导致UAF。",
+   "bypass_technique": "利用递归调用导致对象释放后重用。",
+   "defensive_insight": "修复mruby VM的对象生命周期管理，增加安全检查。"
+  },
+  {
+   "id": 2442008,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / IDOR",
+   "reasoning": "是。通过summary report功能绕过附件ID校验，实现跨账户文件读取。技术点在于不同端点对附件ID的校验不一致，攻击者利用功能差异绕过。区别于普通IDOR，它展示了如何通过功能组合绕过看似有效的防护。",
+   "attack_chain": "创建报告→创建summary→编辑summary→替换附件ID为受害者ID→预览读取。",
+   "bypass_technique": "利用summary report端点未校验附件所有权，替换ID。",
+   "defensive_insight": "统一所有端点的附件权限校验，确保IDOR防护一致。"
+  },
+  {
+   "id": 172746,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "开放重定向",
+   "reasoning": "否。开放重定向是常见漏洞，无绕过或创新。",
+   "attack_chain": "单点：构造恶意referrer→重定向。",
+   "bypass_technique": "无实质绕过，直接利用参数。",
+   "defensive_insight": "验证重定向目标，限制为白名单。"
+  },
+  {
+   "id": 370094,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 信息泄露",
+   "reasoning": "是。利用Nginx变量在URL中的解析，将变量值反射到响应中，泄露服务器路径、版本等。技术点在于Nginx的变量插值行为，可被利用进行信息收集。区别于普通信息泄露，它展示了服务器配置的意外行为。",
+   "attack_chain": "构造含$变量的URL→Nginx解析并反射→泄露敏感信息。",
+   "bypass_technique": "利用Nginx变量插值，无需认证。",
+   "defensive_insight": "禁用不必要的Nginx变量，或对URL进行过滤。"
+  },
+  {
+   "id": 397545,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用GoldSource引擎加载BMP文件时的缓冲区溢出，通过服务器向客户端发送恶意文件实现远程代码执行。技术点在于利用游戏引擎的漏洞，结合服务器-客户端交互形成攻击链。区别于普通溢出，它展示了跨组件攻击的完整性。",
+   "attack_chain": "服务器加载恶意地图→客户端下载BMP→解析时溢出→执行shellcode。",
+   "bypass_technique": "利用引擎漏洞，通过文件传输触发。",
+   "defensive_insight": "修复引擎漏洞，加强文件校验。"
+  },
+  {
+   "id": 9479,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少X-Content-Type-Options头是常见配置问题，无绕过或创新。",
+   "attack_chain": "单点：上传恶意图片→IE渲染为脚本。",
+   "bypass_technique": "无实质绕过，直接利用配置缺失。",
+   "defensive_insight": "设置X-Content-Type-Options: nosniff。"
+  },
+  {
+   "id": 970869,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用Jupyter Notebook的HTML输出保留data-*属性，结合jquery-ujs的data-method/data-url等属性，实现任意请求发送。技术点在于框架的富文本渲染与前端库的交互，形成CSRF-like攻击。区别于普通XSS，它展示了如何利用合法功能进行攻击。",
+   "attack_chain": "上传恶意ipynb→渲染HTML→用户点击→触发jquery-ujs→发送任意请求。",
+   "bypass_technique": "利用data-*属性作为gadget，绕过CSP限制。",
+   "defensive_insight": "过滤data-*属性，或限制jquery-ujs的使用。"
+  },
+  {
+   "id": 96908,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过",
+   "reasoning": "部分。管理员无Settings权限但可通过API访问支付网关，属于权限校验不一致。技术点在于UI与API的权限分离，可被利用。区别于普通IDOR，它展示了权限模型的漏洞。",
+   "attack_chain": "低权限管理员→直接调用API→获取支付网关信息。",
+   "bypass_technique": "利用API端点未校验权限。",
+   "defensive_insight": "统一UI和API的权限校验。"
+  },
+  {
+   "id": 83178,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。DOM XSS是常见漏洞，无绕过或创新。",
+   "attack_chain": "单点：构造URL→触发DOM XSS。",
+   "bypass_technique": "无实质绕过，直接利用。",
+   "defensive_insight": "对DOM操作进行编码和过滤。"
+  },
+  {
+   "id": 267570,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型XSS通过Facebook页面名称注入，是常见漏洞，无绕过或创新。",
+   "attack_chain": "单点：创建恶意页面名→连接Facebook→触发XSS。",
+   "bypass_technique": "无实质绕过，直接利用。",
+   "defensive_insight": "对第三方数据输出进行编码。"
+  },
+  {
+   "id": 316789,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 类型混淆",
+   "reasoning": "是。通过修改请求参数和vpc_Amount值，以0.1美元购买300美元礼品卡。技术点在于支付流程中参数校验不严，可篡改金额。区别于普通IDOR，它展示了业务逻辑漏洞的利用。",
+   "attack_chain": "设置金额→拦截请求→修改参数→替换vpc_Amount→支付0.1美元。",
+   "bypass_technique": "利用参数篡改和加密值替换。",
+   "defensive_insight": "服务端校验金额一致性，签名防篡改。"
+  },
+  {
+   "id": 161299,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。内容注入是常见配置问题，无绕过或创新。",
+   "attack_chain": "单点：构造URL→返回错误页面内容注入。",
+   "bypass_technique": "无实质绕过，直接利用。",
+   "defensive_insight": "自定义错误页面，避免反射用户输入。"
+  }
+ ]
+}

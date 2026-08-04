@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 8,
+  "dropped": 12,
+  "avg_score": 4.6,
+  "top_n": [
+   1069487,
+   403039,
+   1256777,
+   1121896,
+   402473
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 180196,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。Host header 注入是常见问题，且此处未展示实际利用（如密码重置投毒），仅证明可控制 Host 导致 Fastly 错误页。无绕过，无攻击链，信息不足。",
+   "attack_chain": "单点：控制 Host 头 → 触发 Fastly 错误页，未达实际危害。",
+   "bypass_technique": "无实质绕过，直接利用未校验的 Host 头。",
+   "defensive_insight": "校验 Host 头白名单，避免在响应中反射 Host 值。"
+  },
+  {
+   "id": 184452,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。Websphere 页面泄露和版本信息是常见信息泄露，无绕过，无攻击链，价值低。",
+   "attack_chain": "单点：访问特定 URL → 泄露服务器版本。",
+   "bypass_technique": "无。",
+   "defensive_insight": "隐藏管理页面，禁用版本信息显示。"
+  },
+  {
+   "id": 1069487,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 认证绕过",
+   "reasoning": "是。利用 localhost6 不在 hosts 文件中的事实，将其当作普通域名进行 DNS rebinding，绕过 Node.js 调试器的 DNS rebinding 防护。这是对 CVE-2018-7160 修复的巧妙绕过，展示了白名单的过度信任。",
+   "attack_chain": "受害者访问恶意网页 → 网页请求 localhost6:9229 → DNS 解析到攻击者 IP → 加载恶意页面 → 再次 DNS 解析到 127.0.0.1 → 获取调试器 WebSocket URL → 连接并控制 Node.js 进程。",
+   "bypass_technique": "利用 localhost6 不在 hosts 文件中的特性，将其作为普通域名进行 DNS rebinding，绕过基于主机名的白名单。",
+   "defensive_insight": "调试器应绑定到 127.0.0.1 或使用更强的验证机制，如 WebSocket 握手时的 Origin 检查，或使用 Unix socket。"
+  },
+  {
+   "id": 1572120,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 其他",
+   "reasoning": "否。curl 的 globbing 功能被滥用导致 DoS，是已知功能，无绕过，无攻击链，价值低。",
+   "attack_chain": "单点：构造超大范围 globbing URL → 大量请求 → 资源耗尽。",
+   "bypass_technique": "无。",
+   "defensive_insight": "限制 curl 的 globbing 范围，或对 URL 长度和范围进行限制。"
+  },
+  {
+   "id": 403039,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。WooCommerce 使用黑名单方式限制 Shopmanager 编辑管理员，但未限制编辑其他角色，导致可通过提升普通用户为编辑角色并利用存储 XSS 提权。这是对黑名单策略的优雅绕过，展示了黑名单的局限性。",
+   "attack_chain": "Shopmanager 登录 → 将普通用户提升为编辑角色 → 修改密码 → 登录该用户 → 发布含恶意脚本的文章 → 管理员访问触发 XSS → 提权为管理员。",
+   "bypass_technique": "绕过黑名单：不直接提权为管理员，而是通过中间角色（编辑）获得 XSS 能力。",
+   "defensive_insight": "使用白名单方式限制角色提升，或对敏感操作进行二次验证。"
+  },
+  {
+   "id": 293359,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 其他",
+   "reasoning": "否。缺少速率限制和黑名单是常见配置问题，无绕过，无攻击链，价值低。",
+   "attack_chain": "单点：暴力枚举 token → 获取有效会话。",
+   "bypass_technique": "无。",
+   "defensive_insight": "实施速率限制、IP 黑名单和 MFA。"
+  },
+  {
+   "id": 1256777,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 业务逻辑",
+   "reasoning": "是。通过设置组的默认分支名为恶意脚本，在创建项目时未过滤地嵌入到页面中，导致存储 XSS。这是对输入验证的巧妙绕过，展示了信任边界外的输入如何影响内部页面。",
+   "attack_chain": "攻击者创建组 → 设置默认分支名为恶意脚本 → 创建项目 → 受害者访问项目页面 → 脚本执行 → 窃取 token 或重定向。",
+   "bypass_technique": "利用未过滤的字段（默认分支名）注入脚本，绕过 CSP 限制（通过 base-uri 或外部脚本）。",
+   "defensive_insight": "对所有用户输入进行输出编码，实施严格的 CSP，并验证输入字段的合法性。"
+  },
+  {
+   "id": 6877,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。Cookie 未设置 Secure 标志是常见配置问题，无绕过，无攻击链，价值低。",
+   "attack_chain": "单点：通过 HTTP 窃取会话 Cookie。",
+   "bypass_technique": "无。",
+   "defensive_insight": "设置 Cookie 的 Secure 和 HttpOnly 标志。"
+  },
+  {
+   "id": 392728,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 其他",
+   "reasoning": "部分。通过 URL 参数 devEnv=staging 可无限启动 Slack 桌面进程，导致资源耗尽。这是对业务逻辑的滥用，但思路较直接，无复杂绕过。",
+   "attack_chain": "构造恶意链接 → 用户点击 → 启动多个 Slack 进程 → 系统资源耗尽。",
+   "bypass_technique": "利用 devEnv 参数绕过单实例限制。",
+   "defensive_insight": "限制 devEnv 参数的使用，或对进程启动进行频率限制。"
+  },
+  {
+   "id": 966383,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。日志记录敏感信息是常见问题，无绕过，无攻击链，价值低。",
+   "attack_chain": "单点：设置日志级别 → 创建 secret → 日志泄露。",
+   "bypass_technique": "无。",
+   "defensive_insight": "避免在日志中记录敏感信息，或对日志进行脱敏。"
+  },
+  {
+   "id": 380878,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "类型混淆 / 框架行为利用",
+   "reasoning": "是。通过构造 {constructor: {prototype: {...}}} 对象，利用 defaults-deep 的递归合并逻辑污染 Object.prototype，这是原型污染攻击的典型变体，展示了框架行为利用。",
+   "attack_chain": "攻击者控制输入 → 触发 defaults-deep 合并 → 污染 Object.prototype → 影响所有对象。",
+   "bypass_technique": "利用 constructor.prototype 路径绕过属性过滤。",
+   "defensive_insight": "对合并操作进行深度检查，禁止修改原型链。"
+  },
+  {
+   "id": 2081332,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。LDAP 匿名登录是常见配置错误，无绕过，无攻击链，价值低。",
+   "attack_chain": "单点：匿名绑定 → 枚举信息。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁用匿名绑定，强制认证。"
+  },
+  {
+   "id": 460556,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。Banner 抓取是常见信息泄露，无绕过，无攻击链，价值极低。",
+   "attack_chain": "单点：查看响应头 → 获取版本。",
+   "bypass_technique": "无。",
+   "defensive_insight": "隐藏服务器版本信息。"
+  },
+  {
+   "id": 402473,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 授权绕过",
+   "reasoning": "是。通过使用绝对路径（//home/...）绕过文件扩展名检查，导致任意文件下载。这是对路径类型判断的巧妙绕过，展示了黑名单的局限性。",
+   "attack_chain": "Shopmanager 登录 → 设置下载文件为绝对路径 → 下载任意文件（如 wp-config.php）→ 获取数据库凭据。",
+   "bypass_technique": "使用 // 开头的绝对路径绕过相对路径的扩展名检查。",
+   "defensive_insight": "对所有文件路径进行规范化检查，限制可访问的目录。"
+  },
+  {
+   "id": 55431,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XXE / 其他",
+   "reasoning": "部分。XXE 是常见漏洞，但此处展示了通过上传 XML 文件触发，且可读取任意文件，思路清晰，但无特殊绕过。",
+   "attack_chain": "上传恶意 XML → 解析时触发 XXE → 读取 /etc/passwd。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁用外部实体解析，使用安全的 XML 解析器。"
+  },
+  {
+   "id": 1051885,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。使用默认凭据是常见配置错误，无绕过，无攻击链，价值低。",
+   "attack_chain": "单点：使用默认凭据登录 → 访问管理面板。",
+   "bypass_technique": "无。",
+   "defensive_insight": "强制修改默认凭据，限制外部访问。"
+  },
+  {
+   "id": 94610,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。Nginx 版本泄露是常见信息泄露，无绕过，无攻击链，价值极低。",
+   "attack_chain": "单点：查看响应头 → 获取版本。",
+   "bypass_technique": "无。",
+   "defensive_insight": "隐藏服务器版本信息。"
+  },
+  {
+   "id": 1121896,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 0
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 认证绕过",
+   "reasoning": "是。通过 Stripe Connect 创建账户时，未验证邮箱即可使用全部功能，导致可冒充他人发送发票。这是对业务逻辑的巧妙绕过，展示了不同创建流程之间的安全差异。",
+   "attack_chain": "攻击者通过 Connect 创建账户 → 使用虚假邮箱 → 创建发票并发送给受害者 → 受害者收到看似合法的发票。",
+   "bypass_technique": "利用 Connect 流程未验证邮箱的漏洞，绕过标准流程的邮箱验证。",
+   "defensive_insight": "统一所有创建流程的验证要求，确保邮箱验证在所有入口都强制执行。"
+  },
+  {
+   "id": 523,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 其他",
+   "reasoning": "是。利用 ASN.1 字符串中的 NUL 字节导致缓冲区溢出，这是对协议解析器的巧妙利用，展示了非二进制安全解析器的风险。",
+   "attack_chain": "构造恶意证书 → 触发 openssl_x509_parse() → 内存破坏 → 可能 RCE。",
+   "bypass_technique": "利用 NUL 字节绕过长度检查。",
+   "defensive_insight": "使用二进制安全的解析函数，对输入进行严格验证。"
+  },
+  {
+   "id": 2213900,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "保留，普通",
+   "category": "IDOR / 授权绕过",
+   "reasoning": "部分。IDOR 是常见漏洞，但此处展示了通过修改 strUserId 参数删除任意用户头像，思路清晰，但无特殊绕过。",
+   "attack_chain": "单点：修改 strUserId 参数 → 删除任意用户头像。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对用户 ID 进行权限校验，确保只能操作自己的资源。"
+  }
+ ]
+}

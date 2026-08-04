@@ -1,0 +1,336 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 4,
+  "dropped": 16,
+  "avg_score": 3.1,
+  "top_n": [
+   1086781,
+   294462,
+   924393,
+   1187816
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1196945,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。URL 参数中 onclick + img onerror 直接反射执行——经典反射型 XSS，无变形无绕过，目标与参数名 REDACTED 降低可复现价值。",
+   "attack_chain": "单点：构造恶意 URL→参数反射进 HTML→alert 执行。",
+   "bypass_technique": "无绕过，直接利用参数未编码回显。",
+   "defensive_insight": "参数输出统一上下文编码；输入校验与输出编码分离。"
+  },
+  {
+   "id": 188075,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。Apache 默认 /icons/README 文件存在——纯信息性发现，无安全影响论证，技术启发为零。",
+   "attack_chain": "单点：访问 /icons/README 确认默认文件存在。",
+   "bypass_technique": "无。",
+   "defensive_insight": "移除框架默认示例与说明文件；部署基线扫描默认文件。"
+  },
+  {
+   "id": 1727424,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 业务逻辑",
+   "reasoning": "否。创建用户密码无长度上限，超长输入致哈希计算资源消耗（潜在 DoS）——输入长度缺失的经典缺陷，正文附超长密码但无服务端观测数据，影响停留在理论。",
+   "attack_chain": "单点：提交数千字符密码→服务端哈希耗资源→并发放大为 DoS。",
+   "bypass_technique": "无绕过，直接利用缺失的长度限制。",
+   "defensive_insight": "密码字段设置长度上限（如 72 字节）；哈希前截断或先做长度校验。"
+  },
+  {
+   "id": 1086781,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 配置错误",
+   "reasoning": "部分。GitLab 管理员在 UI 限制项目可见性选项（灰化），但 PUT /api/v4/projects 仍可设为 internal/public——'UI 层已生效的策略被 API 绕过'是策略实施点不一致的典型，可抽象为通用判据（可见性等策略必须在服务端 API 层统一实施）；条件极简（直接 API 调用），复现完整。",
+   "attack_chain": "单点：非特权用户 PUT /api/v4/projects/{id} 传 restricted 可见性→API 不校验→项目越权公开。",
+   "bypass_technique": "无绕过，直接调用未实施限制的 API 通道。",
+   "defensive_insight": "可见性/合规类策略在服务端模型层统一校验，UI 灰化仅作提示；API 与 UI 共用同一授权判定。"
+  },
+  {
+   "id": 294462,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "命令注入 / 框架行为利用",
+   "reasoning": "部分。NET::Ftp 用 open(localfile,'w') 写文件，Ruby 的 open 对 '|' 前缀执行管道命令——'文件 API 的隐藏 shell 语义'是 Ruby 特有反直觉点，恶意 FTP 服务器返回特殊文件名即可打客户端 RCE；可抽象为通用判据（语言 API 的双重语义必须按预期用途选用 File.open）。前置需客户端信任服务器文件名（批量下载场景常见），链路跨服务器与客户端信任边界。",
+   "attack_chain": "恶意 FTP 服务器返回 '|cmd' 文件名→客户端 gettextfile 用 open 打开→管道执行命令→RCE。",
+   "bypass_technique": "利用 Ruby open() 对 '|' 前缀的管道语义注入命令。",
+   "defensive_insight": "文件写入一律用 File.open 而非 open；下载文件名做白名单过滤（拒绝 '|' 与控制字符）。"
+  },
+  {
+   "id": 362129,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "XSS",
+   "reasoning": "无法判断。仅称移动端昵称存在 self-stored XSS，正文两张截图无 payload、无触发路径、无上下文，无法验证。",
+   "attack_chain": "无法确认。",
+   "bypass_technique": "无法确认。",
+   "defensive_insight": "昵称等展示字段统一输出编码。"
+  },
+  {
+   "id": 156182,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。robots.txt 列出 admin 等路径——模板化信息性报告，报告者自己引用的是机器人协议基础知识而非漏洞，无实际越权证明。",
+   "attack_chain": "单点：读 robots.txt 获受限路径线索。",
+   "bypass_technique": "无。",
+   "defensive_insight": "robots.txt 不得用于访问控制，受限目录靠服务端鉴权。"
+  },
+  {
+   "id": 1065516,
+   "value_score": 0,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "无法判断。仅列 CTF 12 个 flag 无任何技术内容（writeup 承诺后续补），非漏洞报告。",
+   "attack_chain": "无法确认。",
+   "bypass_technique": "无法确认。",
+   "defensive_insight": "无有效信息。"
+  },
+  {
+   "id": 210188,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "子域名接管 / 配置错误",
+   "reasoning": "否。cloudfront.ubnt.com CNAME 到无 origin 关联的 CloudFront 分配，注册即可认领——子域名接管经典，CloudFront 不验证 CNAME 认领的机制说明清晰、影响分析完整（cookie/SSL/钓鱼），但技术机制零变形。",
+   "attack_chain": "建 CloudFront 分配→添加 CNAME cloudfront.ubnt.com→接管域名→钓鱼/读 cookie/签证书。",
+   "bypass_technique": "无绕过，直接认领未关联的 CDN 委派。",
+   "defensive_insight": "弃用 CDN/第三方服务时删除 DNS 记录；定期审计 CNAME 指向与分配归属。"
+  },
+  {
+   "id": 179920,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SQL注入",
+   "reasoning": "否。WP DB prepare 方法两个契约缺陷（数组参数跳过后续参数、%s 引号处理不当）放大为广泛 SQLi——框架核心方法的错误使用分析有价值，但本质仍是 SQLi 成熟套路，PoC 细节（截图）不完整。",
+   "attack_chain": "单点：构造数组参数或预引号输入→prepare 生成可注入 SQL。",
+   "bypass_technique": "无绕过，利用框架 API 的参数形态缺陷。",
+   "defensive_insight": "查询构造 API 严格参数类型校验；插件开发者强制绑定参数与占位符一致。"
+  },
+  {
+   "id": 924393,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "认证绕过 / 协议行为利用",
+   "reasoning": "部分。Nextcloud WebAuthn 登录未设置 userVerification 且不校验 UV flag，带 PIN 的 FIDO2 钥匙在登录时不要求 PIN——'硬件钥匙声明的双因素被服务端实现静默降级为单因素'（与微软同类缺陷一致），是协议选项与服务端校验不匹配的典型，可抽象为通用判据（WebAuthn 服务端必须声明并校验 UV）；攻击者靠近受害者用其 NFC 钥匙即可登录，条件明确。",
+   "attack_chain": "携带 FIDO2 钥匙靠近受害者→其 NFC 钥匙触发 WebAuthn→服务端不校验 UV→无 PIN 完成登录。",
+   "bypass_technique": "利用服务端未要求 userVerification/不校验 UV flag 的降级。",
+   "defensive_insight": "WebAuthn 注册与认证均声明 userVerification=required 并校验响应 UV flag；按配置的因子强度实施策略。"
+  },
+  {
+   "id": 319480,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "认证绕过",
+   "reasoning": "否。项目创建请求捕获后登出仍可重放、API key 不绑定会话可为任意用户建项目——请求重放+API key 与会话解绑的认证边界缺陷，影响明确（污染他人项目）但机制成熟（重放/身份绑定缺失），informative。",
+   "attack_chain": "捕获项目创建请求→登出后重放→或换他人 API key→向任意账户注入项目。",
+   "bypass_technique": "无绕过，利用请求可重放与身份绑定缺失。",
+   "defensive_insight": "API key 必须绑定用户会话/设备并支持吊销；敏感操作校验会话与 key 的一致性。"
+  },
+  {
+   "id": 1745702,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。密码策略 app 禁用时用 Math.random 生成 10 位分享密码——弱随机生成安全凭据的经典缺陷，代码引用完整；影响（分享密码可预测）真实但机制零变形，无利用演示。",
+   "attack_chain": "单点：禁用密码策略→分享密码由 Math.random 生成→可预测/爆破→越权访问分享文件。",
+   "bypass_technique": "无绕过，利用可预测的伪随机输出。",
+   "defensive_insight": "安全相关随机一律 CSPRNG；功能降级路径（策略禁用）不得退回弱随机。"
+  },
+  {
+   "id": 178611,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。Close text 参数反射 XSS（需登录配置，近似 self-XSS 但影响敏感配置区）——反射 XSS 经典，payload 与复现完整但技术零变形。",
+   "attack_chain": "单点：构造含 script 的 Close text→配置页渲染执行。",
+   "bypass_technique": "无绕过，直接利用未转义输出。",
+   "defensive_insight": "配置类表单字段统一输出编码；高敏配置界面增加保存确认。"
+  },
+  {
+   "id": 177635,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。添加信用卡表单无 CSRF 防护，可被诱导保存他人卡用于快捷支付——CSRF 到支付卡绑定的经典问题，有金钱影响但技术机制零变形。",
+   "attack_chain": "单点：诱导登录用户提交隐藏表单→绑定攻击者卡→购物误扣款。",
+   "bypass_technique": "无绕过，直接利用缺失的 CSRF 防护。",
+   "defensive_insight": "支付类状态变更强制 CSRF token+二次确认；卡绑定绑定操作绑定会话一次性校验。"
+  },
+  {
+   "id": 4561,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。Slackbot 收集的信息直接进 <a href=javascript:...>，点击触发——javascript: URL 进 href 的经典存储 XSS，步骤简述+视频 PoC，机制零变形。",
+   "attack_chain": "提供 javascript: URL 作为个人信息→Slackbot 渲染进链接 href→点击执行。",
+   "bypass_technique": "无绕过，直接利用 href 未过滤危险 scheme。",
+   "defensive_insight": "链接 href 做 scheme 白名单；用户可控文本输出转义。"
+  },
+  {
+   "id": 218733,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露 / 路径遍历",
+   "reasoning": "否。AWStats 公开可看用户 IP 记录，config 参数路径遍历（/proc/version）——awstats 配置错误+已知路径遍历 CVE 的组合，手法成熟，目标 REDACTED。",
+   "attack_chain": "单点：访问 awstats.pl→输出=unknownip 看用户 IP→config=../.. 路径遍历读系统文件。",
+   "bypass_technique": "无绕过，直接利用公开统计端点与已知遍历参数。",
+   "defensive_insight": "统计工具绑定内网/鉴权；config 参数白名单化并拒绝路径分隔符。"
+  },
+  {
+   "id": 800109,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "授权绕过 / 信息泄露",
+   "reasoning": "否。离开私有项目后经旧报告 .json 仍可读 submission_state——'撤销访问未覆盖历史引用'的授权边界缺陷，影响轻微（仅程序开放/禁用状态元数据），请求响应完整但机制无新意。",
+   "attack_chain": "单点：离开项目→请求旧报告 .json→读 submission_state 推断程序状态。",
+   "bypass_technique": "无绕过，直接访问未随退出撤销的引用数据。",
+   "defensive_insight": "成员关系变更须级联重算历史对象可见性；引用型数据按当前权限即时评估。"
+  },
+  {
+   "id": 1990338,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 授权绕过",
+   "reasoning": "否。搜索引擎索引泄露的 ITSM 凭据仍有效，配合公开 CVE-2018-18862（访问控制缺陷）进入 BMC Remedy——泄露凭据复用+已知 CVE 的链路每步都是成熟手法，价值在'补救未闭环'（凭据半年未重置），目标与凭据 REDACTED。",
+   "attack_chain": "搜索发现泄露凭据→登录 ITSM→URL 构造利用 CVE-2018-18862→访问整个 Remedy 系统。",
+   "bypass_technique": "无绕过，复用公开泄露凭据+已知 CVE 路径。",
+   "defensive_insight": "暴露面监测与凭据强制轮换联动；升级受 CVE 影响组件并审计访问日志。"
+  },
+  {
+   "id": 1187816,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "跨组件攻击链 / 配置错误",
+   "reasoning": "部分。sifchain 项目依赖未在 npm 注册的私有包名，认领后分发恶意包即供应链 RCE——dependency confusion 是 2021 年热门套路，本报告价值在于'真实认领并观测到 300+ 下载'的实证与'私有包未注册=投毒点'的可操作判据；链路跨包注册与安装分发两个环节，报告者守规未投毒。",
+   "attack_chain": "注册未认领的私有包名→发布恶意版本→开发者安装 sifnode 依赖→恶意代码在构建/运行环境执行。",
+   "bypass_technique": "无绕过，利用公共仓库对未注册包名的可认领性。",
+   "defensive_insight": "私有依赖显式声明 registry 与版本锁定；安装侧配置私有源白名单防公共源混淆。"
+  }
+ ]
+}

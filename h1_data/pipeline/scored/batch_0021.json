@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 7,
+  "dropped": 13,
+  "avg_score": 4.0,
+  "top_n": [
+   218230,
+   1731349,
+   758445,
+   375083,
+   268794
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1072857,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 认证绕过",
+   "reasoning": "否。通过公开邮箱搜到的弱密码登录 phpBB 管理员，开启样式 PHP 执行得 RCE——核心是凭据泄露复用+高危配置开关，链路完整但每一步都是成熟手法，无技术绕过。",
+   "attack_chain": "搜到管理员邮箱→试出弱密码→后台开启 PHP 执行→模板注入 phpinfo→RCE。",
+   "bypass_technique": "无绕过，复用公开泄露凭据+启用高危功能。",
+   "defensive_insight": "管理员凭据强密码+双因素；样式执行类高危开关默认禁用；公开邮箱信息与密码无关联。"
+  },
+  {
+   "id": 758445,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链 / 其他",
+   "reasoning": "是。Squid 3.x/4.x 容忍头名与冒号间的空白字符（RFC 7230 明确禁止），导致请求分段错乱实现响应拆分/走私，可对前置组件做缓存投毒与安全过滤绕过——'解析器对畸形头的容忍产生前后端分歧'是走私的精细变体，攻击者构造 Transfer-Encoding\t: 等变体即可通用触发；报告覆盖 4 个 issue（1 个 CVE 化），请求样例完整，regilero 权威研究。",
+   "attack_chain": "构造 'Transfer-Encoding\\t: chunked' 头→Squid 解析分段错乱→额外响应/请求注入→缓存投毒/过滤绕过。",
+   "bypass_technique": "用头名冒号前的空白字符（\\t/\\f/\\x0b 等）制造解析分歧。",
+   "defensive_insight": "HTTP 解析严格按 RFC 7230 拒绝头名冒号前空白；反代与 Squid 解析规范统一并升级。"
+  },
+  {
+   "id": 111514,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。error 参数反射进登录错误提示，可伪造'请到 fake 站点登录'的钓鱼文案——内容欺骗经典（登录错误页注入），URL 完整但无绕过无链。",
+   "attack_chain": "单点：构造含钓鱼文案的 error 参数→登录页显示伪造提示→诱导用户去假站。",
+   "bypass_technique": "无绕过，直接利用错误信息回显。",
+   "defensive_insight": "错误提示文案固定化，不回显用户输入；如需展示做 HTML 编码。"
+  },
+  {
+   "id": 508446,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。bootbox 对话框 API 不转义消息内容（公开 github issue 已知）——第三方库的已知设计缺陷，报告无实际受影响站点，仅库层面提示。",
+   "attack_chain": "单点（理论）：网站把用户输入传给 bootbox.alert→渲染执行。",
+   "bypass_technique": "无绕过，直接利用库的 HTML 注入特性。",
+   "defensive_insight": "对话框库默认文本模式转义；调用方对用户输入先转义再传入。"
+  },
+  {
+   "id": 87168,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。分享按钮 onclick 的 URL 拼接未转义，?x=');alert(1)// 注入 JS 上下文——JS 属性上下文注入的经典反射 XSS，payload 完整但机制零变形。",
+   "attack_chain": "单点：构造恶意 URL→分享按钮 JS 属性拼接→点击执行。",
+   "bypass_technique": "无绕过，直接利用属性内拼接未转义。",
+   "defensive_insight": "分享按钮 URL 做 JS 上下文转义/编码；参数统一输出编码。"
+  },
+  {
+   "id": 55827,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 跨组件攻击链",
+   "reasoning": "部分。Coinbase 的 iframe 支付 API 允许客户在明文页面嵌入，MITM 可替换 iframe 把捐款劫持到攻击者地址——'第三方支付 iframe 的明文嵌入'是接口设计对客户部署约束缺失的问题（United Way 实例 + mitmproxy PoC 有效）；归属在客户侧配置而非 Coinbase 自身，但'接口文档未声明安全部署前提'的责任划分有启发。",
+   "attack_chain": "受害者访问明文捐款页→MITM 替换 Coinbase iframe→比特币转入攻击者地址。",
+   "bypass_technique": "无绕过，利用明文页面的 iframe 可被中间人替换。",
+   "defensive_insight": "支付 iframe 强制 https-only 与 CSP frame-src 白名单；API 文档明确客户安全部署要求。"
+  },
+  {
+   "id": 1341133,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "子域名接管 / 配置错误",
+   "reasoning": "否。子域指向未注册的 Azure cloudapp，注册即接管——云服务委派未认领的经典子域接管，目标 REDACTED，机制零变形。",
+   "attack_chain": "单点：发现指向未注册 cloudapp 的 CNAME→注册认领→托管恶意内容。",
+   "bypass_technique": "无绕过，直接认领未注册的云资源。",
+   "defensive_insight": "弃用云资源即删 DNS 记录；CNAME 指向第三方服务的记录定期审计认领状态。"
+  },
+  {
+   "id": 218230,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 跨组件攻击链 / 业务逻辑",
+   "reasoning": "是。把 GitLab 的 issue 邮件功能（incoming+{token}@gitlab.com）当作一次性邮箱接收 Slack 验证信，从而以 @gitlab.com 身份加入企业 Slack——'业务功能重用的身份验证绕过'非常反直觉：GitLab 会收到 slack 验证邮件并自动建 issue，攻击者读 issue 即拿到验证链接，全程无需真实企业邮箱。可抽象为通用判据（'任意发送到企业域'的邮件别名=第三方验证信接收器）。",
+   "attack_chain": "创建项目→用 incoming+token@gitlab.com 注册 Slack→验证信自动进 issue→点击链接+设 2FA→加入企业 Slack。",
+   "bypass_technique": "借 issue 邮件别名接收第三方服务验证信，绕过企业邮箱归属验证。",
+   "defensive_insight": "邮件别名功能域名与第三方验证通道隔离；Slack 等企业服务改用 SSO/邀请制而非邮箱自证。"
+  },
+  {
+   "id": 1731349,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 框架行为利用 / 跨组件攻击链",
+   "reasoning": "是。Kroki 过滤器 CSS 选择器匹配 code[lang] 却取 node.parent['lang'] 注入引号到 img src——'选择器与取值对象不一致'是过滤器实现的隐蔽缺陷；且报告进一步完成 CSP 绕过：用 data-diff-for-path 属性让 jQuery 加载任意 JSON 执行，再以 style 全屏覆盖+popover 点击链触发。存储 XSS 到 CSP 突破的完整链路，多层属性注入技术密度高，可抽象为通用判据（HTML 构建必须用 DOM API 而非字符串拼接）。",
+   "attack_chain": "issue 注释放恶意 pre[lang]→Kroki 生成带注入属性的 img→data-diff-for-path 加载恶意 JSON→点击链触发 JS。",
+   "bypass_technique": "pre lang 注入引号逃逸 img src；借 data-* 属性的 jQuery 消费点绕过 CSP。",
+   "defensive_insight": "过滤器取值与选择器一致校验；HTML 节点一律用 content_tag/DOM API 构建，禁用字符串拼接。"
+  },
+  {
+   "id": 268794,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 认证绕过",
+   "reasoning": "部分。/api/v4/users/{id} 未认证返回 authentication_token——'认证凭据随公开接口泄露'，影响是所有用户可被冒充（全站接管级）；机制是公开接口的字段级泄露（极简 GET 触发），非预期性来自'token 出现在公开响应'的配置疏忽，无绕过技巧。",
+   "attack_chain": "GET /api/v4/users/{id}→取 authentication_token→PRIVATE-TOKEN 冒充任意用户操作。",
+   "bypass_technique": "无绕过，直接读取公开响应中的凭据字段。",
+   "defensive_insight": "公开接口响应字段最小化，token 类字段绝不出现在非本人上下文中。"
+  },
+  {
+   "id": 1084939,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "授权绕过",
+   "reasoning": "否。Store Management 权限用户可调 enforceSamlOrganizationDomains（应限 User Management）——GraphQL mutation 的权限分离缺失经典，报告者自述影响有限，步骤完整但机制零变形。",
+   "attack_chain": "单点：低权用户调 enforceSamlOrganizationDomains mutation→执行高权操作。",
+   "bypass_technique": "无绕过，直接调用未限制的 mutation。",
+   "defensive_insight": "GraphQL mutation 按操作语义映射权限点，逐一校验而非按页面。"
+  },
+  {
+   "id": 375083,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 跨组件攻击链",
+   "reasoning": "是。Slack 的 UploadActivity 用 uri.getPathSegments().contains('com.Slack') 拒绝私文件，恶意 app 在自身目录建 symlink 指向 Slack 数据库，路径检查基于字符串而实际解析走 symlink——'字符串路径检查与文件系统真实路径不一致'是优雅的绕过（检查的是 URL 字符串而非规范化的真实文件），恶意 app 可读取 account_manager 数据库获得完整账户。条件极简（ln -s + Intent），可抽象为通用判据（Android 私文件检查必须基于解析后真实路径）。",
+   "attack_chain": "恶意 app 建 symlink 指向 Slack 数据库→设可读→Intent 触发 UploadActivity→导出文件→取 cookies/数据库。",
+   "bypass_technique": "用 symlink 使路径字符串不含 com.Slack，绕过 isPrivateFile 检查。",
+   "defensive_insight": "私文件判定基于规范化/真实路径（realpath）而非 URI 字符串；导出 Activity 禁止 file:// 与敏感目录。"
+  },
+  {
+   "id": 1594627,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。仅贴 CVE 摘要（Apache mod_proxy_ajp 走私），无任何技术细节、PoC 或复现步骤，信息停留在公告层面。",
+   "attack_chain": "单点（理论）：构造走私请求经 mod_proxy_ajp 注入 AJP 后端。",
+   "bypass_technique": "无法确认。",
+   "defensive_insight": "升级 Apache；AJP 仅限内网受信来源。"
+  },
+  {
+   "id": 1637761,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。CSV 导入流程（S3 预签名上传+upload_complete 回调）无 CSRF 防护，构造表单让受害者导入恶意交易数据——CSRF 到数据导入，'文件导入流程的 CSRF 面'较冷门算轻微亮点，但机制是经典 CSRF，步骤完整。",
+   "attack_chain": "攻击者上传 CSV 拿预签名 URL→构造表单诱受害者提交→受害者账户导入恶意交易。",
+   "bypass_technique": "无绕过，利用导入回调缺少 CSRF 校验。",
+   "defensive_insight": "导入回调强制 CSRF token/自定义头；S3 回调 URL 绑定会话校验。"
+  },
+  {
+   "id": 219870,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。mirb 的 main() 定长缓冲 OOB 写——交互 shell 的栈缓冲区经典缺陷，ASAN 完整但仅崩溃，无利用链。",
+   "attack_chain": "单点：输入超长行→main 栈缓冲越界写→崩溃。",
+   "bypass_technique": "无绕过，直接利用定长缓冲。",
+   "defensive_insight": "交互工具输入限长或动态扩容；fuzz 纳入 CI。"
+  },
+  {
+   "id": 229483,
+   "value_score": 0,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "无法判断。正文仅称 unicode 校验导致保存账户出错，无具体字符、无请求、无影响论证。",
+   "attack_chain": "无法确认。",
+   "bypass_technique": "无法确认。",
+   "defensive_insight": "无有效信息。"
+  },
+  {
+   "id": 2211561,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。Ctrl+Shift+V 粘贴内容直接进 innerHtml 不转义，可注入 HTML——self-XSS 变体（需受害者手动粘贴），'粘贴实现绕过了编辑器 schema'是细节但机制零变形。",
+   "attack_chain": "诱导受害者粘贴恶意 HTML→innerHtml 注入→页面执行。",
+   "bypass_technique": "无绕过，利用粘贴路径绕过编辑器 sanitize。",
+   "defensive_insight": "粘贴通道与输入通道统一 sanitize；innerHtml 一律替换为 textContent。"
+  },
+  {
+   "id": 12794,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。未定义索引触发 PHP 错误泄露完整服务器路径——错误信息路径泄露经典，影响轻微，无绕过无链。",
+   "attack_chain": "单点：触发未定义索引→错误页回显服务器路径。",
+   "bypass_technique": "无绕过，直接利用未脱敏错误。",
+   "defensive_insight": "生产环境 display_errors=Off；错误日志与用户隔离。"
+  },
+  {
+   "id": 1237700,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 配置错误",
+   "reasoning": "部分。项目标签名可设为 null，受害者前端崩溃无法管理项目——输入类型校验缺失的可用性炸弹，亮点在于'邀请到恶意项目即无交互影响他人'的传播路径（可批量瘫痪客户项目）；机制是 null 类型校验缺失的经典输入验证问题，链路由恶意项目→邀请→受害者瘫痪完成。",
+   "attack_chain": "创建带 null 标签的项目→邀请目标邮箱→受害者项目列表崩溃→无法管理/删除。",
+   "bypass_technique": "无绕过，直接提交 null 类型字段。",
+   "defensive_insight": "输入强类型校验（拒绝 null/类型漂移）；前端对异常数据降级渲染而非整体崩溃。"
+  },
+  {
+   "id": 186554,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。地址簿 FirstName 属性注入 onmouseover+全屏 style 覆盖，客户支持查看账户时触发——存储 XSS 的精细 payload（绕过 < 过滤用引号闭合属性、全屏诱触发），payload 构造有细节但本质是未转义输出的经典问题。",
+   "attack_chain": "保存恶意地址名→他人（含客服）查看地址→onmouseover+全屏覆盖触发。",
+   "bypass_technique": "无绕过，用引号逃逸属性上下文（服务端挡 < 不挡 \"）。",
+   "defensive_insight": "表单字段统一输出编码（属性上下文亦转义引号）；客户端长度校验须服务端同步。"
+  }
+ ]
+}

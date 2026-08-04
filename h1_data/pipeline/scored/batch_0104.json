@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   894949,
+   1665658,
+   1695454,
+   159820,
+   1664920
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 159958,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。这是一个已知的PHP整数溢出漏洞，报告仅提供链接，无详细分析。属于常见内存破坏类型，无新颖绕过或攻击链。",
+   "attack_chain": "单点：整数溢出导致堆破坏。",
+   "bypass_technique": "无实质绕过，直接利用已知漏洞。",
+   "defensive_insight": "修复PHP核心漏洞，更新版本。"
+  },
+  {
+   "id": 7085,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。DNS解析到127.0.0.1导致同源脚本攻击，是已知配置问题，无新颖绕过或攻击链。",
+   "attack_chain": "单点：DNS配置错误导致同源脚本。",
+   "bypass_technique": "无实质绕过，直接利用配置错误。",
+   "defensive_insight": "正确配置DNS，避免解析到本地地址。"
+  },
+  {
+   "id": 992618,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过",
+   "reasoning": "部分。未授权访问工单并可能删除，属于典型的IDOR/访问控制缺失，但无复杂绕过，链路简单。",
+   "attack_chain": "直接访问未授权URL→查看/删除工单。",
+   "bypass_technique": "无实质绕过，直接利用缺失的访问控制。",
+   "defensive_insight": "实施严格的访问控制，验证用户权限。"
+  },
+  {
+   "id": 55842,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 业务逻辑",
+   "reasoning": "部分。通过referer参数注入XSS，管理员点击触发，属于存储型XSS的变体，但思路较新颖，利用业务交互。",
+   "attack_chain": "构造恶意referer→管理员点击→XSS执行。",
+   "bypass_technique": "利用referer参数未过滤，注入javascript协议。",
+   "defensive_insight": "对所有输入进行编码，特别是URL参数。"
+  },
+  {
+   "id": 168054,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "XSS",
+   "reasoning": "否。报告自认超出范围，仅引用已知漏洞，无实际测试，信息不足。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "无。"
+  },
+  {
+   "id": 159820,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "SSRF / 信息泄露 / 跨组件攻击链",
+   "reasoning": "是。通过图片上传功能触发SSRF，可探测内网端口、泄露SSH版本，并导致内存溢出。利用多个组件（URL下载、图像处理）形成攻击链。",
+   "attack_chain": "PUT请求设置remote_image_url→SSRF探测内网→信息泄露→恶意图片导致内存溢出。",
+   "bypass_technique": "利用URL参数未过滤，直接请求内网地址。",
+   "defensive_insight": "限制URL下载的协议和IP，对图像处理进行资源限制。"
+  },
+  {
+   "id": 147188,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。重复点击导致金额倍增，是典型的业务逻辑漏洞，无新颖绕过。",
+   "attack_chain": "重复点击按钮→金额倍增。",
+   "bypass_technique": "无实质绕过，直接利用业务逻辑缺陷。",
+   "defensive_insight": "服务端验证点击次数或幂等性。"
+  },
+  {
+   "id": 118033,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少X-Content-Type-Options头，是常见配置问题，无实际利用。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "设置安全响应头。"
+  },
+  {
+   "id": 15652,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。IIS短文件名枚举是已知技术，无新颖绕过。",
+   "attack_chain": "利用IIS短文件名漏洞枚举目录。",
+   "bypass_technique": "无实质绕过，直接利用已知漏洞。",
+   "defensive_insight": "禁用短文件名或更新IIS。"
+  },
+  {
+   "id": 149273,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "路径遍历 / 信息泄露",
+   "reasoning": "部分。通过文件导入功能进行目录枚举，利用错误消息差异，思路较清晰，但属于常见路径遍历变体。",
+   "attack_chain": "设置文件路径为系统路径→通过错误消息判断存在性。",
+   "bypass_technique": "利用未过滤的路径输入，结合错误消息差异。",
+   "defensive_insight": "对文件路径进行白名单校验，统一错误消息。"
+  },
+  {
+   "id": 1664920,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 授权绕过",
+   "reasoning": "是。导出功能未过滤草稿报告，导致程序管理员可查看未公开的草稿，绕过草稿的隐私控制。思路新颖，利用功能间的逻辑漏洞。",
+   "attack_chain": "创建草稿→导出报告→CSV包含草稿信息。",
+   "bypass_technique": "利用导出功能未过滤草稿状态。",
+   "defensive_insight": "导出功能应遵循相同的权限和状态过滤。"
+  },
+  {
+   "id": 197916,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "其他",
+   "reasoning": "部分。通过设置backtrace数组为非法指针导致崩溃，属于类型混淆/内存破坏，但利用条件简单，无复杂链。",
+   "attack_chain": "设置backtrace为非法值→触发崩溃。",
+   "bypass_technique": "利用Ruby API未验证输入。",
+   "defensive_insight": "验证backtrace数组元素类型。"
+  },
+  {
+   "id": 1665658,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 跨组件攻击链 / 框架行为利用",
+   "reasoning": "是。通过GitHub导入功能，利用标签颜色未过滤，实现存储型XSS并绕过CSP。攻击链跨GitHub和GitLab两个平台，且利用CSP绕过技术，极具启发性。",
+   "attack_chain": "搭建恶意GitHub服务器→导入项目→标签颜色注入XSS→CSP绕过→执行任意JS。",
+   "bypass_technique": "利用标签颜色字段未过滤，结合CSP允许的脚本执行方式。",
+   "defensive_insight": "对所有导入数据严格过滤，特别是颜色值；加强CSP策略。"
+  },
+  {
+   "id": 167953,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "其他",
+   "reasoning": "部分。OpenJPEG的越界读写漏洞，有完整PoC和ASAN报告，但属于已知CVE，无新颖绕过。",
+   "attack_chain": "构造恶意JP2文件→触发越界读写。",
+   "bypass_technique": "无实质绕过，直接利用已知漏洞。",
+   "defensive_insight": "更新OpenJPEG到修复版本。"
+  },
+  {
+   "id": 1882751,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，参数未过滤，常见套路，无新颖绕过。",
+   "attack_chain": "构造恶意URL→触发XSS。",
+   "bypass_technique": "无实质绕过，直接利用未过滤参数。",
+   "defensive_insight": "对所有输入进行编码。"
+  },
+  {
+   "id": 1695454,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "IDOR / 授权绕过 / 跨组件攻击链",
+   "reasoning": "是。通过IDOR修改API应用ID，并利用错误消息泄露Client Secret，进而接管账户。攻击链完整，利用错误处理逻辑，思路优雅。",
+   "attack_chain": "修改application[id]→触发错误→泄露Client Secret→使用API接管账户。",
+   "bypass_technique": "利用IDOR和错误消息泄露敏感信息。",
+   "defensive_insight": "验证对象所有权，错误消息不泄露敏感信息。"
+  },
+  {
+   "id": 894949,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 框架行为利用 / 业务逻辑",
+   "reasoning": "是。这是一次复杂的CTF挑战，涉及多个漏洞链：git泄露、2FA绕过、SSRF、路径遍历、CSS注入、Android逆向等。每一步都展示了非预期解，极具启发性。",
+   "attack_chain": "git泄露→2FA绕过→SSRF→路径遍历→Android逆向→权限提升→CSS注入窃取2FA代码。",
+   "bypass_technique": "利用MD5校验缺陷绕过2FA，利用路径遍历访问内部服务，利用CSS注入窃取敏感信息。",
+   "defensive_insight": "加强2FA验证，限制SSRF，防止路径遍历，对CSS输入进行过滤。"
+  },
+  {
+   "id": 123518,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。SPF记录配置不当，是常见配置问题，无实际利用。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "正确配置SPF记录。"
+  },
+  {
+   "id": 153794,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用",
+   "reasoning": "部分。WEBrick响应拆分，利用CRLF注入，属于协议行为利用，但已知漏洞，无新颖绕过。",
+   "attack_chain": "构造恶意参数→注入响应头。",
+   "bypass_technique": "利用未过滤的CRLF字符。",
+   "defensive_insight": "过滤响应头中的CRLF。"
+  },
+  {
+   "id": 283821,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。项目标题未过滤导致存储型XSS，但影响有限，无复杂链。",
+   "attack_chain": "创建恶意标题→分享时触发XSS。",
+   "bypass_technique": "无实质绕过，直接利用未过滤输入。",
+   "defensive_insight": "对项目标题进行编码。"
+  }
+ ]
+}

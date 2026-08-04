@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   265943,
+   1574078,
+   993670,
+   205884,
+   128750
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1482830,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "否。直接暴露监控页面，属于典型的敏感信息泄露，无绕过、无攻击链，一眼即知。",
+   "attack_chain": "单点：访问监控路径→泄露服务器状态。",
+   "bypass_technique": "无，直接利用未授权访问。",
+   "defensive_insight": "监控页面应置于认证之后，或限制内网访问。"
+  },
+  {
+   "id": 205884,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "类型混淆 / 框架行为利用",
+   "reasoning": "是。整数溢出导致边界检查失效，进而引发越界读写，属于典型的算术错误利用。技术点在于`beg+len`溢出绕过长度检查，可导致内存破坏甚至RCE。与普通内存破坏不同，此漏洞源于对整数溢出的忽视，具有通用性。",
+   "attack_chain": "构造特定字符串和索引→触发整数溢出→越界读写→内存破坏。",
+   "bypass_technique": "利用整数溢出使`beg+len`小于`clen`，绕过长度检查。",
+   "defensive_insight": "使用安全整数运算，检查溢出，或使用无符号类型并显式验证。"
+  },
+  {
+   "id": 128750,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "命令注入 / 跨组件攻击链",
+   "reasoning": "是。通过控制外部服务器返回恶意Cookie，注入shell命令，实现只读用户到任意命令执行的权限提升。技术点在于服务端未对来自其他服务器的输入进行过滤，且将变量直接拼入命令。此攻击链跨信任边界（外部服务器到目标设备），且可抽象为通用模式。",
+   "attack_chain": "攻击者控制服务器→诱导目标发起speed test→恶意Cookie注入→命令执行。",
+   "bypass_technique": "利用`Set-Cookie`头中的反引号注入shell命令。",
+   "defensive_insight": "对所有外部输入进行严格过滤，避免将不可信数据拼入命令，使用白名单校验。"
+  },
+  {
+   "id": 219499,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "配置错误",
+   "reasoning": "否。仅提及SSLv3协议版本问题，无具体利用细节，且substate为informative，信息不足。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁用SSLv3，启用TLS1.2以上。"
+  },
+  {
+   "id": 1168193,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "认证绕过 / 配置错误",
+   "reasoning": "否。未认证请求可修改日志级别，属于典型的未授权访问，无绕过技巧，常见套路。",
+   "attack_chain": "单点：未认证请求→修改日志级别。",
+   "bypass_technique": "无，直接利用缺失认证。",
+   "defensive_insight": "所有管理接口必须强制认证。"
+  },
+  {
+   "id": 73258,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "类型混淆 / 框架行为利用",
+   "reasoning": "是。整数除法忽略余数导致安全检查失效，进而引发缓冲区溢出。技术点在于`check_multiply_size`未考虑余数，使得`size == (product/y)/x`检查可被绕过。此漏洞展示了算术边界条件的重要性，可抽象为通用判断条件。",
+   "attack_chain": "构造特定尺寸参数→绕过检查→缓冲区溢出→内存破坏。",
+   "bypass_technique": "利用整数除法余数忽略，使检查通过但实际尺寸不匹配。",
+   "defensive_insight": "使用乘法验证或检查余数，确保尺寸精确匹配。"
+  },
+  {
+   "id": 56760,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。反射型XSS，参数直接注入，无绕过，但PoC清晰，属于常见类型中的轻微变形（参数位置）。",
+   "attack_chain": "单点：构造URL→触发XSS。",
+   "bypass_technique": "无，直接利用未过滤参数。",
+   "defensive_insight": "对输出进行编码，使用CSP。"
+  },
+  {
+   "id": 1929567,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "部分。利用Ruby Time解析器的ReDoS漏洞，通过Rack中间件触发，属于框架行为利用。技术点在于`Time.rfc2822`对特定字符串处理不当导致性能问题，可被远程利用。",
+   "attack_chain": "构造恶意请求头→触发Time解析→ReDoS。",
+   "bypass_technique": "利用特定字符组合导致正则回溯。",
+   "defensive_insight": "限制输入长度，使用安全解析库，或对请求头进行预处理。"
+  },
+  {
+   "id": 188266,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "开放重定向",
+   "reasoning": "否。开放重定向，参数直接可控，无绕过，常见套路。",
+   "attack_chain": "单点：构造URL→重定向到恶意站点。",
+   "bypass_technique": "无，直接利用未验证的return_url。",
+   "defensive_insight": "验证重定向URL的域名白名单。"
+  },
+  {
+   "id": 120291,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "IDOR / 授权绕过",
+   "reasoning": "部分。IDOR漏洞，通过修改ID即可修改他人数据，属于常见类型，但影响较大，PoC清晰。",
+   "attack_chain": "单点：修改ID→修改他人数据。",
+   "bypass_technique": "无，直接利用不安全的对象引用。",
+   "defensive_insight": "实施对象级授权检查。"
+  },
+  {
+   "id": 1202590,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 状态混淆",
+   "reasoning": "是。用户删除后WebAuthn令牌未清除，导致新用户可被旧用户接管。技术点在于资源生命周期管理缺陷，属于业务逻辑漏洞，可抽象为通用模式。",
+   "attack_chain": "用户删除→令牌残留→新用户分配旧ID→旧用户登录→数据泄露。",
+   "bypass_technique": "利用残留的认证令牌。",
+   "defensive_insight": "删除用户时彻底清除所有关联数据，包括认证令牌。"
+  },
+  {
+   "id": 2032778,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 跨组件攻击链",
+   "reasoning": "是。路径遍历漏洞，通过控制`version`和`trained_at`参数，可加载任意路径的模型文件，可能导致RCE。技术点在于路径拼接未过滤，且可结合文件上传实现代码执行。",
+   "attack_chain": "构造恶意参数→路径遍历→加载恶意模型→RCE。",
+   "bypass_technique": "利用`../`序列跳出目录。",
+   "defensive_insight": "对路径参数进行规范化，限制在允许的目录内。"
+  },
+  {
+   "id": 412481,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "文件上传 / 配置错误",
+   "reasoning": "部分。上传shtml文件导致信息泄露，属于常见上传漏洞，但可读取配置文件，影响较大。",
+   "attack_chain": "上传shtml→服务器解析→读取敏感文件。",
+   "bypass_technique": "利用允许上传shtml后缀。",
+   "defensive_insight": "限制上传文件类型，禁止脚本执行。"
+  },
+  {
+   "id": 265943,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 认证绕过",
+   "reasoning": "是。通过组合CSRF登录、referrer参数控制、SVG XSS和token不失效等多个漏洞，实现SSO token窃取。技术点在于利用`#hashfragment`在重定向中传递token，以及SVG XSS执行JS。此攻击链跨多个组件，且可抽象为通用模式。",
+   "attack_chain": "CSRF登录→控制referrer→重定向携带token→SVG XSS窃取token→登录受害者账户。",
+   "bypass_technique": "利用`#hashfragment`在重定向中传递token，SVG XSS执行JS。",
+   "defensive_insight": "添加state参数防CSRF，限制referrer，token一次性使用，禁止SVG上传。"
+  },
+  {
+   "id": 1574078,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用无效IP地址触发DNS rebinding，绕过Node.js inspector的host检查。技术点在于`IsIPAddress`未正确验证IP，导致浏览器发起DNS请求，攻击者可控DNS实现重绑定。此漏洞展示了协议行为利用的优雅性。",
+   "attack_chain": "受害者访问恶意页面→重定向到无效IP→DNS rebinding→访问调试器→RCE。",
+   "bypass_technique": "利用无效IP触发DNS请求，实现重绑定。",
+   "defensive_insight": "严格验证IP地址，使用DNS pinning或禁止重绑定。"
+  },
+  {
+   "id": 410334,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 命令注入",
+   "reasoning": "部分。同时存在XSS和命令注入，但均为常见类型，无特殊绕过，PoC清晰。",
+   "attack_chain": "构造恶意参数→触发XSS或命令执行。",
+   "bypass_technique": "无，直接利用未过滤输入。",
+   "defensive_insight": "对输入进行严格过滤和编码。"
+  },
+  {
+   "id": 1634105,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "开放重定向",
+   "reasoning": "否。开放重定向，参数直接可控，无绕过，常见套路。",
+   "attack_chain": "单点：构造URL→重定向。",
+   "bypass_technique": "无。",
+   "defensive_insight": "验证重定向URL。"
+  },
+  {
+   "id": 993670,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 框架行为利用",
+   "reasoning": "是。通过跨域子帧调用U2F.register，结合模态框显示顶层origin和version参数未转义，实现UXSS。技术点在于利用postMessage直接调用U2F API，以及evaluateJavaScript未转义。此攻击链跨多个组件，且可抽象为通用模式。",
+   "attack_chain": "恶意子帧→调用U2F.register→模态框显示顶层origin→version注入JS→UXSS。",
+   "bypass_technique": "利用postMessage绕过origin检查，version参数注入。",
+   "defensive_insight": "验证调用者origin，对参数进行转义，限制U2F调用。"
+  },
+  {
+   "id": 1489470,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "IDOR / 信息泄露",
+   "reasoning": "部分。IDOR漏洞，通过修改ID获取他人PII，属于常见类型，但影响较大，PoC清晰。",
+   "attack_chain": "发现admin.js→构造请求→遍历ID→获取PII。",
+   "bypass_technique": "无，直接利用不安全的对象引用。",
+   "defensive_insight": "实施对象级授权检查，保护管理端点。"
+  },
+  {
+   "id": 167908,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "内存破坏",
+   "reasoning": "部分。整数溢出导致堆破坏，但仅引用外部链接，无详细PoC，信息不足。",
+   "attack_chain": "未知。",
+   "bypass_technique": "未知。",
+   "defensive_insight": "修复整数溢出。"
+  }
+ ]
+}

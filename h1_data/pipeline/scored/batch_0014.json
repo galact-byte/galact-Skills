@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 6,
+  "dropped": 14,
+  "avg_score": 3.3,
+  "top_n": [
+   259100,
+   645299,
+   1021885,
+   1215251,
+   874778
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1248052,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "反序列化",
+   "reasoning": "否。CVE-2021-35464（OpenAM Jato 框架不安全反序列化）的标准 ysoserial 链复现——已知 CVE 的公开 PoC 套用，无新技巧；步骤完整但技术启发有限。",
+   "attack_chain": "单点：ysoserial 生成 Click1 链→base64url→注入 jato.pageSession→反序列化触发 RCE→collaborator 回连验证。",
+   "bypass_technique": "无绕过，直接利用公开的预认证反序列化链。",
+   "defensive_insight": "对外组件及时升级并禁用反序列化入口；基于 gadget 黑名单与入站流量特征双重防护。"
+  },
+  {
+   "id": 645299,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 3,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 信息泄露",
+   "reasoning": "是。安全 schema 转换器把 GraphQL where 的 _or 数组只转换第一个条件，第二个条件走未保护 schema——'看似已生效的字段级过滤被复合条件操作符绕过'，从被置 null 的字段反推出 soft_launched 状态。绕过条件为零（复制条件即可），可抽象为通用判据：安全层重写必须递归覆盖 _or/_and 等复合操作符的全部分支；HackerOne 自家系统的自指案例增强了可信度。",
+   "attack_chain": "单点：构造 _or:[{state:{_eq:soft_launched}},{state:{_eq:soft_launched}}]→第二条件走未保护 schema→返回 state:null 但可知其真实值。",
+   "bypass_technique": "用 or 操作符构造重复条件，利用安全 schema 只转换首条件的转换器缺陷。",
+   "defensive_insight": "字段级授权过滤须在查询编译层统一实施，递归处理所有复合操作符；过滤逻辑集中而非依赖转换器逐项改写。"
+  },
+  {
+   "id": 232320,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。URL 注入触发 NumberFormatException，Java 错误页堆栈把输入未转义回显导致反射 XSS——错误页/堆栈回显的经典形态，位置在异常处理路径而非业务页面，变形轻微，无绕过无链。",
+   "attack_chain": "单点：构造含 svg/onload 的 URL→服务端异常→堆栈回显输入→浏览器执行。",
+   "bypass_technique": "无绕过，直接利用错误页对异常的未转义输出。",
+   "defensive_insight": "生产环境禁用堆栈跟踪输出；错误页统一转义所有回显内容。"
+  },
+  {
+   "id": 114127,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。断开 Twitter 关联的 GET 请求无 CSRF 防护，标准 CSRF 且 GET 型更易触发——经典缺陷，PoC 表单完整但技术点零变形。",
+   "attack_chain": "单点：诱导登录用户提交表单→GET 断开其 Twitter 关联。",
+   "bypass_technique": "无绕过，直接利用 GET 状态变更与缺失的 CSRF token。",
+   "defensive_insight": "状态变更一律 POST+CSRF token；第三方账号解绑属高敏操作，增加确认页。"
+  },
+  {
+   "id": 1327443,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。censys 被动测绘发现源 IP 绕过 Cloudflare——源 IP 泄露的经典形态，无主动利用、无链，substate informative；影响论证（DDoS/MITM）停留在理论。",
+   "attack_chain": "单点：搜索证书/DNS 历史发现源 IP→绕过 WAF 直连源站。",
+   "bypass_technique": "无绕过，直接利用暴露的源地址。",
+   "defensive_insight": "源站 IP 仅允许 CDN 回源段访问；清理 DNS 历史与证书中的源地址痕迹。"
+  },
+  {
+   "id": 259100,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 跨组件攻击链 / 协议行为利用",
+   "reasoning": "是。__e2e_action_id 未转义反射进 finishAction() JS 调用本是'不可直接利用的 JSON 响应'，但 _m=edit 不校验 window_id 归属，攻击者能把含 XSS 的 finishAction 消息推送到受害者频道，经其长轮询 update 请求零交互触发——'频道消息投递机制 + 未转义反射'组合成跨组件攻击链，把看似安全的缺陷变成可规模化投递的 XSS。报告对 channel 结构、dep 前缀可枚举性、暴力扩展成本做了系统分析，边界条件极其清晰。",
+   "attack_chain": "构造含恶意 __e2e_action_id 的 _m=edit 请求→指定 window_id 为受害者频道→受害者 update 长轮询收到 finishAction 消息→JS 执行。",
+   "bypass_technique": "利用 JSONP/频道消息通道投递未转义反射，绕过'仅同会话可触发'的限制；window_id 归属校验缺失是关键。",
+   "defensive_insight": "任何反射进客户端 JS 的参数必须转义；跨会话消息通道必须校验目标频道归属调用者会话。"
+  },
+  {
+   "id": 1021885,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "其他",
+   "reasoning": "部分。Hey 的追踪像素重写只处理 img src，srcset（及 doctype/manifest/profile 等属性）未覆盖，攻击者绕过隐私过滤继续追踪用户 IP——'HTML 资源加载属性面覆盖不全'是可迁移的通用判据，srcset 属较冷门但现代浏览器普遍支持的属性，思路有借鉴；但本质仍是过滤器遗漏型绕过，单点无链。",
+   "attack_chain": "单点：邮件内用 srcset 指向追踪服务器→过滤器不重写→受害者浏览器直连追踪端。",
+   "bypass_technique": "用 srcset/picture 等非 src 资源加载属性绕过 img 重写过滤器。",
+   "defensive_insight": "资源重写/拦截需覆盖全部可加载资源属性（src/srcset/CSS url/iframe）并统一白名单解析。"
+  },
+  {
+   "id": 852713,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。2019 年被攻破的 DoD PulseSSL 凭据库中的凭据至今可登录——补丁打了但凭据未重置的运维缺陷，真实且有影响但技术零变形（直接复用已泄露凭据），目标与证据 REDACTED。",
+   "attack_chain": "单点：用历史泄露凭据登录 VPN 入口。",
+   "bypass_technique": "无绕过，直接复用公开泄露的凭据。",
+   "defensive_insight": "披露/入侵事件后必须全量重置受影响凭据；凭据泄露检测与强制重置联动。"
+  },
+  {
+   "id": 1318087,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "信息泄露 / 认证绕过",
+   "reasoning": "无法判断。声称 OTP 在验证响应中回显可致 ATO，但无任何请求/响应样例证明，substate not-applicable，无法验证真实性。",
+   "attack_chain": "无法确认。",
+   "bypass_technique": "无法确认。",
+   "defensive_insight": "OTP 严禁出现在任何响应体中；验证码仅服务端比对。"
+  },
+  {
+   "id": 263873,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "认证绕过",
+   "reasoning": "否。退出登录后会话 cookie 不失效，注入窃取的 cookie 仍可进入账户——会话失效管理缺陷的经典形态，需先窃取 cookie 为前提，技术零变形。",
+   "attack_chain": "窃取会话 cookie→受害者登出→注入 cookie 仍可访问账户。",
+   "bypass_technique": "无绕过，直接利用登出后未失效的会话。",
+   "defensive_insight": "登出必须服务端销毁会话并清除客户端 cookie；会话绑定设备指纹降低复用价值。"
+  },
+  {
+   "id": 224108,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "XSS",
+   "reasoning": "无法判断。声称 comment/reply 存在 akismet 已知漏洞的存储 XSS，但复现步骤最后一步实际弹出的是'需要登录'提示而非 payload 执行——XSS 未真正触发，substate informative，无法确认漏洞真实存在。",
+   "attack_chain": "无法确认。",
+   "bypass_technique": "无法确认。",
+   "defensive_insight": "论坛插件及时升级；富文本输出按上下文编码并做标签白名单。"
+  },
+  {
+   "id": 1216085,
+   "value_score": 0,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "SQL注入",
+   "reasoning": "无法判断。正文仅为占位符（'will send detailed report later'），无任何技术内容。",
+   "attack_chain": "无法确认。",
+   "bypass_technique": "无法确认。",
+   "defensive_insight": "无有效信息。"
+  },
+  {
+   "id": 244971,
+   "value_score": 0,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "无法判断。账户删除后无邮件通知——产品体验问题而非安全漏洞，无攻击路径与安全影响论证。",
+   "attack_chain": "无法确认。",
+   "bypass_technique": "无法确认。",
+   "defensive_insight": "账户删除/变更类操作应发送通知邮件（若属于产品要求）。"
+  },
+  {
+   "id": 1215251,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "其他",
+   "reasoning": "部分。Nextcloud Mail 的图片隐私过滤可被 list-style-image/background-image 等 CSS url() 属性绕过——与 Hey srcset 同族（资源加载通道覆盖不全），但 CSS 属性更隐蔽，'CSS 作为追踪像素通道'对邮件客户端过滤器是普遍盲区，思路可跨产品迁移；单点无链，绕过本身是过滤器遗漏。",
+   "attack_chain": "单点：邮件注入 CSS background-image/list-style-image→过滤器不拦→受害者打开邮件即直连追踪端。",
+   "bypass_technique": "用 CSS url() 属性加载远程图片，绕过内联图片拦截。",
+   "defensive_insight": "邮件净化需剥离全部可发起请求的 CSS 属性并重写外链；对远程资源统一走代理白名单。"
+  },
+  {
+   "id": 357109,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "路径遍历",
+   "reasoning": "否。simplehttpserver 直接把 URL 路径拼到 web root，../ 可列出根外目录——静态服务器路径拼接的经典缺陷，无任何绕过技巧（浏览器会规范化需用 burp 原始请求是唯一的操作细节）。",
+   "attack_chain": "单点：burp 发含 ../ 的原始请求→路径拼接→列出/读取根外文件。",
+   "bypass_technique": "无绕过，直接利用未过滤的路径拼接。",
+   "defensive_insight": "静态服务对请求路径先规范化再校验根目录包含；拒绝含 .. 的路径段。"
+  },
+  {
+   "id": 6884,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。重置密码链接经 referrer 泄露——经典 referrer 泄露问题（且重置链接属高敏 token），但正文无任何技术细节，仅一张截图，无法确认泄露链路与触发条件。",
+   "attack_chain": "单点：受害者打开重置链接后点外链→referrer 携带重置链接→被第三方记录。",
+   "bypass_technique": "无绕过，直接利用 referrer 默认携带。",
+   "defensive_insight": "重置链接页面设置 Referrer-Policy: no-referrer；重置链接短时效并绑定一次性使用。"
+  },
+  {
+   "id": 6574,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 认证绕过",
+   "reasoning": "否。登录页无账户锁定，可无限爆破——教科书级配置缺陷，报告者自测多次无锁定，技术零变形。",
+   "attack_chain": "单点：对登录接口反复尝试口令组合。",
+   "bypass_technique": "无绕过，直接利用缺失的爆破防护。",
+   "defensive_insight": "登录接口速率限制+账户锁定+验证码；失败计数按账户与 IP 双维度。"
+  },
+  {
+   "id": 56182,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 其他",
+   "reasoning": "部分。Vimeo 邀请功能允许用户完全控制发件显示名与邮件正文，从 no-reply@vimeo.com 发出'官方安全提醒'钓鱼邮件——滥用平台官方邮件基础设施做鱼叉钓鱼，'信任域发件人+任意内容'的组合让钓鱼极具欺骗性；思路有启发（邮件功能参数校验缺失的钓鱼放大），但本质是邮件内容/显示名注入，无技术绕过。",
+   "attack_chain": "改 username 为伪装名→拦截邀请请求改 message 内容→受害者收到官方域钓鱼邮件→诱导访问钓鱼站。",
+   "bypass_technique": "无绕过，直接利用邀请功能对显示名与正文的缺少校验。",
+   "defensive_insight": "事务邮件正文与发件显示名使用系统模板字段，禁止拼接用户输入；用户可控文本在邮件中一律以纯文本插入。"
+  },
+  {
+   "id": 519631,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SQL注入",
+   "reasoning": "否。Oracle 下用引号对差异（' 语法错 vs '' 数字错）确认 app_id 注入，可 INTO OUTFILE 写 shell 到 RCE——经典 Oracle 错误确认+写文件利用，链路完整（单组件多步）但每步都是成熟手法；附带'verbose 错误页泄露源码'的辅助发现路径。",
+   "attack_chain": "app_id 注入引号确认→枚举列/提权→INTO OUTFILE 写 aspx shell→RCE。",
+   "bypass_technique": "无绕过，直接利用未参数化的 SQL 拼接。",
+   "defensive_insight": "全部 SQL 参数化；生产关闭详细错误回显（防止源码/结构泄露辅助攻击）。"
+  },
+  {
+   "id": 874778,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "框架行为利用 / 信息泄露",
+   "reasoning": "部分。curl 相对重定向时把 Basic 凭据（user:pass@）整体拼进 URL，密码部分进入 DNS 查询明文（tcpdump 抓到 S3cr3t@mareksz.gq）——'URL 用户信息语法与重定向重写的交互'让密码以反直觉方式外泄，属客户端框架行为缺陷（CVE-2020-8169）；触发条件极简（服务端发相对重定向即可），可抽象为'凭据不得参与 URL 重写'的通用判据，pcap 证据完整。",
+   "attack_chain": "单点：curl -u user:pass 访问相对重定向→重写 URL 含 pass@host→DNS 明文解析泄露密码。",
+   "bypass_technique": "服务端发 301/302 相对 Location 触发 curl 的 URL 拼接缺陷，无需受害者交互。",
+   "defensive_insight": "客户端重定向重写不得把 Authorization 用户信息拼入 URL；凭据始终走专用头。"
+  }
+ ]
+}

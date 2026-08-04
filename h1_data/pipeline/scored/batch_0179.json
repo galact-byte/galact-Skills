@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   415222,
+   894623,
+   377107,
+   630903,
+   1261413
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 377107,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 授权绕过",
+   "reasoning": "是。通过使用替代路径 `/data/user/0/` 绕过对 `/data/data/` 的路径检查，利用了 Android 文件系统的符号链接等价性，属于对路径规范化检查的优雅绕过。该技术点可抽象为通用判断条件：任何基于字符串前缀的路径检查都可能被替代路径绕过。",
+   "attack_chain": "恶意应用构造 Intent 指向导出 Activity，使用替代路径读取应用私有数据。",
+   "bypass_technique": "使用 `/data/user/0/` 替代 `/data/data/` 绕过路径前缀检查。",
+   "defensive_insight": "对路径进行规范化（如 realpath）后再检查，并避免导出敏感组件。"
+  },
+  {
+   "id": 263736,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。SPF 记录设置为 neutral 是常见的配置错误，没有绕过或创新，属于成熟套路。",
+   "attack_chain": "无攻击链，直接利用 SPF 配置缺失。",
+   "bypass_technique": "无实质绕过，利用 SPF 记录为 neutral 允许伪造。",
+   "defensive_insight": "设置 SPF 为 -all 并配合 DMARC 策略。"
+  },
+  {
+   "id": 415222,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 反序列化 / SSRF",
+   "reasoning": "是。从 LFI 到 PHP 对象注入，再到 XXE 和 SSRF，最终通过 Python pickle 反序列化实现 RCE，整个攻击链跨多个组件，每一步都利用了框架行为（魔术方法、pickle 协议）。特别是通过 LFI 读取源码，发现 unserialize 和 ConfigFile 类的 __toString 方法，形成链式利用，极具启发性。",
+   "attack_chain": "LFI 读取源码 → 发现 unserialize 和 ConfigFile 类 → 构造序列化 payload 触发 XXE → SSRF 扫描内网 → 发现 pickle 服务 → 构造 pickle payload 实现 RCE。",
+   "bypass_technique": "利用 PHP 对象注入触发 __toString 方法，结合 XXE 和 SSRF 进行内网探测，最终通过 pickle 反序列化执行命令。",
+   "defensive_insight": "严格验证文件路径，避免使用 unserialize 处理不可信数据，对内部服务进行访问控制，使用安全的序列化格式。"
+  },
+  {
+   "id": 84740,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。Markdown 中的 javascript: 链接是经典 XSS 向量，没有绕过或创新，属于常见套路。",
+   "attack_chain": "单点：存储型 XSS，通过恶意链接触发。",
+   "bypass_technique": "无实质绕过，利用 Markdown 未过滤 javascript: 协议。",
+   "defensive_insight": "对 Markdown 输出进行白名单过滤，禁止 javascript: 等危险协议。"
+  },
+  {
+   "id": 195688,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "类型混淆 / 框架行为利用",
+   "reasoning": "部分。利用 PHP 反序列化时对接口/抽象类的处理缺陷，导致空指针解引用，属于框架行为利用，但影响有限（仅 DoS），且需要特定环境。",
+   "attack_chain": "单点：构造恶意 wddx 数据触发反序列化，导致崩溃。",
+   "bypass_technique": "利用 PHP 对接口/抽象类实例化的错误处理。",
+   "defensive_insight": "修复 PHP 内核，对反序列化输入进行严格校验。"
+  },
+  {
+   "id": 7041,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "认证绕过",
+   "reasoning": "否。登出后会话未销毁是常见的会话管理缺陷，没有绕过或创新，属于成熟套路。",
+   "attack_chain": "单点：登出后会话仍有效，可被重放。",
+   "bypass_technique": "无实质绕过，利用服务端未销毁会话。",
+   "defensive_insight": "登出时服务端应销毁会话，并设置 cookie 过期。"
+  },
+  {
+   "id": 245833,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 状态混淆",
+   "reasoning": "部分。仅在登录时检查组织成员资格，之后不重新验证，导致被移除后仍可操作。属于业务逻辑缺陷，但思路简单，可抽象为“权限检查时机不当”。",
+   "attack_chain": "用户被移除组织 → 会话仍有效 → 继续执行敏感操作。",
+   "bypass_technique": "利用权限检查仅在登录时进行，后续请求不验证。",
+   "defensive_insight": "在每个敏感操作中验证用户权限，并定期刷新会话状态。"
+  },
+  {
+   "id": 43617,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过",
+   "reasoning": "部分。上传头像时未校验 profile id 归属，导致可任意修改他人头像。属于 IDOR 变体，但思路简单，无绕过。",
+   "attack_chain": "单点：修改请求中的 id 参数，上传头像到任意账户。",
+   "bypass_technique": "无实质绕过，直接利用未校验的 id 参数。",
+   "defensive_insight": "服务端应校验资源归属，使用当前用户 ID 而非客户端提供的 ID。"
+  },
+  {
+   "id": 894623,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 认证绕过 / SSRF",
+   "reasoning": "是。从信息泄露到 2FA 绕过，再到 SSRF 和 APK 逆向，最终通过 CSRF 和参数污染实现权限提升，整个攻击链跨多个组件，每一步都利用了业务逻辑缺陷。特别是通过日志文件泄露凭据，以及利用 open redirect 配合 SSRF 访问内网，极具启发性。",
+   "attack_chain": "子域枚举 → 信息泄露（日志）→ 2FA 绕过 → SSRF 扫描内网 → APK 逆向获取 token → 创建用户 → CSRF 提权 → 获取 CEO 凭据。",
+   "bypass_technique": "利用日志泄露的凭据，通过修改 cookie 中的 account_id 实现 SSRF，结合 open redirect 访问内网，逆向 APK 获取内部 token。",
+   "defensive_insight": "严格保护日志文件，2FA 应服务端验证，SSRF 防护，APK 内敏感信息加密，CSRF 防护。"
+  },
+  {
+   "id": 165570,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "竞争条件",
+   "reasoning": "部分。利用并发请求重复领取奖励，属于典型的竞争条件，但思路简单，无绕过。",
+   "attack_chain": "单点：并发请求导致奖励重复发放。",
+   "bypass_technique": "无实质绕过，利用服务端未处理并发。",
+   "defensive_insight": "使用事务或锁机制确保操作的原子性。"
+  },
+  {
+   "id": 1188633,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。非 PIE 二进制是常见的编译配置问题，没有绕过或创新，属于成熟套路。",
+   "attack_chain": "无攻击链，直接利用 ASLR 缺失。",
+   "bypass_technique": "无实质绕过，利用编译选项。",
+   "defensive_insight": "编译时启用 PIE 和 ASLR。"
+  },
+  {
+   "id": 319576,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "ReDoS",
+   "reasoning": "部分。利用正则表达式的回溯导致 DoS，属于常见 ReDoS 套路，但 PoC 清晰，可复现。",
+   "attack_chain": "单点：构造恶意 proto 文件触发 ReDoS。",
+   "bypass_technique": "无实质绕过，利用正则缺陷。",
+   "defensive_insight": "使用安全的正则表达式，避免嵌套量词。"
+  },
+  {
+   "id": 342693,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。密码重置令牌通过 referer 泄露是常见的信息泄露，没有绕过或创新，属于成熟套路。",
+   "attack_chain": "单点：点击外部链接导致令牌泄露。",
+   "bypass_technique": "无实质绕过，利用 referer 头。",
+   "defensive_insight": "在敏感页面禁止外部链接，或使用 Referrer-Policy 头。"
+  },
+  {
+   "id": 1707616,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。CORS 配置错误是常见问题，没有绕过或创新，属于成熟套路。",
+   "attack_chain": "单点：利用 CORS 配置读取敏感信息。",
+   "bypass_technique": "无实质绕过，直接利用配置错误。",
+   "defensive_insight": "正确配置 CORS，避免使用通配符和凭据。"
+  },
+  {
+   "id": 630903,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "DLL 劫持 / 配置错误",
+   "reasoning": "是。利用 OpenSSL 配置文件的搜索路径，通过创建恶意 openssl.cnf 和 DLL 实现代码执行，属于对系统路径搜索行为的利用，可抽象为通用判断条件。",
+   "attack_chain": "低权限用户创建恶意文件 → 管理员运行应用 → DLL 被加载执行。",
+   "bypass_technique": "利用 OpenSSL 搜索当前目录的配置和 DLL，实现 DLL 劫持。",
+   "defensive_insight": "指定 OpenSSL 配置文件的绝对路径，并确保目录权限安全。"
+  },
+  {
+   "id": 1106652,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 命令注入",
+   "reasoning": "是。利用 Rails 的 redirect_to 方法对数组参数的处理，导致调用任意 `_url` 方法，属于框架行为利用，可抽象为通用判断条件。",
+   "attack_chain": "单点：构造数组参数触发任意方法调用。",
+   "bypass_technique": "利用 Rails 的 redirect_to 对数组参数的处理，调用任意 `_url` 方法。",
+   "defensive_insight": "对 redirect_to 的参数进行严格类型检查，避免数组。"
+  },
+  {
+   "id": 50134,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。利用 original_referer 参数注入 javascript: 链接，属于反射型 XSS 变体，但需要用户交互，思路简单。",
+   "attack_chain": "单点：构造恶意链接，诱导用户点击触发 XSS。",
+   "bypass_technique": "无实质绕过，利用未过滤的 referer 参数。",
+   "defensive_insight": "对 referer 参数进行白名单过滤，禁止 javascript: 协议。"
+  },
+  {
+   "id": 310708,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "原型污染",
+   "reasoning": "部分。利用 merge-deep 库的缺陷，通过 `__proto__` 修改对象原型，属于原型污染攻击，但思路已公开，无绕过。",
+   "attack_chain": "单点：构造恶意 JSON 触发原型污染。",
+   "bypass_technique": "无实质绕过，利用库的缺陷。",
+   "defensive_insight": "使用安全的合并函数，过滤 `__proto__` 键。"
+  },
+  {
+   "id": 1851969,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "开放重定向",
+   "reasoning": "否。开放重定向是常见漏洞，没有绕过或创新，属于成熟套路。",
+   "attack_chain": "单点：构造恶意 URL 实现重定向。",
+   "bypass_technique": "无实质绕过，直接利用未过滤的 url 参数。",
+   "defensive_insight": "对重定向目标进行白名单校验。"
+  },
+  {
+   "id": 1261413,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 文件读取 / SSRF",
+   "reasoning": "是。利用 HEIC 预览调用 Imagick，通过 SVG 的 xlink:href 读取任意文件，属于对框架行为的利用，可抽象为通用判断条件。",
+   "attack_chain": "上传恶意 HEIC 文件 → 触发 Imagick 处理 → 读取任意文件。",
+   "bypass_technique": "利用 HEIC 预览调用 Imagick，通过 SVG 的 xlink:href 读取文件。",
+   "defensive_insight": "限制 Imagick 处理的文件类型，禁用危险功能。"
+  }
+ ]
+}

@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   134738,
+   270068,
+   1033107,
+   783392,
+   174470
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 134738,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用 Flash 的 ExternalInterface 回调机制，通过 SOME 攻击绕过严格的输入过滤，实现跨域方法执行，最终导致 RCE。技术点在于对 Flash 安全模型的深入理解，以及将 SOME 与 WordPress 插件安装流程结合，形成完整的攻击链。",
+   "attack_chain": "构造恶意链接→诱导用户点击→打开 SWF 并设置 target 参数→利用 SOME 触发点击→安装恶意插件→RCE。",
+   "bypass_technique": "利用 SOME 绕过 Flash 的输入过滤，通过 DOM 遍历和 click() 方法执行操作。",
+   "defensive_insight": "限制 Flash 文件直接访问，使用 Content-Disposition 头，或移除不必要的 Flash 组件。"
+  },
+  {
+   "id": 1033107,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 其他",
+   "reasoning": "是。DNS 解析器对大量响应处理不当导致 DoS，属于协议行为利用。技术点在于 DNS 响应数量超过预期时，Node.js 的 dns 模块无法处理，导致挂起。",
+   "attack_chain": "攻击者控制域名→触发 DNS 解析→大量响应导致 Node.js 进程挂起→DoS。",
+   "bypass_technique": "利用 DNS 响应数量超出处理能力，导致资源耗尽。",
+   "defensive_insight": "限制 DNS 响应数量，增加超时处理，或使用更健壮的 DNS 解析库。"
+  },
+  {
+   "id": 991718,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。硬编码密码在 JavaScript 中，属于常见配置错误，无绕过或攻击链。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "不要在客户端代码中存储敏感凭据，使用服务端认证。"
+  },
+  {
+   "id": 460911,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型 XSS 在短代码中，属于常见漏洞，无特殊绕过。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对用户输入进行严格过滤和输出编码。"
+  },
+  {
+   "id": 135946,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。仅提供 commit 链接，无漏洞详情，无法判断真实性。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "无。"
+  },
+  {
+   "id": 2584,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "信息泄露",
+   "reasoning": "否。报告描述模糊，无法复现，缺少关键细节。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "无。"
+  },
+  {
+   "id": 174470,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。通过移除 CSRF token 仍能成功创建外部程序，说明 CSRF 防护可被绕过，属于业务逻辑缺陷。技术点在于对 CSRF 防护机制的绕过，且影响范围广。",
+   "attack_chain": "构造恶意请求→移除 CSRF token→提交→成功创建外部程序。",
+   "bypass_technique": "移除 CSRF token 字段，利用服务端未正确验证。",
+   "defensive_insight": "确保所有状态变更请求都验证 CSRF token，且 token 不可预测。"
+  },
+  {
+   "id": 13286,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 配置错误",
+   "reasoning": "部分。利用 Host 头注入导致重定向到恶意站点，属于协议行为利用，但技术点较常见。",
+   "attack_chain": "构造恶意 Host 头→服务器重定向→用户被引导至恶意站点。",
+   "bypass_technique": "利用多个 Host 头或 X-Forwarded-Host 头。",
+   "defensive_insight": "严格验证 Host 头，使用白名单。"
+  },
+  {
+   "id": 840759,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。反射型 XSS 在营销站点，但利用方式简单，无特殊绕过。",
+   "attack_chain": "构造恶意 URL→用户点击→XSS 执行。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对输出进行编码，使用 CSP。"
+  },
+  {
+   "id": 513134,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少 CSRF token 是常见配置问题，无绕过或攻击链。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "在所有状态变更请求中添加 CSRF token。"
+  },
+  {
+   "id": 962889,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SQL注入",
+   "reasoning": "否。SQL 注入在参数中，属于常见漏洞，无特殊绕过。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "使用参数化查询。"
+  },
+  {
+   "id": 783392,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "SSRF / 跨组件攻击链",
+   "reasoning": "是。通过 SSRF 进行本地端口扫描，利用重定向和 iframe 加载，属于跨组件攻击链。技术点在于利用 SSRF 结合浏览器行为进行端口扫描。",
+   "attack_chain": "构造恶意 URL→触发 SSRF→重定向到本地端口→通过 iframe 加载判断端口开放。",
+   "bypass_technique": "利用重定向和 iframe 加载绕过限制。",
+   "defensive_insight": "限制 SSRF 目标，禁止访问内网地址。"
+  },
+  {
+   "id": 825091,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "类型混淆",
+   "reasoning": "部分。数组索引下溢导致越界读取，属于类型混淆，但技术点较具体。",
+   "attack_chain": "构造恶意输入→触发下溢→读取越界数据。",
+   "bypass_technique": "利用类型转换错误。",
+   "defensive_insight": "使用无符号类型进行索引。"
+  },
+  {
+   "id": 407355,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "子域名接管",
+   "reasoning": "否。子域名接管是常见漏洞，无特殊绕过。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "定期检查 DNS 记录，删除未使用的 CNAME。"
+  },
+  {
+   "id": 293105,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型 XSS 在消息中，属于常见漏洞，无特殊绕过。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对用户输入进行过滤和输出编码。"
+  },
+  {
+   "id": 83576,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。通过 Cookie 注入 XSS，属于非预期输入点，但技术点较常见。",
+   "attack_chain": "设置恶意 Cookie→用户访问→XSS 执行。",
+   "bypass_technique": "利用 Cookie 值未过滤。",
+   "defensive_insight": "对 Cookie 值进行过滤和输出编码。"
+  },
+  {
+   "id": 330349,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "路径遍历",
+   "reasoning": "部分。路径遍历漏洞，利用双斜杠绕过，属于常见变形。",
+   "attack_chain": "构造恶意 URL→读取任意文件。",
+   "bypass_technique": "使用双斜杠绕过路径检查。",
+   "defensive_insight": "规范化路径并限制访问范围。"
+  },
+  {
+   "id": 222224,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。存储型 XSS 在用户资料中，利用 Angular 模板注入，属于框架行为利用。",
+   "attack_chain": "编辑资料→注入 Angular 表达式→XSS 执行。",
+   "bypass_technique": "利用 Angular 模板语法绕过过滤。",
+   "defensive_insight": "对用户输入进行严格过滤，避免使用 Angular 模板。"
+  },
+  {
+   "id": 174328,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "CSRF / 业务逻辑",
+   "reasoning": "部分。CSRF 导致 GitHub 集成被移除，属于业务逻辑缺陷，但技术点较常见。",
+   "attack_chain": "构造恶意页面→管理员访问→CSRF 触发→集成被移除。",
+   "bypass_technique": "利用图片请求触发 CSRF。",
+   "defensive_insight": "在状态变更请求中添加 CSRF token。"
+  },
+  {
+   "id": 270068,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 框架行为利用",
+   "reasoning": "是。利用 start_with? 检查的缺陷，通过构造 gem 名称和版本号，实现路径遍历，覆盖其他 gem 文件。技术点在于对字符串比较逻辑的绕过，且可导致代码执行。",
+   "attack_chain": "构造恶意 gem→安装→利用路径遍历覆盖其他 gem 文件→代码执行。",
+   "bypass_technique": "利用 start_with? 检查的缺陷，构造路径前缀。",
+   "defensive_insight": "在路径检查时添加目录分隔符，确保路径边界。"
+  }
+ ]
+}

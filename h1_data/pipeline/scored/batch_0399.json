@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   737140,
+   1409788,
+   415258,
+   301526,
+   339483
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 301526,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "信息泄露 / 跨组件攻击链",
+   "reasoning": "是。邀请令牌通过第三方统计脚本（Bing）泄露，属于典型的供应链信息泄露。技术点在于页面内嵌 iframe 加载第三方脚本，导致敏感 token 被发送到外部域。虽然原理简单，但攻击链完整，且影响明确（私有项目邀请令牌泄露）。",
+   "attack_chain": "邀请页面包含 iframe → iframe 加载 bat.bing.com 脚本 → 脚本请求携带邀请令牌 → 令牌泄露给第三方。",
+   "bypass_technique": "利用第三方统计脚本的自动请求，将 URL 中的敏感参数（邀请令牌）作为 referrer 或参数发送。",
+   "defensive_insight": "避免在 URL 中直接暴露敏感令牌；对第三方脚本进行严格审查，确保不泄露敏感信息；使用一次性令牌或短时效令牌。"
+  },
+  {
+   "id": 1409788,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用 DOMPurify 不清理任意 data-* 属性的特性，结合 GitLab 前端 JS 的 data-dismiss-endpoint 等属性，实现任意 POST 请求。技术点在于前端框架的隐式信任 data 属性，且可跨组件（Jupyter notebook 注入 HTML → 触发 GitLab 前端逻辑）。",
+   "attack_chain": "创建恶意 Jupyter notebook → 注入 HTML 包含 data-dismiss-endpoint → 受害者访问并点击 → 触发 POST 请求 → 任意操作（如创建管理员）。",
+   "bypass_technique": "利用 DOMPurify 允许任意 data-* 属性，结合前端 JS 的 data 属性绑定，实现 CSRF 类似攻击。",
+   "defensive_insight": "前端 JS 应严格校验 data 属性的来源和值；对 data-* 属性进行白名单过滤；避免使用用户可控的 data 属性作为请求端点。"
+  },
+  {
+   "id": 415258,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。通过拖放快捷方式文件导航到 chrome://brave 特权上下文，绕过导航限制，进而利用 IPC 和 remote 模块实现 RCE。技术点在于浏览器对快捷方式文件的处理逻辑，以及特权上下文的访问控制缺陷。",
+   "attack_chain": "受害者拖放恶意 .webloc 文件 → 导航到 chrome://brave → 加载本地文件 → 通过 IPC 发送任意命令 → RCE。",
+   "bypass_technique": "利用快捷方式文件的自动导航功能，绕过对 chrome:// 导航的限制。",
+   "defensive_insight": "限制对特权 URL 的导航；对快捷方式文件进行安全处理；移除不必要的 remote 模块或限制其功能。"
+  },
+  {
+   "id": 842,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。浏览器自动填充功能导致敏感信息缓存，属于常见配置问题，无技术含量。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "在敏感字段上禁用自动填充。"
+  },
+  {
+   "id": 117068,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。简单的反射型 XSS，通过 javascript: 协议执行，无绕过，无攻击链。",
+   "attack_chain": "单点：构造 URL → 触发 XSS。",
+   "bypass_technique": "无",
+   "defensive_insight": "对输出进行编码，禁止 javascript: 协议。"
+  },
+  {
+   "id": 622937,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。响应中泄露内网 IP，属于常见信息泄露，无技术含量。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "过滤响应中的敏感 IP 地址。"
+  },
+  {
+   "id": 149011,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型 XSS，但利用的是常见的标签注入，无特殊绕过。",
+   "attack_chain": "单点：创建恶意 snippet → 受害者查看 → 执行 XSS。",
+   "bypass_technique": "无",
+   "defensive_insight": "对用户输入进行严格过滤和输出编码。"
+  },
+  {
+   "id": 1632104,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。服务器状态目录开放，属于常见配置错误。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "关闭或限制 server-status 目录的访问。"
+  },
+  {
+   "id": 1736433,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS，利用 onauxclick 事件，但属于常见绕过 WAF 的技巧，无新意。",
+   "attack_chain": "单点：构造 URL → 触发 XSS。",
+   "bypass_technique": "使用 onauxclick 事件绕过 WAF。",
+   "defensive_insight": "对输入进行严格过滤，使用 CSP。"
+  },
+  {
+   "id": 2109320,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 配置错误",
+   "reasoning": "部分。利用 Firefox Relay 服务重写邮件头导致 DKIM/ARC 失效，从而绕过 DMARC 防护。技术点在于邮件转发服务对邮件完整性的破坏，属于协议行为利用。",
+   "attack_chain": "攻击者发送伪造邮件 → Relay 重写邮件头 → 邮件进入收件箱 → 绕过 DMARC。",
+   "bypass_technique": "利用邮件转发服务对邮件头的修改，破坏 DKIM/ARC 签名。",
+   "defensive_insight": "邮件转发服务应保留原始邮件头，或进行 ARC 验证。"
+  },
+  {
+   "id": 304679,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。存储型 XSS，通过参数注入和附件预览触发，但技术点在于参数未过滤，无特殊绕过。",
+   "attack_chain": "构造恶意参数 → 保存设置 → 添加附件 → 预览附件 → 触发 XSS。",
+   "bypass_technique": "无",
+   "defensive_insight": "对参数进行严格过滤，对输出进行编码。"
+  },
+  {
+   "id": 490379,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "路径遍历 / 配置错误",
+   "reasoning": "部分。nodot 配置只阻止直接访问点文件，但可通过访问点文件内部内容绕过，属于配置逻辑缺陷。",
+   "attack_chain": "访问 .git/HEAD → 获取引用 → 下载对象 → 重建仓库。",
+   "bypass_technique": "利用路径遍历，访问点文件内部内容。",
+   "defensive_insight": "对点文件目录进行整体禁止访问，而不仅仅是点文件本身。"
+  },
+  {
+   "id": 386340,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。SWF 反射型 XSS，利用 playerready 参数，属于常见漏洞。",
+   "attack_chain": "单点：构造 URL → 触发 XSS。",
+   "bypass_technique": "无",
+   "defensive_insight": "移除或更新过时的 SWF 文件。"
+  },
+  {
+   "id": 737140,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。CLTE 请求走私（TE 与冒号间插空格致前后端解析分歧）造成 socket 脱同步，再利用后端对绝对 URI 请求回 301 且携带受害者 cookie 的行为窃取会话。区别于普通走私 PoC：把 desync 与'绝对URI→301反射凭据'组合成可规模化 ATO，可抽象为通用判据。",
+   "attack_chain": "探测CLTE→毒化后端socket→改写受害者请求为GET绝对URL→301带cookie到攻击者域→批量接管。",
+   "bypass_technique": "`Transfer-Encoding : chunked`(冒号前空格)制造前后端解析分歧；绝对URI触发反射cookie的301。",
+   "defensive_insight": "前后端统一HTTP解析并拒绝畸形TE；后端禁止对绝对URI请求回带会话cookie的重定向。"
+  },
+  {
+   "id": 440484,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "开放重定向",
+   "reasoning": "否。简单的开放重定向，无绕过，无攻击链。",
+   "attack_chain": "单点：构造 URL → 重定向到恶意站点。",
+   "bypass_technique": "无",
+   "defensive_insight": "对重定向 URL 进行白名单校验。"
+  },
+  {
+   "id": 817331,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。默认弱口令 admin/admin，属于常见配置错误。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "强制使用强密码，禁止默认凭据。"
+  },
+  {
+   "id": 339483,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "是。利用 HTML 实体编码不带分号的形式绕过 WordPress 的协议过滤函数，属于对 HTML 解析行为的利用。",
+   "attack_chain": "构造恶意链接 → 绕过 wp_kses_bad_protocol_once → 触发 XSS。",
+   "bypass_technique": "使用不带分号的 HTML 实体编码（如 `&#58`）绕过协议检测。",
+   "defensive_insight": "在解析 HTML 实体时，应规范化处理不带分号的实体。"
+  },
+  {
+   "id": 634488,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "认证绕过",
+   "reasoning": "否。修改密码后旧会话仍然有效，属于常见的会话管理缺陷。",
+   "attack_chain": "单点：修改密码 → 旧会话仍有效。",
+   "bypass_technique": "无",
+   "defensive_insight": "修改密码后应使所有旧会话失效。"
+  },
+  {
+   "id": 2110945,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 竞争条件",
+   "reasoning": "部分。Memcached 作为限流后端时，由于缓存重置导致限流失效，属于配置逻辑缺陷。",
+   "attack_chain": "利用缓存重置 → 绕过限流 → 暴力破解。",
+   "bypass_technique": "利用缓存重置机制，使限流计数归零。",
+   "defensive_insight": "限流应使用持久化存储，或确保缓存重置不会影响限流计数。"
+  },
+  {
+   "id": 1572591,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过",
+   "reasoning": "部分。低权限用户通过直接调用 API 端点获取敏感信息，属于典型的 IDOR/越权访问。",
+   "attack_chain": "低权限用户 → 直接调用 API → 获取敏感信息。",
+   "bypass_technique": "直接构造 API 请求，绕过 UI 限制。",
+   "defensive_insight": "服务端应进行严格的权限校验，不能依赖 UI 隐藏。"
+  }
+ ]
+}

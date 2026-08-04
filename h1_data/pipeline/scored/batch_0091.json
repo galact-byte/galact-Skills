@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 8,
+  "dropped": 12,
+  "avg_score": 4.6,
+  "top_n": [
+   676976,
+   139245,
+   62400,
+   296282,
+   803141
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 296282,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "路径遍历 / 配置错误",
+   "reasoning": "部分。利用双斜杠 `//etc/passwd` 绕过路径规范化，属于对 URL 解析行为的轻微变形，但本质仍是经典路径遍历。PoC 完整，但启发性中等。",
+   "attack_chain": "单点：构造 `//etc/passwd` 请求 → 服务器未规范化路径 → 读取任意文件。",
+   "bypass_technique": "双斜杠绕过路径规范化，使 `..` 不再必要。",
+   "defensive_insight": "服务端应规范化 URL 路径（如去除多余斜杠），并限制文件访问范围。"
+  },
+  {
+   "id": 143541,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告描述模糊，无具体技术细节，无法判断是否为真实漏洞。",
+   "attack_chain": "无明确攻击链。",
+   "bypass_technique": "无。",
+   "defensive_insight": "无。"
+  },
+  {
+   "id": 62400,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "是。通过上传 PDF 的标题参数注入 XSS，利用 Flash 播放器请求导出端点时 content-type 为 text/html 导致渲染，形成跨组件攻击链。区别于普通存储 XSS，涉及 Flash 与 HTML 的交互。",
+   "attack_chain": "上传 PDF 时注入标题 → Flash 播放器请求 export.html → 响应 content-type 为 text/html → 执行 XSS。",
+   "bypass_technique": "利用 content-type 错误（text/html 而非 application/json）使 HTML 标签被渲染。",
+   "defensive_insight": "确保 JSON 响应使用正确的 content-type，并对用户输入进行 HTML 编码。"
+  },
+  {
+   "id": 1040639,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 业务逻辑",
+   "reasoning": "部分。POST 型反射 XSS，但需要受害者被邀请并授予权限，攻击条件较复杂。绕过思路一般，但复现步骤清晰。",
+   "attack_chain": "创建站点 → 邀请受害者并授权 → 受害者访问恶意页面 → 触发 XSS。",
+   "bypass_technique": "利用 POST 参数未过滤，结合社会工程。",
+   "defensive_insight": "对 POST 参数进行输入验证和输出编码。"
+  },
+  {
+   "id": 480883,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "其他",
+   "reasoning": "部分。栈溢出漏洞，但属于经典缓冲区溢出，无特殊绕过。PoC 完整，但技术点常见。",
+   "attack_chain": "构造恶意 XML → 打开文件 → 触发栈溢出。",
+   "bypass_technique": "无。",
+   "defensive_insight": "修复缓冲区边界检查。"
+  },
+  {
+   "id": 676976,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 配置错误",
+   "reasoning": "是。GitLab 在禁用公共流水线的情况下仍泄露扫描报告，绕过访问控制策略。这是对权限模型的非预期利用，可抽象为通用判断条件：报告端点未检查 CI 权限。",
+   "attack_chain": "创建公共项目并限制 CI 访问 → 生成扫描报告 → 未授权用户直接访问报告端点。",
+   "bypass_technique": "利用端点未继承 CI 权限检查。",
+   "defensive_insight": "确保所有报告端点都执行权限验证，与 CI 权限一致。"
+  },
+  {
+   "id": 1244053,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS，参数直接反射，无绕过，成熟套路。",
+   "attack_chain": "单点：构造恶意 URL → 参数反射 → 执行 JS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对参数进行输出编码。"
+  },
+  {
+   "id": 1168196,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。弱加密配置，无绕过，无攻击链，属于配置问题。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁用弱加密算法。"
+  },
+  {
+   "id": 134206,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "认证绕过 / 业务逻辑",
+   "reasoning": "部分。利用订阅链接无需认证即可修改设置，属于业务逻辑缺陷。绕过简单，但影响有限。",
+   "attack_chain": "获取订阅链接 → 匿名访问 → 修改设置。",
+   "bypass_technique": "链接缺少认证令牌。",
+   "defensive_insight": "对敏感操作强制认证。"
+  },
+  {
+   "id": 423118,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。未加密的 __VIEWSTATE 参数，属于配置问题，无绕过。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "启用视图状态加密。"
+  },
+  {
+   "id": 171048,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。源码泄露，无绕过，无攻击链。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "移除敏感信息。"
+  },
+  {
+   "id": 1940245,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS，参数直接反射，无绕过。",
+   "attack_chain": "单点：构造恶意 URL → 参数反射 → 执行 JS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对参数进行输出编码。"
+  },
+  {
+   "id": 1888808,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "路径遍历",
+   "reasoning": "否。经典路径遍历，无绕过，无攻击链。",
+   "attack_chain": "单点：构造 ../ 序列 → 读取文件。",
+   "bypass_technique": "无。",
+   "defensive_insight": "输入验证和路径规范化。"
+  },
+  {
+   "id": 1300591,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。敏感文件公开，无绕过。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "限制敏感文件访问。"
+  },
+  {
+   "id": 139245,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "是。利用 WordPress XMLRPC 创建附件时文件名未转义，导致存储型 XSS。这是对 XMLRPC 功能的非预期利用，可抽象为通用判断条件：文件名未编码。",
+   "attack_chain": "通过 XMLRPC 创建附件 → 文件名注入 HTML → 管理员查看媒体列表时触发 XSS。",
+   "bypass_technique": "利用 XMLRPC 绕过前端限制，文件名未转义。",
+   "defensive_insight": "对所有输出进行 HTML 编码，尤其是文件名。"
+  },
+  {
+   "id": 1200785,
+   "value_score": 0,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告内容为空，仅引用其他报告，无法评估。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "无。"
+  },
+  {
+   "id": 803141,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 认证绕过",
+   "reasoning": "部分。利用邮件创建工单功能，通过邮件删除账户，绕过身份验证。思路巧妙，但依赖邮件系统。",
+   "attack_chain": "发送邮件创建工单 → 使用受害者邮箱 → 删除账户。",
+   "bypass_technique": "利用邮件工单系统未验证身份。",
+   "defensive_insight": "对敏感操作进行二次验证。"
+  },
+  {
+   "id": 116254,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。存储型 XSS，但未提供完整 PoC，复现性一般。",
+   "attack_chain": "在个人资料中注入 XSS → 其他用户访问时触发。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对用户输入进行过滤和输出编码。"
+  },
+  {
+   "id": 1998179,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。内容欺骗，无绕过，无攻击链。",
+   "attack_chain": "单点：构造 URL → 页面反射内容。",
+   "bypass_technique": "无。",
+   "defensive_insight": "删除路径输出。"
+  },
+  {
+   "id": 1109311,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SQL注入",
+   "reasoning": "否。经典 SQL 注入，使用 sqlmap，无绕过。",
+   "attack_chain": "单点：POST 参数注入 → 数据库查询。",
+   "bypass_technique": "无。",
+   "defensive_insight": "参数化查询。"
+  }
+ ]
+}

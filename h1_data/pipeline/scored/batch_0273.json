@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1226891,
+   490946,
+   164224,
+   6017,
+   336131
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1210043,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 配置错误",
+   "reasoning": "部分。利用 Google dork 枚举公开的班级加入链接，绕过邀请机制直接加入班级。思路简单但有效，属于对公开资源的滥用，非预期性中等。技术点在于利用搜索引擎索引公开链接，而非直接攻击系统。",
+   "attack_chain": "Google dork 枚举班级链接 → 创建学生账户 → 直接加入班级。",
+   "bypass_technique": "利用搜索引擎索引公开的班级加入链接，绕过邀请验证。",
+   "defensive_insight": "班级加入链接应设计为不可枚举的随机令牌，并限制加入次数或要求邀请验证。"
+  },
+  {
+   "id": 1226891,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。DNS 托管区域删除后未清理 nameserver 记录，导致任何人可重新创建托管区域接管域名。这是 DNS 配置生命周期管理缺陷，非预期性强。技术点在于利用 DNS 解析链中的配置残留，可抽象为通用判据：检查权威 NS 指向的托管服务商是否存在对应区域。",
+   "attack_chain": "WHOIS 发现 NS 指向 Reg.ru → DIG 显示 SERVFAIL → 在 Reg.ru 创建缺失的托管区域 → 控制域名内容及邮箱。",
+   "bypass_technique": "利用 DNS 托管区域删除后 NS 记录未清理的配置残留，重新创建区域接管域名。",
+   "defensive_insight": "删除托管区域时同步移除 NS 记录，或定期审计 DNS 配置一致性。"
+  },
+  {
+   "id": 336131,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 状态混淆",
+   "reasoning": "是。购物车保存的价格不随商品价格变动而更新，导致可长期锁定旧价格。这是业务逻辑中的状态不一致问题，非预期性中等。技术点在于购物车快照与实时价格脱节，可抽象为通用判据：任何保存的报价都应验证时效性。",
+   "attack_chain": "保存购物车 → 等待价格变动 → 通过恢复链接以旧价格购买。",
+   "bypass_technique": "利用购物车价格快照不更新，锁定历史低价。",
+   "defensive_insight": "购物车恢复时重新计算价格，或设置购物车有效期。"
+  },
+  {
+   "id": 1930763,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 业务逻辑",
+   "reasoning": "部分。通过拦截请求篡改链接为 javascript 协议，绕过客户端校验，在定时帖编辑页面触发存储型 XSS。非预期性中等，技术点在于客户端校验可被绕过，且定时帖的编辑流程未复用发布时的过滤逻辑。",
+   "attack_chain": "创建定时帖 → 拦截请求篡改链接 → 编辑时触发 XSS。",
+   "bypass_technique": "绕过客户端校验，直接构造恶意链接。",
+   "defensive_insight": "服务端对所有输入进行严格校验，定时帖与普通帖共用同一过滤逻辑。"
+  },
+  {
+   "id": 1770797,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。普通用户可添加 h1_analyst_* 前缀的用户名，属于输入验证缺失，影响有限。无绕过、无攻击链，常见套路。",
+   "attack_chain": "注册时构造特殊用户名 → 获得特殊标识。",
+   "bypass_technique": "无实质绕过，直接利用输入验证缺失。",
+   "defensive_insight": "服务端对用户名前缀进行白名单校验。"
+  },
+  {
+   "id": 858674,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "命令注入",
+   "reasoning": "部分。wireguard-wrapper 模块使用 exec 拼接命令，导致命令注入。属于常见漏洞类型，但 PoC 完整，可复现。技术点在于未使用 execFile/spawn 的安全调用方式。",
+   "attack_chain": "传入恶意 device 参数 → 拼接命令执行 → 任意命令执行。",
+   "bypass_technique": "利用 exec 的 shell 解释特性，注入分号等命令分隔符。",
+   "defensive_insight": "使用 execFile/spawn 替代 exec，并对输入进行严格校验。"
+  },
+  {
+   "id": 490946,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 跨组件攻击链",
+   "reasoning": "是。通过暴露的 intent nc://login 添加新账户，绕过应用锁保护。这是 Android 组件间通信的信任边界问题，非预期性强。技术点在于 intent 未验证来源，且锁保护仅覆盖单账户，可抽象为通用判据：任何受保护操作都应验证调用者身份。",
+   "attack_chain": "触发恶意 intent → 添加新账户 → 绕过锁保护访问数据。",
+   "bypass_technique": "利用暴露的 intent 添加账户，绕过锁检查。",
+   "defensive_insight": "对 intent 调用者进行签名验证，锁保护应覆盖所有账户。"
+  },
+  {
+   "id": 507222,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SQL注入",
+   "reasoning": "否。untitled-model 模块存在多处 SQL 注入，属于未转义输入直接拼接，典型漏洞。无绕过、无攻击链，常见套路。",
+   "attack_chain": "构造恶意 filter 参数 → 拼接 SQL → 注入执行。",
+   "bypass_technique": "无实质绕过，直接利用未转义输入。",
+   "defensive_insight": "使用参数化查询或 ORM 的转义机制。"
+  },
+  {
+   "id": 164224,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "命令注入 / 模板注入",
+   "reasoning": "是。Smarty 模板引擎启用了 {php} 标签，导致服务端模板注入，可执行任意 PHP 代码。非预期性强，技术点在于模板引擎的 {php} 标签默认禁用但被启用，且用户输入直接进入模板。可抽象为通用判据：任何模板引擎都应禁用危险标签。",
+   "attack_chain": "在用户字段注入 {php} 标签 → 邀请邮件触发模板渲染 → 执行 PHP 代码。",
+   "bypass_technique": "利用 Smarty 的 {php} 标签执行任意 PHP 函数。",
+   "defensive_insight": "禁用模板引擎的危险标签，对用户输入进行严格过滤。"
+  },
+  {
+   "id": 94517,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS，参数未编码直接输出，经典漏洞。无绕过、无攻击链，常见套路。",
+   "attack_chain": "构造恶意 URL → 参数反射 → 执行脚本。",
+   "bypass_technique": "无实质绕过，直接利用未编码输出。",
+   "defensive_insight": "对输出进行 HTML 编码，使用 CSP。"
+  },
+  {
+   "id": 143321,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。CSRF token 未在服务端验证，可被用户任意指定。属于配置错误，无绕过、无攻击链，常见套路。",
+   "attack_chain": "构造请求 → 提交任意 token → 请求成功。",
+   "bypass_technique": "无实质绕过，直接利用服务端未验证 token。",
+   "defensive_insight": "服务端严格验证 CSRF token 的随机性和一致性。"
+  },
+  {
+   "id": 413828,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 存储型",
+   "reasoning": "部分。签名插件的 Format 参数未编码输出，导致存储型 XSS。非预期性中等，技术点在于参数回显未编码，且可被管理员触发。",
+   "attack_chain": "构造恶意 Format 参数 → 保存签名 → 查看帖子时触发 XSS。",
+   "bypass_technique": "利用未编码输出，注入 HTML/脚本。",
+   "defensive_insight": "对输出进行编码，使用白名单校验 Format 参数。"
+  },
+  {
+   "id": 7921,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 状态混淆",
+   "reasoning": "部分。通过篡改请求分配不存在的角色，导致项目页面异常。非预期性中等，技术点在于服务端未验证角色 ID 的有效性，可导致 DoS。",
+   "attack_chain": "请求访问权限 → 篡改角色 ID → 分配无效角色 → 项目页面崩溃。",
+   "bypass_technique": "利用未验证的角色 ID，触发异常。",
+   "defensive_insight": "服务端对角色 ID 进行存在性校验。"
+  },
+  {
+   "id": 1245529,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。忘记密码接口无速率限制，可导致邮件轰炸。属于常见配置问题，无绕过、无攻击链，常见套路。",
+   "attack_chain": "重复请求忘记密码接口 → 发送大量邮件。",
+   "bypass_technique": "无实质绕过，直接利用缺少速率限制。",
+   "defensive_insight": "对密码重置接口实施速率限制和验证码。"
+  },
+  {
+   "id": 267213,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。服务器响应头泄露版本信息，属于低危信息泄露，无绕过、无攻击链，常见套路。",
+   "attack_chain": "查看响应头 → 获取服务器版本。",
+   "bypass_technique": "无实质绕过，直接观察响应头。",
+   "defensive_insight": "隐藏服务器版本信息，配置安全响应头。"
+  },
+  {
+   "id": 375091,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。GitLab 实例公开 snippets，导致代码和用户信息泄露。属于配置错误，无绕过、无攻击链，常见套路。",
+   "attack_chain": "访问公开 snippets → 获取代码和用户信息。",
+   "bypass_technique": "无实质绕过，直接利用公开配置。",
+   "defensive_insight": "将 snippets 设为私有，定期审计公开内容。"
+  },
+  {
+   "id": 2622,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "开放重定向",
+   "reasoning": "否。redir 参数未验证，可重定向到任意 URL。经典漏洞，无绕过、无攻击链，常见套路。",
+   "attack_chain": "构造恶意 URL → 重定向到外部站点。",
+   "bypass_technique": "无实质绕过，直接利用未验证参数。",
+   "defensive_insight": "对重定向参数进行白名单校验。"
+  },
+  {
+   "id": 202967,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "内存破坏",
+   "reasoning": "否。tcpdump 的 ATM 解析器存在缓冲区溢出，属于已知 CVE，无绕过、无攻击链，常见套路。",
+   "attack_chain": "构造恶意 ATM 报文 → 触发溢出。",
+   "bypass_technique": "无实质绕过，直接利用已知漏洞。",
+   "defensive_insight": "更新 tcpdump 至修复版本，进行输入验证。"
+  },
+  {
+   "id": 6017,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 开放重定向",
+   "reasoning": "是。利用 Slack 的 302 重定向和 Facebook OAuth 的宽松 redirect_uri 校验，窃取 Facebook 访问令牌。这是跨平台攻击链，非预期性强。技术点在于 OAuth 重定向 URI 未严格限制子域，且重定向会携带 hash 值。可抽象为通用判据：OAuth 重定向 URI 必须精确匹配。",
+   "attack_chain": "构造恶意 OAuth 链接 → 用户授权 → 重定向到 files.slack.com → 窃取 token。",
+   "bypass_technique": "利用 302 重定向携带 hash 值，绕过 OAuth 重定向 URI 校验。",
+   "defensive_insight": "严格限制 OAuth 重定向 URI 为精确匹配，禁止子域通配。"
+  },
+  {
+   "id": 235041,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。账户激活接口无速率限制且泄露邮箱，属于常见信息泄露，无绕过、无攻击链，常见套路。",
+   "attack_chain": "枚举用户名 → 获取邮箱。",
+   "bypass_technique": "无实质绕过，直接利用接口行为。",
+   "defensive_insight": "对激活接口实施速率限制，统一错误消息。"
+  }
+ ]
+}

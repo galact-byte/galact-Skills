@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   441090,
+   1078002,
+   1271944,
+   946409,
+   38007
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 93020,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 信息泄露",
+   "reasoning": "部分。通过公开的widget接口绕过页面删除状态获取用户信息，属于业务逻辑缺陷，思路有启发性但依赖特定接口，通用性一般。",
+   "attack_chain": "访问已删除页面→利用widget_subscribe.php获取用户信息→通过订阅操作进一步获取教育信息。",
+   "bypass_technique": "利用未授权接口绕过页面删除状态限制。",
+   "defensive_insight": "对已删除资源的所有接口进行统一访问控制，避免信息泄露。"
+  },
+  {
+   "id": 49356,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "授权绕过",
+   "reasoning": "否。典型的IDOR漏洞，直接替换ID即可删除他人资源，无绕过技巧，属于常见套路。",
+   "attack_chain": "构造删除URL→替换受害者ID→执行删除。",
+   "bypass_technique": "无，直接利用不安全的直接对象引用。",
+   "defensive_insight": "对删除操作进行所有权校验，使用不可预测的标识符。"
+  },
+  {
+   "id": 38007,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "子域名接管",
+   "reasoning": "是。子域名指向已失效的第三方服务，可被接管并用于钓鱼，属于经典的子域名接管，但利用方式清晰，影响大。",
+   "attack_chain": "发现子域名指向失效的Hubspot→在Hubspot上注册该域名→托管恶意内容。",
+   "bypass_technique": "利用DNS记录指向已失效服务，通过服务商接管域名。",
+   "defensive_insight": "定期审计DNS记录，移除不再使用的第三方服务指向。"
+  },
+  {
+   "id": 946409,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "配置错误 / 跨组件攻击链",
+   "reasoning": "是。利用内部包名未在公共PyPI注册，通过上传同名恶意包实现供应链攻击，属于配置错误导致的供应链风险，思路新颖。",
+   "attack_chain": "发现内部包名未注册→上传恶意包到PyPI→构建服务器安装时执行恶意代码。",
+   "bypass_technique": "利用包名抢占，在公共仓库注册内部包名。",
+   "defensive_insight": "确保内部依赖从私有仓库获取，并验证包完整性。"
+  },
+  {
+   "id": 109810,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。典型的CSRF漏洞，无绕过，属于成熟套路。",
+   "attack_chain": "构造恶意页面→诱导用户访问→创建钱包。",
+   "bypass_technique": "无，直接利用缺少CSRF令牌。",
+   "defensive_insight": "在所有状态变更请求中添加CSRF令牌。"
+  },
+  {
+   "id": 66235,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 授权绕过",
+   "reasoning": "部分。通过公开的hash和接口，可以给任意用户的照片添加地理位置标记，属于业务逻辑缺陷，思路有启发性但依赖特定接口。",
+   "attack_chain": "获取目标照片的hash→构造请求添加标记→诱导用户打开链接。",
+   "bypass_technique": "利用公开的hash和缺少所有权校验的接口。",
+   "defensive_insight": "对修改操作进行所有权校验，确保hash不可预测。"
+  },
+  {
+   "id": 274998,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "内存破坏",
+   "reasoning": "否。报告仅提供崩溃栈，无利用细节，且为fuzzing发现，信息不足。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "修复未初始化值的使用。"
+  },
+  {
+   "id": 681986,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。存储型XSS，但触发需要用户交互，属于常见类型，但PoC完整。",
+   "attack_chain": "在流名称中注入恶意脚本→部署后双击触发。",
+   "bypass_technique": "无，直接利用未过滤输入。",
+   "defensive_insight": "对输入进行HTML编码，使用CSP。"
+  },
+  {
+   "id": 1541660,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 授权绕过",
+   "reasoning": "部分。通过手机号即可获取用户个人信息，属于API未授权访问，思路简单但影响大。",
+   "attack_chain": "构造API请求→输入手机号→获取用户数据。",
+   "bypass_technique": "无，直接利用未授权API。",
+   "defensive_insight": "对API进行身份验证和授权检查。"
+  },
+  {
+   "id": 73250,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "内存破坏",
+   "reasoning": "否。仅提供bug链接，无具体分析，信息不足。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "修复use-after-free。"
+  },
+  {
+   "id": 204208,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。通过修改参数导致资源消耗，属于参数未限制，常见套路。",
+   "attack_chain": "构造请求→修改宽高参数→服务器生成大图片。",
+   "bypass_technique": "无，直接利用未限制参数。",
+   "defensive_insight": "限制参数范围，设置资源使用上限。"
+  },
+  {
+   "id": 441090,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用git://协议未受UrlBlocker限制，通过CRLF注入Redis实现RCE，属于协议行为利用和跨组件攻击链，思路极具启发性。",
+   "attack_chain": "配置git://镜像→注入CRLF→操作Redis→注入恶意任务→RCE。",
+   "bypass_technique": "利用git://协议绕过SSRF防护，通过CRLF注入Redis。",
+   "defensive_insight": "对所有协议进行统一过滤，限制内网访问。"
+  },
+  {
+   "id": 1271944,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "缓存欺骗 / 信息泄露",
+   "reasoning": "是。利用路径混淆和.css扩展名欺骗缓存服务器，泄露用户个人信息和CSRF令牌，属于缓存欺骗攻击，思路新颖。",
+   "attack_chain": "构造带.css的URL→诱导用户访问→缓存服务器缓存页面→攻击者获取缓存。",
+   "bypass_technique": "利用路径混淆和扩展名欺骗缓存。",
+   "defensive_insight": "根据内容类型而非扩展名缓存，配置缓存策略。"
+  },
+  {
+   "id": 891846,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "内存破坏",
+   "reasoning": "否。已知CVE，无新意，属于常见漏洞。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "应用补丁。"
+  },
+  {
+   "id": 1078002,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用QDesktopServices::openUrl()打开任意URI scheme，结合WinSCP等第三方应用实现RCE，属于协议行为利用和跨组件攻击链，思路极具启发性。",
+   "attack_chain": "恶意服务器提供恶意链接→用户点击→调用系统默认应用→执行任意命令。",
+   "bypass_technique": "利用URI scheme的信任，绕过应用内限制。",
+   "defensive_insight": "对URI scheme进行白名单过滤，限制openUrl调用。"
+  },
+  {
+   "id": 73241,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "内存破坏",
+   "reasoning": "否。已知CVE，无新意。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "应用补丁。"
+  },
+  {
+   "id": 861849,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "IDOR",
+   "reasoning": "部分。IDOR漏洞，但涉及编辑和删除操作，且无速率限制，影响较大，但属于常见类型。",
+   "attack_chain": "修改请求中的评论ID→编辑或删除他人评论。",
+   "bypass_technique": "无，直接利用IDOR。",
+   "defensive_insight": "对操作进行所有权校验，添加速率限制。"
+  },
+  {
+   "id": 514451,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "子域名接管",
+   "reasoning": "部分。文档中提到的Heroku应用已失效，可被接管，属于子域名接管，但影响有限。",
+   "attack_chain": "发现文档中的Heroku应用→在Heroku上接管该应用。",
+   "bypass_technique": "利用失效的第三方服务。",
+   "defensive_insight": "定期清理文档中的失效链接。"
+  },
+  {
+   "id": 290023,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。典型CSRF，无绕过。",
+   "attack_chain": "构造恶意图片标签→诱导用户访问→触发CSRF。",
+   "bypass_technique": "无，直接利用缺少CSRF令牌。",
+   "defensive_insight": "添加CSRF令牌。"
+  },
+  {
+   "id": 244636,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 认证绕过",
+   "reasoning": "是。通过修改确认邮件请求中的邮箱，可以创建任意邮箱的账户，属于业务逻辑缺陷，思路有启发性。",
+   "attack_chain": "创建账户→拦截确认请求→修改邮箱→使用原链接确认新邮箱。",
+   "bypass_technique": "利用确认链接未绑定原始邮箱。",
+   "defensive_insight": "确认链接应绑定原始邮箱，验证时校验邮箱匹配。"
+  }
+ ]
+}

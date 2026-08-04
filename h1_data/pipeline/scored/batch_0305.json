@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1579645,
+   1350401,
+   532667,
+   506040,
+   1280002
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1350401,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 认证绕过 / 跨组件攻击链",
+   "reasoning": "是。通过密码重置流程中的状态混淆，在未验证邮箱的情况下将任意邮箱标记为已验证，进而利用同一已验证邮箱关联多个账户，窃取受害者的私有邀请。技术点在于密码重置流程未正确区分'当前密码'与'新密码'的验证状态，导致攻击者可以绕过邮箱验证。该漏洞跨多个组件（账户系统、广告系统），且可抽象为'验证状态未正确绑定'的通用问题。",
+   "attack_chain": "注册Google账户→重置密码→修改邮箱→利用密码重置链接验证受害者邮箱→创建广告账户→访问受害者私有邀请→接受邀请。",
+   "bypass_technique": "利用密码重置流程中的状态混淆，在未持有受害者邮箱验证链接的情况下，通过提交受害者邮箱和任意密码完成邮箱验证。",
+   "defensive_insight": "确保邮箱验证与密码重置流程严格分离，验证状态必须基于持有验证链接，而非用户提交的邮箱字段。"
+  },
+  {
+   "id": 166634,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 0
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 配置错误",
+   "reasoning": "是。SSLv2 在禁用密码套件后仍可被利用，绕过了管理员认为已生效的禁用配置，属于协议行为利用。该漏洞影响广泛，且修复方案明确。虽然报告本身信息较少，但作为 CVE 漏洞，其技术细节已知，可复现性较高。",
+   "attack_chain": "配置SSLv2禁用→攻击者仍可协商SSLv2→利用DROWN攻击解密流量。",
+   "bypass_technique": "利用SSLv2协议实现中的缺陷，即使密码套件被禁用，仍可协商使用。",
+   "defensive_insight": "彻底禁用SSLv2协议，而不仅仅是禁用密码套件；定期更新OpenSSL版本。"
+  },
+  {
+   "id": 231805,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "部分。利用浏览器缓存机制，通过后退按钮获取API密钥，属于配置错误导致的敏感信息泄露。虽然思路简单，但利用了浏览器缓存行为，有一定非预期性。攻击链较短，但复现步骤清晰。",
+   "attack_chain": "访问API设置页→登出→点击后退→浏览器缓存显示API密钥。",
+   "bypass_technique": "利用浏览器缓存未设置no-store，通过后退按钮恢复敏感页面。",
+   "defensive_insight": "对包含敏感信息的页面设置Cache-Control: no-store, no-cache, must-revalidate。"
+  },
+  {
+   "id": 713,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SSRF",
+   "reasoning": "否。通过修改前端表单类型实现URL上传，属于典型的SSRF利用，但未涉及服务端过滤绕过，思路常见。",
+   "attack_chain": "修改前端表单→提交URL→服务端请求URL→获取图片。",
+   "bypass_technique": "无实质绕过，直接利用前端限制不足。",
+   "defensive_insight": "服务端应验证上传来源，限制URL请求目标。"
+  },
+  {
+   "id": 707228,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。在JS文件中泄露内网IP，属于常见的信息泄露，无绕过或攻击链，价值低。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "避免在公开代码中硬编码内网地址。"
+  },
+  {
+   "id": 247680,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "SSRF / 协议行为利用",
+   "reasoning": "部分。在已知SSRF漏洞的基础上，发现新的利用点，且支持gopher协议注入，属于协议行为利用。攻击链较完整，但依赖特定协议支持。",
+   "attack_chain": "构造恶意URL→服务端请求→利用gopher协议注入HTTP头。",
+   "bypass_technique": "利用gopher协议进行SSRF扩展，注入任意内容。",
+   "defensive_insight": "限制SSRF请求协议，过滤gopher等危险协议。"
+  },
+  {
+   "id": 188279,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。使用过时的Yoast SEO插件，存在已知漏洞，属于典型的配置错误，无新意。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "及时更新插件版本。"
+  },
+  {
+   "id": 532667,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 代码注入",
+   "reasoning": "是。通过控制序列化schema中的属性名，注入JavaScript代码，实现RCE。利用了fastify框架对属性名处理不当的缺陷，属于框架行为利用。攻击链清晰，但需要攻击者能控制schema定义。",
+   "attack_chain": "控制schema属性名→注入恶意JS→fast-json-stringify执行→RCE。",
+   "bypass_technique": "利用属性名中的引号等字符注入代码。",
+   "defensive_insight": "对schema属性名进行转义，避免直接拼接。"
+  },
+  {
+   "id": 261338,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "反序列化 / 内存破坏",
+   "reasoning": "部分。PHP反序列化中的UAF漏洞，属于已知CVE，但利用条件明确，技术点在于zval_get_type函数的使用。攻击链简单，但影响广泛。",
+   "attack_chain": "构造恶意序列化数据→触发UAF→内存破坏。",
+   "bypass_technique": "利用反序列化过程中的类型混淆。",
+   "defensive_insight": "升级PHP版本，避免反序列化不可信数据。"
+  },
+  {
+   "id": 1280002,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 0
+   },
+   "verdict": "保留，高优先级",
+   "category": "原型污染 / XSS / 跨组件攻击链",
+   "reasoning": "是。通过Mermaid图表中的__proto__属性污染原型，进而触发存储型XSS。利用了Mermaid配置合并时的原型污染漏洞，属于框架行为利用。攻击链跨组件（Mermaid→GitLab），且可抽象为通用原型污染问题。",
+   "attack_chain": "创建含恶意Mermaid的issue→原型污染→用户交互触发XSS→窃取数据。",
+   "bypass_technique": "利用__proto__属性污染template，注入恶意HTML。",
+   "defensive_insight": "禁止Mermaid配置中的__proto__属性，使用安全合并。"
+  },
+  {
+   "id": 905692,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。注册接口缺少速率限制，导致用户枚举和资源耗尽，属于常见配置错误。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "实施速率限制和验证码。"
+  },
+  {
+   "id": 183548,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "部分。SMTP开放中继和用户枚举，属于配置错误，但攻击链简单，利用方式常见。",
+   "attack_chain": "SMTP用户枚举→发送钓鱼邮件。",
+   "bypass_technique": "无实质绕过，直接利用开放中继。",
+   "defensive_insight": "限制SMTP中继，禁用VRFY命令。"
+  },
+  {
+   "id": 1579645,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 框架行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用DOMPurify未过滤的data-disable-with属性，结合Rails-ujs的行为，实现XSS。绕过现代防御（DOMPurify），且可升级为管理员权限。技术点在于DOMPurify的过滤列表与Rails-ujs的属性使用不一致，属于框架行为利用。攻击链跨组件（GitLab→Rails-ujs），且可抽象为'属性过滤不完整'的通用问题。",
+   "attack_chain": "构造恶意CI job名称→存储XSS→点击触发→执行任意操作。",
+   "bypass_technique": "利用data-disable-with属性绕过DOMPurify过滤，结合Rails-ujs的HTML注入。",
+   "defensive_insight": "完善DOMPurify过滤列表，覆盖所有可能被框架使用的属性。"
+  },
+  {
+   "id": 299835,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 0
+   },
+   "verdict": "保留，普通",
+   "category": "开放重定向",
+   "reasoning": "部分。通过语言切换功能实现开放重定向，利用了host参数未验证，属于业务逻辑缺陷。攻击链简单，但可用于钓鱼。",
+   "attack_chain": "构造恶意链接→用户切换语言→重定向到外部网站。",
+   "bypass_technique": "利用host参数控制重定向目标。",
+   "defensive_insight": "验证重定向目标，仅允许白名单域名。"
+  },
+  {
+   "id": 506040,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 0
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 加密问题",
+   "reasoning": "是。OpenSSL对ChaCha20-Poly1305的nonce处理不符合规范，丢弃前4字节，导致完整性破坏和nonce重用风险。利用了协议实现与规范的差异，属于协议行为利用。影响广泛，修复方案明确。",
+   "attack_chain": "使用16字节nonce→OpenSSL丢弃前4字节→完整性破坏或nonce重用。",
+   "bypass_technique": "利用OpenSSL对nonce长度的错误处理。",
+   "defensive_insight": "遵循规范使用12字节nonce，或升级OpenSSL版本。"
+  },
+  {
+   "id": 41469,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。错误堆栈泄露，属于常见信息泄露，无绕过或攻击链。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "配置错误页面不显示堆栈信息。"
+  },
+  {
+   "id": 225769,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。分享链接未使用HTTPS，属于低危配置问题，无技术含量。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "统一使用HTTPS。"
+  },
+  {
+   "id": 1914115,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 授权绕过",
+   "reasoning": "部分。通过修改元数据文件破坏E2EE文件可用性，利用了元数据文件可被任意修改的缺陷，属于业务逻辑漏洞。攻击链简单，但影响可用性。",
+   "attack_chain": "获取元数据文件→修改条目→上传→文件无法解密。",
+   "bypass_technique": "利用元数据文件未受保护，直接修改。",
+   "defensive_insight": "服务端应验证元数据文件的完整性，不允许客户端直接修改。"
+  },
+  {
+   "id": 1159371,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。路径反射型XSS，常见套路，无绕过。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对路径参数进行编码。"
+  },
+  {
+   "id": 1476709,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "信息泄露",
+   "reasoning": "否。目录列表泄露，常见配置错误，且报告未深入挖掘，信息不足。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁用目录列表。"
+  }
+ ]
+}

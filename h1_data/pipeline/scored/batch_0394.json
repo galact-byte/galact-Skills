@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   489102,
+   1178562,
+   1086259,
+   50786,
+   270993
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 270993,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 配置错误",
+   "reasoning": "是。设置中关闭'已解决报告'公开显示，但目录页仍泄露数量，属于设置与实现不一致，绕过看似生效的隐私策略。技术点在于同一平台不同页面间权限控制不一致，可抽象为通用判断条件。",
+   "attack_chain": "程序设置隐藏已解决报告数→访问目录页→泄露数量。",
+   "bypass_technique": "利用不同页面间权限控制不一致，绕过设置限制。",
+   "defensive_insight": "统一权限控制逻辑，确保所有页面遵循相同设置。"
+  },
+  {
+   "id": 489102,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 3
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 栈溢出",
+   "reasoning": "是。利用RTCP SDES包中name_length字段控制memcpy长度，绕过缓冲区大小限制，覆盖SEH链。技术点在于协议字段直接控制内存拷贝长度，且未做边界检查，可远程触发。",
+   "attack_chain": "构造恶意RTSP包→触发rtcp_input→memcpy溢出→覆盖SEH→RCE。",
+   "bypass_technique": "利用协议字段name_length控制memcpy长度，绕过固定缓冲区限制。",
+   "defensive_insight": "对协议字段进行严格边界检查，确保name_length不超过缓冲区大小。"
+  },
+  {
+   "id": 1086259,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 信息泄露",
+   "reasoning": "是。cURL在重定向时未剥离Proxy-Authorization头，导致凭据泄露到新主机。技术点在于HTTP客户端对代理头处理与标准Authorization头不一致，可抽象为通用判断条件。",
+   "attack_chain": "构造带Proxy-Authorization的请求→服务器重定向→凭据发送到新主机。",
+   "bypass_technique": "利用cURL重定向时未剥离Proxy-Authorization头的行为。",
+   "defensive_insight": "客户端在重定向时应剥离敏感头，或限制跨主机传递。"
+  },
+  {
+   "id": 6488,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。弱加密套件是常见配置问题，无绕过无链，信息完整但套路成熟。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁用弱加密套件，配置强加密。"
+  },
+  {
+   "id": 187410,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型XSS，经典payload，无绕过无链，信息完整但套路成熟。",
+   "attack_chain": "提交恶意公司名→存储→触发XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "输入过滤和输出编码。"
+  },
+  {
+   "id": 104620,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "XXE",
+   "reasoning": "否。XXE上传SVG，但报告信息不足，仅视频链接，无详细步骤，且substate为informative。",
+   "attack_chain": "上传恶意SVG→服务器解析→XXE。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁用XML外部实体解析。"
+  },
+  {
+   "id": 789388,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。目录列表暴露，常见配置错误，无绕过无链。",
+   "attack_chain": "访问目录→列出文件。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁用目录列表。"
+  },
+  {
+   "id": 1187820,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。反射型XSS，但利用accesskey属性需要用户交互，变形轻微，PoC完整。",
+   "attack_chain": "构造恶意URL→用户点击→触发XSS。",
+   "bypass_technique": "利用accesskey属性绕过过滤。",
+   "defensive_insight": "对参数进行严格过滤和编码。"
+  },
+  {
+   "id": 259416,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。邮件内容错误，低危逻辑问题，无安全影响。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "确保邮件内容准确。"
+  },
+  {
+   "id": 10297,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型XSS，经典payload，无绕过无链，信息不足。",
+   "attack_chain": "提交恶意链接→存储→触发XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "输入过滤和输出编码。"
+  },
+  {
+   "id": 390,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "其他",
+   "reasoning": "部分。利用图像像素尺寸欺骗导致内存耗尽，属于资源消耗攻击，思路有启发性但实现简单。",
+   "attack_chain": "上传恶意图像→服务端解析→内存耗尽→DoS。",
+   "bypass_technique": "修改图像像素尺寸字段，绕过大小限制。",
+   "defensive_insight": "限制图像最大像素数。"
+  },
+  {
+   "id": 781673,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "开放重定向",
+   "reasoning": "部分。利用错误页面的OK按钮重定向到攻击者网站，需要用户交互，但思路有启发性。",
+   "attack_chain": "构造恶意页面→用户点击→跳转twitter→点击OK→重定向到攻击者。",
+   "bypass_technique": "利用错误页面的重定向行为。",
+   "defensive_insight": "确保错误页面重定向到固定安全URL。"
+  },
+  {
+   "id": 1869184,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。LDAP匿名访问，常见配置错误，无绕过无链。",
+   "attack_chain": "扫描→匿名绑定→信息泄露。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁用匿名访问。"
+  },
+  {
+   "id": 50786,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。通过修改请求中的group id，将视频添加到其他用户的私有组，绕过访问控制。技术点在于IDOR，但结合私有组场景，思路有启发性。",
+   "attack_chain": "拦截请求→修改group id→添加视频到私有组。",
+   "bypass_technique": "利用IDOR，修改group id绕过权限检查。",
+   "defensive_insight": "服务端验证用户对目标组的权限。"
+  },
+  {
+   "id": 1102780,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告描述模糊，CRLF注入和websocket信息泄露，但步骤不清晰，substate为informative。",
+   "attack_chain": "构造恶意URL→绕过认证→信息泄露。",
+   "bypass_technique": "无。",
+   "defensive_insight": "严格验证输入，防止CRLF注入。"
+  },
+  {
+   "id": 988550,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。已知CVE，利用公开漏洞，无绕过无链。",
+   "attack_chain": "访问端点→信息泄露。",
+   "bypass_technique": "无。",
+   "defensive_insight": "升级Jira版本。"
+  },
+  {
+   "id": 1178562,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 认证绕过",
+   "reasoning": "是。Ruby的net/imap库在STARTTLS失败时未抛出异常，导致凭据明文传输。技术点在于库对协议错误处理不当，可抽象为通用判断条件。",
+   "attack_chain": "MITM拦截→阻止STARTTLS→客户端继续发送凭据→窃取。",
+   "bypass_technique": "利用库未检查STARTTLS响应，进行降级攻击。",
+   "defensive_insight": "客户端应严格检查STARTTLS响应，失败时中止连接。"
+  },
+  {
+   "id": 692154,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "开放重定向",
+   "reasoning": "否。经典开放重定向，利用//绕过，无新意。",
+   "attack_chain": "构造URL→重定向到恶意网站。",
+   "bypass_technique": "利用//绕过域名校验。",
+   "defensive_insight": "严格校验重定向URL。"
+  },
+  {
+   "id": 6843,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，经典payload，无绕过无链。",
+   "attack_chain": "构造URL→触发XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "输入过滤和输出编码。"
+  },
+  {
+   "id": 1627961,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "认证绕过 / 业务逻辑",
+   "reasoning": "部分。通过修改用户ID和邮箱实现账户接管，属于IDOR和逻辑漏洞组合，思路有启发性但步骤复杂。",
+   "attack_chain": "修改请求中的用户ID和邮箱→提交→接管账户。",
+   "bypass_technique": "利用IDOR和逻辑漏洞，修改关键参数。",
+   "defensive_insight": "服务端验证用户身份和权限，防止参数篡改。"
+  }
+ ]
+}

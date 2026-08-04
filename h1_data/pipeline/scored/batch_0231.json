@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   733072,
+   682442,
+   320222,
+   282209,
+   2041007
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 282209,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "是。利用URL协议解析的宽松性，通过大小写混合和注释符绕过协议检查，构造出javascript:伪协议。技术点在于浏览器对URL的解析与后端校验不一致，且利用注释符使payload在JS中合法。区别于普通XSS，这是对URL校验逻辑的巧妙绕过，可抽象为通用判断条件。",
+   "attack_chain": "设置Logo链接为恶意javascript: URL → 用户点击Logo → 执行XSS。",
+   "bypass_technique": "使用`javascripT://`绕过大小写敏感的黑名单，并用`%0a`注释符使后续内容成为JS注释，从而绕过协议检查。",
+   "defensive_insight": "严格校验URL必须以http(s)://开头，且使用白名单而非黑名单，并对协议进行规范化处理。"
+  },
+  {
+   "id": 18372,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "XSS",
+   "reasoning": "否。报告描述模糊，声称存在XSS但未提供有效PoC，且自述无法触发。信息不足，无法判断真实性。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "无"
+  },
+  {
+   "id": 733072,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 跨组件攻击链",
+   "reasoning": "是。通过路径遍历在GitLab服务器上任意写文件，进而覆盖authorized_keys实现RCE。技术点在于API对路径参数未充分过滤，且利用`--path-as-is`绕过curl的路径规范化。这是从路径遍历到RCE的完整攻击链，跨组件且可通用化。",
+   "attack_chain": "构造恶意API请求 → 路径遍历写入authorized_keys → SSH登录获取shell。",
+   "bypass_technique": "利用`..%2f`进行路径遍历，结合`--path-as-is`保留原始路径，绕过服务端和客户端的路径规范化。",
+   "defensive_insight": "对API路径参数进行严格校验，禁止包含`..`等特殊字符，并限制文件写入位置。"
+  },
+  {
+   "id": 2041007,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 配置错误",
+   "reasoning": "是。CSRF防护因空字符串与null的判断错误而失效，导致攻击者可以无token发起请求。技术点在于PHP中空字符串与null的差异，这是一个典型的类型混淆。绕过优雅，可抽象为通用判断条件。",
+   "attack_chain": "构造恶意网站 → 受害者访问 → 自动提交表单 → 创建管理员账户。",
+   "bypass_technique": "利用服务端对空字符串与null的区分错误，使CSRF token检查被跳过。",
+   "defensive_insight": "严格检查CSRF token是否存在且非空，并统一处理空值与null。"
+  },
+  {
+   "id": 1707680,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。仅指出SameSite属性设置不当，属于通用配置建议，无具体漏洞利用链，且未证明实际影响。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "设置SameSite=Lax或Strict，并确保Secure属性。"
+  },
+  {
+   "id": 320222,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 内存破坏",
+   "reasoning": "是。利用HTTP响应解析中的边界条件，通过构造特定响应导致数组负索引，进而引发内存破坏。技术点在于对`\\r\\n`处理不当，可导致`tmp_line_len`变为-1。这是对协议解析行为的利用，可通用化。",
+   "attack_chain": "构造恶意HTTP响应 → 触发解析漏洞 → 内存破坏 → DoS或RCE。",
+   "bypass_technique": "发送包含`\\r`的响应，使长度计算错误，导致负索引。",
+   "defensive_insight": "在解析HTTP响应时，严格检查长度边界，避免负索引。"
+  },
+  {
+   "id": 5426,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。描述模糊，疑似恶作剧，无实际漏洞细节。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "无"
+  },
+  {
+   "id": 290930,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露",
+   "reasoning": "部分。利用未接受的邀请token泄露邮箱和私有项目信息，属于信息泄露，但依赖HackerOne的疏忽，通用性有限。",
+   "attack_chain": "获取泄露的token → 访问JSON接口 → 获取敏感信息。",
+   "bypass_technique": "无实质绕过，直接利用未失效的token。",
+   "defensive_insight": "确保token在公开后立即失效，并避免在响应中返回敏感字段。"
+  },
+  {
+   "id": 188205,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。仅报告用户名枚举和暴力破解可能性，属于常见问题，无实际利用。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "限制登录尝试次数，隐藏用户名枚举。"
+  },
+  {
+   "id": 251918,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "CSRF / 协议行为利用",
+   "reasoning": "部分。利用Flash和307重定向绕过CSRF防护，属于经典技巧，但需要特定环境，通用性一般。",
+   "attack_chain": "诱导用户访问恶意Flash → 发送跨域请求 → 修改广告频率。",
+   "bypass_technique": "利用Flash的跨域策略和307重定向保持POST方法。",
+   "defensive_insight": "禁用Flash，使用CSRF token，并验证Origin头。"
+  },
+  {
+   "id": 838910,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "部分。利用`[0].find(confirm)`绕过关键字过滤，属于JavaScript函数调用的巧妙变形，但依赖特定上下文。",
+   "attack_chain": "构造恶意表单 → 用户提交 → 执行XSS。",
+   "bypass_technique": "使用`[0].find(confirm)`替代`confirm()`，绕过黑名单。",
+   "defensive_insight": "对输出进行HTML编码，并加强输入验证。"
+  },
+  {
+   "id": 262852,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。利用空字节截断绕过过滤，属于常见技巧，无新意。",
+   "attack_chain": "构造恶意URL → 触发XSS。",
+   "bypass_technique": "使用`%00`截断字符串，绕过过滤。",
+   "defensive_insight": "对输入进行严格过滤，并正确编码输出。"
+  },
+  {
+   "id": 1247910,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "部分。暴露Golang pprof调试接口，可导致信息泄露和DoS，属于配置错误，但影响明确。",
+   "attack_chain": "访问pprof接口 → 获取敏感信息 → 触发GC导致DoS。",
+   "bypass_technique": "无实质绕过，直接利用暴露的接口。",
+   "defensive_insight": "禁用或限制pprof接口的访问。"
+  },
+  {
+   "id": 181685,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 内存破坏",
+   "reasoning": "是。通过移除`initialize_copy`方法，构造未初始化的Range对象，导致空指针解引用。技术点在于利用Ruby的元编程能力，绕过对象初始化流程。这是对框架行为的深度利用，可通用化。",
+   "attack_chain": "移除方法 → 创建未初始化对象 → 调用方法 → 崩溃。",
+   "bypass_technique": "利用`remove_method`移除关键方法，使对象状态不完整。",
+   "defensive_insight": "在复制对象时，确保内部状态已初始化，或禁止移除关键方法。"
+  },
+  {
+   "id": 866837,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。POST型反射XSS，参数未过滤，属于常见漏洞。",
+   "attack_chain": "构造恶意表单 → 用户提交 → 执行XSS。",
+   "bypass_technique": "无实质绕过，直接利用未过滤参数。",
+   "defensive_insight": "对输入进行编码和过滤。"
+  },
+  {
+   "id": 38170,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。仅提供外部链接，无具体漏洞细节，信息不足。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "无"
+  },
+  {
+   "id": 459084,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "框架行为利用",
+   "reasoning": "部分。JSON.parse不传播taint标记，可能导致安全决策错误，属于框架行为缺陷，但影响有限。",
+   "attack_chain": "无",
+   "bypass_technique": "无实质绕过，利用框架行为缺陷。",
+   "defensive_insight": "在解析JSON时，手动检查并传播taint标记。"
+  },
+  {
+   "id": 682442,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "命令注入 / 框架行为利用",
+   "reasoning": "是。通过`ref`参数注入`--no-index`标志，使`git grep`搜索整个文件系统，泄露敏感文件。技术点在于利用git命令的选项注入，绕过参数校验。这是对命令行工具行为的利用，可通用化。",
+   "attack_chain": "构造API请求 → 注入git标志 → 读取任意文件。",
+   "bypass_technique": "在`ref`参数中注入`--no-index`，使git grep搜索非git文件。",
+   "defensive_insight": "对命令行参数进行严格校验，禁止以`--`开头的参数。"
+  },
+  {
+   "id": 330356,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。目录名未过滤导致存储型XSS，属于常见漏洞，但影响明确。",
+   "attack_chain": "创建恶意目录名 → 用户访问 → 执行XSS。",
+   "bypass_technique": "无实质绕过，直接利用未过滤的目录名。",
+   "defensive_insight": "对目录名进行HTML编码。"
+  },
+  {
+   "id": 11919,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 0
+   },
+   "verdict": "保留，普通",
+   "category": "SSRF / XSS / 跨组件攻击链",
+   "reasoning": "部分。通过控制响应头实现存储型XSS，并利用SSRF进行内网扫描，但复现细节缺失。",
+   "attack_chain": "控制响应头 → 存储XSS → 触发；SSRF → 内网扫描。",
+   "bypass_technique": "利用服务端对响应头的信任，注入恶意内容。",
+   "defensive_insight": "对响应头进行严格验证，并限制SSRF目标。"
+  }
+ ]
+}

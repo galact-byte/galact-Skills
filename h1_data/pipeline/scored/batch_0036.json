@@ -1,0 +1,335 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 3,
+  "dropped": 17,
+  "avg_score": 3.1,
+  "top_n": [
+   1262434,
+   1019389,
+   179695
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1019389,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "配置错误 / 跨组件攻击链",
+   "reasoning": "是。HEY macOS 客户端传输文件不设 com.apple.quarantine，Gatekeeper 不拦截，.terminal 恶意文件直接执行（curl|bash 后门）——'客户端文件处理未设隔离属性'使 macOS 核心防护（Gatekeeper）被绕过，反直觉点在于'经客户端传输=本应触发隔离'；链路（上传→下载→打开→命令执行）完整，PoC 视频，可抽象为通用判据（文件传输类客户端必须设置隔离/下载属性）。",
+   "attack_chain": "发送 .terminal 恶意附件→受害者下载打开→无 Gatekeeper 警告→命令执行→shell。",
+   "bypass_technique": "无绕过，利用缺失的 quarantine 属性使 Gatekeeper 不介入。",
+   "defensive_insight": "macOS 客户端文件传输写入 com.apple.quarantine；可执行文件类型告警。"
+  },
+  {
+   "id": 8846,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。e.mail.ru 登出后 localStorage 残留用户信息——本地存储清理缺陷（共享电脑隐私），影响轻微，机制零变形。",
+   "attack_chain": "单点：登出后读 localStorage→残留用户信息。",
+   "bypass_technique": "无绕过，直接利用未清理的存储。",
+   "defensive_insight": "登出时清理本地敏感存储；敏感数据避免落 localStorage。"
+  },
+  {
+   "id": 320355,
+   "value_score": 0,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "无法判断。攻击者自述测试过程等待回应，无任何漏洞细节（Shopify 侧发现的行为记录）。",
+   "attack_chain": "无法确认。",
+   "bypass_technique": "无法确认。",
+   "defensive_insight": "无有效信息。"
+  },
+  {
+   "id": 361341,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "反序列化",
+   "reasoning": "否。LiberaPay 通知上下文用 pickle 序列化——不安全反序列化经典（pickle 已知危险），RCE 需 SQLi 前置（报告者未能直接利用），机制成熟。",
+   "attack_chain": "SQLi 改写通知 context→pickle 反序列化→RCE（需前置）。",
+   "bypass_technique": "无绕过，利用 pickle 未限制类。",
+   "defensive_insight": "通知上下文改用安全序列化（json）；反序列化禁用危险类。"
+  },
+  {
+   "id": 20720,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。cloud.mail.ru 上传接口的 Content-Type 头注入被错误响应反射——错误回显注入（未执行），影响轻微，机制零变形。",
+   "attack_chain": "单点：Content-Type 注入→错误响应回显。",
+   "bypass_technique": "无绕过，直接利用未转义错误回显。",
+   "defensive_insight": "错误响应不回显请求头；输入校验。"
+  },
+  {
+   "id": 1912782,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "框架行为利用",
+   "reasoning": "否。curl 连接池匹配漏掉 GSS 委托设置（CVE-2023-27536），不同委托级别连接被复用——连接复用配置维度遗漏经典（与 1898475 同族），影响凭据边界。",
+   "attack_chain": "单点：宽松委托连接被复用于需严格委托的请求。",
+   "bypass_technique": "无绕过，利用匹配检查遗漏。",
+   "defensive_insight": "连接池匹配覆盖全部安全配置维度；升级 curl。"
+  },
+  {
+   "id": 226896,
+   "value_score": 0,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "命令注入",
+   "reasoning": "无法判断。声称 findBinaryPath exec 注入，但代码显示 escapeshellarg 已对参数转义——防护存在，误报。",
+   "attack_chain": "无法确认。",
+   "bypass_technique": "无法确认。",
+   "defensive_insight": "exec 参数转义；报告前核对代码上下文。"
+  },
+  {
+   "id": 159961,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "无法判断。正文仅一句指向 php bug 链接，无技术细节可评估。",
+   "attack_chain": "无法确认。",
+   "bypass_technique": "无法确认。",
+   "defensive_insight": "升级 PHP；uuencode 长度校验。"
+  },
+  {
+   "id": 1167530,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "命令注入",
+   "reasoning": "否。Burp 'Copy as Node Request' 扩展 escapeQuotes 漏转义单引号，cookie 注入 Node 代码——代码生成器的引号转义遗漏（需用户执行复制文本），机制成熟。",
+   "attack_chain": "cookie 注入单引号 payload→复制代码→执行→RCE（用户交互）。",
+   "bypass_technique": "无绕过，利用单引号未转义。",
+   "defensive_insight": "代码生成器对所有字符串字面量统一转义（含单双引号）。"
+  },
+  {
+   "id": 488923,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 其他",
+   "reasoning": "否。CrowdSignal 评论无速率限制——无防护重放经典，影响轻微（评论轰炸），机制零变形。",
+   "attack_chain": "单点：爆破提交评论→刷屏。",
+   "bypass_technique": "无绕过，直接利用缺失限速。",
+   "defensive_insight": "评论提交限速+频率控制。"
+  },
+  {
+   "id": 1677047,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 命令注入",
+   "reasoning": "否。Pentaho 默认凭据 admin/password + 上传 prpt 报告（beanshell/js）RCE——默认凭据+已知功能滥用的经典组合（MTN 域），链路完整但机制成熟。",
+   "attack_chain": "默认凭据登录→上传恶意 prpt→运行报告→RCE。",
+   "bypass_technique": "无绕过，直接使用默认凭据。",
+   "defensive_insight": "默认凭据轮换；报告上传白名单+沙箱执行。"
+  },
+  {
+   "id": 264494,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "子域名接管 / 配置错误",
+   "reasoning": "否。Roblox creatorforum CNAME 指向不存在 Discourse——子域接管经典，已修复未实际接管，报告说明性。",
+   "attack_chain": "单点：注册 Discourse 认领（未执行）。",
+   "bypass_technique": "无绕过，直接认领。",
+   "defensive_insight": "第三方服务下线即删 DNS；定期审计 CNAME。"
+  },
+  {
+   "id": 964582,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。tcpdump MPTCP 越界读（CVE-2017-13040）——已知 CVE 摘要，解析器缺陷经典，无 PoC。",
+   "attack_chain": "单点：畸形 MPTCP 包→越界读。",
+   "bypass_technique": "无绕过，直接利用解析缺陷。",
+   "defensive_insight": "升级 tcpdump；协议解析边界校验。"
+  },
+  {
+   "id": 309394,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。anywhere 静态服务器文件名含 iframe 注入目录列表——文件名存储 XSS 经典（同 serve 398285），PoC 完整但机制零变形。",
+   "attack_chain": "文件名存 iframe→目录列表渲染→加载恶意 frame。",
+   "bypass_technique": "无绕过，直接利用未转义文件名。",
+   "defensive_insight": "目录列表文件名转义；文件名白名单。"
+  },
+  {
+   "id": 449351,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。HackerOne 程序资产名存 img onerror 多处渲染（CSP 阻止实际执行）——存储 XSS 经典，CSP 缓解后影响受限，机制零变形。",
+   "attack_chain": "资产名存 payload→多处渲染→（CSP 阻止）。",
+   "bypass_technique": "无绕过，直接利用未转义输出。",
+   "defensive_insight": "资产名输出统一转义；CSP 保持为纵深防御。"
+  },
+  {
+   "id": 179695,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 业务逻辑",
+   "reasoning": "部分。WordPress unicode 文件名使 sanitize/unique_filename 返回 0，文件被存为无扩展名的 '-1'，Apache 按 HTML 渲染执行 JS——'文件名处理边界的 -1 命名'（sanitize 返回 0 的边界缺陷）链条有反直觉性，链路由上传→'-1' 文件名→HTML 渲染→管理员访问→提权完整；机制是文件名 sanitize 缺陷的巧妙变体。",
+   "attack_chain": "上传 unicode 文件名→unique_filename 返回 0→存为 -1→按 HTML 渲染→XSS→提权。",
+   "bypass_technique": "无绕过，利用 sanitize 返回 0 的边界命名缺陷。",
+   "defensive_insight": "文件名 sanitize 返回值校验；上传文件强制扩展名与 Content-Type；目录禁脚本渲染。"
+  },
+  {
+   "id": 2279759,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "部分。curl 保存 HSTS 到超长文件名时 tmp 重命名失败清空内容（HSTS 状态丢失→bypass）——文件操作边界缺陷，需构造超长 HSTS 文件名（条件具体），机制是边界文件名缺陷经典。",
+   "attack_chain": "单点：超长 HSTS 文件名→重命名失败→HSTS 状态清空→降级。",
+   "bypass_technique": "无绕过，利用文件名长度边界。",
+   "defensive_insight": "文件保存检查临时文件与目标长度；失败不丢原数据。"
+  },
+  {
+   "id": 126797,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "无法判断。仅引用 MFSA-2016-27（CVE-2016-1964）询问规则，无技术细节。",
+   "attack_chain": "无法确认。",
+   "bypass_technique": "无法确认。",
+   "defensive_insight": "升级 Firefox；XML 变换 UAF 修复。"
+  },
+  {
+   "id": 1262434,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "信息泄露 / 认证绕过 / 跨组件攻击链",
+   "reasoning": "是。Shopify 主题编辑器 oseid 参数经 Referer 泄露给第三方（分享按钮跳转），拿到后可 iframe 注入绕过店铺密码——'会话类参数经 Referer 泄露'（编辑器预览无 Referrer-Policy）+ 'oseid 即店铺密码通行证'，链路由编辑器→Referer→第三方→iframe 绕过完整；可抽象为通用判据（含权限的 URL 参数必须防 Referer 泄露+服务端绑定校验），复现步骤详尽。",
+   "attack_chain": "编辑器预览点分享→oseid 进 Referer→第三方捕获→iframe 注入 oseid→绕过店铺密码→浏览店铺。",
+   "bypass_technique": "借 Referer 泄露 oseid，用 iframe 注入绕过后台跳转限制。",
+   "defensive_insight": "编辑器预览加 Referrer-Policy: same-origin；oseid 绑定会话并限制第三方 referrer。"
+  },
+  {
+   "id": 658217,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。exchangemarketplace 的 ALLOW-FROM 不被多数浏览器支持致 clickjacking——XFO 值兼容性经典（同 198622），PoC 完整但机制成熟。",
+   "attack_chain": "单点：iframe 嵌套→诱导点击敏感操作。",
+   "bypass_technique": "无绕过，利用 ALLOW-FROM 无效。",
+   "defensive_insight": "用 CSP frame-ancestors 替代 ALLOW-FROM；跨浏览器验证。"
+  }
+ ]
+}

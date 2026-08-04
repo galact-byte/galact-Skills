@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 8,
+  "dropped": 12,
+  "avg_score": 4.6,
+  "top_n": [
+   1560324,
+   1019891,
+   474262,
+   963155,
+   189793
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 80118,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。这是搜索引擎缓存导致的敏感信息泄露，属于配置或管理疏忽，没有技术上的巧妙绕过，攻击链简单。",
+   "attack_chain": "搜索引擎抓取私有报告页面→缓存暴露标题和描述。",
+   "bypass_technique": "无，直接利用搜索引擎缓存。",
+   "defensive_insight": "确保私有页面不被搜索引擎索引，使用robots.txt或noindex。"
+  },
+  {
+   "id": 7929,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。允许上传任意文件到云存储是常见配置问题，没有绕过或攻击链，属于设计缺陷。",
+   "attack_chain": "上传恶意文件到S3→用于钓鱼或托管恶意内容。",
+   "bypass_technique": "无，直接利用上传功能。",
+   "defensive_insight": "限制上传文件类型和内容，对上传的文件进行安全扫描。"
+  },
+  {
+   "id": 4549,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。开放重定向是常见漏洞，没有绕过或攻击链，直接利用。",
+   "attack_chain": "构造恶意链接→用户点击→跳转到钓鱼网站。",
+   "bypass_technique": "无，直接利用未过滤的url参数。",
+   "defensive_insight": "对重定向URL进行白名单校验。"
+  },
+  {
+   "id": 1560324,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用curl对非安全cookie覆盖安全cookie的规则缺陷，通过HTTP注入cookie到HTTPS会话，实现会话固定。这是对库行为边界的巧妙利用，可抽象为通用条件。",
+   "attack_chain": "攻击者控制HTTP响应→注入cookie→受害者使用curl访问HTTPS→cookie被发送→会话固定。",
+   "bypass_technique": "利用curl对非安全cookie覆盖安全cookie的规则缺陷，通过HTTP注入cookie到HTTPS会话。",
+   "defensive_insight": "修复curl的cookie处理逻辑，确保安全cookie不被非安全cookie覆盖。"
+  },
+  {
+   "id": 2230842,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。描述的是Burp Suite的欺骗行为，但缺乏具体技术细节，且影响有限，无法判断真实性。",
+   "attack_chain": "无明确攻击链。",
+   "bypass_technique": "无。",
+   "defensive_insight": "无。"
+  },
+  {
+   "id": 1019891,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用Windows命名管道安全描述符配置错误，实现中间人攻击，窃取数据库通信。这是对系统调用行为的利用，攻击链完整。",
+   "attack_chain": "创建恶意管道实例→等待客户端连接→连接真实管道→转发并窃取数据。",
+   "bypass_technique": "利用命名管道安全描述符配置错误，创建恶意管道实例进行中间人攻击。",
+   "defensive_insight": "正确设置命名管道安全描述符，限制创建权限。"
+  },
+  {
+   "id": 164704,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，利用WAF绕过，但属于常见套路，没有新颖性。",
+   "attack_chain": "构造恶意请求→参数未过滤→反射XSS。",
+   "bypass_technique": "使用HTML标签绕过WAF。",
+   "defensive_insight": "对输出进行编码，使用安全的模板引擎。"
+  },
+  {
+   "id": 708917,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。登录接口缺少速率限制，是常见配置错误，没有绕过或攻击链。",
+   "attack_chain": "暴力破解登录→获取弱密码账户。",
+   "bypass_technique": "无，直接利用缺少速率限制。",
+   "defensive_insight": "实施严格的速率限制和账户锁定策略。"
+  },
+  {
+   "id": 229825,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。密码重置接口缺少速率限制，导致邮件轰炸，是常见配置错误。",
+   "attack_chain": "重复请求密码重置→发送大量邮件。",
+   "bypass_technique": "无，直接利用缺少速率限制。",
+   "defensive_insight": "对密码重置请求实施速率限制和验证码。"
+  },
+  {
+   "id": 833856,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 跨组件攻击链",
+   "reasoning": "部分。通过控制artifactName参数，使GCS客户端下载大对象导致内存耗尽，属于资源消耗型DoS，攻击链完整但技术点常见。",
+   "attack_chain": "构造恶意请求→控制artifactName→下载大对象→内存耗尽。",
+   "bypass_technique": "无，直接利用未限制的下载大小。",
+   "defensive_insight": "限制下载对象大小，对输入进行验证。"
+  },
+  {
+   "id": 1339356,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型XSS，但触发条件特殊（复制时执行），属于常见漏洞的轻微变形，没有新颖性。",
+   "attack_chain": "注入XSS payload→用户复制内容→触发执行。",
+   "bypass_technique": "无，直接利用未过滤输入。",
+   "defensive_insight": "对用户输入进行过滤和输出编码。"
+  },
+  {
+   "id": 165542,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。点击劫持是常见漏洞，没有绕过或攻击链，直接利用。",
+   "attack_chain": "iframe嵌入目标页面→诱导用户点击。",
+   "bypass_technique": "无，直接利用缺少X-Frame-Options。",
+   "defensive_insight": "添加X-Frame-Options或CSP frame-ancestors。"
+  },
+  {
+   "id": 230076,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 状态混淆",
+   "reasoning": "部分。账户删除后仍可通过密码重置接管，属于业务逻辑缺陷，思路值得借鉴，但步骤简单。",
+   "attack_chain": "删除账户→使用密码重置→重新激活并接管。",
+   "bypass_technique": "利用账户删除后密码重置功能未失效。",
+   "defensive_insight": "账户删除后应使所有会话和重置令牌失效。"
+  },
+  {
+   "id": 317332,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / IDOR",
+   "reasoning": "部分。通过跨商店的IDOR绕过权限控制，属于授权绕过，思路清晰，但场景具体。",
+   "attack_chain": "创建商店B→获取商店A的outlet ID→修改请求→添加register到商店A。",
+   "bypass_technique": "利用IDOR，修改outlet_id参数。",
+   "defensive_insight": "服务端校验用户对目标资源的权限。"
+  },
+  {
+   "id": 62827,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少邮件通知是功能缺陷，不是安全漏洞。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对敏感操作添加通知。"
+  },
+  {
+   "id": 189793,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / XSS",
+   "reasoning": "是。通过Android导出组件传递html参数，在WebView中执行JavaScript，实现XSS和潜在RCE。这是跨组件攻击链，思路新颖。",
+   "attack_chain": "恶意应用启动导出Activity→传递html参数→WebView执行JS→XSS或RCE。",
+   "bypass_technique": "利用导出组件和WebView的JavaScript执行。",
+   "defensive_insight": "限制导出组件，对传入参数进行验证，禁用WebView的JavaScript。"
+  },
+  {
+   "id": 227837,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。点击劫持是常见漏洞，没有绕过或攻击链，直接利用。",
+   "attack_chain": "iframe嵌入目标页面→诱导用户点击。",
+   "bypass_technique": "无，直接利用缺少X-Frame-Options。",
+   "defensive_insight": "添加X-Frame-Options或CSP frame-ancestors。"
+  },
+  {
+   "id": 1716286,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。CORS配置错误，允许任意Origin并携带凭据，是常见配置错误，没有绕过或攻击链。",
+   "attack_chain": "构造恶意页面→读取敏感数据。",
+   "bypass_technique": "无，直接利用CORS配置错误。",
+   "defensive_insight": "正确配置CORS白名单，避免使用通配符。"
+  },
+  {
+   "id": 474262,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / XSS",
+   "reasoning": "是。利用Rails的JavaScriptHelper未转义模板字符串，导致XSS。这是对框架行为的利用，可抽象为通用条件。",
+   "attack_chain": "注入模板字符串→未转义→执行JavaScript。",
+   "bypass_technique": "利用模板字符串的`${}`和反引号绕过转义。",
+   "defensive_insight": "修复Rails的JavaScriptHelper，转义模板字符串。"
+  },
+  {
+   "id": 963155,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 其他",
+   "reasoning": "是。通过伪造Content-Disposition和Content-Type，绕过WebTorrent验证，下载恶意文件，实现RCE。这是跨组件攻击链，思路新颖。",
+   "attack_chain": "构造恶意服务器→返回伪造头→WebTorrent误判→下载恶意文件→执行。",
+   "bypass_technique": "利用Content-Disposition和Content-Type伪造。",
+   "defensive_insight": "严格验证文件内容，不依赖响应头。"
+  }
+ ]
+}

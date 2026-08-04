@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 18,
+  "kept": 10,
+  "dropped": 8,
+  "avg_score": 5.4,
+  "top_n": [
+   1961655,
+   1888351,
+   375329,
+   209352,
+   165324
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 762510,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告正文是一首诗歌，没有描述任何实际漏洞或技术细节，无法判断真实性或边界条件。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "无"
+  },
+  {
+   "id": 1888351,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "信息泄露 / 配置错误 / 跨组件攻击链",
+   "reasoning": "是。一个看似无用的info.php脚本竟然缓存所有HTTP头，导致Cookie泄露和HTML注入。技术点在于调试脚本暴露了内部网络信息（如内网IP）并缓存用户数据，且与Akamai头结合形成跨组件信息泄露。",
+   "attack_chain": "攻击者发送带恶意头的请求→脚本缓存→受害者访问→缓存泄露Cookie和内部信息→攻击者利用。",
+   "bypass_technique": "利用调试脚本的缓存机制，无需绕过WAF即可窃取Cookie。",
+   "defensive_insight": "禁用不必要的调试端点，对缓存内容进行脱敏，避免缓存用户敏感头。"
+  },
+  {
+   "id": 1961655,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 授权绕过",
+   "reasoning": "是。Node.js权限模型通过重命名相对符号链接绕过，利用了符号链接解析的时机差异。技术点在于权限模型只检查原始路径，不检查重命名后的目标，导致越权访问。",
+   "attack_chain": "重命名现有相对符号链接→链接指向受限目录外→读取任意文件。",
+   "bypass_technique": "利用相对符号链接重定向，绕过路径检查。",
+   "defensive_insight": "权限模型应验证符号链接的最终目标，或禁止重命名符号链接。"
+  },
+  {
+   "id": 1444675,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 配置错误",
+   "reasoning": "部分。X-Forwarded-Host头导致开放重定向和内容欺骗，是常见的主机头注入，但结合了未验证邮件的业务逻辑，有一定变形。",
+   "attack_chain": "添加X-Forwarded-Host头→应用生成恶意链接→用户点击→重定向或内容注入。",
+   "bypass_technique": "利用X-Forwarded-Host头覆盖Host，无需复杂条件。",
+   "defensive_insight": "信任代理头时应验证来源，或使用标准Host头。"
+  },
+  {
+   "id": 209352,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "信息泄露 / 跨组件攻击链",
+   "reasoning": "是。密码重置链接通过Referer头泄露给第三方，导致账户接管。技术点在于第三方脚本自动加载，无需用户交互，且链接包含令牌和邮箱。",
+   "attack_chain": "用户点击重置链接→页面加载第三方资源→Referer泄露令牌→攻击者使用令牌重置密码。",
+   "bypass_technique": "利用Referer头泄露，无需用户点击第三方链接。",
+   "defensive_insight": "在敏感页面设置Referrer-Policy，或使用meta标签禁止发送Referer。"
+  },
+  {
+   "id": 1201396,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "认证绕过",
+   "reasoning": "否。会话固定攻击，通过手动设置cookie值，是成熟套路，无绕过或创新。",
+   "attack_chain": "攻击者获取会话ID→在受害者浏览器中设置→受害者登录→攻击者使用该会话。",
+   "bypass_technique": "无实质绕过，直接利用会话固定。",
+   "defensive_insight": "登录后应重新生成会话ID。"
+  },
+  {
+   "id": 375329,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 信息泄露",
+   "reasoning": "是。Brave浏览器对本地文件返回CORS头，允许HTML导入读取本地文件。技术点在于浏览器对file://协议的错误处理，导致本地文件读取。",
+   "attack_chain": "恶意HTML导入file:///etc/passwd→读取内容并显示。",
+   "bypass_technique": "利用link rel=import和CORS头，无需用户交互。",
+   "defensive_insight": "浏览器应禁止对file://协议返回CORS头，或限制导入。"
+  },
+  {
+   "id": 165324,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 类型混淆",
+   "reasoning": "是。通过Content-Type包含image/jpeg和text/html，绕过内容类型检查，导致存储XSS。技术点在于浏览器解析Content-Type时的宽松处理。",
+   "attack_chain": "上传恶意文件→服务端存储→浏览器解析为HTML→执行脚本。",
+   "bypass_technique": "利用Content-Type中的多个类型，浏览器忽略无效部分。",
+   "defensive_insight": "严格验证Content-Type，并设置Content-Disposition: attachment。"
+  },
+  {
+   "id": 49408,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。JDWP未授权访问导致RCE，是常见配置错误，无绕过或创新。",
+   "attack_chain": "直接连接JDWP端口→执行命令。",
+   "bypass_technique": "无，直接利用开放端口。",
+   "defensive_insight": "禁用JDWP或限制网络访问。"
+  },
+  {
+   "id": 1398617,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "子域名接管 / 配置错误",
+   "reasoning": "部分。文档中引用了不存在的GitHub账户，攻击者可以注册并托管恶意代码，导致供应链攻击。技术点在于文档中的链接未验证。",
+   "attack_chain": "注册被引用的GitHub账户→托管恶意代码→用户克隆执行。",
+   "bypass_technique": "利用未注册的账户名，无需复杂条件。",
+   "defensive_insight": "定期检查文档中的外部链接，确保账户存在。"
+  },
+  {
+   "id": 662287,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 业务逻辑",
+   "reasoning": "部分。RDoc语法中的图片链接未正确过滤属性，导致存储XSS和点击劫持。技术点在于RDoc解析器的缺陷。",
+   "attack_chain": "创建恶意RDoc页面→用户访问→点击劫持或XSS。",
+   "bypass_technique": "利用RDoc的图片链接语法绕过过滤。",
+   "defensive_insight": "加强RDoc解析器的属性过滤，限制class等属性。"
+  },
+  {
+   "id": 1070081,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。通过web.archive.org访问已公开的笔记，是常见的信息泄露，无技术含量。",
+   "attack_chain": "搜索web.archive.org中的笔记链接→访问。",
+   "bypass_technique": "无，直接利用公开存档。",
+   "defensive_insight": "在robots.txt中禁止存档，或使用认证机制。"
+  },
+  {
+   "id": 191689,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 类型混淆",
+   "reasoning": "是。mruby编译器对NODE_NEGATE未使用结果时错误生成代码，导致崩溃或潜在任意代码生成。技术点在于编译器未检查节点有效性。",
+   "attack_chain": "构造特殊输入→编译器错误→崩溃或代码执行。",
+   "bypass_technique": "利用编译器缺陷，无需复杂条件。",
+   "defensive_insight": "修复编译器对无效节点的处理。"
+  },
+  {
+   "id": 237927,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。存储XSS在模板的call for action按钮中，通过javascript:协议，是常见XSS，但结合了模板功能。",
+   "attack_chain": "创建模板→插入恶意URL→用户点击→执行脚本。",
+   "bypass_technique": "利用javascript:协议，无需复杂绕过。",
+   "defensive_insight": "过滤URL协议，限制为http/https。"
+  },
+  {
+   "id": 868561,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。CSRF修改用户资料，是常见漏洞，无绕过或创新。",
+   "attack_chain": "诱导用户访问恶意页面→自动提交表单→修改资料。",
+   "bypass_technique": "无，直接利用缺少CSRF令牌。",
+   "defensive_insight": "添加CSRF令牌。"
+  },
+  {
+   "id": 871071,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "命令注入",
+   "reasoning": "部分。gfc模块通过拼接命令导致命令注入，是常见问题，但PoC完整，且涉及npm生态。",
+   "attack_chain": "传入恶意message参数→拼接命令→执行任意命令。",
+   "bypass_technique": "利用引号闭合，注入命令。",
+   "defensive_insight": "使用execFile或spawn，避免拼接。"
+  },
+  {
+   "id": 159156,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "子域名接管",
+   "reasoning": "部分。通过Instapage 0day接管hacker.one子域，是子域名接管，但利用了第三方服务漏洞。",
+   "attack_chain": "利用Instapage漏洞→控制CNAME→托管恶意内容。",
+   "bypass_technique": "利用第三方服务漏洞，无需复杂条件。",
+   "defensive_insight": "定期检查DNS记录，移除未使用的CNAME。"
+  },
+  {
+   "id": 157996,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "竞争条件 / 业务逻辑",
+   "reasoning": "部分。优惠券兑换存在竞态条件，可多次使用，是常见逻辑漏洞，但利用异步请求。",
+   "attack_chain": "发送多个并发请求→优惠券多次兑换→叠加折扣。",
+   "bypass_technique": "利用竞态条件，无需复杂绕过。",
+   "defensive_insight": "使用原子操作或锁机制。"
+  },
+  {
+   "id": 887766,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。仅提交了CTF flag，没有漏洞描述，无法评估。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "无"
+  },
+  {
+   "id": 331489,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 配置错误",
+   "reasoning": "部分。Nextcloud客户端PIN锁可通过文件管理器绕过，因为文件被缓存到本地。技术点在于缓存未加密。",
+   "attack_chain": "打开文件→缓存到本地→通过文件管理器访问。",
+   "bypass_technique": "利用文件系统缓存，无需复杂条件。",
+   "defensive_insight": "加密本地缓存，或限制文件管理器访问。"
+  }
+ ]
+}

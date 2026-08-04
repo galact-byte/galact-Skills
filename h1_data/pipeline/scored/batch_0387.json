@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1654310,
+   184698,
+   1113289,
+   74004,
+   185899
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 137756,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 其他",
+   "reasoning": "否。Host header 缓存投毒是已知攻击模式，报告仅描述理论风险，无具体利用链或绕过，且 substate 为 informative，信息不足。",
+   "attack_chain": "控制 Host 头 → 缓存投毒 → 影响缓存代理用户。",
+   "bypass_technique": "无实质绕过，依赖 Host 头未验证。",
+   "defensive_insight": "缓存键应包含 Host 头，并验证 Host 合法性。"
+  },
+  {
+   "id": 1113289,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。通过篡改 issue_type 参数从 issue 改为 test_case，绕过角色权限限制，属于参数篡改导致的授权绕过，思路简洁且可复用。",
+   "attack_chain": "Guest 用户 → 构造创建 issue 请求 → 篡改 issue_type 为 test_case → 创建 test_case。",
+   "bypass_technique": "参数篡改：修改隐藏字段 issue_type 绕过服务端角色校验。",
+   "defensive_insight": "服务端应基于用户角色而非客户端参数决定操作权限，对 issue_type 等关键字段进行白名单校验。"
+  },
+  {
+   "id": 74004,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "内存破坏 / 其他",
+   "reasoning": "是。通过超长 multipart boundary 触发栈缓冲区溢出，属于经典 C 代码缺陷，但利用条件简单（仅需构造 HTTP 请求），且可导致 RCE，具有高影响。",
+   "attack_chain": "构造超长 boundary → 触发 strcpy 溢出 → 覆盖栈 → 可能 RCE。",
+   "bypass_technique": "利用 strcpy 无边界检查，通过超长输入覆盖栈。",
+   "defensive_insight": "使用 strncpy 或动态分配，对输入长度进行校验。"
+  },
+  {
+   "id": 184698,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。通过修改邀请接口的 room 和 responder 参数，将攻击者加入他人正在进行的私人通话，实现窃听。这是对即时通讯应用通话功能的逻辑漏洞，思路巧妙且影响严重。",
+   "attack_chain": "获取房间 ID → 构造邀请请求 → 修改 room 和 responder → 加入通话窃听。",
+   "bypass_technique": "参数篡改：修改邀请接口的 room 和 responder 绕过权限检查。",
+   "defensive_insight": "服务端应验证邀请者是否有权邀请他人加入特定房间，并限制 responder 必须为当前用户。"
+  },
+  {
+   "id": 496285,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 其他",
+   "reasoning": "是。利用 snapd API 的未授权访问，通过 Unix socket 创建恶意 snap 包实现本地提权，属于系统服务配置缺陷，但已有公开 exploit，思路清晰。",
+   "attack_chain": "访问 snapd API → 创建恶意 snap → 安装 → 获取 root。",
+   "bypass_technique": "利用 snapd 的 REST API 未授权访问，通过恶意 snap 包提权。",
+   "defensive_insight": "限制 snapd API 的访问权限，仅允许 root 或特定用户。"
+  },
+  {
+   "id": 208480,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。子域名配置错误导致浏览器警告，属于常见配置问题，无安全影响，仅影响用户信任。",
+   "attack_chain": "访问错误配置的子域 → 浏览器显示警告。",
+   "bypass_technique": "无。",
+   "defensive_insight": "正确配置 TLS 证书和 DNS 记录。"
+  },
+  {
+   "id": 250729,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS / 配置错误",
+   "reasoning": "否。通过 URL 末尾添加 % 或 %\" 导致 CSP 失效，属于错误页面 CSP 缺失，但利用需要用户交互（inspect element），且实际为自 XSS，影响有限。",
+   "attack_chain": "构造恶意 URL → 触发错误页面 → 用户手动执行 payload。",
+   "bypass_technique": "利用错误页面未应用 CSP，通过 URL 参数注入。",
+   "defensive_insight": "确保所有页面（包括错误页）应用 CSP，并避免使用 unsafe-inline。"
+  },
+  {
+   "id": 407763,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "是。利用浏览器后退按钮和缓存控制不当，未授权用户可查看私有项目内容，属于缓存配置缺陷，思路简单但影响较大。",
+   "attack_chain": "登录访问私有项目 → 退出登录 → 后退按钮 → 查看缓存内容。",
+   "bypass_technique": "利用浏览器缓存和后退按钮，绕过访问控制。",
+   "defensive_insight": "对敏感页面设置 Cache-Control: no-store，并确保退出登录后清除缓存。"
+  },
+  {
+   "id": 12949,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "开放重定向",
+   "reasoning": "否。典型的开放重定向，通过 origin 参数控制跳转，成熟套路，无新意。",
+   "attack_chain": "构造恶意链接 → 用户点击 → 重定向到攻击者网站。",
+   "bypass_technique": "无，直接利用未过滤的 origin 参数。",
+   "defensive_insight": "对重定向 URL 进行白名单校验，禁止跳转到外部域名。"
+  },
+  {
+   "id": 174228,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。CSRF token 放在 cookie 中属于常见设计缺陷，但报告仅描述问题，无实际攻击场景，且 substate 为 informative，信息不足。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "CSRF token 应放在表单或请求头中，而非 cookie。"
+  },
+  {
+   "id": 1654310,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / XSS",
+   "reasoning": "是。CVE-2022-32209 的修复不完整，因为修复只处理了通过 options 传入的标签列表，而忽略了类属性中的配置，导致在特定配置下仍可绕过 sanitizer 实现 XSS。这展示了框架行为利用和修复不完整的典型问题。",
+   "attack_chain": "配置允许 select 和 style → 构造 payload → 绕过 sanitizer → XSS。",
+   "bypass_technique": "利用修复不完整，通过类属性配置绕过 sanitizer 的过滤。",
+   "defensive_insight": "修复漏洞时需全面考虑所有配置路径，并添加回归测试。"
+  },
+  {
+   "id": 156510,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。目录列表开启属于常见配置错误，无技术含量，直接访问即可。",
+   "attack_chain": "访问目录 → 查看文件列表。",
+   "bypass_technique": "无。",
+   "defensive_insight": "关闭目录列表，或对敏感目录进行访问控制。"
+  },
+  {
+   "id": 294201,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "子域名接管",
+   "reasoning": "是。CNAME 指向未注册的 S3 bucket，导致子域名可被接管，属于经典子域名接管，但利用简单，影响较大。",
+   "attack_chain": "发现 CNAME 指向未注册 bucket → 注册 bucket → 上传内容 → 控制子域名。",
+   "bypass_technique": "利用 DNS CNAME 记录指向未注册资源。",
+   "defensive_insight": "定期检查 DNS 记录，确保所有 CNAME 指向的资源已注册。"
+  },
+  {
+   "id": 1201134,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。典型的反射型 XSS，通过 username 参数注入，成熟套路，无新意。",
+   "attack_chain": "构造恶意 URL → 用户点击 → 执行脚本。",
+   "bypass_technique": "无，直接注入。",
+   "defensive_insight": "对输入进行编码或过滤，使用 CSP。"
+  },
+  {
+   "id": 225653,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "CSRF / 认证绕过",
+   "reasoning": "是。通过 CSRF 攻击第三方认证流程，将攻击者的 Ubuntu 账户关联到受害者账户，实现账户接管。这是对 OAuth/OpenID 流程的 CSRF 攻击，思路巧妙且影响严重。",
+   "attack_chain": "构造 CSRF 表单 → 受害者提交 → 攻击者账户关联到受害者 → 登录受害者账户。",
+   "bypass_technique": "利用第三方认证回调缺少 CSRF 防护，通过 CSRF 绑定攻击者账户。",
+   "defensive_insight": "在第三方认证回调中验证 state 参数，防止 CSRF。"
+  },
+  {
+   "id": 185899,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "内存破坏 / 其他",
+   "reasoning": "是。通过数组乘法操作触发整数溢出，导致内存越界写，属于类型混淆和边界检查缺失，利用特定 Ruby 代码可导致崩溃，展示了语言实现中的边界问题。",
+   "attack_chain": "构造特定数组操作 → 触发整数溢出 → 内存越界写 → 崩溃。",
+   "bypass_technique": "利用整数溢出绕过大小检查。",
+   "defensive_insight": "在数组大小计算时考虑溢出，使用安全整数运算。"
+  },
+  {
+   "id": 39486,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。通过密码找回接口的响应差异枚举邮箱，属于常见用户枚举，无技术含量。",
+   "attack_chain": "输入邮箱 → 观察响应差异 → 判断邮箱是否存在。",
+   "bypass_technique": "无，直接利用响应差异。",
+   "defensive_insight": "统一响应信息，添加速率限制。"
+  },
+  {
+   "id": 159878,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 存储型XSS",
+   "reasoning": "是。通过修改头像属性值注入 XSS payload，导致渲染服务返回 500 错误时在响应中执行脚本，属于存储型 XSS 的变体，利用错误页面触发。",
+   "attack_chain": "修改头像属性 → 提交 → 渲染时触发错误 → 执行脚本。",
+   "bypass_technique": "利用错误页面未过滤，通过属性值注入。",
+   "defensive_insight": "对用户输入进行严格过滤，错误页面也需应用安全措施。"
+  },
+  {
+   "id": 299728,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 存储型XSS",
+   "reasoning": "是。Markdown 解析器对特定字符组合处理不当，导致可注入恶意标签，属于解析器行为利用，但影响有限。",
+   "attack_chain": "提交恶意 Markdown → 解析器生成错误 HTML → 执行脚本。",
+   "bypass_technique": "利用 Markdown 解析器的特殊字符交互。",
+   "defensive_insight": "使用安全的 Markdown 解析器，并对输出进行过滤。"
+  },
+  {
+   "id": 177619,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS / 开放重定向",
+   "reasoning": "否。通过 base64 编码的 javascript URL 注入 XSS，属于常见反射型 XSS，无新意。",
+   "attack_chain": "构造恶意 URL → 用户点击 → 执行脚本。",
+   "bypass_technique": "无，直接注入。",
+   "defensive_insight": "对 back 参数进行白名单校验，禁止 javascript: 协议。"
+  }
+ ]
+}

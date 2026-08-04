@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1348154,
+   329645,
+   608577,
+   374737,
+   1334111
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1348154,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "命令注入 / 跨组件攻击链",
+   "reasoning": "是。在PDF下载参数中直接注入反引号执行系统命令，且能外带文件内容，属于典型的命令注入但利用方式直接且影响严重。技术点在于参数未经过滤直接拼入系统命令，且通过curl外带数据，形成完整的攻击链。与普通命令注入的区别在于其直接导致RCE且可外带敏感文件，具有高危害性。",
+   "attack_chain": "构造恶意date_start参数→注入curl命令→服务器执行并外带/etc/passwd→攻击者获取文件内容。",
+   "bypass_technique": "利用反引号执行系统命令，绕过参数过滤。",
+   "defensive_insight": "对用户输入进行严格过滤和转义，避免直接拼入系统命令；使用白名单验证参数格式。"
+  },
+  {
+   "id": 229577,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。允许设置与旧密码相同的密码，属于常见的安全配置缺失，无技术亮点，攻击链简单，无绕过。",
+   "attack_chain": "用户修改密码为旧密码→系统接受。",
+   "bypass_technique": "无，直接利用配置缺失。",
+   "defensive_insight": "实施密码历史记录，禁止重复使用旧密码。"
+  },
+  {
+   "id": 878420,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "命令注入 / 框架行为利用",
+   "reasoning": "是。npm模块将用户输入直接格式化进命令字符串，导致命令注入，属于供应链攻击的典型。技术点在于模块设计缺陷，未对输入进行转义。与普通命令注入的区别在于其影响面广（npm包），且可远程触发，具有高启发性。",
+   "attack_chain": "用户输入恶意URI→模块拼接命令→执行任意命令→RCE。",
+   "bypass_technique": "利用分号和注释符注入额外命令。",
+   "defensive_insight": "避免使用字符串拼接命令，使用参数化执行或严格转义。"
+  },
+  {
+   "id": 220150,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。目录访问控制缺失，属于常见配置错误，无技术亮点，无绕过。",
+   "attack_chain": "直接访问受保护目录→返回200。",
+   "bypass_technique": "无，直接利用配置错误。",
+   "defensive_insight": "正确配置目录访问权限，禁止未授权访问。"
+  },
+  {
+   "id": 374737,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "SSRF / 配置错误",
+   "reasoning": "是。利用Sentry的source code scraping功能，通过构造错误报告中的filename参数触发盲SSRF，属于配置错误导致的SSRF。技术点在于Sentry的默认配置不安全，且攻击者可控filename。与普通SSRF的区别在于其利用第三方组件的配置缺陷，且可内网探测，具有通用性。",
+   "attack_chain": "构造恶意错误报告→Sentry解析filename→发起GET请求到攻击者服务器→盲SSRF。",
+   "bypass_technique": "利用Sentry的source code scraping功能，通过filename参数控制请求目标。",
+   "defensive_insight": "关闭Sentry的source code scraping功能，或对filename参数进行白名单校验。"
+  },
+  {
+   "id": 608577,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用Windows下低权限用户可创建目录的特性，在curl的OPENSSLDIR路径下放置恶意openssl.cnf，加载恶意引擎实现提权。技术点在于利用OpenSSL配置加载机制和Windows文件系统权限，属于协议行为利用。与普通提权漏洞的区别在于其利用的是构建配置缺陷，且可跨平台影响，具有通用性。",
+   "attack_chain": "创建恶意openssl.cnf→curl启动时加载→加载恶意DLL→任意代码执行。",
+   "bypass_technique": "利用Windows目录创建权限和OpenSSL配置加载机制。",
+   "defensive_insight": "构建时使用安全路径，或限制低权限用户对配置目录的写权限。"
+  },
+  {
+   "id": 426147,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 配置错误",
+   "reasoning": "部分。CORS配置错误，动态反射Origin且允许凭据，导致账户接管。技术点在于Origin校验不严格，可被包含niche.co的域名绕过。与普通CORS漏洞的区别在于其影响严重（ATO），但技术思路常见。",
+   "attack_chain": "构造恶意页面→受害者访问→携带凭据请求API→数据泄露。",
+   "bypass_technique": "利用Origin包含niche.co的域名绕过校验。",
+   "defensive_insight": "使用白名单校验Origin，避免动态反射。"
+  },
+  {
+   "id": 1213181,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 信息泄露",
+   "reasoning": "是。curl的metalink功能在下载时会将凭据发送到其他主机，即使协议不安全，属于协议行为利用。技术点在于metalink的凭据复用机制，与HTTP重定向不同，不会限制主机。与普通凭据泄露的区别在于其利用的是curl的特定功能，且可被MitM截获，具有通用性。",
+   "attack_chain": "构造恶意metalink文件→curl下载时发送凭据到其他主机→凭据泄露。",
+   "bypass_technique": "利用metalink的凭据复用机制，绕过主机限制。",
+   "defensive_insight": "限制metalink下载时的凭据发送范围，或使用安全协议。"
+  },
+  {
+   "id": 121382,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。PHP处理器缺失导致源码泄露，属于常见配置错误，无技术亮点。",
+   "attack_chain": "访问PHP文件→服务器返回源码。",
+   "bypass_technique": "无，直接利用配置错误。",
+   "defensive_insight": "正确配置PHP处理器，禁止源码泄露。"
+  },
+  {
+   "id": 101104,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "子域名接管",
+   "reasoning": "否。子域名指向过期服务，属于常见子域名接管，无技术亮点。",
+   "attack_chain": "子域名指向过期服务→攻击者注册服务→接管。",
+   "bypass_technique": "无，直接利用过期DNS记录。",
+   "defensive_insight": "定期清理过期DNS记录，监控子域名状态。"
+  },
+  {
+   "id": 1334111,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 认证绕过",
+   "reasoning": "是。curl在IMAP/POP3/FTP中，当能力命令失败或服务器返回特定响应时，会静默忽略--ssl-reqd，导致TLS降级。技术点在于协议状态机处理缺陷，属于协议行为利用。与普通TLS降级的区别在于其利用的是curl的特定实现，且可被MitM利用，具有通用性。",
+   "attack_chain": "MitM篡改服务器响应→curl忽略TLS要求→明文传输。",
+   "bypass_technique": "利用服务器返回错误或特定响应码，使curl跳过TLS。",
+   "defensive_insight": "修复curl的协议处理逻辑，确保--ssl-reqd始终生效。"
+  },
+  {
+   "id": 674426,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 业务逻辑",
+   "reasoning": "部分。存储型XSS，但需要API或第三方登录才能注入，属于业务逻辑绕过。技术点在于API和社交登录未过滤名称，导致XSS。与普通XSS的区别在于其利用的是API和第三方信任，但思路常见。",
+   "attack_chain": "通过API或社交登录创建恶意名称→用户查看资料→XSS执行。",
+   "bypass_technique": "利用API或社交登录绕过前端过滤。",
+   "defensive_insight": "服务端对所有输入进行过滤和编码，不依赖前端。"
+  },
+  {
+   "id": 329645,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 认证绕过",
+   "reasoning": "是。LibreSSL和BoringSSL对X509_VERIFY_PARAM_set1_host的实现与OpenSSL不同，导致主机名验证被静默忽略，属于协议行为利用。技术点在于API实现差异，且影响多个应用。与普通证书验证漏洞的区别在于其利用的是库的兼容性问题，影响面广，具有通用性。",
+   "attack_chain": "应用调用set1_host→库忽略验证→接受任意证书→MitM。",
+   "bypass_technique": "利用库实现差异，使主机名验证失效。",
+   "defensive_insight": "使用标准库并验证主机名，或修复库实现。"
+  },
+  {
+   "id": 43846,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。CSRF token不变化，导致可批量关注，属于常见CSRF缺陷，无技术亮点。",
+   "attack_chain": "利用固定token批量关注用户。",
+   "bypass_technique": "无，直接利用token不更新。",
+   "defensive_insight": "每次请求生成新token，并验证来源。"
+  },
+  {
+   "id": 236276,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。信息不足，仅提到弱密码加密，无具体细节。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "使用强密码哈希算法。"
+  },
+  {
+   "id": 168165,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "是。通过colorbox插件将任意URL内容插入DOM，绕过WAF和XSS Auditor，实现DOM XSS。技术点在于利用第三方插件的行为，且需要用户交互。与普通XSS的区别在于其利用插件功能绕过防御，且攻击链完整。",
+   "attack_chain": "构造恶意链接→受害者点击→colorbox加载恶意内容→XSS执行。",
+   "bypass_technique": "利用colorbox的URL插入功能，绕过WAF和XSS Auditor。",
+   "defensive_insight": "对第三方插件进行安全审计，限制其加载外部内容。"
+  },
+  {
+   "id": 250273,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "命令注入",
+   "reasoning": "部分。Image_lib中exec函数未转义路径，导致命令注入。技术点在于文件名可控，但需要上传恶意文件。与普通命令注入的区别在于其利用的是图像处理库的缺陷，但思路常见。",
+   "attack_chain": "上传恶意文件名→触发图像处理→执行命令。",
+   "bypass_technique": "利用文件名注入命令。",
+   "defensive_insight": "使用escapeshellarg转义路径参数。"
+  },
+  {
+   "id": 1044698,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "SQL注入",
+   "reasoning": "部分。时间盲注，注入点在JSON参数中，属于常见SQL注入，但PoC完整。",
+   "attack_chain": "构造恶意JSON→注入SQL→时间延迟。",
+   "bypass_technique": "无，直接利用未过滤参数。",
+   "defensive_insight": "参数化查询，过滤特殊字符。"
+  },
+  {
+   "id": 916704,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "IDOR / 授权绕过",
+   "reasoning": "部分。附件ID可枚举，导致越权访问，属于常见IDOR，但影响较大。",
+   "attack_chain": "枚举附件ID→访问其他用户附件。",
+   "bypass_technique": "无，直接利用ID可预测。",
+   "defensive_insight": "实施访问控制，使用不可预测的ID。"
+  },
+  {
+   "id": 167911,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。仅提供bug链接，无具体细节，无法判断真实性。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "更新PHP版本。"
+  }
+ ]
+}

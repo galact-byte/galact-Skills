@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.4,
+  "top_n": [
+   1071832,
+   893922,
+   495382,
+   300532,
+   1083734
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 300532,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 业务逻辑",
+   "reasoning": "是。存储型XSS通过事件名称注入，利用管理员查看日历事件时触发，形成跨用户攻击链（低权限用户→管理员）。技术点在于事件名称字段未过滤HTML，且发布事件后管理员自动触发，无需交互。区别于普通存储XSS，此案例展示了权限提升路径，且PoC完整。",
+   "attack_chain": "低权限用户创建恶意事件→发布→管理员查看日历→XSS执行→窃取管理员会话或操作。",
+   "bypass_technique": "利用事件名称字段未过滤，注入img标签onerror事件。",
+   "defensive_insight": "对所有用户输入进行HTML编码，尤其在管理界面渲染时；实施CSP策略。"
+  },
+  {
+   "id": 1762927,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "信息泄露",
+   "reasoning": "否。报告内容为模板占位符，无具体漏洞细节，无法判断真实性。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "无"
+  },
+  {
+   "id": 301812,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "部分。目录列表暴露WEB-INF，可下载class文件反编译获取源码，属于配置错误导致的源码泄露。技术点在于未禁用目录列表，但利用方式直接，无绕过。",
+   "attack_chain": "访问/WEB-INF/→目录列表→下载class→反编译→获取源码。",
+   "bypass_technique": "无，直接利用目录列表。",
+   "defensive_insight": "禁用目录列表，对敏感目录设置访问控制。"
+  },
+  {
+   "id": 245340,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 状态混淆",
+   "reasoning": "是。通过角色切换后，再次点击编辑按钮绕过权限检查，属于状态混淆导致的授权绕过。技术点在于前端未同步后端权限状态，第二次请求未重新校验。",
+   "attack_chain": "创建私有排行榜→邀请成员→切换角色→尝试编辑→首次被拒→再次点击→绕过。",
+   "bypass_technique": "利用前端状态与后端权限不同步，重复请求绕过。",
+   "defensive_insight": "每次操作都进行后端权限校验，不依赖前端状态。"
+  },
+  {
+   "id": 495382,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "命令注入 / 框架行为利用",
+   "reasoning": "是。Notepad++将自定义搜索引擎URL直接传给ShellExecute，导致命令注入。技术点在于ShellExecute对URL和命令的解析差异，可执行任意命令。区别于普通命令注入，此案例展示了桌面应用对系统调用的误用，且PoC简单。",
+   "attack_chain": "设置搜索引擎为恶意命令→选择文本→搜索→ShellExecute执行命令。",
+   "bypass_technique": "利用ShellExecute对URL和命令的解析差异，将命令作为URL传入。",
+   "defensive_insight": "对用户输入进行严格校验，使用安全的API执行外部命令。"
+  },
+  {
+   "id": 1530581,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。CORS配置错误反射任意Origin，属于常见配置问题，无绕过或创新。",
+   "attack_chain": "构造恶意页面→诱导受害者访问→窃取数据。",
+   "bypass_technique": "无，直接利用错误配置。",
+   "defensive_insight": "白名单校验Origin，不反射任意域。"
+  },
+  {
+   "id": 906226,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑 / 配置错误",
+   "reasoning": "否。未验证邮箱即可注册，导致可滥用发送预览邮件功能进行DoS，属于业务逻辑缺陷，但无绕过或创新。",
+   "attack_chain": "注册未验证邮箱→发送预览邮件→重放请求→资源耗尽。",
+   "bypass_technique": "无，利用未验证邮箱和缺乏速率限制。",
+   "defensive_insight": "强制邮箱验证，限制发送频率。"
+  },
+  {
+   "id": 928255,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 认证绕过",
+   "reasoning": "是。通过伪造邮件触发GDPR删除请求，无需用户交互即可删除账户。技术点在于邮件验证缺失，利用SMTP伪造。区别于普通账户删除，此案例展示了流程设计缺陷，且影响严重。",
+   "attack_chain": "伪造受害者邮件→发送至GDPR请求邮箱→触发删除流程→账户被删。",
+   "bypass_technique": "利用邮件伪造和缺乏二次验证。",
+   "defensive_insight": "增加多因素验证，如DOB或政府ID。"
+  },
+  {
+   "id": 996122,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "部分。会议房间无密码且会话不失效，可暴力破解进入，属于配置错误。技术点在于会话管理缺陷，但利用方式直接。",
+   "attack_chain": "猜测会议ID→进入房间→获取聊天记录和文件。",
+   "bypass_technique": "无，利用无密码和会话不失效。",
+   "defensive_insight": "强制会议密码，设置会话超时。"
+  },
+  {
+   "id": 943487,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SQL注入",
+   "reasoning": "否。GET参数时间盲注，经典套路，无绕过或创新。",
+   "attack_chain": "单点：bldID参数→sleep注入。",
+   "bypass_technique": "无，直接利用未过滤参数。",
+   "defensive_insight": "参数化查询。"
+  },
+  {
+   "id": 1088966,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑",
+   "reasoning": "部分。沙箱程序允许邀请成员，与描述不符，属于业务逻辑缺陷。技术点在于功能未按文档限制，但无绕过。",
+   "attack_chain": "创建沙箱程序→邀请成员→违反限制。",
+   "bypass_technique": "无，直接利用功能。",
+   "defensive_insight": "确保功能与文档一致，实施后端限制。"
+  },
+  {
+   "id": 715740,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "信息泄露",
+   "reasoning": "否。无法复现，信息不足，可能为误配置。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "无"
+  },
+  {
+   "id": 893922,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。IP-in-IP协议默认路由任意流量，可被利用进行反射DDoS和绕过ACL。技术点在于协议设计缺陷，影响广泛。区别于普通配置错误，此案例展示了协议层面的系统性风险。",
+   "attack_chain": "发送IP-in-IP包→设备解封装→转发→反射DDoS或绕过ACL。",
+   "bypass_technique": "利用IP-in-IP协议默认接受任意源和目的地址。",
+   "defensive_insight": "禁用IP-in-IP或配置严格过滤。"
+  },
+  {
+   "id": 178742,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 状态混淆",
+   "reasoning": "是。发送特定消息导致用户无法访问消息系统，属于业务逻辑缺陷。技术点在于消息解析器对特殊URL处理不当，形成DoS。",
+   "attack_chain": "发送恶意消息→接收者消息系统崩溃→无法访问。",
+   "bypass_technique": "利用URL解析器对特殊字符处理不当。",
+   "defensive_insight": "对消息内容进行严格过滤和长度限制。"
+  },
+  {
+   "id": 1065517,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。CTF解题脚本，非真实漏洞，无启发性。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "无"
+  },
+  {
+   "id": 1083734,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "是。通过恶意博客URL注入XSS，在用户查看评论时触发。技术点在于URL未过滤，且跨组件（博客→评论系统→用户页面）。区别于普通存储XSS，此案例展示了跨站数据流。",
+   "attack_chain": "攻击者创建恶意博客→用户评论→评论系统渲染URL→XSS执行。",
+   "bypass_technique": "利用URL中的特殊字符绕过过滤。",
+   "defensive_insight": "对URL进行严格编码，使用CSP。"
+  },
+  {
+   "id": 1434179,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "子域名接管 / 配置错误",
+   "reasoning": "部分。文档链接指向未注册域名，可被接管，属于供应链风险。技术点在于域名过期未处理。",
+   "attack_chain": "购买未注册域名→托管恶意内容→用户访问→RCE。",
+   "bypass_technique": "无，利用域名未注册。",
+   "defensive_insight": "定期检查文档链接，使用内部域名。"
+  },
+  {
+   "id": 729040,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。公开Gist泄露内部信息，属于配置错误，无绕过或创新。",
+   "attack_chain": "搜索公开Gist→发现敏感信息。",
+   "bypass_technique": "无，直接利用公开资源。",
+   "defensive_insight": "教育员工不要公开敏感信息。"
+  },
+  {
+   "id": 1071832,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "权限提升 / 跨组件攻击链",
+   "reasoning": "是。通过MSI修复功能加载恶意DLL，利用MsiExec提权。技术点在于MSI文件可被非管理员访问，且修复过程加载临时目录中的DLL。区别于普通LPE，此案例展示了安装包设计缺陷。",
+   "attack_chain": "非管理员执行msiexec /fa→MSI修复→加载恶意DLL→提权至SYSTEM。",
+   "bypass_technique": "利用MSI修复功能加载可控DLL。",
+   "defensive_insight": "限制MSI文件访问，使用安全目录存储临时文件。"
+  },
+  {
+   "id": 1430405,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "供应链攻击 / 配置错误",
+   "reasoning": "部分。文档链接指向已改名的GitHub仓库，可被接管，属于供应链风险。技术点在于仓库改名后未更新链接。",
+   "attack_chain": "注册旧用户名→创建恶意仓库→用户访问→RCE。",
+   "bypass_technique": "无，利用仓库改名。",
+   "defensive_insight": "定期检查文档链接，使用永久链接。"
+  }
+ ]
+}

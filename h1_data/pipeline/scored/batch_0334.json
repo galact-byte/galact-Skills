@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1583680,
+   293016,
+   273647,
+   1434056,
+   163067
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 293016,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 认证绕过",
+   "reasoning": "是。利用API端点将session_id直接反射到Set-Cookie，实现CSRF登录受害者到攻击者账户。这种通过CSRF强制登录（Login CSRF）的变体，将登录状态与攻击者绑定，进而可能诱导受害者泄露敏感信息。技术点在于API设计缺陷：未验证session_id的归属，且CSRF防护缺失。与普通CSRF不同，这里攻击的是登录流程而非操作，思路巧妙。",
+   "attack_chain": "受害者已登出→攻击者获取自己的session_id→构造CSRF页面→受害者访问→浏览器设置攻击者session cookie→受害者以攻击者身份登录。",
+   "bypass_technique": "利用API端点接受任意session_id并设置cookie，结合CSRF实现登录劫持。",
+   "defensive_insight": "API端点应验证session_id的有效性和归属，并实施CSRF防护（如SameSite、CSRF token）。"
+  },
+  {
+   "id": 674757,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。通过UI新功能泄露程序支付总额，属于信息泄露的常见场景，无特殊绕过或攻击链。",
+   "attack_chain": "无，直接观察UI。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对敏感信息进行权限控制，避免在UI中展示。"
+  },
+  {
+   "id": 288846,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误",
+   "reasoning": "部分。优惠券端点无速率限制，可暴力破解。属于常见暴力破解问题，但端点暴露和缺乏限速是典型配置错误，思路简单但有效。",
+   "attack_chain": "单点：暴力破解优惠券。",
+   "bypass_technique": "无绕过，直接利用无速率限制。",
+   "defensive_insight": "对敏感端点实施速率限制和验证码。"
+  },
+  {
+   "id": 229869,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑",
+   "reasoning": "部分。添加邮箱无需密码验证，属于敏感操作缺少认证，可导致账户接管。思路常见但影响明确，属于业务逻辑缺陷。",
+   "attack_chain": "单点：添加邮箱→验证→接管。",
+   "bypass_technique": "无绕过，直接利用缺少密码验证。",
+   "defensive_insight": "敏感操作（如添加邮箱）应要求密码或二次验证。"
+  },
+  {
+   "id": 251358,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。存储型XSS通过构造payload逃逸JavaScript上下文，利用引号和括号闭合，属于常见的XSS变形，但payload构造巧妙，且影响其他用户。",
+   "attack_chain": "单点：存储payload→触发执行。",
+   "bypass_technique": "利用引号和括号闭合JavaScript代码。",
+   "defensive_insight": "对用户输入进行上下文感知的编码和过滤。"
+  },
+  {
+   "id": 927413,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告内容模糊，仅提及发现多个漏洞但无具体细节，无法判断真实性。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "无。"
+  },
+  {
+   "id": 343928,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少Secure标志的cookie，需要MITM攻击，属于常见配置问题，无新意。",
+   "attack_chain": "单点：MITM窃取cookie。",
+   "bypass_technique": "无。",
+   "defensive_insight": "设置Secure标志。"
+  },
+  {
+   "id": 159460,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。存储型XSS在应用名称参数，payload简单，但影响其他用户，属于常见XSS。",
+   "attack_chain": "单点：存储payload→触发。",
+   "bypass_technique": "无绕过，直接注入。",
+   "defensive_insight": "对输入进行编码和过滤。"
+  },
+  {
+   "id": 708076,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。500错误泄露路径，属于常见信息泄露，无特殊之处。",
+   "attack_chain": "单点：触发错误→泄露路径。",
+   "bypass_technique": "无。",
+   "defensive_insight": "配置错误处理，避免泄露内部信息。"
+  },
+  {
+   "id": 176065,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "部分。Android WebView中的HTML注入，通过构造URL导致注入，涉及WebView组件，但属于常见移动端XSS。",
+   "attack_chain": "构造恶意URL→WebView加载→注入HTML。",
+   "bypass_technique": "利用URL参数注入HTML。",
+   "defensive_insight": "在WebView中正确编码输出，限制加载内容。"
+  },
+  {
+   "id": 1583680,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。Undici的ProxyAgent未使用CONNECT隧道，而是直接发送绝对URL，导致HTTPS证书验证失效，代理可MitM。这是对HTTP代理协议行为的错误利用，影响Node.js全局fetch，跨组件且可通用化。",
+   "attack_chain": "配置HTTP代理→请求HTTPS→代理可篡改→数据泄露。",
+   "bypass_technique": "利用代理实现中未使用CONNECT，直接发送绝对URL，绕过证书验证。",
+   "defensive_insight": "代理实现应使用CONNECT隧道，并正确验证上游证书。"
+  },
+  {
+   "id": 4184,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。允许javascript:链接，但CSP阻止，仅影响旧浏览器，属于常见XSS变体。",
+   "attack_chain": "单点：点击链接→执行脚本。",
+   "bypass_technique": "无。",
+   "defensive_insight": "限制URL协议，加强CSP。"
+  },
+  {
+   "id": 7923,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。Apache默认图标目录可访问，属于配置错误，无实际危害。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "移除不必要的目录。"
+  },
+  {
+   "id": 1125329,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "命令注入",
+   "reasoning": "部分。Jenkins未授权RCE，属于常见配置错误，但影响严重，且步骤清晰。",
+   "attack_chain": "单点：访问_script→执行命令。",
+   "bypass_technique": "无绕过，直接利用未授权访问。",
+   "defensive_insight": "限制Jenkins脚本接口的访问权限。"
+  },
+  {
+   "id": 412526,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。API token无速率限制，可暴力破解，属于常见问题。",
+   "attack_chain": "单点：暴力破解token。",
+   "bypass_technique": "无。",
+   "defensive_insight": "实施速率限制。"
+  },
+  {
+   "id": 273647,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 类型混淆",
+   "reasoning": "是。通过追加空格绕过邮箱唯一性检查，导致账户接管。这是对字符串比较的巧妙绕过，利用编码差异，思路新颖。",
+   "attack_chain": "添加带空格的邮箱→绕过唯一性→验证→接管。",
+   "bypass_technique": "利用%20绕过邮箱唯一性检查。",
+   "defensive_insight": "对输入进行规范化处理，确保唯一性检查考虑编码。"
+  },
+  {
+   "id": 163067,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 跨组件攻击链",
+   "reasoning": "是。密码重置后的开放重定向结合钓鱼页面窃取密码，属于逻辑链，利用用户信任。",
+   "attack_chain": "构造重置链接→用户重置→重定向到恶意页面→窃取密码。",
+   "bypass_technique": "利用next_url参数控制重定向。",
+   "defensive_insight": "限制重定向URL，避免开放重定向。"
+  },
+  {
+   "id": 396370,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。DOM XSS在搜索参数，属于常见XSS，但影响用户。",
+   "attack_chain": "单点：构造URL→触发XSS。",
+   "bypass_technique": "无绕过，直接注入。",
+   "defensive_insight": "对DOM输出进行编码。"
+  },
+  {
+   "id": 380102,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少ASLR/DEP，属于配置问题，无直接利用。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "启用内存保护。"
+  },
+  {
+   "id": 1434056,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用",
+   "reasoning": "是。利用multipart解析中的整数下溢导致堆溢出，属于协议行为利用，构造特定请求触发，思路巧妙。",
+   "attack_chain": "单点：构造恶意multipart请求→整数下溢→堆溢出→崩溃。",
+   "bypass_technique": "利用边界条件导致size_t下溢。",
+   "defensive_insight": "检查长度计算，避免整数溢出。"
+  }
+ ]
+}

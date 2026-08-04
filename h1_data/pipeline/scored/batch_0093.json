@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1620702,
+   1069189,
+   1069171,
+   836877,
+   134521
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1620702,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用 ingress-nginx 将 Ingress path 字段直接拼接进 nginx.conf 的配置注入，通过 log_format 和 access_log 写任意文件，再 include 该文件实现 RCE。技术点在于将配置注入与文件写入结合，绕过 path 过滤，形成从 Kubernetes 对象到容器内代码执行的完整链路。区别于普通配置注入，此攻击链跨 Kubernetes API 与 nginx 配置解析，且可抽象为'配置注入+文件写入+include'的通用模式。",
+   "attack_chain": "创建恶意 Ingress（path 注入 nginx 配置）→ 利用 log_format/access_log 写 Lua 脚本到 /tmp → 创建第二个 Ingress include 该文件 → 触发 RCE。",
+   "bypass_technique": "利用 path 字段的换行和注释符注入 nginx 配置，绕过路径校验；通过 log_format 和 access_log 写任意文件，再 include 实现代码执行。",
+   "defensive_insight": "对 Ingress 的 path 字段进行严格白名单校验，禁止特殊字符；nginx 配置生成时使用模板而非直接拼接；限制 nginx 进程的文件写入权限。"
+  },
+  {
+   "id": 149279,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "SQL注入 / XSS",
+   "reasoning": "部分。SQL 查询表单通过 GET 参数传递 Base64 编码的查询，导致 SQL 注入和反射型 XSS。技术点在于将敏感操作暴露在 GET 请求中，且错误信息未编码导致 XSS。虽然 SQL 注入是常见类型，但结合 XSS 和 GET 请求的利用方式有一定启发性，且 PoC 清晰。",
+   "attack_chain": "构造恶意链接 → 管理员点击 → 执行任意 SQL 查询或触发 XSS。",
+   "bypass_technique": "利用 GET 参数直接传递 SQL 查询，绕过输入过滤；错误信息未编码导致 XSS。",
+   "defensive_insight": "将敏感操作改为 POST 请求，并对输入进行严格过滤和参数化查询；对错误信息进行 HTML 编码。"
+  },
+  {
+   "id": 1069189,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 0
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 协议行为利用",
+   "reasoning": "是。CTF 挑战中综合运用了多种技术，包括 DNS rebinding 绕过 SSRF 防护、二次 SQL 注入、模板注入等。技术点在于将多个看似独立的漏洞组合成攻击链，特别是 DNS rebinding 绕过 IP 校验，体现了协议行为利用的优雅性。虽然这是 CTF 题目，但攻击链的完整性和技术多样性使其具有很高的启发性。",
+   "attack_chain": "信息收集 → 利用 SQLi 获取凭据 → 利用模板注入读取文件 → 利用 DNS rebinding 绕过 SSRF 防护 → 攻击内部服务。",
+   "bypass_technique": "DNS rebinding 绕过 SSRF 防护；二次 SQL 注入；模板注入绕过过滤。",
+   "defensive_insight": "对 SSRF 防护应使用 DNS 解析后的 IP 进行校验，并防止 DNS rebinding；对模板引擎进行沙箱隔离；对 SQL 查询使用参数化。"
+  },
+  {
+   "id": 331223,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑 / 授权绕过",
+   "reasoning": "否。停用的员工账户仍能收到订单通知，属于业务逻辑缺陷，但无绕过技巧，攻击链简单，启发性低。",
+   "attack_chain": "停用账户 → 创建订单 → 通知仍发送。",
+   "bypass_technique": "无实质绕过，利用状态未同步。",
+   "defensive_insight": "停用账户时应同步禁用相关通知订阅。"
+  },
+  {
+   "id": 273377,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。目录列表漏洞，属于常见配置错误，无绕过，无攻击链，且报告者自认为超出范围。",
+   "attack_chain": "直接访问目录列表。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁用目录列表，配置 Web 服务器安全。"
+  },
+  {
+   "id": 134521,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 授权绕过",
+   "reasoning": "是。fast-rating 端点未正确认证，任何人拥有链接即可修改评分。技术点在于链接中携带的 token 未绑定用户，且参数可篡改，属于典型的认证缺失。虽然简单，但影响明确，且可抽象为'链接中 token 未验证'的通用问题。",
+   "attack_chain": "获取链接 → 修改 rating 参数 → 未认证修改评分。",
+   "bypass_technique": "直接修改 URL 参数，绕过认证。",
+   "defensive_insight": "对敏感操作进行身份验证，链接中的 token 应绑定用户并验证。"
+  },
+  {
+   "id": 137127,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型 XSS，多个输入点未过滤，属于常见漏洞，无绕过，无攻击链。",
+   "attack_chain": "在多个字段注入 XSS payload → 存储后触发。",
+   "bypass_technique": "无实质绕过，直接注入。",
+   "defensive_insight": "对所有输入进行输出编码，使用 CSP。"
+  },
+  {
+   "id": 836877,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XXE / 协议行为利用",
+   "reasoning": "是。通过 JPEG 的 XMP 元数据注入 XXE payload，利用图片解析器的外部实体加载。技术点在于利用图片元数据作为攻击向量，绕过文件上传过滤，且 Java 解析器默认支持外部实体。区别于普通 XXE，此攻击链通过非标准入口触发，具有启发性。",
+   "attack_chain": "上传恶意 JPEG → 解析 XMP 元数据 → 触发 XXE → 读取文件或 SSRF。",
+   "bypass_technique": "利用 XMP 元数据注入外部实体，绕过文件类型检查。",
+   "defensive_insight": "禁用 XML 外部实体，对图片元数据进行清理，使用安全的解析库。"
+  },
+  {
+   "id": 265528,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。反射型 XSS 通过 WAF 绕过和 Chrome XSS Auditor 绕过，技术点在于使用畸形 payload 绕过过滤，但整体仍是常见 XSS 类型，启发性中等。",
+   "attack_chain": "构造恶意 URL → 用户悬停触发 XSS。",
+   "bypass_technique": "使用特殊字符和编码绕过 WAF 和浏览器过滤器。",
+   "defensive_insight": "对输出进行编码，使用 CSP，更新 WAF 规则。"
+  },
+  {
+   "id": 208566,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。过时 Jenkins 版本，已知 CVE，属于常见配置错误，无绕过，无攻击链。",
+   "attack_chain": "直接利用已知漏洞。",
+   "bypass_technique": "无。",
+   "defensive_insight": "及时更新软件版本。"
+  },
+  {
+   "id": 1530396,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "开放重定向",
+   "reasoning": "否。开放重定向，利用路径解析差异，属于常见漏洞，无绕过，无攻击链。",
+   "attack_chain": "构造 URL → 重定向到恶意站点。",
+   "bypass_technique": "利用路径中的分号绕过。",
+   "defensive_insight": "对重定向目标进行白名单校验。"
+  },
+  {
+   "id": 1815355,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 子域名接管",
+   "reasoning": "否。未认领的 Twitter 链接，属于配置错误，无技术含量，无攻击链。",
+   "attack_chain": "认领链接 → 冒充官方。",
+   "bypass_technique": "无。",
+   "defensive_insight": "定期检查外部链接的有效性。"
+  },
+  {
+   "id": 1788006,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "开放重定向",
+   "reasoning": "否。开放重定向，参数直接可控，常见漏洞，无绕过，无攻击链。",
+   "attack_chain": "构造 URL → 重定向。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对重定向参数进行校验。"
+  },
+  {
+   "id": 963384,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。公开的 docker-compose.yml 泄露凭据，属于配置错误，无技术含量。",
+   "attack_chain": "直接访问文件获取凭据。",
+   "bypass_technique": "无。",
+   "defensive_insight": "敏感文件不应公开访问。"
+  },
+  {
+   "id": 1069171,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 0
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 协议行为利用",
+   "reasoning": "是。CTF 挑战中综合运用了多种技术，包括 DNS rebinding 绕过 SSRF 防护、二次 SQL 注入、模板注入等。技术点在于将多个看似独立的漏洞组合成攻击链，特别是 DNS rebinding 绕过 IP 校验，体现了协议行为利用的优雅性。虽然这是 CTF 题目，但攻击链的完整性和技术多样性使其具有很高的启发性。",
+   "attack_chain": "信息收集 → 利用 SQLi 获取凭据 → 利用模板注入读取文件 → 利用 DNS rebinding 绕过 SSRF 防护 → 攻击内部服务。",
+   "bypass_technique": "DNS rebinding 绕过 SSRF 防护；二次 SQL 注入；模板注入绕过过滤。",
+   "defensive_insight": "对 SSRF 防护应使用 DNS 解析后的 IP 进行校验，并防止 DNS rebinding；对模板引擎进行沙箱隔离；对 SQL 查询使用参数化。"
+  },
+  {
+   "id": 1344982,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "子域名接管",
+   "reasoning": "否。子域名接管，常见漏洞，无绕过，无攻击链。",
+   "attack_chain": "注册未认领的域名。",
+   "bypass_technique": "无。",
+   "defensive_insight": "定期检查 DNS 记录，及时清理。"
+  },
+  {
+   "id": 1390131,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS，直接注入，常见漏洞，无绕过，无攻击链。",
+   "attack_chain": "构造 URL → 触发 XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对输入进行过滤和输出编码。"
+  },
+  {
+   "id": 974271,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。存储型 XSS，通过媒体嵌入功能注入 payload，绕过输入过滤。技术点在于利用媒体嵌入的解析漏洞，但整体仍是常见 XSS 类型，启发性中等。",
+   "attack_chain": "创建调查 → 添加媒体 → 注入 XSS payload → 存储后触发。",
+   "bypass_technique": "利用媒体嵌入的语法绕过过滤。",
+   "defensive_insight": "对媒体嵌入进行严格校验，输出编码。"
+  },
+  {
+   "id": 2264960,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 授权绕过",
+   "reasoning": "部分。Celery Flower 实例未认证，可访问管理接口，可能导致 RCE。技术点在于暴露了管理接口，但无绕过技巧，属于配置错误，启发性中等。",
+   "attack_chain": "访问 Flower 接口 → 查看任务 → 可能执行任意代码。",
+   "bypass_technique": "无，直接利用未认证接口。",
+   "defensive_insight": "启用认证，限制网络访问。"
+  },
+  {
+   "id": 85011,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑 / 其他",
+   "reasoning": "否。自嵌入面板导致 DoS，属于业务逻辑缺陷，但无绕过，攻击链简单，启发性低。",
+   "attack_chain": "创建面板 → 嵌入自身 → 渲染死循环。",
+   "bypass_technique": "无。",
+   "defensive_insight": "限制面板的递归嵌入。"
+  }
+ ]
+}

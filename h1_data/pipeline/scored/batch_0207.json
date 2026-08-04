@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   412673,
+   1404731,
+   180572,
+   463828,
+   409237
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 409237,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 信息泄露",
+   "reasoning": "是。通过修改 email 参数即可访问其他用户账户信息，属于典型的 IDOR 但影响明确，且步骤清晰。技术点在于对对象引用直接使用用户可控参数，未进行所有权校验。",
+   "attack_chain": "注册账户→修改 email 参数为其他用户邮箱→获取他人姓名等敏感信息。",
+   "bypass_technique": "直接修改参数值，无任何访问控制。",
+   "defensive_insight": "对对象引用进行服务端所有权校验，使用不可预测的标识符。"
+  },
+  {
+   "id": 229532,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 认证绕过",
+   "reasoning": "是。利用用户未设置密码的状态，绕过删除账户时的重认证要求，属于业务逻辑缺陷。技术点在于密码未设置时，重认证机制失效，导致账户可被任意删除。",
+   "attack_chain": "用户创建账户但未设密码→离开共享电脑→攻击者删除账户无需密码。",
+   "bypass_technique": "利用密码未设置的状态，绕过重认证。",
+   "defensive_insight": "强制注册时设置密码，或对未设置密码的账户提供其他验证方式。"
+  },
+  {
+   "id": 361414,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。CSRF token 存储在 cookie 中且服务端未验证，属于常见配置错误，无绕过或创新。",
+   "attack_chain": "无，单点漏洞。",
+   "bypass_technique": "无，直接利用缺失的 CSRF 防护。",
+   "defensive_insight": "CSRF token 应存储在服务端会话中，并在服务端验证。"
+  },
+  {
+   "id": 412673,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。Python 标准库 xml.etree 未使用 expat 的哈希随机化，导致哈希碰撞 DoS。技术点在于库实现细节的疏忽，影响广泛，可跨平台利用。",
+   "attack_chain": "构造恶意 XML→触发哈希碰撞→CPU 耗尽。",
+   "bypass_technique": "利用 expat 哈希随机化未启用，构造碰撞数据。",
+   "defensive_insight": "确保所有 XML 解析器使用安全的哈希种子，或限制 XML 大小。"
+  },
+  {
+   "id": 2061049,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。HTML 注入，反射型，无绕过，常见套路。",
+   "attack_chain": "单点：参数反射未过滤。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对输出进行编码，使用 CSP。"
+  },
+  {
+   "id": 35413,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。反射型 XSS，但提到可绕过 CSRF 防护，有一定组合性。技术点在于 XSS 与 CSRF 结合。",
+   "attack_chain": "构造恶意链接→触发 XSS→执行任意 JS→绕过 CSRF。",
+   "bypass_technique": "利用 XSS 执行 JS 绕过 CSRF 防护。",
+   "defensive_insight": "过滤输入，使用 CSP，CSRF token 独立于 cookie。"
+  },
+  {
+   "id": 1404731,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 命令注入 / 框架行为利用",
+   "reasoning": "是。绕过 Apache 补丁，利用编码差异实现路径遍历和 RCE。技术点在于对 URL 编码的二次解码，属于框架行为利用。",
+   "attack_chain": "构造编码路径→绕过补丁→读取文件或执行命令。",
+   "bypass_technique": "使用 %%32%65 等编码绕过过滤。",
+   "defensive_insight": "统一解码逻辑，严格校验路径。"
+  },
+  {
+   "id": 463828,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 授权绕过",
+   "reasoning": "是。通过嵌入式提交表单，用户离开项目后仍可访问项目页面，属于业务逻辑缺陷。技术点在于权限状态未正确更新。",
+   "attack_chain": "创建嵌入式提交链接→提交报告→离开项目→仍可访问项目信息。",
+   "bypass_technique": "利用嵌入式表单的权限继承问题。",
+   "defensive_insight": "确保权限变更后立即撤销访问令牌。"
+  },
+  {
+   "id": 101145,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "CSRF",
+   "reasoning": "部分。删除图片无 CSRF 保护，但属于常见漏洞。技术点在于敏感操作缺少 CSRF token。",
+   "attack_chain": "发送恶意链接→触发删除操作。",
+   "bypass_technique": "无，直接利用缺失的 CSRF 防护。",
+   "defensive_insight": "为敏感操作添加 CSRF token。"
+  },
+  {
+   "id": 384517,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型 XSS，常见套路，无绕过。",
+   "attack_chain": "单点：存储未过滤。",
+   "bypass_technique": "无。",
+   "defensive_insight": "输入过滤，输出编码。"
+  },
+  {
+   "id": 180572,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "内存破坏 / 框架行为利用",
+   "reasoning": "是。PHP 的 number_format 函数缺少大小检查，导致内存破坏。技术点在于内部函数对极端参数处理不当。",
+   "attack_chain": "调用 number_format 传入极大参数→内存破坏。",
+   "bypass_technique": "利用整数溢出。",
+   "defensive_insight": "对参数进行范围检查，使用安全函数。"
+  },
+  {
+   "id": 151258,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS，常见套路，无绕过。",
+   "attack_chain": "单点：参数反射未过滤。",
+   "bypass_technique": "无。",
+   "defensive_insight": "输出编码，升级 WordPress。"
+  },
+  {
+   "id": 161947,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。输入长度未限制，可能导致 DoS，但属于常见配置问题。",
+   "attack_chain": "单点：输入超长数据。",
+   "bypass_technique": "无。",
+   "defensive_insight": "限制输入长度。"
+  },
+  {
+   "id": 152407,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 信息泄露",
+   "reasoning": "是。通过接口可查询任意邮箱关联的账户，属于 IDOR。技术点在于接口未校验所有权。",
+   "attack_chain": "构造请求→查询邮箱关联账户→信息泄露。",
+   "bypass_technique": "直接修改参数。",
+   "defensive_insight": "服务端校验用户权限。"
+  },
+  {
+   "id": 261592,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "开放重定向",
+   "reasoning": "部分。利用路径解析差异实现开放重定向，有一定技巧。技术点在于 URL 解析的差异。",
+   "attack_chain": "构造 URL→触发重定向到恶意站点。",
+   "bypass_technique": "利用 // 和 %2f 绕过。",
+   "defensive_insight": "严格校验重定向目标。"
+  },
+  {
+   "id": 1213580,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "开放重定向",
+   "reasoning": "否。常见开放重定向，无绕过。",
+   "attack_chain": "单点：构造 URL。",
+   "bypass_technique": "无。",
+   "defensive_insight": "校验重定向域名。"
+  },
+  {
+   "id": 1474017,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。S3 桶配置错误，常见问题。",
+   "attack_chain": "单点：访问公开桶。",
+   "bypass_technique": "无。",
+   "defensive_insight": "配置桶策略，限制访问。"
+  },
+  {
+   "id": 36264,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "内存破坏 / 协议行为利用",
+   "reasoning": "是。mod_proxy_fcgi 缓冲区溢出，属于协议实现缺陷。技术点在于 FastCGI 响应处理不当。",
+   "attack_chain": "恶意 FastCGI 服务器→发送畸形响应→堆溢出。",
+   "bypass_technique": "无，直接利用。",
+   "defensive_insight": "更新 Apache，限制 FastCGI 响应大小。"
+  },
+  {
+   "id": 2442613,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "内存泄漏 / 协议行为利用",
+   "reasoning": "部分。HTTP/2 push 头内存泄漏，属于协议实现缺陷。技术点在于 push 头处理不当。",
+   "attack_chain": "构造 HTTP/2 请求→触发内存泄漏→DoS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "更新 libcurl，限制 push 头数量。"
+  },
+  {
+   "id": 496375,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS，常见套路。",
+   "attack_chain": "单点：参数反射未过滤。",
+   "bypass_technique": "无。",
+   "defensive_insight": "输出编码。"
+  }
+ ]
+}

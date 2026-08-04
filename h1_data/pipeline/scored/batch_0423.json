@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   344112,
+   1040471,
+   315837,
+   1096123,
+   170161
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1188629,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。这是一个简单的链接失效问题，属于常见的配置错误，没有技术上的巧妙之处。攻击者可以注册该LinkedIn页面，但影响有限，且需要受害者点击链接。",
+   "attack_chain": "无攻击链，单点配置错误。",
+   "bypass_technique": "无绕过，直接利用未验证的链接。",
+   "defensive_insight": "定期检查外部链接的有效性，并确保链接指向正确的资源。"
+  },
+  {
+   "id": 1096123,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 跨组件攻击链",
+   "reasoning": "是。CSRF 结合 XSS 形成攻击链，且利用了管理员功能中的参数注入，绕过 CSRF 防护后触发存储型 XSS。技术点在于通过 CSRF 使管理员执行恶意操作，进而导致 XSS，属于逻辑组合。",
+   "attack_chain": "构造恶意页面→诱导管理员提交→CSRF 触发→XSS 执行→窃取会话。",
+   "bypass_technique": "利用 CSRF 绕过，在管理员上下文中注入 XSS payload。",
+   "defensive_insight": "实施 CSRF 令牌验证，并对所有输入进行输出编码。"
+  },
+  {
+   "id": 190373,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。使用不安全的随机数生成器是常见问题，但报告指出有回退机制，且实际影响取决于是否使用 SystemRandom。没有绕过或攻击链，属于已知问题。",
+   "attack_chain": "无攻击链，单点配置问题。",
+   "bypass_technique": "无绕过，直接利用不安全的随机数生成。",
+   "defensive_insight": "强制使用密码学安全的随机数生成器，并移除不安全的回退。"
+  },
+  {
+   "id": 344112,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "是。利用 JSON 状态脚本中的 HTML 上下文，通过闭合 script 标签注入 XSS，且 payload 在 URL 参数中，无需特殊编码。技术点在于对 JSON 数据未进行 HTML 实体编码，导致脚本执行。",
+   "attack_chain": "构造恶意 URL→用户点击→XSS 执行→窃取 cookie。",
+   "bypass_technique": "利用 JSON 中的 HTML 上下文，闭合 script 标签注入。",
+   "defensive_insight": "对 JSON 数据在 HTML 上下文中进行编码，或使用 CSP 限制脚本执行。"
+  },
+  {
+   "id": 1794757,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。这是已知 CVE 的复现，属于常见套路，但 PoC 清晰，且影响明确。没有绕过或攻击链，但作为已知漏洞的验证，有一定价值。",
+   "attack_chain": "单点：构造 URL→XSS 执行。",
+   "bypass_technique": "无绕过，直接利用未过滤参数。",
+   "defensive_insight": "升级 SharePoint 并应用补丁，对输入进行编码。"
+  },
+  {
+   "id": 179751,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SQL注入",
+   "reasoning": "否。这是典型的 SQL 注入，使用 sqlmap 自动检测，没有绕过或攻击链，属于成熟套路。",
+   "attack_chain": "单点：email 参数→SQL 注入→数据泄露。",
+   "bypass_technique": "无绕过，直接利用未过滤参数。",
+   "defensive_insight": "使用参数化查询，并限制数据库权限。"
+  },
+  {
+   "id": 259913,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。通过修改参数绕过上传限制，属于常见的客户端校验绕过，没有技术上的新颖性。",
+   "attack_chain": "单点：修改 imgnum 参数→无限上传→DoS。",
+   "bypass_technique": "修改参数值绕过限制。",
+   "defensive_insight": "服务端校验参数范围，并限制上传数量。"
+  },
+  {
+   "id": 170161,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 状态混淆",
+   "reasoning": "是。密码重置令牌不失效，导致旧令牌仍可用，属于业务逻辑缺陷。技术点在于令牌生命周期管理不当，可被用于账户接管。",
+   "attack_chain": "获取旧令牌→等待新令牌→使用旧令牌重置密码→账户接管。",
+   "bypass_technique": "利用令牌不失效的缺陷。",
+   "defensive_insight": "确保新令牌生成后旧令牌立即失效，并设置过期时间。"
+  },
+  {
+   "id": 1040471,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 协议行为利用",
+   "reasoning": "是。通过添加换行符绕过速率限制，属于协议行为利用。技术点在于服务端未对输入进行规范化，导致速率限制被绕过，可进行大规模暴力破解。",
+   "attack_chain": "添加换行符→绕过速率限制→暴力破解→账户接管。",
+   "bypass_technique": "在参数中添加 \\n 字符绕过速率限制。",
+   "defensive_insight": "对输入进行规范化处理，并基于规范化后的值实施速率限制。"
+  },
+  {
+   "id": 315837,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XXE / 协议行为利用",
+   "reasoning": "是。利用 autodiscover 解析器中的 XXE，通过外部实体进行数据外带，且可探测文件存在性。技术点在于利用 XML 外部实体进行信息泄露，属于协议行为利用。",
+   "attack_chain": "构造恶意 XML→触发 XXE→外带数据→信息泄露。",
+   "bypass_technique": "利用外部实体进行数据外带。",
+   "defensive_insight": "禁用外部实体解析，或使用安全的 XML 解析器。"
+  },
+  {
+   "id": 827484,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误",
+   "reasoning": "部分。缺少速率限制导致暴力破解，属于常见问题，但影响明确，且 PoC 清晰。没有绕过或攻击链，但作为安全设计缺陷，有一定价值。",
+   "attack_chain": "单点：暴力破解当前密码→账户接管。",
+   "bypass_technique": "无绕过，直接利用缺少速率限制。",
+   "defensive_insight": "对密码修改接口实施速率限制和账户锁定。"
+  },
+  {
+   "id": 148865,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "部分。利用语法高亮关闭但内容仍被解析的行为，导致 XSS。技术点在于框架行为不一致，属于框架行为利用。",
+   "attack_chain": "单点：上传大文件→XSS 执行。",
+   "bypass_technique": "利用语法高亮关闭但内容仍被解析的缺陷。",
+   "defensive_insight": "确保关闭语法高亮时内容不被解析，或对内容进行转义。"
+  },
+  {
+   "id": 812907,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 协议行为利用",
+   "reasoning": "部分。通过 X-Forwarded-For 头绕过 IP 限制，属于协议行为利用。技术点在于信任客户端提供的 IP 头，可被用于投票操纵。",
+   "attack_chain": "单点：添加 X-Forwarded-For 头→绕过限制→无限投票。",
+   "bypass_technique": "利用 X-Forwarded-For 头伪造 IP。",
+   "defensive_insight": "不要信任客户端提供的 IP 头，应使用代理配置。"
+  },
+  {
+   "id": 978768,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少速率限制导致批量邀请，属于常见问题，且报告被标记为 not-applicable，可能不在范围内。没有绕过或攻击链。",
+   "attack_chain": "单点：批量邀请→邮件轰炸。",
+   "bypass_technique": "无绕过，直接利用缺少速率限制。",
+   "defensive_insight": "对邀请接口实施速率限制。"
+  },
+  {
+   "id": 1278977,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露",
+   "reasoning": "部分。这是已知 CVE 的复现，属于常见套路，但影响明确，且 PoC 清晰。没有绕过或攻击链，但作为已知漏洞的验证，有一定价值。",
+   "attack_chain": "单点：访问端点→信息泄露。",
+   "bypass_technique": "无绕过，直接利用未授权端点。",
+   "defensive_insight": "升级 Jira 并应用补丁，限制端点访问。"
+  },
+  {
+   "id": 1687005,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误",
+   "reasoning": "部分。明文传输敏感信息，属于配置错误，但影响明确，且 PoC 清晰。没有绕过或攻击链，但作为安全设计缺陷，有一定价值。",
+   "attack_chain": "单点：明文传输→信息泄露。",
+   "bypass_technique": "无绕过，直接利用配置错误。",
+   "defensive_insight": "强制使用 HTTPS，并禁止明文传输。"
+  },
+  {
+   "id": 854793,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误",
+   "reasoning": "部分。缺少速率限制导致邮件轰炸和枚举，属于常见问题，但影响明确，且 PoC 清晰。没有绕过或攻击链，但作为安全设计缺陷，有一定价值。",
+   "attack_chain": "单点：批量请求→邮件轰炸/枚举。",
+   "bypass_technique": "无绕过，直接利用缺少速率限制。",
+   "defensive_insight": "对邮件发送接口实施速率限制，并统一错误响应。"
+  },
+  {
+   "id": 236301,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "SSRF",
+   "reasoning": "部分。通过 img 标签注入触发 SSRF，属于常见套路，但利用了表单字段的 HTML 注入，且可进行多次请求。技术点在于未过滤 HTML 标签，导致 SSRF。",
+   "attack_chain": "单点：注入 img 标签→SSRF→内网探测。",
+   "bypass_technique": "利用 img 标签触发 SSRF。",
+   "defensive_insight": "过滤用户输入中的 HTML 标签，并限制出站请求。"
+  },
+  {
+   "id": 135797,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "认证绕过 / 状态混淆",
+   "reasoning": "部分。会话固定攻击，属于常见套路，但利用了登录后未更换会话 ID 的缺陷。技术点在于会话管理不当，可被用于账户接管。",
+   "attack_chain": "单点：设置会话 ID→受害者登录→攻击者使用同一会话。",
+   "bypass_technique": "利用会话固定，登录后未更换会话 ID。",
+   "defensive_insight": "登录成功后重新生成会话 ID。"
+  },
+  {
+   "id": 1536899,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。HTML 注入在邮件中，属于常见套路，且需要用户交互，影响有限。没有绕过或攻击链。",
+   "attack_chain": "单点：注入 HTML→邮件中执行。",
+   "bypass_technique": "无绕过，直接利用未过滤输入。",
+   "defensive_insight": "对邮件内容进行 HTML 编码，并过滤输入。"
+  }
+ ]
+}

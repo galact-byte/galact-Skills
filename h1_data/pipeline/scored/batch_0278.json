@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1089914,
+   148151,
+   335608,
+   390871,
+   115686
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 761573,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。搜索表单中的反射型XSS，直接注入payload，无绕过，无攻击链，属于常见套路。",
+   "attack_chain": "单点：搜索表单字段注入XSS payload。",
+   "bypass_technique": "无实质绕过，直接利用未过滤输入。",
+   "defensive_insight": "对所有输入进行输出编码和输入验证。"
+  },
+  {
+   "id": 361184,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。CSRF修改用户信息，无绕过，无攻击链，常见套路。",
+   "attack_chain": "单点：诱导用户访问恶意页面，触发CSRF修改信息。",
+   "bypass_technique": "无实质绕过，直接利用缺少CSRF token。",
+   "defensive_insight": "使用CSRF token并验证来源。"
+  },
+  {
+   "id": 219509,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型XSS，通过表单字段注入，无绕过，无攻击链，常见套路。",
+   "attack_chain": "单点：提交恶意payload到训练描述字段，触发存储型XSS。",
+   "bypass_technique": "无实质绕过，直接利用未过滤输入。",
+   "defensive_insight": "对用户输入进行严格的HTML编码和过滤。"
+  },
+  {
+   "id": 83374,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。通过Referer头注入XSS，利用服务器将Referer反射到onclick事件，属于非典型注入点，但无绕过，单点漏洞。",
+   "attack_chain": "单点：构造恶意Referer头，触发反射型XSS。",
+   "bypass_technique": "利用Referer头作为注入点，绕过常规输入过滤。",
+   "defensive_insight": "对所有HTTP头进行输出编码，避免直接拼接。"
+  },
+  {
+   "id": 883693,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。phpinfo()页面泄露敏感信息，直接暴露，无绕过，无攻击链，常见配置错误。",
+   "attack_chain": "单点：访问公开的phpinfo()页面获取敏感信息。",
+   "bypass_technique": "无实质绕过，直接利用配置错误。",
+   "defensive_insight": "禁用或保护phpinfo()页面，避免公开访问。"
+  },
+  {
+   "id": 335608,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 内存破坏",
+   "reasoning": "是。利用nghttp2对ALTSVC帧处理时未初始化指针，导致崩溃。这是对协议实现的深入理解，非预期行为，可远程触发，且影响Node.js进程。",
+   "attack_chain": "发送畸形ALTSVC和GOAWAY帧→触发未初始化指针→进程崩溃。",
+   "bypass_technique": "利用协议帧的畸形组合，触发未初始化指针。",
+   "defensive_insight": "修复nghttp2库，确保所有指针初始化，并加强输入验证。"
+  },
+  {
+   "id": 171205,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。缺少速率限制，直接滥用，无绕过，无攻击链，常见业务逻辑缺陷。",
+   "attack_chain": "单点：重复发送推荐请求。",
+   "bypass_technique": "无实质绕过，直接利用缺少速率限制。",
+   "defensive_insight": "实施速率限制和验证码。"
+  },
+  {
+   "id": 390871,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "命令注入 / 框架行为利用",
+   "reasoning": "是。win-spawn/win-fork在Windows上行为与文档不符，实际使用exec而非spawn，导致命令注入。这是对框架行为的非预期利用，可通用化。",
+   "attack_chain": "调用win-spawn/win-fork→在Windows上执行cmd /c→注入额外命令。",
+   "bypass_technique": "利用模块在Windows上的行为差异，将spawn降级为exec。",
+   "defensive_insight": "修复模块或明确文档，避免使用exec语义。"
+  },
+  {
+   "id": 222692,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。TRACE方法启用，可被XST利用，但现代浏览器已限制，且无实际攻击链，常见配置问题。",
+   "attack_chain": "单点：发送TRACE请求，反射头信息。",
+   "bypass_technique": "无实质绕过，直接利用配置错误。",
+   "defensive_insight": "禁用TRACE方法。"
+  },
+  {
+   "id": 213358,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "SSRF",
+   "reasoning": "部分。通过下载链接参数进行SSRF，可探测内网端口，但无绕过，单点漏洞。",
+   "attack_chain": "单点：在下载链接输入内网地址，探测端口。",
+   "bypass_technique": "无实质绕过，直接利用未过滤的URL。",
+   "defensive_insight": "对URL进行白名单校验，禁止内网地址。"
+  },
+  {
+   "id": 838855,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "SQL注入",
+   "reasoning": "部分。盲SQL注入，利用CASE WHEN和SLEEP，但无绕过，单点漏洞，常见套路。",
+   "attack_chain": "单点：构造SQL注入payload，触发时间盲注。",
+   "bypass_technique": "无实质绕过，直接利用未过滤参数。",
+   "defensive_insight": "使用参数化查询。"
+  },
+  {
+   "id": 906201,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。自XSS，通过文件名注入，但影响有限，无绕过，无攻击链。",
+   "attack_chain": "单点：上传恶意文件名，触发自XSS。",
+   "bypass_technique": "无实质绕过，直接利用未过滤文件名。",
+   "defensive_insight": "对文件名进行过滤和编码。"
+  },
+  {
+   "id": 83856,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。会话cookie缺少secure标志，常见配置问题，无绕过，无攻击链。",
+   "attack_chain": "单点：通过HTTP窃取cookie。",
+   "bypass_technique": "无实质绕过，直接利用配置错误。",
+   "defensive_insight": "设置cookie的secure标志。"
+  },
+  {
+   "id": 1681178,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。反射型XSS，利用URL编码绕过，但无攻击链，常见套路。",
+   "attack_chain": "单点：构造恶意URL，触发反射型XSS。",
+   "bypass_technique": "利用URL编码绕过过滤。",
+   "defensive_insight": "对输出进行编码，严格过滤输入。"
+  },
+  {
+   "id": 213114,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "UI Redressing (Clickjacking)",
+   "reasoning": "部分。利用AsciiDoc语法生成target=_blank链接，导致反向tabnabbing，属于非预期行为，但无攻击链。",
+   "attack_chain": "单点：在AsciiDoc中插入恶意链接，诱导用户点击。",
+   "bypass_technique": "利用AsciiDoc语法生成不安全的HTML属性。",
+   "defensive_insight": "对AsciiDoc渲染进行安全配置，添加rel=noopener。"
+  },
+  {
+   "id": 144484,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "内存破坏",
+   "reasoning": "部分。DateTime.strftime在32位系统上因整数溢出导致堆破坏，属于边界条件利用，但无攻击链。",
+   "attack_chain": "单点：构造特定格式字符串，触发整数溢出。",
+   "bypass_technique": "利用整数溢出绕过边界检查。",
+   "defensive_insight": "修复整数溢出，使用安全函数。"
+  },
+  {
+   "id": 1089914,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 协议行为利用",
+   "reasoning": "是。利用HTML video/audio标签的fallback机制实现XS-Leak，跨组件（浏览器+服务器），可通用化，非预期行为。",
+   "attack_chain": "攻击者分享私有资源→受害者访问攻击页面→通过video/audio标签的fallback判断资源是否加载→推断受害者身份。",
+   "bypass_technique": "利用HTML标签的fallback行为绕过同源策略。",
+   "defensive_insight": "设置SameSite cookie属性，或使用浏览器扩展防御。"
+  },
+  {
+   "id": 951530,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "路径遍历",
+   "reasoning": "否。CVE-2020-3452已知漏洞，直接利用，无绕过，无攻击链，常见套路。",
+   "attack_chain": "单点：构造URL读取任意文件。",
+   "bypass_technique": "无实质绕过，直接利用已知漏洞。",
+   "defensive_insight": "升级Cisco ASA固件。"
+  },
+  {
+   "id": 148151,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 协议行为利用",
+   "reasoning": "是。利用SMB服务器默认配置（map to guest）导致认证绕过，可登录任意用户，非预期行为，可通用化。",
+   "attack_chain": "配置SMB认证→利用map to guest绕过→登录任意用户。",
+   "bypass_technique": "利用SMB服务器默认配置，使无效用户也能通过认证。",
+   "defensive_insight": "修改SMB服务器配置，禁用map to guest，或改进认证逻辑。"
+  },
+  {
+   "id": 115686,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "内存破坏 / 框架行为利用",
+   "reasoning": "是。多个潜在内存破坏点，包括整数溢出和未初始化内存，属于对代码的深入分析，非预期行为。",
+   "attack_chain": "构造特定输入→触发整数溢出或未初始化内存→内存破坏。",
+   "bypass_technique": "利用整数溢出绕过边界检查。",
+   "defensive_insight": "使用安全函数，修复整数溢出，初始化内存。"
+  }
+ ]
+}

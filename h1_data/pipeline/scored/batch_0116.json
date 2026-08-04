@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   396954,
+   495495,
+   422279,
+   181879,
+   180562
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 495495,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。CVE-2019-5736 利用 runc 的 /proc/self/exe 符号链接在容器内指向宿主机 runc 二进制，通过覆盖该文件实现容器逃逸。这是对 Linux 内核 procfs 行为的巧妙利用，且影响 Docker 和 Kubernetes 等广泛使用的容器平台，攻击链跨容器与宿主机两个信任边界。虽然该漏洞已公开，但作为经典案例，其技术思路和影响范围具有很高的启发性。",
+   "attack_chain": "容器内进程打开 /proc/self/exe 获取宿主机 runc 文件描述符 → 通过写文件描述符覆盖宿主机上的 runc 二进制 → 宿主机下次执行 runc 时执行恶意代码 → 获得宿主机 root 权限。",
+   "bypass_technique": "利用 /proc/self/exe 符号链接指向宿主机二进制，通过文件描述符写操作绕过容器文件系统隔离。",
+   "defensive_insight": "及时更新 runc 和容器运行时；限制容器内进程对 /proc/self/exe 的写权限；使用用户命名空间和 seccomp 等加固措施。"
+  },
+  {
+   "id": 396954,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。该漏洞利用 RLP 编码的宽松解析，在交易末尾附加任意数据而不影响签名验证，从而在区块链中注入数据且无需支付 gas。这是对协议解析行为的反直觉利用，攻击链涉及交易构造、网络传播、区块打包等多个环节，且可抽象为通用判断条件（解析后未检查数据末尾）。",
+   "attack_chain": "构造合法交易并附加恶意 RLP 数据 → 交易通过签名验证并广播 → 矿工打包进区块 → 区块被网络接受 → 恶意数据永久上链。",
+   "bypass_technique": "利用 RLP 解析器未检查数据末尾，附加额外数据而不影响签名验证。",
+   "defensive_insight": "在 RLP 解析后严格检查数据长度，确保消费完所有输入；对交易和区块的编码进行规范化验证。"
+  },
+  {
+   "id": 284346,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 0
+   },
+   "verdict": "保留，普通",
+   "category": "路径遍历 / 配置错误",
+   "reasoning": "部分。该漏洞是对先前修复的不完整绕过，利用文件名中的 '../' 绕过下载目录限制，但仅影响 sdcard 且需要配合其他应用。虽然思路简单，但体现了修复不完整的问题，具有一定的启发性。",
+   "attack_chain": "构造文件名包含 '../' 的附件 → 下载时路径拼接绕过 /sdcard/download 目录 → 文件写入任意 sdcard 目录。",
+   "bypass_technique": "利用文件名中的 '../' 进行路径遍历，绕过目录限制。",
+   "defensive_insight": "对文件名进行规范化处理，移除路径分隔符和 '..'；使用白名单校验文件名。"
+  },
+  {
+   "id": 950853,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 其他",
+   "reasoning": "否。该报告仅描述了一个文件上传功能未限制恶意文件类型，属于常见的配置错误，没有绕过或攻击链，且缺乏具体技术细节。",
+   "attack_chain": "上传恶意文件到聊天支持 → 员工下载执行 → 感染。",
+   "bypass_technique": "无实质绕过，直接利用未限制文件类型。",
+   "defensive_insight": "限制上传文件类型，对上传内容进行恶意代码扫描，并隔离执行环境。"
+  },
+  {
+   "id": 788257,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "授权绕过 / 配置错误",
+   "reasoning": "部分。该漏洞通过直接访问 /download 端点绕过 'Secure View' 的下载限制，属于简单的端点绕过，没有复杂攻击链，但体现了功能设计上的缺陷。",
+   "attack_chain": "在共享链接后添加 /download → 直接下载文件。",
+   "bypass_technique": "直接访问隐藏的下载端点。",
+   "defensive_insight": "在服务端强制实施下载权限检查，而不仅仅依赖前端隐藏按钮。"
+  },
+  {
+   "id": 804772,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "类型混淆 / 框架行为利用",
+   "reasoning": "部分。该漏洞是原型污染攻击，通过 multipart 解析器污染对象原型导致 DoS。虽然原型污染是已知技术，但该漏洞展示了在流行框架中的实际影响，且可跨组件复用。",
+   "attack_chain": "构造恶意 multipart 请求 → 污染 Object.prototype → 导致服务器崩溃。",
+   "bypass_technique": "利用 multipart 解析器对参数名的处理，设置 __proto__ 属性。",
+   "defensive_insight": "对 multipart 参数名进行过滤，禁止 __proto__ 等危险键；使用安全的解析库。"
+  },
+  {
+   "id": 272379,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "部分。该漏洞通过 Referer 头泄露密码重置令牌，属于常见的信息泄露，但攻击链简单，且修复方法明确。",
+   "attack_chain": "用户点击重置链接 → 点击外部链接 → Referer 携带令牌发送到第三方 → 攻击者获取令牌重置密码。",
+   "bypass_technique": "利用浏览器自动发送 Referer 头。",
+   "defensive_insight": "在外部链接上添加 rel='noopener noreferrer'；使用一次性令牌并绑定用户。"
+  },
+  {
+   "id": 192388,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "授权绕过 / IDOR",
+   "reasoning": "否。该漏洞是典型的 IDOR，通过修改 ID 访问其他用户的收据，属于成熟套路，没有绕过或攻击链。",
+   "attack_chain": "修改收据 ID → 访问其他用户的收据。",
+   "bypass_technique": "无实质绕过，直接利用不安全的直接对象引用。",
+   "defensive_insight": "实施访问控制检查，确保用户只能访问自己的资源。"
+  },
+  {
+   "id": 180562,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "类型混淆 / 内存破坏",
+   "reasoning": "是。该漏洞利用整数溢出绕过长度检查，导致内存破坏。这是对整数运算行为的巧妙利用，展示了在 32 位系统上如何通过精心构造的数值绕过安全检查，具有很高的技术启发性。",
+   "attack_chain": "构造超长千位分隔符 → 整数溢出绕过检查 → 内存破坏 → 崩溃或代码执行。",
+   "bypass_technique": "利用整数溢出使长度检查失效。",
+   "defensive_insight": "使用更大整数类型或进行溢出检查；对用户输入的长度进行严格限制。"
+  },
+  {
+   "id": 1379158,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。该漏洞是典型的反射型 XSS，通过 url 参数注入脚本，属于成熟套路，没有绕过或攻击链。",
+   "attack_chain": "构造恶意 URL → 用户点击 → 执行脚本。",
+   "bypass_technique": "无实质绕过，直接利用未过滤参数。",
+   "defensive_insight": "对输出进行编码，使用 CSP 等安全头。"
+  },
+  {
+   "id": 181879,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "类型混淆 / 内存破坏",
+   "reasoning": "是。该漏洞是 mruby 中的结构体类型混淆，通过操纵对象类型导致指令指针控制，可能实现 RCE。这是对动态语言内部对象模型的深入利用，展示了类型混淆的威力，具有很高的启发性。",
+   "attack_chain": "构造恶意脚本 → 触发类型混淆 → 控制指令指针 → 代码执行。",
+   "bypass_technique": "利用类型混淆绕过类型检查。",
+   "defensive_insight": "加强类型检查，确保对象类型在运行时的一致性。"
+  },
+  {
+   "id": 422279,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 0
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 认证绕过",
+   "reasoning": "是。该漏洞利用 URL 中的反斜杠和 @ 符号，使浏览器解析 URL 时加载 @ 前的域名，从而绕过 Shopify 的 URL 白名单检查，实现钓鱼攻击。这是对浏览器 URL 解析行为的巧妙利用，且攻击链涉及多个组件，具有很高的启发性。",
+   "attack_chain": "构造恶意 URL → 受害者点击 → 浏览器加载 @ 前的域名 → 显示伪造登录页 → 窃取凭据。",
+   "bypass_technique": "利用反斜杠和 @ 符号使浏览器解析 URL 时忽略 @ 后的域名。",
+   "defensive_insight": "对 URL 进行规范化处理，禁止反斜杠等特殊字符；使用严格的白名单校验。"
+  },
+  {
+   "id": 50554,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。该漏洞是典型的存储型 XSS，通过标题字段注入脚本，属于成熟套路，没有绕过或攻击链。",
+   "attack_chain": "提交恶意标题 → 存储 → 其他用户查看时执行。",
+   "bypass_technique": "无实质绕过，直接利用未过滤输入。",
+   "defensive_insight": "对输入进行过滤和输出编码。"
+  },
+  {
+   "id": 748765,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "路径遍历 / 配置错误",
+   "reasoning": "部分。该漏洞利用大小写不同的 URL 编码绕过黑名单，属于常见的绕过技巧，但展示了黑名单过滤的局限性，具有一定的启发性。",
+   "attack_chain": "构造 %2E%2E 路径 → 绕过黑名单 → 读取任意文件。",
+   "bypass_technique": "使用大小写不同的 URL 编码绕过黑名单。",
+   "defensive_insight": "使用白名单或规范化路径，而不是黑名单。"
+  },
+  {
+   "id": 668439,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "授权绕过 / IDOR",
+   "reasoning": "否。该漏洞是典型的 IDOR，通过修改附件 ID 下载任意附件，且无需授权，属于成熟套路，没有绕过或攻击链。",
+   "attack_chain": "修改附件 ID → 下载任意附件。",
+   "bypass_technique": "无实质绕过，直接利用不安全的直接对象引用。",
+   "defensive_insight": "实施访问控制检查，确保用户只能访问自己的资源。"
+  },
+  {
+   "id": 248601,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "内存破坏 / 类型混淆",
+   "reasoning": "是。该漏洞是 PHP INI 解析中的栈缓冲区溢出，通过构造特殊的 INI 条目触发，展示了整数溢出导致缓冲区溢出的经典案例，具有较高的技术启发性。",
+   "attack_chain": "构造恶意 INI 文件 → 触发整数溢出 → 栈缓冲区溢出 → 代码执行或 DoS。",
+   "bypass_technique": "利用整数溢出绕过长度检查。",
+   "defensive_insight": "使用安全函数，进行边界检查，避免整数溢出。"
+  },
+  {
+   "id": 159696,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "内存破坏 / 其他",
+   "reasoning": "部分。该漏洞是 Python ssl 模块中的 use-after-free 和未初始化变量使用，属于常见的内存管理错误，但展示了在安全关键模块中的影响，具有一定的启发性。",
+   "attack_chain": "触发特定 SSL 操作 → 释放后使用 → 内存破坏。",
+   "bypass_technique": "无实质绕过，直接利用内存管理错误。",
+   "defensive_insight": "加强内存管理，使用安全的内存分配和释放函数。"
+  },
+  {
+   "id": 138516,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "内存破坏 / 其他",
+   "reasoning": "部分。该漏洞是 Adobe Flash Player 中的内存破坏，通过直接调用 retrieveAdPolicySelector 并传入无效参数触发，属于常见的参数验证缺失，但展示了特定 API 的利用方式，具有一定的启发性。",
+   "attack_chain": "构造恶意 Flash 文件 → 调用 API 并传入无效参数 → 内存破坏。",
+   "bypass_technique": "无实质绕过，直接利用参数验证缺失。",
+   "defensive_insight": "加强参数验证，确保所有 API 输入合法。"
+  },
+  {
+   "id": 335495,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 内存破坏",
+   "reasoning": "部分。该漏洞是 TLS 握手消息乱序导致 Node.js 段错误，展示了协议状态机处理不当的后果，具有一定的启发性，但攻击链简单。",
+   "attack_chain": "发送乱序 TLS 消息 → 触发状态机错误 → 段错误。",
+   "bypass_technique": "利用协议状态机未正确处理乱序消息。",
+   "defensive_insight": "加强协议状态机验证，确保消息顺序正确。"
+  },
+  {
+   "id": 280912,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "否。该漏洞是访问日志泄露，通过大量请求导致日志内容出现在响应中，属于配置错误，没有绕过或攻击链。",
+   "attack_chain": "发送大量请求 → 日志文件过大 → 部分日志内容泄露。",
+   "bypass_technique": "无实质绕过，直接利用配置错误。",
+   "defensive_insight": "限制日志文件大小，确保日志不直接暴露给用户。"
+  }
+ ]
+}

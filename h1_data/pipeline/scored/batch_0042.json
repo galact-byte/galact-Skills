@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   2371019,
+   1893186,
+   207321,
+   46397,
+   1838329
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1279322,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 授权绕过",
+   "reasoning": "部分。通过批发商店注册流程，利用'客户必须提供地址'功能，在未授权情况下向其他客户添加默认地址，属于业务逻辑绕过。思路有一定启发性，但依赖特定配置，且影响有限。",
+   "attack_chain": "启用批发商店地址必填→使用受害者邮箱注册并添加地址→受害者账户被添加默认地址。",
+   "bypass_technique": "利用批发注册流程的信任边界，绕过管理员权限限制。",
+   "defensive_insight": "对跨系统地址添加操作进行权限校验，确保只有管理员或本人可修改地址。"
+  },
+  {
+   "id": 231041,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "会话管理",
+   "reasoning": "否。登出后会话未失效，属于常见的会话管理缺陷，无绕过或攻击链，信息完整但套路成熟。",
+   "attack_chain": "登出后重放旧请求，服务器仍响应。",
+   "bypass_technique": "无实质绕过，直接利用会话未失效。",
+   "defensive_insight": "登出时彻底销毁服务端会话，并设置短会话超时。"
+  },
+  {
+   "id": 46397,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "IDOR / 业务逻辑",
+   "reasoning": "是。通过修改URL中的user_id，可以删除从未邀请的用户并触发通知邮件，属于IDOR的变体，但影响是发送垃圾邮件和制造混乱，思路巧妙，可批量利用。",
+   "attack_chain": "构造DELETE请求→修改user_id→触发删除通知邮件→批量骚扰用户。",
+   "bypass_technique": "直接遍历user_id，绕过邀请关系校验。",
+   "defensive_insight": "服务端校验用户是否真的被邀请，对删除操作进行权限验证。"
+  },
+  {
+   "id": 2371019,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / XSS",
+   "reasoning": "是。通过widgets.wp.com的DOM XSS，结合Jetpack的postMessage监听器未验证avatar_url，实现跨域XSS，影响数十万网站。攻击链跨组件，利用postMessage信任边界，极具启发性。",
+   "attack_chain": "在widgets.wp.com触发XSS→发送恶意postMessage→Jetpack监听器未编码avatar_url→DOM XSS→账户接管。",
+   "bypass_technique": "利用postMessage的origin检查漏洞，通过已控制的widgets.wp.com域发送恶意消息。",
+   "defensive_insight": "对postMessage消息进行严格验证和编码，避免使用innerHTML直接插入不可信数据。"
+  },
+  {
+   "id": 85559,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "配置错误",
+   "reasoning": "否。浏览器自动保存密码导致密码出现在用户名字段，属于浏览器行为，非应用漏洞，且信息不足。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "确保登录表单的autocomplete属性正确设置。"
+  },
+  {
+   "id": 10186,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "会话管理",
+   "reasoning": "否。密码修改后旧会话仍有效，属于常见会话管理缺陷，无绕过或攻击链，信息完整但套路成熟。",
+   "attack_chain": "修改密码→旧会话仍有效→攻击者继续访问。",
+   "bypass_technique": "无实质绕过，直接利用会话未失效。",
+   "defensive_insight": "密码修改后应使所有旧会话失效。"
+  },
+  {
+   "id": 1838329,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "是。GraphQL的aggs参数未过滤私有数据，可枚举私有项目句柄，属于聚合查询的权限绕过，思路新颖，可批量泄露信息。",
+   "attack_chain": "构造GraphQL查询→使用aggs聚合handle字段→泄露私有项目信息。",
+   "bypass_technique": "利用GraphQL聚合功能绕过权限过滤。",
+   "defensive_insight": "对GraphQL聚合字段进行权限校验，确保不泄露私有数据。"
+  },
+  {
+   "id": 1033253,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，单引号未过滤，经典套路，无绕过或攻击链，信息完整但启发性低。",
+   "attack_chain": "构造恶意URL→触发XSS→执行任意JS。",
+   "bypass_technique": "无实质绕过，直接利用未过滤的单引号。",
+   "defensive_insight": "对用户输入进行HTML编码，使用CSP。"
+  },
+  {
+   "id": 753386,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "CSRF",
+   "reasoning": "部分。通过CSRF绕过content-type限制，触发重发确认邮件，属于CSRF的变体，思路有一定启发性，但影响有限。",
+   "attack_chain": "构造恶意表单→受害者访问→自动提交→触发重发邮件。",
+   "bypass_technique": "利用表单提交绕过content-type检查。",
+   "defensive_insight": "强制要求JSON content-type，并添加CSRF token。"
+  },
+  {
+   "id": 1587246,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 状态混淆",
+   "reasoning": "部分。角色变更后未刷新页面，导致旧权限仍生效，属于状态混淆，思路有启发性，但依赖用户行为。",
+   "attack_chain": "添加超级管理员→受害者打开页面→角色改为分析师→受害者未刷新→仍可发布帖子。",
+   "bypass_technique": "利用前端状态未同步，绕过权限变更。",
+   "defensive_insight": "服务端每次请求都校验权限，前端状态变更后强制刷新。"
+  },
+  {
+   "id": 1893186,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / XSS",
+   "reasoning": "是。通过richdocumentscode的proxy.php绕过CSP，结合Collabora的字符串拼接漏洞，实现反射型XSS和账户接管。攻击链跨组件，利用CSP绕过，极具启发性。",
+   "attack_chain": "构造恶意URL→proxy.php未应用CSP→注入XSS→账户接管。",
+   "bypass_technique": "利用proxy.php绕过CSP，通过WOPISrc参数注入。",
+   "defensive_insight": "所有PHP脚本应统一应用CSP，对输入进行严格验证和编码。"
+  },
+  {
+   "id": 226335,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "命令注入 / 协议行为利用",
+   "reasoning": "部分。通过gemspec的summary字段注入终端转义序列，利用终端模拟器的行为，实现命令注入，思路有启发性，但依赖终端环境。",
+   "attack_chain": "创建恶意gem→受害者执行gem search→终端执行转义序列→任意命令执行。",
+   "bypass_technique": "利用终端转义序列注入，绕过应用层过滤。",
+   "defensive_insight": "对输出到终端的字符串进行转义序列过滤。"
+  },
+  {
+   "id": 636560,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 信息泄露",
+   "reasoning": "部分。通过组路径访问项目里程碑，绕过项目设置中的权限限制，属于授权绕过，思路有启发性，但影响有限。",
+   "attack_chain": "访问组路径→查看项目里程碑→绕过项目权限设置。",
+   "bypass_technique": "利用组与项目的权限继承差异，绕过项目级限制。",
+   "defensive_insight": "确保组和项目权限一致，对里程碑访问进行统一校验。"
+  },
+  {
+   "id": 191220,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "配置错误",
+   "reasoning": "否。HTTP OPTIONS方法启用，属于常见配置问题，无实际攻击链，信息不足。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁用不必要的HTTP方法。"
+  },
+  {
+   "id": 605915,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 配置错误",
+   "reasoning": "部分。SVG参数注入XSS，但被CSP缓解，利用CSP缺少form-action进行钓鱼，思路有启发性，但影响有限。",
+   "attack_chain": "构造恶意SVG URL→注入XSS→CSP阻止→利用form-action进行钓鱼。",
+   "bypass_technique": "利用CSP缺少form-action，注入钓鱼表单。",
+   "defensive_insight": "完善CSP策略，添加form-action指令，对SVG参数进行编码。"
+  },
+  {
+   "id": 162296,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，通过闭合script标签注入，经典套路，无绕过或攻击链，信息完整但启发性低。",
+   "attack_chain": "构造恶意URL→触发XSS→执行任意JS。",
+   "bypass_technique": "无实质绕过，直接利用未过滤的script标签。",
+   "defensive_insight": "对用户输入进行HTML编码，使用CSP。"
+  },
+  {
+   "id": 125397,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。PHP空指针解引用，属于已知漏洞，无绕过或攻击链，信息完整但套路成熟。",
+   "attack_chain": "调用stream_context_get_default→触发空指针→崩溃。",
+   "bypass_technique": "无实质绕过，直接利用已知漏洞。",
+   "defensive_insight": "修复PHP漏洞，更新版本。"
+  },
+  {
+   "id": 105887,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "部分。通过thanks.json响应差异判断私有程序是否存在，属于信息泄露，思路有启发性，但影响有限，且无攻击链。",
+   "attack_chain": "猜测用户名→访问thanks.json→判断程序是否存在。",
+   "bypass_technique": "利用响应差异进行枚举。",
+   "defensive_insight": "对私有程序页面返回统一响应，避免泄露存在性。"
+  },
+  {
+   "id": 28150,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型XSS，通过tweet内容注入，经典套路，无绕过或攻击链，信息完整但启发性低。",
+   "attack_chain": "发布恶意tweet→触发XSS→执行任意JS。",
+   "bypass_technique": "无实质绕过，直接利用未过滤的输入。",
+   "defensive_insight": "对用户输入进行HTML编码，使用CSP。"
+  },
+  {
+   "id": 207321,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "类型混淆 / 信息泄露",
+   "reasoning": "是。通过重载<=>方法，利用mrb_value联合体的类型混淆，泄露对象地址，绕过ASLR，属于框架行为利用，极具启发性。",
+   "attack_chain": "重载Integer的<=>→调用字符串比较→返回对象指针→泄露地址。",
+   "bypass_technique": "利用类型混淆，将对象指针当作整数返回。",
+   "defensive_insight": "在将返回值当作fixnum前进行类型检查，使用mrb_fixnum_p宏。"
+  }
+ ]
+}

@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   500,
+   118582,
+   50752,
+   138881,
+   118965
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 118965,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "信息泄露 / 业务逻辑",
+   "reasoning": "是。通过两个公开端点返回状态码的差异矩阵，无需登录即可区分HackerOne上EP+Private与Private项目，属于对平台业务逻辑的巧妙利用。技术点在于利用HTTP状态码的细微差别（500 vs 401）作为侧信道，可抽象为通用判断条件。",
+   "attack_chain": "构造两个特定年份的thanks端点请求→观察状态码组合→推断项目类型。",
+   "bypass_technique": "利用不同年份端点返回状态码的差异，绕过登录限制进行信息枚举。",
+   "defensive_insight": "统一端点返回状态码，避免基于年份的差异；对未授权访问返回一致响应。"
+  },
+  {
+   "id": 241192,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "部分。利用jQuery的$.get方法绕过CSP的connect-src限制，且不触发report-uri，属于对框架行为的利用。但依赖特定库版本，通用性有限，且报告为duplicate，可复现性一般。",
+   "attack_chain": "构造恶意$.get请求→绕过CSP→执行远程脚本。",
+   "bypass_technique": "利用jQuery的$.get方法绕过CSP的connect-src限制，且不触发report-uri。",
+   "defensive_insight": "更新jQuery库，严格CSP策略，避免使用'unsafe-inline'。"
+  },
+  {
+   "id": 404898,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "是。漏洞不在软件本身，而在其导出的XML配置文件中，通过篡改XML实现XSS和重定向，属于跨组件攻击链。技术点在于利用SWF的xml_path参数信任用户输入，可抽象为通用模式。",
+   "attack_chain": "定位SWF→获取XML配置→篡改XML→托管恶意XML→诱导用户点击→执行XSS。",
+   "bypass_technique": "通过篡改XML配置文件，控制SWF行为，实现XSS和重定向。",
+   "defensive_insight": "对xml_path参数进行白名单校验，限制外部XML加载。"
+  },
+  {
+   "id": 500,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 内存破坏",
+   "reasoning": "是。利用AES-GCM模式下MAC上下文未初始化，导致rekey时调用野指针，属于协议行为利用。技术点在于未初始化内存中的回调指针被调用，可抽象为通用条件。",
+   "attack_chain": "选择AES-GCM密码→触发rekey→调用未初始化MAC上下文→内存破坏→代码执行。",
+   "bypass_technique": "利用AES-GCM模式下MAC上下文未初始化，在rekey时触发野指针调用。",
+   "defensive_insight": "初始化所有上下文，使用calloc代替malloc，禁用AES-GCM或升级版本。"
+  },
+  {
+   "id": 138881,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "信息泄露 / 业务逻辑",
+   "reasoning": "是。通过API端点验证手机号是否已注册，可批量枚举用户手机号，属于业务逻辑漏洞。技术点在于利用API的响应差异进行侧信道枚举，可抽象为通用判断条件。",
+   "attack_chain": "调用API验证手机号→观察响应差异→批量枚举用户手机号。",
+   "bypass_technique": "利用API对已注册和未注册手机号的响应差异，进行批量枚举。",
+   "defensive_insight": "对API请求添加CSRF令牌和速率限制，统一响应信息。"
+  },
+  {
+   "id": 118582,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "命令注入 / 业务逻辑",
+   "reasoning": "是。通过构造特殊标题绕过CSV注入的防护，利用Excel解析分号分割字段的特性执行公式，属于对Excel行为的利用。技术点在于利用引号包裹的字段中分号仍可分割，可抽象为通用条件。",
+   "attack_chain": "创建恶意标题→导出CSV→Excel解析时分割字段→执行公式。",
+   "bypass_technique": "在标题中注入分号，绕过CSV字段封装，使Excel分割字段并执行公式。",
+   "defensive_insight": "对CSV导出内容进行转义，禁止以=、+、-、@开头的字段。"
+  },
+  {
+   "id": 190798,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "否。典型的反射型XSS，参数未过滤直接反射，无绕过，但PoC完整，可复现。",
+   "attack_chain": "构造恶意URL→参数注入→反射执行脚本。",
+   "bypass_technique": "无实质绕过，直接利用参数未过滤。",
+   "defensive_insight": "对LocaleID参数进行编码和验证。"
+  },
+  {
+   "id": 1916583,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 授权绕过",
+   "reasoning": "部分。通过API错误消息枚举应用名称，属于信息泄露，但技术点简单，无绕过。",
+   "attack_chain": "未授权用户请求API→错误消息泄露应用名→进一步攻击。",
+   "bypass_technique": "利用API错误消息中的差异枚举应用名。",
+   "defensive_insight": "统一错误消息，避免泄露敏感信息。"
+  },
+  {
+   "id": 58831,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "是。利用Flash的ExternalInterface和redirectUrl参数注入JavaScript，属于框架行为利用。技术点在于ActionScript与JavaScript的交互，可抽象为通用模式。",
+   "attack_chain": "构造恶意SWF URL→注入JavaScript→点击触发XSS。",
+   "bypass_technique": "利用Flash的ExternalInterface和redirectUrl参数注入JavaScript。",
+   "defensive_insight": "对Flash参数进行严格过滤，禁用ExternalInterface或升级。"
+  },
+  {
+   "id": 310943,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "路径遍历",
+   "reasoning": "否。典型的路径遍历，代码未过滤，但PoC完整，可复现。",
+   "attack_chain": "构造../路径→读取任意文件。",
+   "bypass_technique": "无实质绕过，直接利用未过滤路径。",
+   "defensive_insight": "对路径进行规范化，限制访问范围。"
+  },
+  {
+   "id": 1416665,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "否。GitHub上泄露密钥，常见配置错误，无绕过，无链。",
+   "attack_chain": "搜索GitHub→发现密钥→利用。",
+   "bypass_technique": "无实质绕过，直接利用泄露的密钥。",
+   "defensive_insight": "定期扫描代码库，使用密钥管理服务。"
+  },
+  {
+   "id": 1726445,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "认证绕过 / 配置错误",
+   "reasoning": "部分。利用PermitPAMUserChange配置错误，允许错误密码登录，属于配置错误，但技术点简单。",
+   "attack_chain": "配置PermitPAMUserChange为yes→使用错误密码登录成功。",
+   "bypass_technique": "利用配置错误，绕过密码验证。",
+   "defensive_insight": "默认禁用PermitPAMUserChange，严格配置审查。"
+  },
+  {
+   "id": 1184644,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，WAF绕过但无新意，常见套路。",
+   "attack_chain": "构造恶意URL→绕过WAF→执行脚本。",
+   "bypass_technique": "利用WAF绕过技巧，但无通用性。",
+   "defensive_insight": "加强WAF规则，对输入进行编码。"
+  },
+  {
+   "id": 50752,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "开放重定向 / 协议行为利用",
+   "reasoning": "是。利用双斜杠和IP地址转换，绕过域名限制，将authenticity_token发送到任意IP，属于协议行为利用。技术点在于将域名转换为IP数字形式，可抽象为通用条件。",
+   "attack_chain": "构造双斜杠URL→转换为IP数字→重定向并发送token。",
+   "bypass_technique": "利用双斜杠和IP数字转换，绕过域名限制。",
+   "defensive_insight": "对重定向URL进行白名单校验，禁止IP地址。"
+  },
+  {
+   "id": 42587,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "IDOR / 认证绕过",
+   "reasoning": "部分。IDOR重置密码，但报告缺少细节，可复现性一般。",
+   "attack_chain": "利用IDOR→重置任意用户密码。",
+   "bypass_technique": "利用IDOR，直接操作他人资源。",
+   "defensive_insight": "实施对象级授权检查。"
+  },
+  {
+   "id": 751876,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。只是列出已知WordPress漏洞，无新意，无绕过。",
+   "attack_chain": "无，仅版本信息。",
+   "bypass_technique": "无。",
+   "defensive_insight": "及时更新WordPress版本。"
+  },
+  {
+   "id": 1186740,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少CAA记录，常见配置问题，无实际利用。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "添加CAA记录。"
+  },
+  {
+   "id": 1245055,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。已知CVE的利用，无新意。",
+   "attack_chain": "构造POST表单→触发XSS。",
+   "bypass_technique": "无，直接利用已知漏洞。",
+   "defensive_insight": "升级Cisco设备固件。"
+  },
+  {
+   "id": 1994585,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。未认证的缓存清除，常见配置错误，无绕过。",
+   "attack_chain": "发送PURGE请求→清除缓存。",
+   "bypass_technique": "无，直接利用未认证接口。",
+   "defensive_insight": "对PURGE请求进行认证。"
+  },
+  {
+   "id": 1113025,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "整数溢出 / 协议行为利用",
+   "reasoning": "是。利用整数溢出导致负输出长度，结合指针运算访问错误内存，属于协议行为利用。技术点在于整数溢出与指针运算的组合，可抽象为通用条件。",
+   "attack_chain": "构造大输入→触发整数溢出→负长度→内存访问错误。",
+   "bypass_technique": "利用整数溢出，使输出长度为负，导致内存错误。",
+   "defensive_insight": "检查整数溢出，使用安全长度计算。"
+  }
+ ]
+}

@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 8,
+  "dropped": 12,
+  "avg_score": 4.6,
+  "top_n": [
+   139398,
+   1984060,
+   1047447,
+   1927480,
+   50776
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 385322,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。WordPress author enumeration 是公开的经典技巧，无绕过、无攻击链，信息量少。",
+   "attack_chain": "单点：?author=1 重定向到 /author/admin 泄露用户名。",
+   "bypass_technique": "无，直接利用 WordPress 默认行为。",
+   "defensive_insight": "禁用 author 归档或重定向，限制用户枚举。"
+  },
+  {
+   "id": 139398,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "命令注入 / 协议行为利用",
+   "reasoning": "是。利用正则未锚定（缺少^$）导致 URL 中可注入 shell 命令，且通过重定向响应携带恶意 Location 头触发。这是对已修复漏洞的绕过，展示了正则边界校验的重要性。",
+   "attack_chain": "攻击者服务器返回恶意 Location 头 → 设备 fetchCookies 解析未严格校验 → 拼接进 exec 命令 → 执行任意命令。",
+   "bypass_technique": "在 Location 头中注入反引号命令，利用正则未锚定允许额外字符。",
+   "defensive_insight": "严格校验外部输入，正则使用 ^ 和 $ 锚定，避免将不可信数据拼入系统命令。"
+  },
+  {
+   "id": 272588,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。经典 CSRF，缺少 token 校验，无绕过，攻击链简单。",
+   "attack_chain": "单点：恶意表单提交购买彩票请求。",
+   "bypass_technique": "无，直接利用缺少 CSRF 防护。",
+   "defensive_insight": "实施 CSRF token 并验证 session_id。"
+  },
+  {
+   "id": 1047447,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 开放重定向",
+   "reasoning": "是。Rails HostAuthorization 中间件对点开头域名的正则未锚定，导致 Host 头可注入任意前缀，实现开放重定向。这是对框架安全机制的绕过，展示了正则边界的重要性。",
+   "attack_chain": "构造 Host: google.com#sub.tkte.ch → 中间件误判为合法 → 重定向到恶意域名。",
+   "bypass_technique": "利用正则未锚定，在合法域名前插入任意内容。",
+   "defensive_insight": "严格锚定正则，对 Host 头进行规范化校验。"
+  },
+  {
+   "id": 1406495,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 认证绕过",
+   "reasoning": "部分。通过修改 2FA 设置请求中的手机号，导致受害者无法接收 OTP，实现零点击账户锁定。思路有启发性，但依赖特定业务逻辑，且缺少完整 PoC 细节。",
+   "attack_chain": "攻击者修改 2FA 手机号 → 触发大量重发 → 服务器限制 → 受害者无法登录。",
+   "bypass_technique": "利用 2FA 设置接口未校验手机号归属，结合重发限制。",
+   "defensive_insight": "2FA 设置需验证手机号所有权，限制重发频率。"
+  },
+  {
+   "id": 1927480,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 类型混淆",
+   "reasoning": "是。Node.js crypto 模块的 DiffieHellman.generateKeys() 在已设置私钥后不会重新生成，导致密钥重用。这是对 OpenSSL 底层行为的误解，影响广泛。",
+   "attack_chain": "设置私钥 → 调用 generateKeys() → 私钥不变 → 密钥重用风险。",
+   "bypass_technique": "利用 OpenSSL 内部逻辑：priv_key 非空时跳过生成。",
+   "defensive_insight": "框架应正确封装底层库，确保 generateKeys() 总是生成新密钥。"
+  },
+  {
+   "id": 94230,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。经典反射型 XSS，通过参数注入 script 标签，无绕过，攻击链简单。",
+   "attack_chain": "单点：构造恶意 URL → 参数未过滤 → 执行脚本。",
+   "bypass_technique": "无，直接利用未过滤参数。",
+   "defensive_insight": "对输出进行编码，实施 CSP。"
+  },
+  {
+   "id": 53088,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "SSRF / 跨组件攻击链",
+   "reasoning": "是。利用 SSRF 访问云元数据服务，获取敏感信息。虽然 SSRF 常见，但针对云环境的利用具有通用性，且攻击链清晰。",
+   "attack_chain": "SSRF → 访问 169.254.169.254 → 获取 user-data 等敏感信息。",
+   "bypass_technique": "无，直接利用 SSRF 访问内网元数据。",
+   "defensive_insight": "限制 SSRF 目标，禁止访问云元数据 IP。"
+  },
+  {
+   "id": 14494,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "点击劫持 / CSRF",
+   "reasoning": "否。经典点击劫持和 CSRF，无绕过，攻击链简单。",
+   "attack_chain": "单点：iframe 嵌入登录页，诱导用户操作。",
+   "bypass_technique": "无，直接利用缺少 X-Frame-Options 和 CSRF 防护。",
+   "defensive_insight": "设置 X-Frame-Options，实施 CSRF token。"
+  },
+  {
+   "id": 50776,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。评论功能禁用后，用户仍可通过重放旧请求编辑评论，这是对状态变更的绕过，展示了服务端未校验当前状态的缺陷。",
+   "attack_chain": "评论启用时捕获编辑请求 → 禁用评论后重放 → 编辑成功。",
+   "bypass_technique": "重放旧请求，绕过前端限制。",
+   "defensive_insight": "服务端应校验评论当前状态，禁止在禁用后编辑。"
+  },
+  {
+   "id": 395944,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。经典存储型 XSS，管理员输入未过滤，无绕过，攻击链简单。",
+   "attack_chain": "单点：管理员输入 payload → 存储 → 反射执行。",
+   "bypass_technique": "无，直接利用未过滤输入。",
+   "defensive_insight": "对输入进行过滤和输出编码。"
+  },
+  {
+   "id": 1067004,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。已知 CVE 的信息泄露，直接访问端点即可，无绕过，攻击链简单。",
+   "attack_chain": "单点：访问 /secure/QueryComponent!Default.jspa 获取信息。",
+   "bypass_technique": "无，直接利用已知漏洞。",
+   "defensive_insight": "升级 Jira 版本。"
+  },
+  {
+   "id": 1569926,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 信息泄露",
+   "reasoning": "部分。curl 多 URL 时凭据复用，这是协议行为，但影响有限，且需要用户误用。",
+   "attack_chain": "单点：curl 多 URL 时凭据泄露。",
+   "bypass_technique": "无，利用 curl 默认行为。",
+   "defensive_insight": "文档警告用户避免多 URL 使用凭据。"
+  },
+  {
+   "id": 67929,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。信息不足，仅描述错误页面，无明确漏洞。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "规范错误处理。"
+  },
+  {
+   "id": 681468,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。密码重置功能泄露用户存在性，常见问题，无绕过。",
+   "attack_chain": "单点：尝试重置密码，响应差异泄露邮箱存在。",
+   "bypass_technique": "无，直接利用响应差异。",
+   "defensive_insight": "统一响应消息，避免用户枚举。"
+  },
+  {
+   "id": 2012135,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "ReDoS / 框架行为利用",
+   "reasoning": "部分。GlobalID 的 ReDoS 漏洞，利用正则回溯，影响广泛，但属于已知 CVE，无新意。",
+   "attack_chain": "单点：构造恶意输入 → 正则回溯 → DoS。",
+   "bypass_technique": "无，直接利用正则缺陷。",
+   "defensive_insight": "修复正则，限制输入长度。"
+  },
+  {
+   "id": 872190,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。公开桶中明文密码，配置错误，无绕过。",
+   "attack_chain": "单点：搜索公开桶发现密码。",
+   "bypass_technique": "无，直接利用配置错误。",
+   "defensive_insight": "定期审计公开资源，避免敏感信息。"
+  },
+  {
+   "id": 304708,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。错误页面泄露版本信息，常见问题，无绕过。",
+   "attack_chain": "单点：触发错误页面获取版本。",
+   "bypass_technique": "无，直接利用默认错误页。",
+   "defensive_insight": "自定义错误页面，隐藏版本信息。"
+  },
+  {
+   "id": 1984060,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 跨组件攻击链",
+   "reasoning": "是。私有文件通过变换功能生成公开图片，且无法删除，这是对访问控制的绕过，展示了功能间权限不一致。",
+   "attack_chain": "上传私有文件 → 使用变换功能 → 生成公开图片 → 无法删除。",
+   "bypass_technique": "利用变换功能绕过私有权限。",
+   "defensive_insight": "变换功能应继承原文件权限，提供删除选项。"
+  },
+  {
+   "id": 1068934,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 0
+   },
+   "verdict": "保留，普通",
+   "category": "跨组件攻击链 / 其他",
+   "reasoning": "部分。CTF writeup 展示了多种漏洞组合，但作为漏洞报告缺乏可复现性，且是 CTF 场景。",
+   "attack_chain": "多步：信息收集 → 绕过过滤器 → SQLi → 内部 API 访问 → 最终攻击。",
+   "bypass_technique": "多种：str_replace 绕过、类型混淆、DNS rebinding 等。",
+   "defensive_insight": "综合防御，输入验证、权限控制、安全配置。"
+  }
+ ]
+}

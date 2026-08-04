@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   136169,
+   102194,
+   1543159,
+   54034,
+   2449038
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 2449038,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 其他",
+   "reasoning": "是。这是一个底层密码学库的算术溢出漏洞，影响特定模数大小的RSA/DH/DSA操作。虽然攻击难度高，但属于对数学算法实现的深入利用，非典型Web漏洞。技术点在于Montgomery平方过程的溢出，导致密钥可能被恢复。",
+   "attack_chain": "利用特定模数（如DH512）触发溢出，通过多次签名或密钥交换泄露信息，最终恢复私钥。",
+   "bypass_technique": "利用算法实现中的算术溢出，绕过密码学安全性。",
+   "defensive_insight": "使用经过审计的密码学库，及时更新补丁，避免使用低强度密钥。"
+  },
+  {
+   "id": 1097217,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。这是一个反射型XSS，但利用accesskey属性需要用户交互，且需要特定按键组合，降低了实际危害。技术点在于通过accesskey触发事件，但整体思路较常见。",
+   "attack_chain": "构造恶意URL→用户点击并按下accesskey组合→执行脚本。",
+   "bypass_technique": "利用accesskey属性在用户交互时触发XSS。",
+   "defensive_insight": "对输入进行严格过滤和输出编码，避免反射型XSS。"
+  },
+  {
+   "id": 1763343,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "配置错误 / 其他",
+   "reasoning": "否。依赖混淆是已知攻击手法，但报告未提供实际利用证据，且目标不在范围内，信息不足。",
+   "attack_chain": "未提供完整链。",
+   "bypass_technique": "无。",
+   "defensive_insight": "使用私有仓库或锁定依赖版本，防止依赖混淆。"
+  },
+  {
+   "id": 264090,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "认证绕过 / 业务逻辑",
+   "reasoning": "是。通过重用确认令牌和已使用的authenticity_token绕过账户锁定，实现密码修改。技术点在于令牌不失效，属于状态混淆。",
+   "attack_chain": "获取确认令牌→重用令牌修改密码→绕过锁定。",
+   "bypass_technique": "重用未过期的确认令牌和CSRF令牌。",
+   "defensive_insight": "确保令牌一次性使用，并设置过期时间。"
+  },
+  {
+   "id": 406587,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。DOM XSS使用innerHTML，但需要用户交互且CSP阻止了执行，实际影响有限。技术点常见。",
+   "attack_chain": "用户粘贴恶意内容→提交→触发XSS（但被CSP阻止）。",
+   "bypass_technique": "无实质绕过。",
+   "defensive_insight": "避免使用innerHTML，使用textContent或服务端过滤。"
+  },
+  {
+   "id": 888331,
+   "value_score": 0,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告内容仅为占位符，无任何技术细节。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "无。"
+  },
+  {
+   "id": 1179193,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "子域名接管",
+   "reasoning": "是。通过接管已释放的AWS EC2 IP，实现子域名接管。技术点在于云资源释放后未清理DNS记录，属于配置错误。",
+   "attack_chain": "发现悬空DNS→申请相同IP→控制子域名。",
+   "bypass_technique": "利用云服务IP重用。",
+   "defensive_insight": "定期清理DNS记录，监控悬空资源。"
+  },
+  {
+   "id": 1543159,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 授权绕过",
+   "reasoning": "是。通过直接修改API参数绕过广告审核和支付流程，实现未付费广告投放。技术点在于客户端可控制服务端状态字段，属于授权绕过。",
+   "attack_chain": "创建广告→修改admin_approval和effective_status→绕过审核和支付。",
+   "bypass_technique": "直接修改API请求中的状态字段。",
+   "defensive_insight": "服务端强制校验状态变更权限，不信任客户端输入。"
+  },
+  {
+   "id": 241623,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 状态混淆",
+   "reasoning": "是。断开第三方关联后，仍可通过第三方登录重新关联，导致账户控制。技术点在于状态未彻底清除。",
+   "attack_chain": "断开第三方关联→使用第三方登录→重新关联。",
+   "bypass_technique": "利用第三方登录的持久性。",
+   "defensive_insight": "断开关联时彻底清除相关会话和令牌。"
+  },
+  {
+   "id": 267867,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。CSRF登出是常见漏洞，无特殊绕过。",
+   "attack_chain": "诱导用户访问链接→触发登出。",
+   "bypass_technique": "无。",
+   "defensive_insight": "使用CSRF令牌。"
+  },
+  {
+   "id": 159213,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "内容欺骗 / CSRF",
+   "reasoning": "部分。内容欺骗结合CSRF，但技术点较常见。",
+   "attack_chain": "构造恶意表单→诱导提交→内容欺骗。",
+   "bypass_technique": "利用CSRF触发内容注入。",
+   "defensive_insight": "对输入进行编码，使用CSRF保护。"
+  },
+  {
+   "id": 282748,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 其他",
+   "reasoning": "是。通过按钮默认文本的宽度差异检测浏览器UI语言，绕过隐私设置。技术点在于利用浏览器本地化行为。",
+   "attack_chain": "构造页面→测量按钮宽度→推断语言。",
+   "bypass_technique": "利用浏览器默认文本的宽度差异。",
+   "defensive_insight": "避免依赖默认文本，使用显式属性。"
+  },
+  {
+   "id": 54034,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "其他 / 配置错误",
+   "reasoning": "是。通过JSON格式输出和文件名注入实现RFD攻击。技术点在于利用下载属性和文件名控制。",
+   "attack_chain": "构造恶意URL→诱导下载→执行恶意文件。",
+   "bypass_technique": "利用HTML5下载属性和文件名注入。",
+   "defensive_insight": "设置Content-Disposition头，过滤特殊字符。"
+  },
+  {
+   "id": 136169,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 框架行为利用",
+   "reasoning": "是。通过伪造SAML响应并移除签名标签，绕过SAML认证。技术点在于插件未验证签名，属于框架行为利用。",
+   "attack_chain": "构造SAML响应→移除签名→提交→获得管理员权限。",
+   "bypass_technique": "利用SAML库的签名验证缺陷。",
+   "defensive_insight": "强制验证SAML签名，不信任未签名响应。"
+  },
+  {
+   "id": 102194,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 0
+   },
+   "verdict": "保留，高优先级",
+   "category": "CSRF / 跨组件攻击链",
+   "reasoning": "是。通过CSRF结合文件上传ID，实现账户接管。技术点在于利用CSRF和文件ID的关联。",
+   "attack_chain": "上传恶意CSV→获取文件ID→构造CSRF链接→诱导管理员点击→添加管理员。",
+   "bypass_technique": "利用CSRF和文件ID的关联。",
+   "defensive_insight": "加强CSRF保护，验证文件所有权。"
+  },
+  {
+   "id": 148777,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。IIS tilde枚举是已知技术，无新意。",
+   "attack_chain": "发送特殊请求→枚举目录。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁用短文件名，配置IIS。"
+  },
+  {
+   "id": 1582778,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 竞争条件",
+   "reasoning": "部分。通过并发登录请求锁定账户，属于DoS。技术点在于利用账户锁定机制。",
+   "attack_chain": "并发发送错误密码→触发锁定→持续锁定。",
+   "bypass_technique": "利用账户锁定机制。",
+   "defensive_insight": "使用验证码或IP限制，避免永久锁定。"
+  },
+  {
+   "id": 230428,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。CSRF注册是常见漏洞，无特殊。",
+   "attack_chain": "诱导用户提交表单→创建账户。",
+   "bypass_technique": "无。",
+   "defensive_insight": "使用CSRF令牌。"
+  },
+  {
+   "id": 152929,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 信息泄露",
+   "reasoning": "是。通过修改project_id参数访问其他实例的项目，属于IDOR。技术点在于未校验对象所有权。",
+   "attack_chain": "修改project_id→访问其他项目。",
+   "bypass_technique": "直接修改参数。",
+   "defensive_insight": "服务端校验对象所有权。"
+  },
+  {
+   "id": 1536461,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。反射型XSS，但无特殊绕过，常见。",
+   "attack_chain": "构造恶意URL→触发XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "输入过滤和输出编码。"
+  }
+ ]
+}

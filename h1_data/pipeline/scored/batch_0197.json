@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   304378,
+   1353103,
+   1215263,
+   1196958,
+   1045644
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 188185,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。这是典型的基于DOM的XSS，通过location.hash注入到innerHTML，使用jQuery库的已知漏洞。虽然影响多个子域，但技术点常见，没有新颖的绕过或组合。",
+   "attack_chain": "构造恶意URL→location.hash被用于innerHTML→执行JavaScript。",
+   "bypass_technique": "无实质绕过，直接利用不安全的DOM操作。",
+   "defensive_insight": "避免使用innerHTML插入不可信数据，对hash参数进行编码或使用textContent。"
+  },
+  {
+   "id": 1045644,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "子域名接管 / 配置错误",
+   "reasoning": "是。未认领的子域名指向tilda.cc，攻击者可以注册并控制该子域名，导致子域名接管。这利用了DNS配置错误和第三方服务的信任，可导致CORS绕过和SSO绕过。",
+   "attack_chain": "发现未认领子域名→在tilda.cc注册账户→添加该域名→完全控制子域名内容→利用CORS或SSO窃取用户数据。",
+   "bypass_technique": "利用未认领子域名和第三方服务的信任关系，实现子域名接管。",
+   "defensive_insight": "定期检查DNS记录，确保所有子域名都有明确归属，对不再使用的子域名及时清理或配置验证。"
+  },
+  {
+   "id": 2082528,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "认证绕过 / 路径遍历",
+   "reasoning": "部分。利用路径遍历（/hax/..CFIDE/）绕过访问控制，访问ColdFusion Administrator的敏感功能。这是已知CVE的利用，但路径遍历绕过方式有一定技巧性，且影响明确。",
+   "attack_chain": "构造特殊URL→路径遍历绕过访问控制→访问CFIDE管理功能→获取敏感信息或执行操作。",
+   "bypass_technique": "使用路径遍历（/hax/..CFIDE/）绕过访问控制列表。",
+   "defensive_insight": "对URL进行规范化处理，拒绝包含..的路径，并确保管理接口有严格的访问控制。"
+  },
+  {
+   "id": 196221,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。recipe_url参数直接注入javascript:协议，点击图片触发XSS。虽然简单，但参数在URL中，且需要用户交互，属于常见反射型XSS，但PoC清晰。",
+   "attack_chain": "构造恶意URL→用户点击图片→执行JavaScript。",
+   "bypass_technique": "无实质绕过，直接利用未过滤的URL参数。",
+   "defensive_insight": "对URL参数进行白名单校验，禁止javascript:等协议。"
+  },
+  {
+   "id": 438240,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。ReturnUrl参数未正确过滤，导致反射型XSS，且发生在登录后，影响多个子域。虽然技术点常见，但影响范围广，且利用登录流程，有一定启发性。",
+   "attack_chain": "构造恶意ReturnUrl→用户登录→执行JavaScript。",
+   "bypass_technique": "无实质绕过，直接利用未过滤的redirect参数。",
+   "defensive_insight": "对redirect参数进行白名单校验，并确保内容转义。"
+  },
+  {
+   "id": 304378,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用ACME TLS-SNI-01/02挑战在共享主机环境中的缺陷，攻击者可以获取任意域名的SSL证书。这利用了协议设计假设与云提供商路由行为的差异，导致证书颁发机构信任错误。",
+   "attack_chain": "攻击者控制共享主机上的一个虚拟主机→利用TLS-SNI挑战验证域名所有权→获取目标域名的证书。",
+   "bypass_technique": "利用共享主机上多个域名共享IP的特性，通过TLS-SNI挑战绕过域名验证。",
+   "defensive_insight": "证书颁发机构应使用更安全的验证方法（如DNS-01），并考虑共享主机环境的风险。"
+  },
+  {
+   "id": 1353103,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 路径遍历",
+   "reasoning": "是。利用letter_opener_web gem的CSRF缺失和路径遍历，通过浏览器跨域请求删除任意文件。结合了CSRF、路径遍历和浏览器行为（Firefox/Safari不自动解码%2e），实现了任意文件删除。",
+   "attack_chain": "恶意网站→构造POST请求到letter_opener路由→利用路径遍历删除任意文件。",
+   "bypass_technique": "利用CSRF缺失和浏览器对%2e%2e%2f的不同处理，绕过CORS限制。",
+   "defensive_insight": "为所有路由添加CSRF保护，对文件路径进行规范化，拒绝包含..的路径。"
+  },
+  {
+   "id": 672623,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "部分。iOS客户端在登录流程中向第三方推送服务器发送Basic Auth头，导致用户名和访问令牌泄露。这利用了客户端对第三方服务的信任，属于设计缺陷。",
+   "attack_chain": "用户登录→客户端向推送服务器发送凭据→第三方服务器收集凭据。",
+   "bypass_technique": "无实质绕过，利用客户端设计缺陷。",
+   "defensive_insight": "客户端不应向第三方发送凭据，应使用独立的推送令牌。"
+  },
+  {
+   "id": 1215263,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 其他",
+   "reasoning": "是。通过注入引号到Content-Disposition头，改变下载文件的扩展名，绕过附件过滤并诱导用户执行恶意文件。这利用了HTTP头解析的宽松性，实现了代码执行。",
+   "attack_chain": "发送恶意附件→下载时扩展名被篡改→用户打开文件→代码执行。",
+   "bypass_technique": "在文件名中注入引号，使Content-Disposition头解析出不同的扩展名。",
+   "defensive_insight": "对Content-Disposition头进行严格转义，确保文件名不包含引号等特殊字符。"
+  },
+  {
+   "id": 1195568,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。这是关于勒索软件保护功能缺少扩展名列表的抱怨，属于功能缺陷而非安全漏洞，没有攻击链或绕过。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "定期更新勒索软件扩展名列表，确保覆盖最新威胁。"
+  },
+  {
+   "id": 185826,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型XSS，通过产品名称注入payload，在Buy Button组件中触发。技术点常见，没有新颖的绕过。",
+   "attack_chain": "创建恶意产品→在Buy Button中渲染→执行JavaScript。",
+   "bypass_technique": "无实质绕过，直接利用未过滤的输入。",
+   "defensive_insight": "对用户输入进行HTML编码，避免在innerHTML中直接插入。"
+  },
+  {
+   "id": 1106505,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。通过特定参数泄露数据库凭据，属于配置错误导致的敏感信息暴露，没有绕过或攻击链。",
+   "attack_chain": "访问特定端点→获取数据库凭据。",
+   "bypass_technique": "无实质绕过，直接利用配置错误。",
+   "defensive_insight": "确保敏感信息不通过公开端点暴露，对配置文件进行保护。"
+  },
+  {
+   "id": 794144,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。开放重定向，通过使用多个斜杠绕过过滤。这是常见的绕过技巧，没有新颖性。",
+   "attack_chain": "构造恶意URL→重定向到钓鱼网站。",
+   "bypass_technique": "使用多个斜杠（////）绕过重定向过滤。",
+   "defensive_insight": "对重定向URL进行严格白名单校验，拒绝包含多个斜杠的输入。"
+  },
+  {
+   "id": 144616,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 其他",
+   "reasoning": "部分。邀请码可被暴力破解，且无速率限制，导致滥用和用户信息泄露。虽然技术点简单，但影响业务逻辑，且可导致经济损失。",
+   "attack_chain": "暴力破解邀请码→获取奖励或用户信息。",
+   "bypass_technique": "无实质绕过，直接利用无速率限制的接口。",
+   "defensive_insight": "对邀请码尝试次数进行限制，增加验证码或速率限制。"
+  },
+  {
+   "id": 1787810,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "其他",
+   "reasoning": "部分。利用已知CVE-2022-35954，通过注入分隔符到GITHUB_ENV文件，修改环境变量。虽然技术点已知，但影响明确，且是供应链攻击的一部分。",
+   "attack_chain": "注入恶意内容到GITHUB_ENV→修改环境变量→影响后续步骤。",
+   "bypass_technique": "利用分隔符注入绕过变量隔离。",
+   "defensive_insight": "升级@actions/core到1.9.1，或过滤用户输入中的分隔符。"
+  },
+  {
+   "id": 83239,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。典型的CSRF攻击，通过表单提交修改用户资料。技术点常见，没有新颖的绕过。",
+   "attack_chain": "构造恶意表单→用户提交→修改资料。",
+   "bypass_technique": "无实质绕过，直接利用CSRF缺失。",
+   "defensive_insight": "添加CSRF令牌，验证请求来源。"
+  },
+  {
+   "id": 1196958,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "是。利用剪贴板数据中的text/x-gfm-html MIME类型，在粘贴时直接设置innerHTML，导致XSS。这利用了浏览器剪贴板API的信任，实现了跨站点脚本攻击。",
+   "attack_chain": "恶意网站设置剪贴板内容→用户粘贴到GitLab→执行JavaScript。",
+   "bypass_technique": "利用剪贴板MIME类型和innerHTML的信任，绕过输入过滤。",
+   "defensive_insight": "对剪贴板内容进行消毒，避免直接使用innerHTML。"
+  },
+  {
+   "id": 310036,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "SSRF",
+   "reasoning": "部分。通过Host头注入@符号，导致服务器向攻击者控制的域名发起请求，泄露内部IP和敏感信息。这利用了HTTP解析的宽松性，实现了SSRF。",
+   "attack_chain": "构造恶意Host头→服务器发起请求→泄露信息。",
+   "bypass_technique": "利用@符号在Host头中注入URL，绕过主机校验。",
+   "defensive_insight": "严格校验Host头，拒绝包含@等特殊字符的输入。"
+  },
+  {
+   "id": 181748,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "IDOR / 授权绕过",
+   "reasoning": "部分。通过修改URL中的post_id，可以编辑任意评论，属于IDOR漏洞。虽然技术点常见，但影响明确，且可导致数据篡改。",
+   "attack_chain": "获取post_id→构造编辑URL→修改任意评论。",
+   "bypass_technique": "无实质绕过，直接利用不安全的直接对象引用。",
+   "defensive_insight": "对资源访问进行权限校验，确保用户只能操作自己的资源。"
+  },
+  {
+   "id": 732987,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，通过URL路径中的参数注入，登录后触发。技术点常见，没有新颖的绕过。",
+   "attack_chain": "构造恶意URL→用户登录→执行JavaScript。",
+   "bypass_technique": "无实质绕过，直接利用未过滤的输入。",
+   "defensive_insight": "对URL路径参数进行编码和过滤。"
+  }
+ ]
+}

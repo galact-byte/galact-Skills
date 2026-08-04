@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   780285,
+   1039821,
+   497724,
+   481360,
+   97292
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 268808,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。这是一个经典的缓冲区过度读取漏洞，在解析器处理畸形输入时发生。虽然提供了完整的ASAN堆栈和复现步骤，但这是常见的解析器漏洞类型，没有非预期的绕过或攻击链。",
+   "attack_chain": "单点：畸形PPP数据包触发handle_mlppp中的越界读取。",
+   "bypass_technique": "无绕过，直接利用未检查的输入长度。",
+   "defensive_insight": "在解析前检查数据包长度，确保读取操作在边界内。"
+  },
+  {
+   "id": 481360,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 类型混淆",
+   "reasoning": "是。通过修改格式参数为'String'，绕过了XSS过滤器，因为该格式未经过消毒。这展示了格式参数与消毒逻辑之间的不一致，属于类型混淆和业务逻辑缺陷。",
+   "attack_chain": "发布内容→拦截请求修改Format为String→触发未消毒的渲染→存储型XSS。",
+   "bypass_technique": "利用格式参数与消毒函数之间的映射不一致，选择未消毒的格式。",
+   "defensive_insight": "对所有格式进行统一消毒，或使用白名单限制格式类型。"
+  },
+  {
+   "id": 1039821,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "SQL注入 / 跨组件攻击链",
+   "reasoning": "是。通过campaign_name参数直接注入SOQL查询，且是二阶注入，因为查询在异步任务中执行。这展示了SOQL注入的独特性和异步处理的复杂性。",
+   "attack_chain": "提交恶意campaign_name→异步SOQL查询→注入执行→信息泄露或数据篡改。",
+   "bypass_technique": "直接字符串拼接，无过滤。",
+   "defensive_insight": "使用参数化查询或转义用户输入，避免字符串拼接。"
+  },
+  {
+   "id": 497724,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "是。利用WordPress的preg_replace_callback在消毒后转换URL编码字符，导致esc_url()被绕过。这展示了消毒顺序的缺陷，属于框架行为利用。",
+   "attack_chain": "构造javascript%u003A链接→esc_url()未拦截→预览时转换回实体→点击触发XSS。",
+   "bypass_technique": "利用URL编码的%u003A在消毒后转换，绕过esc_url()。",
+   "defensive_insight": "在消毒前进行规范化，或使用更严格的URL验证。"
+  },
+  {
+   "id": 473064,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。这是一个简单的开放重定向，通过redirect_url参数直接跳转到外部网站。没有绕过或攻击链，属于常见漏洞。",
+   "attack_chain": "单点：构造恶意redirect_url→登录后跳转。",
+   "bypass_technique": "无绕过，直接利用未验证的重定向参数。",
+   "defensive_insight": "验证重定向URL是否在允许的域名列表中。"
+  },
+  {
+   "id": 17664,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少X-Frame-Options头导致点击劫持，这是常见的配置错误，没有非预期性。",
+   "attack_chain": "单点：缺少X-Frame-Options→iframe嵌入→点击劫持。",
+   "bypass_technique": "无绕过，直接利用缺失的安全头。",
+   "defensive_insight": "添加X-Frame-Options或CSP frame-ancestors。"
+  },
+  {
+   "id": 780285,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 框架行为利用",
+   "reasoning": "是。通过多个漏洞组合：利用特殊字符删除行为注册变体邮箱，绕过CSP通过URL编码路径遍历，利用Chrome调试器读取内部文档。每一步都展示了非预期的框架行为。",
+   "attack_chain": "注册变体邮箱→恢复账户→利用XSS绕过CSP→注入HTML→利用Chrome调试器→获取秘密文档。",
+   "bypass_technique": "利用服务器对特殊字符的删除行为，CSP路径遍历，Chrome调试器未授权访问。",
+   "defensive_insight": "严格验证输入，CSP避免使用路径白名单，禁用调试端口。"
+  },
+  {
+   "id": 141240,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "部分。Angular表达式注入展示了模板引擎的评估行为，但无法利用为XSS，且字段长度限制降低了实际风险。",
+   "attack_chain": "单点：在名称字段注入Angular表达式→页面渲染时执行。",
+   "bypass_technique": "利用Angular模板表达式求值。",
+   "defensive_insight": "对用户输入进行转义，避免使用Angular模板渲染用户数据。"
+  },
+  {
+   "id": 1607429,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。这是一个简单的子域名接管或链接劫持，通过注册未使用的Twitter账号。没有技术难度，属于常见问题。",
+   "attack_chain": "单点：发现失效链接→注册对应账号→冒充。",
+   "bypass_technique": "无绕过，直接利用未维护的链接。",
+   "defensive_insight": "定期检查外部链接的有效性，及时更新或移除。"
+  },
+  {
+   "id": 399382,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 业务逻辑",
+   "reasoning": "部分。通过第三方账号登录绕过字符过滤，展示了跨平台信任边界的问题，但攻击链简单。",
+   "attack_chain": "单点：使用恶意名称的第三方账号→登录后触发XSS。",
+   "bypass_technique": "利用第三方账号名称未过滤。",
+   "defensive_insight": "对所有来源的用户输入进行统一消毒。"
+  },
+  {
+   "id": 84085,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。目录列表导致信息泄露，是常见的配置错误，没有非预期性。",
+   "attack_chain": "单点：访问目录→列出文件→泄露信息。",
+   "bypass_technique": "无绕过，直接利用目录列表。",
+   "defensive_insight": "禁用目录列表，限制敏感目录的访问。"
+  },
+  {
+   "id": 114529,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。内容欺骗和开放重定向，通过未验证的参数，属于常见漏洞。",
+   "attack_chain": "单点：构造恶意message和redirect参数→显示欺骗内容并重定向。",
+   "bypass_technique": "无绕过，直接利用未过滤的参数。",
+   "defensive_insight": "验证重定向URL，对message参数进行编码。"
+  },
+  {
+   "id": 234758,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用",
+   "reasoning": "部分。CRLF注入导致设置任意cookie，展示了协议解析的缺陷，但攻击链简单。",
+   "attack_chain": "单点：注入CRLF→服务器响应中设置恶意cookie。",
+   "bypass_technique": "利用URL编码的CRLF字符。",
+   "defensive_insight": "过滤输入中的CRLF字符，使用安全的编码。"
+  },
+  {
+   "id": 97292,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。通过HTTP头注入设置cookie，并利用空格绕过域限制，影响父域。这展示了协议解析的差异和跨子域的影响。",
+   "attack_chain": "注入Set-Cookie头→设置cookie到.hackerone.com→影响主域。",
+   "bypass_technique": "利用空格绕过域限制，注入自定义cookie。",
+   "defensive_insight": "过滤响应头中的CRLF，严格验证cookie域。"
+  },
+  {
+   "id": 329862,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。存储型XSS，通过未过滤的店铺名称，但属于常见漏洞类型，没有非预期性。",
+   "attack_chain": "单点：注入恶意脚本到店铺名称→存储→触发。",
+   "bypass_technique": "无绕过，直接利用未消毒的输入。",
+   "defensive_insight": "对用户输入进行HTML编码。"
+  },
+  {
+   "id": 181073,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告仅链接到PHP bug，没有提供漏洞详情或复现步骤，信息不足。",
+   "attack_chain": "未知。",
+   "bypass_technique": "未知。",
+   "defensive_insight": "无法提供。"
+  },
+  {
+   "id": 277431,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告声称XSS但实际是控制台执行alert，不是漏洞，信息不足。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "无。"
+  },
+  {
+   "id": 67660,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "认证绕过 / 业务逻辑",
+   "reasoning": "部分。验证码可重用，展示了认证逻辑的缺陷，但攻击场景有限。",
+   "attack_chain": "获取验证码→重复使用→绕过2FA。",
+   "bypass_technique": "利用验证码未失效。",
+   "defensive_insight": "验证码应一次性使用，并设置过期时间。"
+  },
+  {
+   "id": 272570,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。管理员可以修改自己的角色为所有者，展示了角色权限验证的缺陷，属于授权绕过。",
+   "attack_chain": "邀请管理员→管理员修改自己角色为所有者→移除原所有者→接管组织。",
+   "bypass_technique": "利用角色修改接口未验证权限。",
+   "defensive_insight": "角色修改应仅限所有者，并验证当前用户权限。"
+  },
+  {
+   "id": 198494,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 信息泄露",
+   "reasoning": "是。通过无速率限制的枚举，结合卡号递增规律，实现卡片和PIN枚举，导致资金盗用。这展示了业务逻辑缺陷和枚举攻击的结合。",
+   "attack_chain": "枚举卡号→枚举PIN→添加卡片→转移资金。",
+   "bypass_technique": "利用无速率限制和卡号规律。",
+   "defensive_insight": "添加速率限制和验证码，随机化卡号。"
+  }
+ ]
+}

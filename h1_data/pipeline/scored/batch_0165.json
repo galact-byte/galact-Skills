@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.4,
+  "top_n": [
+   122113,
+   878181,
+   1184379,
+   1064869,
+   1628102
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 85565,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。CSRF 修改隐私设置是常见漏洞，PoC 仅为视频链接，无具体技术细节，无绕过或攻击链。",
+   "attack_chain": "单点：诱导用户点击恶意链接→修改隐私设置。",
+   "bypass_technique": "无，直接利用缺少 CSRF 防护。",
+   "defensive_insight": "实施 CSRF 令牌或 SameSite cookie 属性。"
+  },
+  {
+   "id": 137964,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。flashmediaelement.swf 的 XSS 是已知的 Flash XSS 套路，利用 jsinitfunction 参数，无新意。",
+   "attack_chain": "单点：构造恶意 URL→Flash 执行 JS。",
+   "bypass_technique": "利用 Flash 的 ExternalInterface 未过滤参数。",
+   "defensive_insight": "移除 Flash 组件或升级到安全版本。"
+  },
+  {
+   "id": 1064869,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 信息泄露",
+   "reasoning": "是。通过 GraphQL 查询 CheckoutStatus 并枚举 ID 获取其他用户结账信息，属于 IDOR 与信息泄露的组合。技术点在于未授权访问敏感结账数据，且 ID 可枚举。",
+   "attack_chain": "获取 guest token→调用 CheckoutStatus 查询枚举 ID→获取结账信息。",
+   "bypass_technique": "利用 GraphQL 查询未校验对象所有权，ID 可预测。",
+   "defensive_insight": "实施对象级授权检查，使用不可预测 ID。"
+  },
+  {
+   "id": 224379,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少 Secure 标志是常见配置问题，无技术难度。",
+   "attack_chain": "单点：MITM 窃取 cookie。",
+   "bypass_technique": "无，直接利用配置缺失。",
+   "defensive_insight": "设置 Secure 标志。"
+  },
+  {
+   "id": 138518,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "内存破坏 / 框架行为利用",
+   "reasoning": "部分。直接调用 update() 导致内存破坏，属于框架行为利用，但 PoC 简单，无复杂链。",
+   "attack_chain": "单点：调用 update() 传入无效参数→内存崩溃。",
+   "bypass_technique": "绕过参数验证，直接调用内部方法。",
+   "defensive_insight": "加强参数验证，修复内部状态管理。"
+  },
+  {
+   "id": 413442,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS 且声称绕过 Cloudflare，但无具体绕过细节，属于常见套路。",
+   "attack_chain": "单点：构造恶意 URL→反射执行。",
+   "bypass_technique": "可能利用编码或过滤缺陷，但未详述。",
+   "defensive_insight": "输入输出编码，使用 CSP。"
+  },
+  {
+   "id": 105434,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XXE / 文件上传",
+   "reasoning": "部分。通过 XLSX 文件上传触发 XXE，属于文件解析漏洞，但 XXE 是已知类型，无特殊绕过。",
+   "attack_chain": "上传恶意 XLSX→解析 XML→读取文件。",
+   "bypass_technique": "利用 XML 外部实体。",
+   "defensive_insight": "禁用外部实体，使用安全解析器。"
+  },
+  {
+   "id": 201723,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑 / 状态混淆",
+   "reasoning": "否。通过 cookie 注入导致服务不可用，属于逻辑缺陷，但无新意。",
+   "attack_chain": "单点：发送恶意链接→设置错误 cookie→服务报错。",
+   "bypass_technique": "利用未过滤的 cookie 值。",
+   "defensive_insight": "验证 cookie 值，异常处理。"
+  },
+  {
+   "id": 1113212,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF / 配置错误",
+   "reasoning": "否。暴露 phpMyAdmin 且存在已知 CVE，属于配置错误，无新意。",
+   "attack_chain": "单点：利用已知 CVE 进行 CSRF。",
+   "bypass_technique": "无，直接利用已知漏洞。",
+   "defensive_insight": "限制访问，更新版本。"
+  },
+  {
+   "id": 997350,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "部分。通过 Referrer 泄露预览链接，属于信息泄露，但需要第三方配合，且修复简单。",
+   "attack_chain": "点击社交链接→Referrer 泄露→获取预览链接。",
+   "bypass_technique": "利用 Referrer 策略缺失。",
+   "defensive_insight": "设置 Referrer-Policy 或 meta 标签。"
+  },
+  {
+   "id": 1184379,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 协议行为利用",
+   "reasoning": "是。通过自定义 RSS 源注入 javascript: URL，在 iOS 上触发 XSS，利用了 URL scheme 未限制的协议行为。",
+   "attack_chain": "添加恶意 RSS→点击条目→执行 javascript: URL。",
+   "bypass_technique": "利用 javascript: URL 协议。",
+   "defensive_insight": "限制 URL scheme，过滤 javascript:。"
+  },
+  {
+   "id": 1628102,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "SSRF / 云元数据",
+   "reasoning": "是。通过 LRS URL 参数实现 SSRF 访问 AWS 元数据，利用问号绕过路径限制，属于云环境利用。",
+   "attack_chain": "创建配置→设置 LRS URL→测试→下载日志获取元数据。",
+   "bypass_technique": "使用问号截断路径。",
+   "defensive_insight": "限制 SSRF 目标，过滤元数据 IP。"
+  },
+  {
+   "id": 312918,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "路径遍历",
+   "reasoning": "否。Node.js 模块路径遍历，经典漏洞，无新意。",
+   "attack_chain": "单点：构造 ../ 路径读取文件。",
+   "bypass_technique": "无，直接利用未过滤路径。",
+   "defensive_insight": "使用 path.normalize 并检查前缀。"
+  },
+  {
+   "id": 122113,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "命令注入 / 协议行为利用",
+   "reasoning": "是。通过 X11 转发中的 xauth 命令注入，绕过 SSH 强制命令和登录 shell 限制，属于协议行为利用，影响广泛。",
+   "attack_chain": "SSH 连接→X11 转发→注入 xauth 命令→执行任意命令。",
+   "bypass_technique": "利用 xauth 命令注入。",
+   "defensive_insight": "禁用 X11 转发或严格过滤参数。"
+  },
+  {
+   "id": 878181,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "原型污染 / 代码注入",
+   "reasoning": "是。通过原型污染注入 NODE_OPTIONS 环境变量，影响子进程，属于框架行为利用，可导致 RCE。",
+   "attack_chain": "原型污染→设置 NODE_OPTIONS→子进程执行恶意代码。",
+   "bypass_technique": "利用 __proto__ 污染环境变量。",
+   "defensive_insight": "防止原型污染，限制环境变量。"
+  },
+  {
+   "id": 151470,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / IDOR",
+   "reasoning": "部分。通过枚举组织 ID 获取其他组织数据，属于 IDOR，但需要枚举，且无详细步骤。",
+   "attack_chain": "枚举组织 ID→访问 trips2 接口→获取数据。",
+   "bypass_technique": "直接修改 ID。",
+   "defensive_insight": "实施对象级授权。"
+  },
+  {
+   "id": 341969,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 点击劫持",
+   "reasoning": "部分。DOM XSS 需要用户交互，通过点击劫持触发，属于组合攻击，但技术点常见。",
+   "attack_chain": "点击劫持→用户操作→触发 XSS。",
+   "bypass_technique": "利用 innerHTML 未过滤。",
+   "defensive_insight": "使用 textContent，避免 innerHTML。"
+  },
+  {
+   "id": 108692,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。混合内容问题，常见配置错误。",
+   "attack_chain": "单点：MITM 注入脚本。",
+   "bypass_technique": "无。",
+   "defensive_insight": "全站 HTTPS。"
+  },
+  {
+   "id": 167075,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型 XSS，常见套路。",
+   "attack_chain": "单点：输入恶意供应商名→触发 XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "输入输出编码。"
+  },
+  {
+   "id": 185833,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少缓存头，常见配置问题。",
+   "attack_chain": "单点：缓存敏感数据。",
+   "bypass_technique": "无。",
+   "defensive_insight": "设置缓存头。"
+  }
+ ]
+}

@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1897203,
+   496326,
+   2109382,
+   1847140,
+   746766
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 746766,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 其他",
+   "reasoning": "是。Python AST builder 中的越界读，属于解析器对特定语法结构的处理缺陷，非典型注入。技术点在于 AST 构建时对某些节点类型未正确检查边界，导致越界读。与普通内存破坏不同，它影响静态分析、语法高亮等不执行代码的服务，攻击面独特。",
+   "attack_chain": "构造恶意 Python 代码片段 → 触发 AST builder 越界读 → 服务崩溃（DoS）。",
+   "bypass_technique": "利用特定语法结构触发解析器边界缺陷。",
+   "defensive_insight": "对 AST builder 进行模糊测试，修复边界检查；对不可信代码片段进行沙箱化处理。"
+  },
+  {
+   "id": 152499,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。通过公开 API 获取用户信息，属于常见的信息泄露，无绕过或攻击链。",
+   "attack_chain": "直接访问用户 JSON 端点获取信息。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对 API 响应进行最小化，避免暴露敏感字段。"
+  },
+  {
+   "id": 801973,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 状态混淆",
+   "reasoning": "部分。利用已验证邮箱作为登录邮箱时，系统未发送变更通知，属于业务逻辑缺陷。技术点在于状态混淆：系统认为已验证邮箱无需确认，但忽略了通知义务。",
+   "attack_chain": "用户将登录邮箱改为已验证邮箱 → 系统不发送通知 → 账户所有者不知情。",
+   "bypass_technique": "利用已验证邮箱绕过通知机制。",
+   "defensive_insight": "无论邮箱是否已验证，都应发送变更通知。"
+  },
+  {
+   "id": 363049,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 其他",
+   "reasoning": "部分。Markdown 渲染未对 punycode 进行解析，导致同形异义 URL 显示为正常域名，属于业务逻辑缺陷。技术点在于对 URL 的显示与解析不一致。",
+   "attack_chain": "在 Markdown 中插入 punycode URL → 渲染后显示为正常域名 → 用户点击被钓鱼。",
+   "bypass_technique": "利用 punycode 与显示名称的差异。",
+   "defensive_insight": "在渲染 URL 时显示 punycode 或进行同形异义检测。"
+  },
+  {
+   "id": 192749,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。CRLF 注入导致响应拆分，并利用缓存机制跨浏览器触发 XSS。技术点在于利用 HTTP 响应拆分和缓存投毒，属于协议行为利用。",
+   "attack_chain": "注入 CRLF 构造恶意响应 → 缓存服务器缓存恶意响应 → 其他浏览器用户访问时触发 XSS。",
+   "bypass_technique": "利用 CRLF 注入和缓存机制。",
+   "defensive_insight": "过滤 CRLF 字符，禁用缓存或对响应进行完整性校验。"
+  },
+  {
+   "id": 1059395,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS，参数直接插入 JS 上下文，经典套路，无绕过。",
+   "attack_chain": "构造恶意参数 → 反射执行 JS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对输出进行编码，使用 CSP。"
+  },
+  {
+   "id": 854049,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。利用之前泄露的凭据登录，属于配置错误，无新意。",
+   "attack_chain": "使用泄露凭据登录 VPN。",
+   "bypass_technique": "无。",
+   "defensive_insight": "强制重置密码，实施多因素认证。"
+  },
+  {
+   "id": 1897203,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "竞争条件 / 框架行为利用",
+   "reasoning": "是。HSTS 处理在多线程下缺乏互斥导致 double-free，属于框架行为利用。技术点在于对共享资源的并发访问未加锁，可抽象为通用并发缺陷。",
+   "attack_chain": "多线程同时处理 HSTS 条目 → 竞争条件 → double-free/UAF。",
+   "bypass_technique": "利用多线程竞争。",
+   "defensive_insight": "对 HSTS 列表操作加锁，或使用线程安全的数据结构。"
+  },
+  {
+   "id": 1878584,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SQL注入",
+   "reasoning": "否。时间盲注，sqlmap 自动检测，成熟套路。",
+   "attack_chain": "POST 参数注入 → 时间盲注。",
+   "bypass_technique": "无。",
+   "defensive_insight": "参数化查询。"
+  },
+  {
+   "id": 2112973,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / IDOR",
+   "reasoning": "部分。低权限用户可启用任意用户的生日联系人功能，属于 IDOR。技术点在于对用户 ID 的校验缺失。",
+   "attack_chain": "拦截请求 → 修改 userId → 启用任意用户功能。",
+   "bypass_technique": "直接修改请求中的 userId。",
+   "defensive_insight": "服务端校验用户权限，确保只能操作自己的资源。"
+  },
+  {
+   "id": 73239,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "其他",
+   "reasoning": "部分。ZIP 整数溢出导致堆溢出，属于经典漏洞，但影响面广。",
+   "attack_chain": "构造恶意 ZIP → 触发整数溢出 → 堆溢出。",
+   "bypass_technique": "利用整数溢出。",
+   "defensive_insight": "修复 libzip 漏洞，更新 PHP。"
+  },
+  {
+   "id": 812585,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。敏感文档公开可访问，配置错误。",
+   "attack_chain": "直接访问 URL 获取文档。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对敏感文档实施访问控制。"
+  },
+  {
+   "id": 60402,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑 / 其他",
+   "reasoning": "否。内容欺骗，利用链接显示与实际的差异，常见。",
+   "attack_chain": "构造恶意链接 → 用户点击 → 钓鱼。",
+   "bypass_technique": "利用 URL 编码差异。",
+   "defensive_insight": "对链接进行编码和验证。"
+  },
+  {
+   "id": 260938,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑 / 其他",
+   "reasoning": "否。同形异义 URL 显示问题，常见。",
+   "attack_chain": "插入同形异义 URL → 用户误认。",
+   "bypass_technique": "利用 IDN 同形异义。",
+   "defensive_insight": "显示 punycode 或进行检测。"
+  },
+  {
+   "id": 1847140,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 跨组件攻击链",
+   "reasoning": "是。Argo CD 在启用 sharding 时未正确限制命名空间，导致越权操作。技术点在于配置组合导致的安全边界失效。",
+   "attack_chain": "启用特定功能 → 创建越权 Application → 部署资源。",
+   "bypass_technique": "利用配置组合绕过命名空间限制。",
+   "defensive_insight": "严格校验命名空间，避免配置组合导致权限扩大。"
+  },
+  {
+   "id": 496326,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 0
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 加密问题",
+   "reasoning": "是。下载 cookie 可预测，仅基于文件 ID 和密码，可绕过 CAC 认证和删除/锁定状态。技术点在于弱加密设计。",
+   "attack_chain": "构造 cookie → 下载任意文件。",
+   "bypass_technique": "利用可预测的 cookie 生成算法。",
+   "defensive_insight": "使用服务端密钥和随机数生成 cookie，并验证文件状态。"
+  },
+  {
+   "id": 126099,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "部分。存储型 XSS 通过插件错误信息注入，需要管理员查看，属于跨组件。",
+   "attack_chain": "构造恶意请求 → 插件错误 → 存储 XSS → 管理员触发。",
+   "bypass_technique": "利用错误信息未过滤。",
+   "defensive_insight": "过滤错误信息，对输出编码。"
+  },
+  {
+   "id": 2109382,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 0
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 跨组件攻击链",
+   "reasoning": "是。绕过修复，利用 Freshdesk 的备用域名创建工单。技术点在于第三方服务的通配符域名。",
+   "attack_chain": "伪造邮件 → 发送到备用域名 → 创建工单。",
+   "bypass_technique": "利用第三方服务的备用域名。",
+   "defensive_insight": "配置 Prevent Wildcard Ticket Create，验证发件人。"
+  },
+  {
+   "id": 1627616,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS，参数未过滤，经典。",
+   "attack_chain": "构造恶意参数 → 反射执行 JS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "输入过滤，输出编码。"
+  },
+  {
+   "id": 686343,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "路径遍历",
+   "reasoning": "部分。目录遍历，但参数直接控制路径，无绕过。",
+   "attack_chain": "构造 DIR 参数 → 浏览任意目录。",
+   "bypass_technique": "无。",
+   "defensive_insight": "限制目录访问范围。"
+  }
+ ]
+}

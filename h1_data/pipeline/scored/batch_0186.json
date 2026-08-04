@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   152266,
+   765291,
+   1330529,
+   80298,
+   204703
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 204703,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 认证绕过",
+   "reasoning": "是。CSRF 修改密码本身常见，但该报告展示了通过 CSRF 直接修改密码的完整攻击链，且 PoC 清晰，无需复杂条件。技术点在于密码修改接口未实施 CSRF 防护，且未要求当前密码验证，导致攻击者可直接构造表单提交。",
+   "attack_chain": "构造恶意表单→诱导已登录用户提交→密码被修改→攻击者登录。",
+   "bypass_technique": "利用 CSRF 漏洞，直接提交密码修改请求，绕过用户确认。",
+   "defensive_insight": "实施 CSRF Token 验证，并要求输入当前密码或二次确认。"
+  },
+  {
+   "id": 175311,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "内存破坏 / 框架行为利用",
+   "reasoning": "是。利用 PHP 内部函数对超长文件名处理不当，导致 memcpy 负长度参数，属于框架行为利用。技术点在于 php_resolve_path 未检查 filename_length 的边界，导致整数溢出。",
+   "attack_chain": "构造超长文件名→触发 php_resolve_path→memcpy 负长度→内存破坏。",
+   "bypass_technique": "利用整数溢出，使 memcpy 的 size 参数变为负数。",
+   "defensive_insight": "在调用 memcpy 前检查长度参数，避免整数溢出。"
+  },
+  {
+   "id": 859342,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。XSS 绕过 WAF 的变形，通过大小写混合和添加属性绕过过滤，属于常见绕过技巧，但 PoC 完整，可复现。",
+   "attack_chain": "构造恶意链接→诱导管理员点击→执行 JS→会话劫持。",
+   "bypass_technique": "使用大小写混合和添加属性绕过 WAF 过滤。",
+   "defensive_insight": "使用白名单过滤，对标签和属性进行严格校验。"
+  },
+  {
+   "id": 1330529,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 授权绕过",
+   "reasoning": "是。通过 OTP 验证流程中的参数篡改，将攻击者手机号与受害者餐厅关联，实现未授权认领。技术点在于 OTP 发送和验证接口未绑定餐厅归属，导致可替换 resId 和 number。",
+   "attack_chain": "发送 OTP 到攻击者手机→篡改 resId 为受害者餐厅→验证 OTP→攻击者成为餐厅所有者。",
+   "bypass_technique": "在 OTP 验证请求中替换 resId 和 number，绕过餐厅所有权验证。",
+   "defensive_insight": "OTP 验证应绑定餐厅 ID 和手机号，确保一致性。"
+  },
+  {
+   "id": 80298,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "是。利用反斜杠转义绕过单引号过滤，实现 XSS。技术点在于过滤机制未处理反斜杠，导致转义失效。",
+   "attack_chain": "构造含反斜杠的 URL→触发 photo.fullscreen→执行 JS。",
+   "bypass_technique": "使用反斜杠转义单引号，绕过过滤。",
+   "defensive_insight": "对反斜杠进行转义或使用白名单过滤。"
+  },
+  {
+   "id": 1969696,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS，无绕过，无攻击链，PoC 简单，属于常见套路。",
+   "attack_chain": "构造恶意 URL→触发 XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对输入进行编码或过滤。"
+  },
+  {
+   "id": 116189,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "部分。Null byte 注入导致 404 绕过，但未造成实际危害，且报告者自述无法利用，信息不足。",
+   "attack_chain": "构造含 %00 的 token→绕过验证→返回 200。",
+   "bypass_technique": "Null byte 注入绕过 token 验证。",
+   "defensive_insight": "对输入进行严格校验，拒绝包含空字节的请求。"
+  },
+  {
+   "id": 811776,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "认证绕过 / 配置错误",
+   "reasoning": "是。通过 Ajax 接口进行密码暴力破解，无速率限制，且无通知机制。技术点在于认证接口未实施防暴力破解措施。",
+   "attack_chain": "构造字典→循环请求→成功破解密码。",
+   "bypass_technique": "利用无速率限制的认证接口进行暴力破解。",
+   "defensive_insight": "实施速率限制、账户锁定和异常通知。"
+  },
+  {
+   "id": 47357,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "认证绕过 / 状态混淆",
+   "reasoning": "是。CSRF Token 未绑定用户会话，导致跨用户 token 可被接受。技术点在于 token 验证逻辑缺陷。",
+   "attack_chain": "获取他人 token→构造请求→执行操作。",
+   "bypass_technique": "使用其他用户的 CSRF Token 绕过验证。",
+   "defensive_insight": "CSRF Token 应绑定用户会话，且每次请求更换。"
+  },
+  {
+   "id": 765291,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 跨组件攻击链",
+   "reasoning": "是。通过 Zip 解压路径遍历，覆盖应用文件，实现 RCE。技术点在于解压时未校验文件名，且可写入应用目录。",
+   "attack_chain": "上传恶意 Zip→修改请求路径→解压覆盖 App.php→访问触发 RCE。",
+   "bypass_technique": "利用路径遍历写入应用文件。",
+   "defensive_insight": "解压时校验文件名，禁止路径穿越，并限制写入目录。"
+  },
+  {
+   "id": 496405,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "是。存储型 XSS，通过富文本编辑器插入恶意链接，绕过过滤。技术点在于 LinkEmbed 未对 photoUrl 等属性进行充分转义。",
+   "attack_chain": "发布含恶意链接的讨论→触发 XSS。",
+   "bypass_technique": "利用未转义的属性注入事件处理器。",
+   "defensive_insight": "对富文本内容进行严格过滤和转义。"
+  },
+  {
+   "id": 154405,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。通过评论中的引用功能，篡改 ID 获取受限数据。技术点在于引用功能未校验权限，导致越权访问。",
+   "attack_chain": "在评论中引用受限 ID→服务端返回数据→信息泄露。",
+   "bypass_technique": "篡改引用 ID 绕过权限检查。",
+   "defensive_insight": "对引用功能进行权限校验，确保用户只能访问授权数据。"
+  },
+  {
+   "id": 280511,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "SSRF",
+   "reasoning": "部分。SSRF 探测端口，但未深入利用，属于常见漏洞类型，但 PoC 清晰。",
+   "attack_chain": "输入 URL→服务端请求→端口探测。",
+   "bypass_technique": "无。",
+   "defensive_insight": "限制请求目标，统一错误信息。"
+  },
+  {
+   "id": 1285598,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "子域名接管 / 配置错误",
+   "reasoning": "是。S3 桶未认领，可被接管，属于配置错误，但攻击链简单。",
+   "attack_chain": "创建同名 S3 桶→上传恶意文件→用户下载执行。",
+   "bypass_technique": "利用未认领的 S3 桶。",
+   "defensive_insight": "定期检查云资源所有权，删除未使用的桶。"
+  },
+  {
+   "id": 1061199,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS，无绕过，无攻击链，常见套路。",
+   "attack_chain": "构造恶意 URL→触发 XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对输入进行编码或过滤。"
+  },
+  {
+   "id": 1337425,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。无速率限制导致邮件轰炸，属于常见配置问题，无技术亮点。",
+   "attack_chain": "循环请求→触发大量邮件。",
+   "bypass_technique": "无。",
+   "defensive_insight": "实施速率限制和验证码。"
+  },
+  {
+   "id": 161935,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "配置错误",
+   "reasoning": "否。用户名限制绕过，但无实际危害，信息不足。",
+   "attack_chain": "注册 .json 用户名→访问个人页面。",
+   "bypass_technique": "无。",
+   "defensive_insight": "完善用户名校验规则。"
+  },
+  {
+   "id": 152266,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "反序列化 / 内存破坏",
+   "reasoning": "是。通过反序列化触发 GC 和 UAF，属于框架行为利用，且可远程触发。技术点在于 PHP 反序列化时 GC 机制与对象生命周期管理缺陷。",
+   "attack_chain": "构造恶意序列化数据→触发 GC→UAF→内存破坏。",
+   "bypass_technique": "利用 GC 自动调用，无需显式调用 gc_collect_cycles。",
+   "defensive_insight": "修复 PHP 内核漏洞，限制反序列化输入。"
+  },
+  {
+   "id": 23386,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "其他",
+   "reasoning": "是。利用 window.opener 进行反向钓鱼，属于浏览器行为利用，但攻击链简单。",
+   "attack_chain": "诱导点击链接→新标签页修改原页面→钓鱼。",
+   "bypass_technique": "利用 window.opener 属性。",
+   "defensive_insight": "设置 rel=\"noopener\" 或 window.opener = null。"
+  },
+  {
+   "id": 1950627,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 认证绕过",
+   "reasoning": "是。curl 的 IDN 通配符匹配绕过，违反 RFC 6125，属于协议行为利用。技术点在于 hostmatch 函数错误地比较 pattern 而非 hostname，导致 IDN 主机名可被通配符证书匹配。",
+   "attack_chain": "构造 IDN 域名→使用通配符证书→TLS 验证通过。",
+   "bypass_technique": "利用 curl 的 IDN 通配符匹配缺陷。",
+   "defensive_insight": "修复 curl 的 hostmatch 函数，正确比较 hostname。"
+  }
+ ]
+}

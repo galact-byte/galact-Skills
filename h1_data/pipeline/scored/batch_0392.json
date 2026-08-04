@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 22,
+  "kept": 12,
+  "dropped": 10,
+  "avg_score": 5.0,
+  "top_n": [
+   882923,
+   1005421,
+   193724,
+   798744,
+   122849
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 99647,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。CSRF 添加相册，缺少 CSRF token 校验，经典漏洞，无绕过，无攻击链。",
+   "attack_chain": "单点：构造表单→受害者点击→添加相册。",
+   "bypass_technique": "无，直接利用缺少 CSRF token。",
+   "defensive_insight": "为敏感操作添加 CSRF token 校验。"
+  },
+  {
+   "id": 1005421,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 配置错误",
+   "reasoning": "是。通过 GET 参数注入 Set-Cookie 头，利用 HTTP 响应头注入设置持久 cookie，导致受害者账户被锁定，需手动清除 cookie 才能恢复。这种通过参数控制 cookie 属性实现 DoS 的手法较为巧妙，且可复用。",
+   "attack_chain": "构造恶意链接→受害者点击→设置恶意 cookie→账户无法正常使用→DoS。",
+   "bypass_technique": "利用参数值中的 CRLF 注入 Set-Cookie 头，设置 Max-Age 为极大值。",
+   "defensive_insight": "对参数值进行严格过滤，禁止 CRLF 字符；使用 HttpOnly 和 Secure 标志。"
+  },
+  {
+   "id": 1112679,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "子域名接管",
+   "reasoning": "部分。子域名指向已释放的云实例，属于经典子域名接管，但报告指出当前 IP 被 Workday 使用，接管条件未满足，价值有限。",
+   "attack_chain": "DNS 解析到已释放 IP→若 IP 被重新分配则可接管。",
+   "bypass_technique": "无，直接利用悬空 DNS 记录。",
+   "defensive_insight": "定期清理不再使用的 DNS 记录，监控子域名解析状态。"
+  },
+  {
+   "id": 358641,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。文件名中的 XSS 在目录列表时触发，属于存储型 XSS 的变体，但利用点在于文件名未过滤，思路简单但有效。",
+   "attack_chain": "创建恶意文件名→用户访问目录列表→XSS 执行。",
+   "bypass_technique": "利用文件名中的 HTML 标签注入。",
+   "defensive_insight": "对文件名进行 HTML 编码，或使用安全的模板渲染。"
+  },
+  {
+   "id": 1294043,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。依赖过时版本导致已知 CVE，属于供应链漏洞，无绕过，无攻击链。",
+   "attack_chain": "单点：依赖旧版本→已知漏洞。",
+   "bypass_technique": "无。",
+   "defensive_insight": "定期更新依赖，使用漏洞扫描工具。"
+  },
+  {
+   "id": 193056,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "子域名接管",
+   "reasoning": "部分。经典 S3 子域名接管，但报告步骤完整，可复现。",
+   "attack_chain": "DNS 指向不存在 bucket→创建 bucket→接管。",
+   "bypass_technique": "无，直接利用悬空 DNS。",
+   "defensive_insight": "删除不再使用的 DNS 记录，监控子域名解析。"
+  },
+  {
+   "id": 1243650,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。已知 CVE 的利用，无新意，无绕过。",
+   "attack_chain": "单点：发送恶意 POST→XSS。",
+   "bypass_technique": "无，直接利用已知漏洞。",
+   "defensive_insight": "及时应用厂商补丁。"
+  },
+  {
+   "id": 882923,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 框架行为利用",
+   "reasoning": "是。jsonpath 递归下降导致 DoS，利用的是解析器的算法复杂度，属于框架行为利用，可抽象为通用判断条件，且影响多个 Kubernetes 组件。",
+   "attack_chain": "构造恶意 jsonpath 表达式→触发递归下降→CPU/内存耗尽。",
+   "bypass_technique": "利用 jsonpath 的递归下降操作符导致指数级计算。",
+   "defensive_insight": "限制 jsonpath 表达式的复杂度，或使用非递归解析器。"
+  },
+  {
+   "id": 856518,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。CSRF 关闭账户，经典漏洞，无绕过。",
+   "attack_chain": "单点：构造表单→受害者点击→账户关闭。",
+   "bypass_technique": "无。",
+   "defensive_insight": "添加 CSRF token 校验。"
+  },
+  {
+   "id": 101324,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。RC4 弱加密套件，配置问题，无绕过。",
+   "attack_chain": "单点：弱加密→明文泄露风险。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁用 RC4，使用强加密套件。"
+  },
+  {
+   "id": 115284,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "内容欺骗",
+   "reasoning": "否。搜索参数反射内容，属于内容欺骗，无绕过。",
+   "attack_chain": "单点：构造恶意搜索词→反射到页面。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对输出进行编码，或使用 CSP。"
+  },
+  {
+   "id": 1038594,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CRLF注入",
+   "reasoning": "否。CRLF 注入设置 cookie，经典漏洞，无绕过。",
+   "attack_chain": "单点：注入 CRLF→设置恶意 cookie。",
+   "bypass_technique": "无。",
+   "defensive_insight": "过滤 CRLF 字符，使用安全编码。"
+  },
+  {
+   "id": 716976,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "开放重定向",
+   "reasoning": "部分。使用 /\\ 绕过过滤，属于常见绕过技巧，但思路可借鉴。",
+   "attack_chain": "单点：构造恶意链接→重定向到外部。",
+   "bypass_technique": "使用 /\\ 组合绕过域名白名单。",
+   "defensive_insight": "严格校验重定向目标，使用白名单。"
+  },
+  {
+   "id": 175979,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "本地文件读取",
+   "reasoning": "否。本地 HTML 文件读取本地文件，属于浏览器安全限制绕过，但需要本地文件访问，场景受限。",
+   "attack_chain": "单点：本地打开 HTML→读取本地文件。",
+   "bypass_technique": "利用 iframe 同源策略的宽松。",
+   "defensive_insight": "浏览器应限制本地文件的跨目录访问。"
+  },
+  {
+   "id": 14092,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SSRF",
+   "reasoning": "否。URL 参数可加载外部图片，属于 SSRF 变体，但无绕过，无攻击链。",
+   "attack_chain": "单点：修改 URL 参数→加载外部资源。",
+   "bypass_technique": "无。",
+   "defensive_insight": "限制 URL 参数，仅允许白名单域名。"
+  },
+  {
+   "id": 194564,
+   "value_score": 0,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。仅提及 SwiftMailer RCE，无细节，无法判断。",
+   "attack_chain": "未知。",
+   "bypass_technique": "未知。",
+   "defensive_insight": "及时更新依赖。"
+  },
+  {
+   "id": 122849,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS",
+   "reasoning": "是。通过上传字段的 URL 类型注入 javascript: 协议，绕过图片上传限制，在结账页面触发 XSS。这种利用方式较为巧妙，且跨组件（上传→结账）。",
+   "attack_chain": "上传恶意 URL→添加到购物车→结账页面触发 XSS。",
+   "bypass_technique": "利用 javascript: 协议绕过图片类型校验。",
+   "defensive_insight": "对上传的 URL 进行协议白名单校验，禁止 javascript: 等危险协议。"
+  },
+  {
+   "id": 193724,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用",
+   "reasoning": "是。通过构造特定 Ruby 代码触发 mruby 解释器的空指针解引用，导致崩溃。这种利用解释器内部状态的方式较为罕见，且 PoC 完整。",
+   "attack_chain": "构造恶意 Ruby 脚本→触发解释器崩溃→DoS。",
+   "bypass_technique": "利用解释器对异常处理的不当，导致空指针。",
+   "defensive_insight": "修复解释器对异常路径的处理，增加空指针检查。"
+  },
+  {
+   "id": 963798,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。已知 CVE 的利用，无新意。",
+   "attack_chain": "单点：发送恶意 POST→XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "及时应用补丁。"
+  },
+  {
+   "id": 798744,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用",
+   "reasoning": "是。利用 PHP 会话上传进度处理中的空指针解引用，在特定配置下可远程崩溃 PHP 服务。这种利用框架内部状态的方式较为巧妙，且影响广泛。",
+   "attack_chain": "构造恶意 multipart 请求→触发空指针→崩溃。",
+   "bypass_technique": "利用 session.upload_progress.cleanup=0 时的未初始化数据。",
+   "defensive_insight": "修复 PHP 会话上传进度处理逻辑，增加空指针检查。"
+  }
+ ]
+}

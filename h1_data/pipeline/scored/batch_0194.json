@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   78158,
+   149268,
+   968165,
+   2203432,
+   488643
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 149268,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 配置错误",
+   "reasoning": "是。管理员设置头像时，从外部链接拉取文件并直接保存，未校验文件内容或扩展名，导致任意文件上传。这种'从URL拉取文件'的功能常被忽视，但可被滥用为存储型XSS或RCE。技术点在于信任外部输入并直接落盘，缺乏内容校验。",
+   "attack_chain": "管理员设置头像→提供恶意URL→服务器拉取并保存为同扩展名文件→访问该文件触发XSS或执行恶意代码。",
+   "bypass_technique": "利用头像URL功能直接上传恶意文件，绕过上传校验。",
+   "defensive_insight": "对上传文件进行内容校验（如MIME类型、魔数），限制可执行文件类型，并隔离上传目录。"
+  },
+  {
+   "id": 159953,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告仅提供PHP bug链接，无具体漏洞细节、复现步骤或影响分析，信息严重不足。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "无"
+  },
+  {
+   "id": 360834,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。CSRF导致用户接受团队邀请，属于常见CSRF漏洞，无特殊绕过或创新，影响低。",
+   "attack_chain": "诱导受害者点击链接→自动接受邀请。",
+   "bypass_technique": "无，直接利用GET请求无CSRF防护。",
+   "defensive_insight": "对敏感操作使用POST请求并添加CSRF token。"
+  },
+  {
+   "id": 1154378,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，通过闭合script标签注入，经典套路，无绕过或创新。",
+   "attack_chain": "构造恶意URL→用户点击→执行脚本。",
+   "bypass_technique": "无，直接利用未编码输出。",
+   "defensive_insight": "对输出进行HTML实体编码，使用CSP。"
+  },
+  {
+   "id": 129869,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。错误报告开启导致信息泄露，属于配置错误，常见且无技术亮点。",
+   "attack_chain": "触发异常→显示堆栈、环境变量等。",
+   "bypass_technique": "无，直接利用错误处理不当。",
+   "defensive_insight": "生产环境关闭错误报告，记录日志而非显示。"
+  },
+  {
+   "id": 342066,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "路径遍历",
+   "reasoning": "部分。路径遍历漏洞，直接拼接URL路径，无过滤，经典但PoC完整，可复现。",
+   "attack_chain": "构造../路径→读取任意文件。",
+   "bypass_technique": "无，直接利用未过滤的req.url。",
+   "defensive_insight": "使用path.normalize并限制在公共目录内。"
+  },
+  {
+   "id": 299552,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。暴露composer.json等文件，属于常见信息泄露，无技术含量。",
+   "attack_chain": "直接访问文件→获取依赖信息。",
+   "bypass_technique": "无",
+   "defensive_insight": "禁止访问敏感文件，配置服务器规则。"
+  },
+  {
+   "id": 860197,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过",
+   "reasoning": "部分。权限控制缺失，无导出权限的员工仍可导出CSV，属于业务逻辑漏洞，但思路简单。",
+   "attack_chain": "登录无权限账号→直接导出CSV。",
+   "bypass_technique": "无，直接利用前端隐藏但后端未校验。",
+   "defensive_insight": "后端必须校验权限，不能依赖前端隐藏。"
+  },
+  {
+   "id": 50481,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。自XSS，通过远程文件URL注入，但影响有限，常见。",
+   "attack_chain": "输入恶意URL→反射XSS。",
+   "bypass_technique": "无",
+   "defensive_insight": "对输入进行过滤和编码。"
+  },
+  {
+   "id": 1806223,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 资源消耗",
+   "reasoning": "部分。利用链接预览功能强制下载大文件，造成带宽饱和，属于逻辑滥用，思路新颖但条件依赖高带宽。",
+   "attack_chain": "发布含大文件链接的消息→服务器下载→带宽耗尽。",
+   "bypass_technique": "利用预览功能无大小限制。",
+   "defensive_insight": "限制预览文件大小，设置超时和带宽限制。"
+  },
+  {
+   "id": 142549,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。.DS_Store文件泄露目录结构，常见信息泄露，无技术亮点。",
+   "attack_chain": "访问.DS_Store→解析获取文件列表。",
+   "bypass_technique": "无",
+   "defensive_insight": "禁止.DS_Store文件公开访问。"
+  },
+  {
+   "id": 968165,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 授权绕过",
+   "reasoning": "是。通过修改邮箱为仅域名部分，绕过订单查询验证，可暴力枚举订单号获取任意订单信息。这种'部分匹配'逻辑漏洞极具启发性，可抽象为'验证不完整'。",
+   "attack_chain": "发起聊天→选择订单更新→输入订单ID和邮箱→修改邮箱为@domain→暴力枚举ID→获取订单详情。",
+   "bypass_technique": "利用邮箱验证只检查域名部分，移除用户名。",
+   "defensive_insight": "验证必须完整匹配邮箱，且对订单查询进行速率限制。"
+  },
+  {
+   "id": 170748,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。仅询问范围，无漏洞描述。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "无"
+  },
+  {
+   "id": 78158,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用Flash Player对Content-Type的字符串搜索行为，在任意位置匹配'application/x-shockwave-flash'即可执行Flash，绕过nosniff和Rosetta Flash补丁。这是对协议实现细节的深度利用，可通用化。",
+   "attack_chain": "上传恶意文件→构造Content-Type注入→Flash执行→SOP绕过。",
+   "bypass_technique": "在Content-Type中注入'application/x-shockwave-flash'字符串，利用Flash的宽松解析。",
+   "defensive_insight": "严格校验Content-Type，禁止用户控制，升级Flash或禁用。"
+  },
+  {
+   "id": 168078,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "内容欺骗",
+   "reasoning": "否。CRLF注入导致内容欺骗，常见且影响有限。",
+   "attack_chain": "构造URL→注入响应头→显示恶意内容。",
+   "bypass_technique": "无，直接利用未过滤的CRLF。",
+   "defensive_insight": "过滤CRLF字符，正确编码输出。"
+  },
+  {
+   "id": 15125,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。反射型XSS，通过image_src参数注入，但依赖浏览器不支持CSP，条件受限。",
+   "attack_chain": "构造URL→用户点击→执行脚本。",
+   "bypass_technique": "无，直接利用未编码输出。",
+   "defensive_insight": "对输出编码，实施CSP。"
+  },
+  {
+   "id": 5617,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "协议行为利用",
+   "reasoning": "否。TLS重协商漏洞，已知CVE，无新意。",
+   "attack_chain": "中间人攻击→注入明文。",
+   "bypass_technique": "无，利用协议设计缺陷。",
+   "defensive_insight": "升级OpenSSL，启用RFC 5746。"
+  },
+  {
+   "id": 488643,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "信息泄露 / 业务逻辑",
+   "reasoning": "是。通过日历订阅泄露未公开的挑战目标名称，属于信息泄露，但利用方式巧妙，通过第三方日历间接获取。",
+   "attack_chain": "订阅HackerOne日历→查看挑战事件→获取目标名称。",
+   "bypass_technique": "利用日历同步功能泄露隐藏信息。",
+   "defensive_insight": "确保日历事件不包含敏感信息，或对未开始挑战隐藏。"
+  },
+  {
+   "id": 2203432,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。通过GraphQL直接调用删除接口，绕过前端权限控制，删除无权限团队的报表。这是典型的'直接调用API'绕过，可抽象为'后端必须校验权限'。",
+   "attack_chain": "获取报表ID→构造GraphQL请求→删除报表。",
+   "bypass_technique": "直接调用后端API，绕过前端限制。",
+   "defensive_insight": "后端必须对每个操作进行权限校验，不能依赖前端隐藏。"
+  },
+  {
+   "id": 113288,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用",
+   "reasoning": "部分。OpenSSL DH小子群攻击，利用非安全素数恢复私钥，属于密码学攻击，技术性强但依赖特定配置。",
+   "attack_chain": "多次握手→收集DH参数→恢复私钥。",
+   "bypass_technique": "利用非安全素数的小子群特性。",
+   "defensive_insight": "使用安全素数，启用SSL_OP_SINGLE_DH_USE。"
+  }
+ ]
+}

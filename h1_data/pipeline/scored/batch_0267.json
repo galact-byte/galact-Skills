@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   653125,
+   491473,
+   417515,
+   397031,
+   1204977
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 13602,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "业务逻辑",
+   "reasoning": "否。会话未在注销时立即失效是常见会话管理缺陷，无绕过或创新。报告为informative，步骤虽清晰但未提供实际请求或响应，无法确认漏洞真实性。",
+   "attack_chain": "登录→捕获请求→注销→重放请求→重新登录。",
+   "bypass_technique": "无，直接利用服务端未使会话失效。",
+   "defensive_insight": "注销时应使服务端会话失效并清除客户端cookie。"
+  },
+  {
+   "id": 397031,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 信息泄露",
+   "reasoning": "是。通过GraphQL查询直接访问未启用Insights功能的程序数据，绕过前端功能限制。技术点在于后端未对功能开关进行权限校验，仅依赖前端隐藏。可抽象为通用判断：功能开关未在后端强制执行。",
+   "attack_chain": "构造GraphQL查询→修改handle参数→获取未授权程序的漏洞类型统计。",
+   "bypass_technique": "直接调用后端API，绕过前端功能开关。",
+   "defensive_insight": "后端必须对功能开关进行权限校验，不能仅依赖前端隐藏。"
+  },
+  {
+   "id": 1198907,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。点击劫持是常见漏洞，报告仅建议添加X-Frame-Options，无绕过或创新。步骤简单，但缺乏实际攻击演示。",
+   "attack_chain": "构造恶意页面→iframe嵌入目标页面→诱导用户点击。",
+   "bypass_technique": "无，直接利用缺少X-Frame-Options。",
+   "defensive_insight": "添加X-Frame-Options或CSP frame-ancestors。"
+  },
+  {
+   "id": 1762764,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。phpinfo.php暴露是常见配置错误，无绕过或创新。报告仅提供URL，信息量少。",
+   "attack_chain": "直接访问phpinfo.php获取系统信息。",
+   "bypass_technique": "无，直接利用未删除的调试文件。",
+   "defensive_insight": "移除生产环境中的phpinfo.php。"
+  },
+  {
+   "id": 124223,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "命令注入",
+   "reasoning": "否。CSV注入是已知套路，报告仅提及绕过之前的修复，但未提供完整步骤。技术点在于公式注入，但无新意。",
+   "attack_chain": "导出CSV→注入公式→在Excel中执行。",
+   "bypass_technique": "使用特殊字符绕过过滤。",
+   "defensive_insight": "对CSV输出进行转义，防止公式注入。"
+  },
+  {
+   "id": 44425,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "认证绕过 / 协议行为利用",
+   "reasoning": "部分。利用Facebook OAuth的redirect_uri参数未严格校验，结合开放重定向实现token窃取。技术点在于OAuth流程中redirect_uri的信任边界，但报告未提供实际利用的完整步骤。",
+   "attack_chain": "构造恶意redirect_uri→诱导用户授权→窃取授权码。",
+   "bypass_technique": "利用开放重定向绕过redirect_uri白名单。",
+   "defensive_insight": "严格校验redirect_uri，使用精确匹配。"
+  },
+  {
+   "id": 287562,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。通过API创建Graph时未过滤content参数，导致存储型XSS。技术点在于API输入验证缺失，但属于常见漏洞类型。",
+   "attack_chain": "通过API提交恶意content→存储→用户访问触发XSS。",
+   "bypass_technique": "无，直接利用未过滤的API参数。",
+   "defensive_insight": "对所有API输入进行HTML编码。"
+  },
+  {
+   "id": 491473,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "信息泄露 / 协议行为利用",
+   "reasoning": "是。利用Twitter搜索URL重定向行为差异，通过二进制搜索提取受保护推文内容。技术点在于利用URL变化作为侧信道，绕过隐私设置。可抽象为通用判断：通过可观察的URL变化推断数据存在性。",
+   "attack_chain": "构造搜索查询→观察URL变化→二分搜索提取数据。",
+   "bypass_technique": "利用搜索结果的URL重定向差异作为侧信道。",
+   "defensive_insight": "对搜索行为进行统一处理，避免泄露状态信息。"
+  },
+  {
+   "id": 798913,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 业务逻辑",
+   "reasoning": "否。邮箱验证缺失和速率限制缺失是常见问题，报告声称RCE但未提供证据。技术点在于输入验证和速率限制，但无新意。",
+   "attack_chain": "构造恶意邮箱→触发大量邮件发送→DoS。",
+   "bypass_technique": "无，直接利用未验证的邮箱和缺失速率限制。",
+   "defensive_insight": "验证邮箱格式并实施速率限制。"
+  },
+  {
+   "id": 653125,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "命令注入 / 跨组件攻击链",
+   "reasoning": "是。利用Git命令的flag注入，通过`--output`参数覆盖文件，进而可能实现RCE。技术点在于未对ref_name进行过滤，导致git将参数解析为flag。可抽象为通用判断：外部输入直接拼接到命令行参数。",
+   "attack_chain": "构造恶意ref_name→git命令执行→文件覆盖→利用竞态条件实现RCE。",
+   "bypass_technique": "使用`--`前缀注入git flag。",
+   "defensive_insight": "对命令行参数进行严格过滤，使用`--`分隔符。"
+  },
+  {
+   "id": 244474,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "子域名接管 / 配置错误",
+   "reasoning": "部分。通过CNAME记录指向mailgun，但未验证域名所有权，导致子域名接管。技术点在于DNS配置错误，但报告未提供完整利用链。",
+   "attack_chain": "发现子域名→在mailgun中认领→控制邮件发送。",
+   "bypass_technique": "利用未验证的CNAME记录。",
+   "defensive_insight": "定期检查DNS记录，确保域名所有权验证。"
+  },
+  {
+   "id": 1665648,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型XSS是常见漏洞，报告仅提供payload，无详细步骤。技术点在于输入过滤缺失，但无新意。",
+   "attack_chain": "提交恶意payload→存储→用户访问触发。",
+   "bypass_technique": "无，直接利用未过滤参数。",
+   "defensive_insight": "对输入进行HTML编码。"
+  },
+  {
+   "id": 417515,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 协议行为利用",
+   "reasoning": "是。利用Monero的locked_transfer功能，发送高锁定时间的输出，导致交易所无法花费。技术点在于利用协议特性绕过交易所的余额验证。可抽象为通用判断：利用协议特性导致资产不可用。",
+   "attack_chain": "发送锁定交易→交易所入账→用户提现→交易所资产被锁定。",
+   "bypass_technique": "利用locked_transfer的锁定时间参数。",
+   "defensive_insight": "交易所应验证交易的可花费性，而不仅仅是显示。"
+  },
+  {
+   "id": 217097,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "其他",
+   "reasoning": "部分。mruby虚拟机中的空指针解引用，通过特定Ruby代码触发。技术点在于VM的异常处理缺陷，但属于内存破坏漏洞，无绕过。",
+   "attack_chain": "构造恶意Ruby代码→触发VM崩溃。",
+   "bypass_technique": "无，直接利用VM缺陷。",
+   "defensive_insight": "修复VM中的空指针检查。"
+  },
+  {
+   "id": 208526,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "其他",
+   "reasoning": "部分。mruby中的空指针解引用，通过特定代码触发。技术点在于GC过程中的缺陷，但属于内存破坏漏洞，无绕过。",
+   "attack_chain": "构造恶意代码→触发GC崩溃。",
+   "bypass_technique": "无，直接利用GC缺陷。",
+   "defensive_insight": "修复GC中的空指针检查。"
+  },
+  {
+   "id": 88395,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 命令注入",
+   "reasoning": "部分。利用Graphviz的image和shapefile属性读取任意文件，结合错误输出进行文件存在性探测。技术点在于未沙箱化的命令执行，但报告未提供完整利用链。",
+   "attack_chain": "构造Graphviz图→利用image属性读取文件→通过错误输出探测。",
+   "bypass_technique": "利用Graphviz的未沙箱化执行。",
+   "defensive_insight": "对Graphviz执行进行沙箱化或禁用。"
+  },
+  {
+   "id": 243094,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。CSRF是常见漏洞，报告仅提及端点存在CSRF，但未提供完整利用链。技术点在于缺少CSRF令牌，但无新意。",
+   "attack_chain": "构造恶意页面→诱导管理员点击→执行操作。",
+   "bypass_technique": "无，直接利用缺少CSRF保护。",
+   "defensive_insight": "添加CSRF令牌验证。"
+  },
+  {
+   "id": 2293731,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "命令注入 / 协议行为利用",
+   "reasoning": "是。利用SSH的ProxyCommand特性，通过恶意主机名注入命令。技术点在于未对主机名进行过滤，导致命令注入。可抽象为通用判断：外部输入直接拼接到命令。",
+   "attack_chain": "构造恶意主机名→ProxyCommand执行→代码执行。",
+   "bypass_technique": "利用ProxyCommand的展开机制。",
+   "defensive_insight": "对主机名进行严格过滤，避免直接拼接到命令。"
+  },
+  {
+   "id": 2171309,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。空指针解引用是常见内存漏洞，报告仅提供代码分析，无实际PoC。技术点在于IDN处理缺陷，但无绕过。",
+   "attack_chain": "构造恶意IDN→触发空指针解引用。",
+   "bypass_technique": "无，直接利用代码缺陷。",
+   "defensive_insight": "修复空指针检查。"
+  },
+  {
+   "id": 1204977,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 其他",
+   "reasoning": "是。利用CGI::Cookie类未对name、path、domain属性进行过滤，导致HTTP响应拆分和XSS。技术点在于利用RFC规范与实现的差异，可抽象为通用判断：输入未按RFC规范过滤。",
+   "attack_chain": "构造恶意Cookie属性→注入响应头或响应体→XSS。",
+   "bypass_technique": "利用未过滤的Cookie属性注入。",
+   "defensive_insight": "严格按RFC规范过滤Cookie属性。"
+  }
+ ]
+}

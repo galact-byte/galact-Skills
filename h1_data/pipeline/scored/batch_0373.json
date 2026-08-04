@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   402671,
+   1760213,
+   895696,
+   1297689,
+   396493
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 7865,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。注册表单无CSRF防护，典型CSRF漏洞，无绕过、无攻击链，信息完整但套路成熟。",
+   "attack_chain": "单点：构造恶意页面自动提交注册表单。",
+   "bypass_technique": "无，直接利用缺失CSRF token。",
+   "defensive_insight": "为所有状态变更请求添加CSRF token并验证。"
+  },
+  {
+   "id": 1297689,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "子域名接管 / 配置错误",
+   "reasoning": "是。利用S3 bucket删除后未释放的DNS记录，接管子域名并控制内容，可进一步用于OAuth回调劫持或cookie窃取。技术点在于云资源生命周期管理缺陷，可抽象为通用判断条件。",
+   "attack_chain": "发现DNS指向已删除的S3 bucket→创建同名bucket→上传恶意内容→控制子域名。",
+   "bypass_technique": "利用S3 bucket名称全局唯一性，重新注册已删除的bucket。",
+   "defensive_insight": "删除云资源时同步清理DNS记录，定期审计DNS与云资源绑定。"
+  },
+  {
+   "id": 1714563,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。Jolokia 1.3.5已知CVE的反射XSS，直接利用公开漏洞，无新意。",
+   "attack_chain": "单点：构造恶意URL触发反射XSS。",
+   "bypass_technique": "无，直接利用已知CVE。",
+   "defensive_insight": "升级Jolokia版本，对输出进行编码。"
+  },
+  {
+   "id": 18691,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "是。利用Phabricator的嵌套解析机制，将src值中的URL自动链接化，导致XSS。技术点在于框架的解析顺序和自动链接行为，非预期且可抽象为通用模式。",
+   "attack_chain": "构造特殊meme语法→嵌套解析触发自动链接→注入onerror事件→执行JS。",
+   "bypass_technique": "利用框架的自动链接功能，将payload嵌入src属性。",
+   "defensive_insight": "避免嵌套解析，对用户输入进行严格过滤和编码。"
+  },
+  {
+   "id": 226037,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "否。转发已知WordPress漏洞信息，无原创研究，仅提醒。",
+   "attack_chain": "无，仅信息转发。",
+   "bypass_technique": "无。",
+   "defensive_insight": "及时更新WordPress版本，应用临时缓解措施。"
+  },
+  {
+   "id": 150565,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。WordPress旧版Flash XSS，已知CVE，无新意。",
+   "attack_chain": "单点：访问恶意SWF URL触发XSS。",
+   "bypass_technique": "无，直接利用已知漏洞。",
+   "defensive_insight": "升级WordPress，移除Flash组件。"
+  },
+  {
+   "id": 868583,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。典型CSRF，无防护，无绕过，套路成熟。",
+   "attack_chain": "单点：构造恶意页面提交偏好修改请求。",
+   "bypass_technique": "无。",
+   "defensive_insight": "添加CSRF token。"
+  },
+  {
+   "id": 97657,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "文件上传 / XSS",
+   "reasoning": "部分。上传Java Applet文件绕过内容类型检查，利用浏览器对可信域Applet的信任执行任意代码。技术点在于文件类型与内容分离，有一定启发性。",
+   "attack_chain": "上传恶意.class文件→浏览器加载Applet→执行任意代码。",
+   "bypass_technique": "上传.class文件但声明为image/jpeg，绕过MIME检查。",
+   "defensive_insight": "基于文件内容而非扩展名验证，禁止上传可执行文件。"
+  },
+  {
+   "id": 130453,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。通过Service Worker泄露用户ID，属于信息泄露，但无绕过，影响有限。",
+   "attack_chain": "单点：加载Service Worker脚本获取用户ID。",
+   "bypass_technique": "无。",
+   "defensive_insight": "限制Service Worker作用域，避免敏感信息暴露。"
+  },
+  {
+   "id": 237262,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "部分。邀请token通过Google Analytics泄露给第三方，属于敏感信息外泄，但技术点在于第三方脚本收集数据，有一定启发性。",
+   "attack_chain": "用户访问页面→Google Analytics收集包含token的payload→第三方存储。",
+   "bypass_technique": "无，利用第三方脚本的默认行为。",
+   "defensive_insight": "过滤敏感参数，避免在URL中传递token。"
+  },
+  {
+   "id": 33331,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "部分。密码策略缺陷导致用户无法更新密码，但影响有限，且substate为informative，可复现性低。",
+   "attack_chain": "设置空格密码→移动端无法更新→账户锁定。",
+   "bypass_technique": "无，利用密码策略不一致。",
+   "defensive_insight": "统一密码策略，禁止纯空格密码。"
+  },
+  {
+   "id": 1121317,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "文件上传",
+   "reasoning": "否。IMCE文件上传绕过，已知CVE，无新意。",
+   "attack_chain": "上传PHP文件→添加.gif扩展名绕过→执行代码。",
+   "bypass_technique": "双扩展名绕过。",
+   "defensive_insight": "严格校验文件内容，禁止脚本执行。"
+  },
+  {
+   "id": 1760213,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 缓存投毒 / 跨组件攻击链",
+   "reasoning": "是。利用WAF对双引号的过滤差异，通过`</sc\"ript>`绕过WAF，结合缓存投毒实现存储型XSS，最终导致账户接管。技术点在于WAF与服务器解析不一致，可抽象为通用绕过模式。",
+   "attack_chain": "构造恶意Cookie→WAF绕过→缓存投毒→存储XSS→窃取会话。",
+   "bypass_technique": "在敏感标签中插入双引号，利用服务器解码差异绕过WAF。",
+   "defensive_insight": "统一WAF与服务器解析规则，对Cookie进行严格过滤。"
+  },
+  {
+   "id": 402671,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用TLS实现中padding错误与MAC错误响应差异，构造GOLDENDOODLE oracle，主动解密HTTPS请求。技术点在于协议实现的细微差异，可抽象为通用攻击模式。",
+   "attack_chain": "MITM注入JS→触发定向请求→利用oracle逐字节解密cookie。",
+   "bypass_technique": "利用服务器对padding错误的不同响应作为oracle。",
+   "defensive_insight": "禁用SSLv3及不安全的密码套件，统一错误处理。"
+  },
+  {
+   "id": 237357,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "CRLF注入",
+   "reasoning": "部分。CRLF注入设置任意cookie，但影响有限，技术点在于输入未过滤，可抽象为通用模式。",
+   "attack_chain": "注入CRLF→设置恶意cookie→可能会话固定。",
+   "bypass_technique": "URL编码%0a%0d注入。",
+   "defensive_insight": "过滤CRLF字符，使用安全API。"
+  },
+  {
+   "id": 191216,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "SSRF",
+   "reasoning": "部分。GitLab导入仓库功能未验证URL，导致SSRF，可扫描内网。技术点在于功能滥用，但无绕过，链路简单。",
+   "attack_chain": "创建仓库→导入URL→服务器发起请求→内网扫描。",
+   "bypass_technique": "无，直接利用功能。",
+   "defensive_insight": "验证URL，限制内网访问。"
+  },
+  {
+   "id": 291057,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "部分。目录列表泄露脚本，包含数据库凭据。技术点在于备份脚本清理不彻底，可抽象为通用配置错误。",
+   "attack_chain": "访问/scripts/目录→下载脚本→获取凭据。",
+   "bypass_technique": "无，直接利用目录列表。",
+   "defensive_insight": "禁止目录列表，保护敏感文件。"
+  },
+  {
+   "id": 895696,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "SSRF / 跨组件攻击链",
+   "reasoning": "是。通过路由直接调用任意控制器方法，结合gopher协议实现SSRF，并利用重定向绕过限制。技术点在于框架路由设计缺陷，可抽象为通用模式。",
+   "attack_chain": "构造URL调用json_status→gopher协议→内网端口扫描/发送邮件。",
+   "bypass_technique": "利用重定向将gopher协议转换为HTTP请求。",
+   "defensive_insight": "限制路由访问，验证协议和URL。"
+  },
+  {
+   "id": 1004536,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 认证绕过",
+   "reasoning": "部分。密码重置流程逻辑缺陷，cookie长时间有效，可被利用接管账户。技术点在于状态管理不当，可抽象为通用模式。",
+   "attack_chain": "请求重置→点击链接→cookie残留→攻击者利用cookie重置密码。",
+   "bypass_technique": "利用cookie未及时失效。",
+   "defensive_insight": "缩短cookie有效期，重置后立即失效。"
+  },
+  {
+   "id": 396493,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "是。利用两个看似无害的漏洞组合：HTML属性注入和prettyPhoto的jQuery选择器注入，实现DOM XSS。技术点在于组合利用，可抽象为通用模式。",
+   "attack_chain": "注入onclick属性→利用prettyPhoto触发click→执行JS。",
+   "bypass_technique": "利用prettyPhoto的hashRel参数注入jQuery选择器。",
+   "defensive_insight": "修复属性注入，对第三方模块进行安全审计。"
+  }
+ ]
+}

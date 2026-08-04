@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   226200,
+   195586,
+   132104,
+   1595296,
+   852103
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 132104,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "是。利用 Slack 新 Markdown 编辑器在编辑模式下对 javascript: URI 的过滤缺失，通过 WebSocket 请求篡改插入 payload，且编辑模式与预览模式的安全检查不一致（预览模式有协议白名单，编辑模式没有）。这种对编辑器内部状态和 WebSocket 消息的利用具有非预期性，且可影响其他协作者。",
+   "attack_chain": "创建/编辑帖子→捕获 WebSocket 请求→修改 links 字段插入 javascript: URI→受害者点击链接触发 XSS。",
+   "bypass_technique": "利用编辑模式与预览模式的安全检查差异，通过 WebSocket 消息注入 javascript: URI。",
+   "defensive_insight": "统一编辑与预览模式的安全过滤；对 WebSocket 消息进行服务端校验；对 javascript: 等危险协议进行全局拦截。"
+  },
+  {
+   "id": 309367,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 配置错误",
+   "reasoning": "部分。metascraper 库未对抓取的 Open Graph 元数据进行 HTML 转义，导致存储型 XSS。这是典型的库使用不当，但攻击链清晰，PoC 完整，且影响面广（任何使用该库且未转义输出的应用）。",
+   "attack_chain": "攻击者构造恶意 OG 元数据→metascraper 抓取→应用未转义直接输出→浏览器执行恶意脚本。",
+   "bypass_technique": "无实质绕过，利用库的缺失和开发者未转义。",
+   "defensive_insight": "库应对输出进行 HTML 转义；开发者应使用模板引擎的自动转义功能。"
+  },
+  {
+   "id": 195586,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "内存破坏 / 协议行为利用",
+   "reasoning": "是。PHAR 解析器在 alias 不匹配时错误地使用 tmp_len 作为缓冲区索引，导致 off-by-one 写入，覆盖 emalloc 元数据，进而实现任意内存写。这是对 PHP 内存管理机制的深入利用，非预期性强，且可导致 RCE。",
+   "attack_chain": "构造恶意 PHAR 文件→触发 phar_parse_pharfile() 的 off-by-one→覆盖 emalloc 元数据→控制内存分配→任意写→可能 RCE。",
+   "bypass_technique": "利用 off-by-one 覆盖内存管理元数据，实现任意内存写。",
+   "defensive_insight": "修复边界检查；使用安全的内存分配函数；对 PHAR 文件进行严格校验。"
+  },
+  {
+   "id": 996273,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SSRF",
+   "reasoning": "否。通过注入 fetch() 到 source 参数实现 SSRF，是常见的反射型 XSS 变体，但未绕过任何防御，且影响有限（仅泄露 IP）。",
+   "attack_chain": "构造恶意 URL→用户点击→fetch 请求攻击者服务器→泄露 IP。",
+   "bypass_technique": "无实质绕过，直接利用未过滤参数。",
+   "defensive_insight": "对参数进行严格过滤和编码；禁止外部请求。"
+  },
+  {
+   "id": 834071,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。通过表单自动提交到 feedback 端点，利用 path 参数注入 javascript: URI，是典型的反射型 XSS，无绕过，无攻击链。",
+   "attack_chain": "构造恶意表单→自动提交→触发 XSS。",
+   "bypass_technique": "无实质绕过。",
+   "defensive_insight": "对 path 参数进行白名单校验；禁止 javascript: 协议。"
+  },
+  {
+   "id": 942481,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。WordPress 默认 REST API 暴露用户列表，是已知配置问题，无绕过，无攻击链。",
+   "attack_chain": "直接访问 /wp-json/wp/v2/users/ 获取用户名。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁用或限制 REST API 用户端点。"
+  },
+  {
+   "id": 226200,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "内存破坏 / 框架行为利用",
+   "reasoning": "是。mruby 编译器在 OP_ASGN 的 LHS 为 OP_SCALL 时，由于 codegen 中 return 导致寄存器未正确 push，进而可操纵 OP_ARYCAT 的目标为任意内存地址，实现任意写。这是对编译器代码生成逻辑的深入利用，非预期性强，且可导致 RCE。",
+   "attack_chain": "构造特定 Ruby 代码→触发编译器错误→操纵寄存器→OP_ARYCAT 写入任意地址→内存破坏→可能 RCE。",
+   "bypass_technique": "利用编译器错误导致寄存器未正确管理，进而控制 OP_ARYCAT 目标。",
+   "defensive_insight": "修复 codegen 中的 return 错误；增加对 OP_ARYCAT 目标的类型检查。"
+  },
+  {
+   "id": 116774,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。开放 UDP 5060 端口是常见配置问题，无绕过，无攻击链。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "关闭不必要的端口。"
+  },
+  {
+   "id": 90753,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。内容欺骗是低危问题，无绕过，无攻击链。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对用户输入进行编码。"
+  },
+  {
+   "id": 77058,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少 SPF 记录是常见配置问题，无绕过，无攻击链。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "添加 SPF 记录。"
+  },
+  {
+   "id": 221833,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。Jenkins 调试模式暴露堆栈信息，是配置错误，无绕过，无攻击链。",
+   "attack_chain": "直接访问 URL 获取堆栈。",
+   "bypass_technique": "无。",
+   "defensive_insight": "关闭调试模式。"
+  },
+  {
+   "id": 177943,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。sort_col 参数未过滤导致反射型 XSS，是常见套路，无绕过。",
+   "attack_chain": "构造恶意 URL→触发 XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对参数进行 HTML 编码。"
+  },
+  {
+   "id": 1635854,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "部分。通过构造空的 SignedProposal 导致 HyperLedger Fabric 网关空指针解引用，实现远程 DoS。这是对 gRPC 接口的未预期输入处理，但影响有限（仅 DoS）。",
+   "attack_chain": "构造恶意 gRPC 请求→触发空指针→服务崩溃。",
+   "bypass_technique": "利用未校验的输入导致空指针。",
+   "defensive_insight": "对 gRPC 请求进行严格校验；增加错误处理。"
+  },
+  {
+   "id": 7869,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。无暴力破解保护是常见问题，无绕过，无攻击链。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "实施账户锁定和速率限制。"
+  },
+  {
+   "id": 783708,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "IDOR / 授权绕过",
+   "reasoning": "部分。通过修改 userId 参数实现越权注册课程，是典型的 IDOR，但攻击链简单，且影响有限（仅课程注册）。",
+   "attack_chain": "拦截注册请求→修改 userId→越权注册。",
+   "bypass_technique": "直接修改对象引用。",
+   "defensive_insight": "服务端校验 userId 与当前用户匹配。"
+  },
+  {
+   "id": 1595296,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "内存破坏 / 协议行为利用",
+   "reasoning": "是。mod_isapi.c 中错误使用 r->filename 的长度来索引 ISAPI DLL 提供的缓冲区，导致越界读取。这是对 ISAPI 协议行为的非预期利用，可导致信息泄露或崩溃。",
+   "attack_chain": "构造恶意 ISAPI DLL→调用 HSE_REQ_MAP_URL_TO_PATH→触发越界读。",
+   "bypass_technique": "利用长度混淆读取越界数据。",
+   "defensive_insight": "使用正确的缓冲区长度；增加边界检查。"
+  },
+  {
+   "id": 852103,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "内存破坏 / 协议行为利用",
+   "reasoning": "是。PHP urldecode() 存在越界读，可导致内存信息泄露。这是对 URL 编码解析的边界条件利用，非预期性强，且影响广泛。",
+   "attack_chain": "构造恶意 URL 编码字符串→触发越界读→泄露内存。",
+   "bypass_technique": "利用边界条件触发越界读。",
+   "defensive_insight": "修复边界检查；使用安全的内存操作函数。"
+  },
+  {
+   "id": 993975,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "路径遍历 / 框架行为利用",
+   "reasoning": "部分。利用 Windows 路径分隔符反斜杠绕过仅过滤正斜杠的防护，实现路径遍历。这是对平台差异的利用，非预期性中等，但影响有限（仅读取 .md 文件）。",
+   "attack_chain": "构造 %5c..%5c 路径→绕过过滤→读取任意 .md 文件。",
+   "bypass_technique": "使用反斜杠绕过正斜杠过滤。",
+   "defensive_insight": "统一过滤正反斜杠；使用安全的路径拼接函数。"
+  },
+  {
+   "id": 151459,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "部分。通过修改请求中的 channel ID 绕过频道发帖权限限制，是典型的业务逻辑漏洞，但攻击链简单，影响有限。",
+   "attack_chain": "创建命令帖子→拦截请求→修改 channel ID→越权发帖。",
+   "bypass_technique": "直接修改对象引用。",
+   "defensive_insight": "服务端校验用户对目标频道的权限。"
+  },
+  {
+   "id": 243619,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。API 密钥重新生成无速率限制，是常见配置问题，无绕过，无攻击链。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "实施速率限制。"
+  }
+ ]
+}

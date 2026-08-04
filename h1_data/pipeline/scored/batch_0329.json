@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   135072,
+   411140,
+   921717,
+   310690,
+   141839
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 164656,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "部分。利用IE对URL编码的解析差异，在Request-URI中注入单引号闭合JS数组，属于浏览器解析差异的利用，有一定非预期性，但依赖IE特定行为，通用性差。",
+   "attack_chain": "构造恶意URL→IE解析差异→注入JS→执行alert。",
+   "bypass_technique": "利用IE对%2e%2e等编码的解析差异，绕过过滤。",
+   "defensive_insight": "服务端对URL参数进行严格编码和过滤，不依赖客户端解析。"
+  },
+  {
+   "id": 1320242,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 0
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "部分。密码重置token通过Referer泄露给第三方，属于常见但重要的信息泄露，利用方式简单，但报告缺少具体细节，可复现性低。",
+   "attack_chain": "用户点击重置链接→点击第三方链接→token通过Referer泄露→攻击者利用。",
+   "bypass_technique": "无绕过，利用Referer默认行为。",
+   "defensive_insight": "在敏感页面设置Referrer-Policy: no-referrer，或不在URL中传递敏感token。"
+  },
+  {
+   "id": 921717,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。displayPost函数缺少认证和授权检查，导致未认证用户可访问私密消息，且token基于unix时间可预测，属于典型的IDOR与可预测标识符组合，思路清晰，可抽象为通用判断条件。",
+   "attack_chain": "构造GET请求→访问私密消息→未授权读取。",
+   "bypass_technique": "利用可预测的token（基于时间戳）和缺失的访问控制。",
+   "defensive_insight": "对所有API端点强制认证和授权检查，使用不可预测的随机token。"
+  },
+  {
+   "id": 135072,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "命令注入 / 框架行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用ImageMagick的MVG解析特性，通过上传ASCII文件触发命令注入，属于框架行为利用，且攻击链完整（上传→解析→RCE），可抽象为通用判断条件。",
+   "attack_chain": "上传恶意MVG文件→ImageMagick解析→触发delegate命令注入→RCE。",
+   "bypass_technique": "利用ImageMagick的MVG delegate机制，通过https URL注入命令。",
+   "defensive_insight": "上传文件前校验magic bytes，限制ImageMagick的delegate，禁止出站网络。"
+  },
+  {
+   "id": 142946,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。典型的反射型XSS，通过javascript:协议注入，无绕过，无攻击链，成熟套路。",
+   "attack_chain": "构造恶意URL→点击链接→执行JS。",
+   "bypass_technique": "无实质绕过，直接注入javascript:协议。",
+   "defensive_insight": "对输出进行编码，禁止javascript:协议。"
+  },
+  {
+   "id": 141839,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "内存破坏 / 框架行为利用",
+   "reasoning": "是。利用PCRE正则引擎的边界条件，导致堆溢出和内存耗尽，属于框架行为利用，非预期性强，但报告缺少具体利用细节，可复现性一般。",
+   "attack_chain": "构造特殊正则→pcre_exec返回异常偏移→堆溢出/内存耗尽。",
+   "bypass_technique": "利用正则引擎对offset的假设错误，触发未定义行为。",
+   "defensive_insight": "升级PCRE库，对用户输入的正则进行限制和验证。"
+  },
+  {
+   "id": 411140,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 跨组件攻击链",
+   "reasoning": "是。通过目录遍历实现文件包含，结合反序列化漏洞形成完整攻击链，属于跨组件利用，思路清晰，可抽象为通用判断条件。",
+   "attack_chain": "利用反序列化写入恶意文件→目录遍历包含→RCE。",
+   "bypass_technique": "利用路径遍历绕过文件包含限制，结合反序列化获取写文件原语。",
+   "defensive_insight": "对文件路径进行规范化，禁止目录遍历，限制文件包含的目录范围。"
+  },
+  {
+   "id": 101331,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。RC4密码套件检测是常见配置问题，无绕过，无攻击链，成熟套路。",
+   "attack_chain": "检测到RC4→利用统计弱点恢复明文。",
+   "bypass_technique": "无实质绕过，直接利用弱加密。",
+   "defensive_insight": "禁用RC4，使用强加密套件。"
+  },
+  {
+   "id": 429966,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。Padding Oracle攻击是已知漏洞，利用现有脚本检测，无新意，无绕过，无攻击链。",
+   "attack_chain": "检测到Padding Oracle→解密数据。",
+   "bypass_technique": "无实质绕过，直接利用已知漏洞。",
+   "defensive_insight": "修复MS10-070，使用安全的加密实现。"
+  },
+  {
+   "id": 310690,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 框架行为利用",
+   "reasoning": "是。由于代码中`indexOf`返回-1导致条件永远为假，过滤函数失效，属于典型的逻辑错误，非预期性强，可抽象为通用判断条件。",
+   "attack_chain": "构造包含../的URL→过滤失效→读取任意文件。",
+   "bypass_technique": "利用错误的过滤条件（indexOf返回-1）绕过路径遍历防护。",
+   "defensive_insight": "正确使用indexOf，对路径进行规范化，使用白名单。"
+  },
+  {
+   "id": 275515,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。典型的存储型XSS，通过自定义属性注入，无绕过，无攻击链，成熟套路。",
+   "attack_chain": "注入恶意属性→管理员查看→执行JS。",
+   "bypass_technique": "无实质绕过，直接注入HTML。",
+   "defensive_insight": "对用户输入进行HTML编码，使用CSP。"
+  },
+  {
+   "id": 64963,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 认证绕过",
+   "reasoning": "部分。auth.validatePhone未正确验证sid参数，导致可无限发送短信，属于业务逻辑漏洞，有一定非预期性，但影响有限。",
+   "attack_chain": "构造恶意sid→绕过验证→发送短信/拨打电话。",
+   "bypass_technique": "利用参数验证不严，构造任意sid。",
+   "defensive_insight": "严格验证sid格式和所有权，限制发送频率。"
+  },
+  {
+   "id": 140705,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 0
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 业务逻辑",
+   "reasoning": "部分。通过修改群组名称触发HTML注入，属于业务逻辑组合，但报告缺少关键细节，可复现性低。",
+   "attack_chain": "修改群组名称→触发通知邮件→HTML注入。",
+   "bypass_technique": "利用群组名称未过滤，注入HTML。",
+   "defensive_insight": "对群组名称进行HTML编码，邮件内容使用纯文本。"
+  },
+  {
+   "id": 303632,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 资源消耗",
+   "reasoning": "部分。Fastify未限制JSON payload大小，导致DoS，属于配置缺失，但利用方式简单，无绕过。",
+   "attack_chain": "发送超大JSON→内存耗尽→崩溃。",
+   "bypass_technique": "无实质绕过，直接利用未限制的payload。",
+   "defensive_insight": "限制请求体大小，使用反向代理。"
+  },
+  {
+   "id": 106024,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。参数污染影响分享链接，属于常见业务逻辑问题，无绕过，无攻击链。",
+   "attack_chain": "构造恶意参数→分享链接被篡改。",
+   "bypass_technique": "无实质绕过，直接利用参数覆盖。",
+   "defensive_insight": "对分享参数进行白名单校验。"
+  },
+  {
+   "id": 115438,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。典型的反射型XSS，通过error参数注入，无绕过，无攻击链。",
+   "attack_chain": "构造恶意URL→点击→执行JS。",
+   "bypass_technique": "无实质绕过，直接注入HTML。",
+   "defensive_insight": "对输出进行编码。"
+  },
+  {
+   "id": 2070810,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "内存破坏",
+   "reasoning": "否。缺少分配检查导致NULL解引用，属于常见内存管理错误，无绕过，无攻击链。",
+   "attack_chain": "发送大请求→分配失败→NULL解引用→崩溃。",
+   "bypass_technique": "无实质绕过，直接利用低内存条件。",
+   "defensive_insight": "检查分配返回值，限制请求大小。"
+  },
+  {
+   "id": 193075,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "内存破坏 / 框架行为利用",
+   "reasoning": "部分。利用Ruby的respond_to?方法在to_str中修改字符串导致NULL解引用，属于框架行为利用，但影响仅为DoS。",
+   "attack_chain": "构造特殊对象→触发to_str→修改字符串→NULL解引用。",
+   "bypass_technique": "利用方法重定义和字符串修改的竞态。",
+   "defensive_insight": "修复mruby的符号处理，增加空指针检查。"
+  },
+  {
+   "id": 1183336,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。典型的反射型XSS，通过terminalId参数注入，无绕过，无攻击链。",
+   "attack_chain": "构造恶意URL→点击→执行JS。",
+   "bypass_technique": "无实质绕过，直接注入HTML。",
+   "defensive_insight": "对输出进行编码。"
+  },
+  {
+   "id": 156373,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。典型的存储型XSS，通过属性注入，无绕过，无攻击链。",
+   "attack_chain": "注入恶意属性→管理员查看→执行JS。",
+   "bypass_technique": "无实质绕过，直接注入HTML。",
+   "defensive_insight": "对用户输入进行HTML编码，使用CSP。"
+  }
+ ]
+}

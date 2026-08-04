@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.4,
+  "top_n": [
+   2138080,
+   271176,
+   712979,
+   1382448,
+   223999
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 190247,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "路径遍历 / 配置错误",
+   "reasoning": "否。路径遍历配合上传文件导致XSS，属于常见配置错误，无新意。",
+   "attack_chain": "上传恶意脚本→构造路径遍历URL→加载脚本执行XSS。",
+   "bypass_technique": "利用路径遍历绕过目录限制，加载用户上传的脚本。",
+   "defensive_insight": "严格校验上传文件类型和路径，禁止执行上传目录中的脚本。"
+  },
+  {
+   "id": 588239,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 协议行为利用",
+   "reasoning": "是。利用Tor浏览器错误页面的本地化标题泄露语言设置，绕过隐私保护，思路新颖。",
+   "attack_chain": "iframe加载错误页面→读取标题→获取语言信息。",
+   "bypass_technique": "利用错误页面的本地化标题，绕过隐私设置。",
+   "defensive_insight": "错误页面应避免使用本地化内容，或限制iframe嵌入。"
+  },
+  {
+   "id": 272863,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。HTTPS外链问题属于常见安全建议，无实际漏洞。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "确保所有外链使用HTTPS。"
+  },
+  {
+   "id": 859688,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 跨组件攻击链",
+   "reasoning": "部分。CORS配置错误允许任意来源读取敏感信息，但属于常见配置问题，无新意。",
+   "attack_chain": "恶意页面→跨域请求→读取敏感信息。",
+   "bypass_technique": "利用CORS配置错误，允许任意来源。",
+   "defensive_insight": "正确配置CORS白名单，避免使用通配符。"
+  },
+  {
+   "id": 278718,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。Unicode验证问题描述模糊，无具体攻击场景。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "加强Unicode输入验证。"
+  },
+  {
+   "id": 265696,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 其他",
+   "reasoning": "否。利用失效链接进行钓鱼，属于常见社会工程学，无技术含量。",
+   "attack_chain": "找到失效链接→注册域名→钓鱼。",
+   "bypass_technique": "无",
+   "defensive_insight": "定期检查外链有效性，防止域名被抢注。"
+  },
+  {
+   "id": 1382448,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用换行符和超长URL导致重定向循环，造成DoS，属于协议行为利用，思路新颖。",
+   "attack_chain": "构造超长URL→触发重定向循环→服务器资源耗尽→DoS。",
+   "bypass_technique": "利用%0a和超长URL绕过限制，触发重定向循环。",
+   "defensive_insight": "限制URL长度，规范重定向处理，防止循环。"
+  },
+  {
+   "id": 875775,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "其他",
+   "reasoning": "部分。curl命令行工具崩溃，属于内存破坏，但影响有限，且是已知问题。",
+   "attack_chain": "构造恶意配置文件→触发崩溃。",
+   "bypass_technique": "无",
+   "defensive_insight": "修复内存管理错误，加强输入验证。"
+  },
+  {
+   "id": 271176,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 授权绕过",
+   "reasoning": "是。通过cookie注入绕过一次性路由限制，泄露支付信息，属于业务逻辑漏洞，思路巧妙。",
+   "attack_chain": "获取合法ID→构造cookie→访问订单页面→泄露信息。",
+   "bypass_technique": "利用cookie注入绕过一次性路由限制。",
+   "defensive_insight": "加强会话管理，对敏感操作进行二次验证。"
+  },
+  {
+   "id": 1627974,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "IDOR / 授权绕过",
+   "reasoning": "部分。IDOR删除公司，属于常见漏洞，但影响较大。",
+   "attack_chain": "创建公司→获取ID→修改ID→删除其他公司。",
+   "bypass_technique": "直接修改ID参数，未授权访问。",
+   "defensive_insight": "实施对象级授权检查，防止IDOR。"
+  },
+  {
+   "id": 135294,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。PHP XML解析器内存破坏，属于已知CVE，无新意。",
+   "attack_chain": "构造恶意XML→触发崩溃。",
+   "bypass_technique": "无",
+   "defensive_insight": "升级PHP版本，修复已知漏洞。"
+  },
+  {
+   "id": 223999,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "命令注入 / 其他",
+   "reasoning": "是。CSV公式注入绕过过滤器，利用换行符绕过首字符检查，属于优雅绕过。",
+   "attack_chain": "构造恶意CSV内容→导出→执行公式。",
+   "bypass_technique": "使用%0A绕过首字符过滤，注入公式。",
+   "defensive_insight": "加强CSV导出过滤，转义所有特殊字符。"
+  },
+  {
+   "id": 2138080,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用Electron contextBridge的序列化异常绕过上下文隔离，属于框架行为利用，思路新颖。",
+   "attack_chain": "构造不可序列化对象→触发异常→获取特权访问。",
+   "bypass_technique": "利用异常处理绕过上下文隔离。",
+   "defensive_insight": "修复Electron框架漏洞，加强异常处理。"
+  },
+  {
+   "id": 317201,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "路径遍历 / 配置错误",
+   "reasoning": "部分。nginx alias配置错误导致路径遍历，属于常见配置问题。",
+   "attack_chain": "构造路径遍历URL→读取任意文件。",
+   "bypass_technique": "利用alias配置错误，绕过目录限制。",
+   "defensive_insight": "正确配置nginx alias，避免路径遍历。"
+  },
+  {
+   "id": 224460,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。登录速率限制绕过，属于常见问题，无新意。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "实施更强大的防暴力破解机制。"
+  },
+  {
+   "id": 228156,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。通过IDOR枚举邮箱，属于常见漏洞。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "加强对象级授权检查。"
+  },
+  {
+   "id": 1776476,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "命令注入 / 跨组件攻击链",
+   "reasoning": "部分。Airflow示例DAG中的命令注入，属于已知CVE，但利用链完整。",
+   "attack_chain": "控制run_id→注入命令→执行任意命令。",
+   "bypass_technique": "利用模板注入，控制run_id。",
+   "defensive_insight": "升级Airflow版本，避免使用示例DAG。"
+  },
+  {
+   "id": 1842822,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。存储型XSS，属于常见漏洞，但利用链完整。",
+   "attack_chain": "注入恶意链接→用户点击→执行脚本。",
+   "bypass_technique": "利用javascript协议绕过过滤。",
+   "defensive_insight": "加强输入过滤和输出编码。"
+  },
+  {
+   "id": 1250293,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SQL注入",
+   "reasoning": "否。SQL注入，属于常见漏洞，无新意。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "使用参数化查询。"
+  },
+  {
+   "id": 712979,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 其他",
+   "reasoning": "是。利用换行符分隔URL，制造视觉欺骗，属于协议行为利用，思路新颖。",
+   "attack_chain": "构造恶意URL→显示为合法→用户点击→钓鱼。",
+   "bypass_technique": "利用%0d分隔URL，绕过显示逻辑。",
+   "defensive_insight": "加强URL解析和显示一致性。"
+  }
+ ]
+}

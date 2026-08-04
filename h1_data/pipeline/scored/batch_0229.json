@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   402410,
+   294147,
+   221041,
+   310443,
+   1784449
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1660611,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型XSS，但报告缺乏具体参数、payload和复现步骤，仅提及PoC附件和另一个参数ID，信息不足，无法判断是否有独特绕过。",
+   "attack_chain": "未明确，存储型XSS通常为：注入恶意脚本→受害者访问→执行。",
+   "bypass_technique": "未明确，可能为输入过滤绕过。",
+   "defensive_insight": "对所有用户输入进行上下文相关的输出编码，实施CSP。"
+  },
+  {
+   "id": 229405,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 认证绕过",
+   "reasoning": "部分。CSRF token缺失但请求仍有效，属于业务逻辑缺陷，但无复杂绕过，直接利用。",
+   "attack_chain": "单点：构造GET请求触发watch/unwatch操作。",
+   "bypass_technique": "直接发送GET请求，无需CSRF token。",
+   "defensive_insight": "对状态变更操作强制使用POST并验证CSRF token。"
+  },
+  {
+   "id": 1669176,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "部分。公开的GCS bucket导致敏感信息泄露，属于配置错误，但攻击链简单，无复杂绕过。",
+   "attack_chain": "列出bucket→访问敏感文件→获取内部信息。",
+   "bypass_technique": "无绕过，直接利用公开bucket。",
+   "defensive_insight": "配置bucket ACL为私有，定期审计公开存储。"
+  },
+  {
+   "id": 951292,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 认证绕过",
+   "reasoning": "部分。站点级CSRF，多个端点无token，但无复杂绕过，直接利用。",
+   "attack_chain": "单点：构造请求修改账户设置。",
+   "bypass_technique": "无token直接发送请求。",
+   "defensive_insight": "全局实施CSRF防护，对敏感操作验证token。"
+  },
+  {
+   "id": 117593,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。Apache版本泄露，常见信息泄露，无绕过无链。",
+   "attack_chain": "单点：请求404页面获取Server头。",
+   "bypass_technique": "无。",
+   "defensive_insight": "隐藏Server头或伪装版本。"
+  },
+  {
+   "id": 1398572,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "子域名接管 / 配置错误",
+   "reasoning": "部分。文档中的外链指向未注册的GitHub仓库，可被接管，属于配置错误，但思路可借鉴。",
+   "attack_chain": "发现外链→注册GitHub账号→托管恶意内容。",
+   "bypass_technique": "利用未注册的GitHub仓库。",
+   "defensive_insight": "定期检查文档外链的有效性，避免指向未注册资源。"
+  },
+  {
+   "id": 202968,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。tcpdump缓冲区溢出，已知CVE，无新意。",
+   "attack_chain": "单点：解析恶意包触发溢出。",
+   "bypass_technique": "无。",
+   "defensive_insight": "更新tcpdump版本。"
+  },
+  {
+   "id": 1261148,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型XSS，payload为常见绕过，但报告不完整，substate为informative，信息不足。",
+   "attack_chain": "创建恶意分支→创建MR→触发XSS。",
+   "bypass_technique": "使用HTML实体和事件处理器绕过过滤。",
+   "defensive_insight": "对用户输入进行严格过滤和输出编码。"
+  },
+  {
+   "id": 221041,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用Cookie大小限制导致服务拒绝，属于协议行为利用，可跨域影响，思路新颖。",
+   "attack_chain": "部署恶意页面→设置大量Cookie→用户访问后浏览器拒绝发送请求。",
+   "bypass_technique": "利用Cookie大小限制，通过JavaScript设置超大Cookie。",
+   "defensive_insight": "限制Cookie大小和数量，监控异常Cookie设置。"
+  },
+  {
+   "id": 164674,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "命令注入 / 其他",
+   "reasoning": "部分。CSV注入绕过过滤，使用分号绕过引号转义，思路可借鉴。",
+   "attack_chain": "构造恶意CSV→导出后Excel执行公式。",
+   "bypass_technique": "使用分号作为分隔符绕过过滤。",
+   "defensive_insight": "对CSV输出进行严格转义，禁用公式。"
+  },
+  {
+   "id": 142709,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "SSRF / 信息泄露",
+   "reasoning": "部分。SVG上传导致外部资源请求，属于SSRF，但报告不完整。",
+   "attack_chain": "上传恶意SVG→服务器请求外部资源。",
+   "bypass_technique": "利用SVG的xlink属性。",
+   "defensive_insight": "对上传的SVG进行消毒，禁止外部资源加载。"
+  },
+  {
+   "id": 294147,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "命令注入 / 跨组件攻击链",
+   "reasoning": "是。利用Mercurial的git子仓库功能，通过恶意仓库触发hook执行命令，跨组件攻击链，思路新颖。",
+   "attack_chain": "构造恶意仓库→用户克隆→触发post-update hook→执行任意命令。",
+   "bypass_technique": "利用git子仓库的hook机制。",
+   "defensive_insight": "禁用或限制子仓库的hook执行，对仓库内容进行校验。"
+  },
+  {
+   "id": 771977,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。二进制未启用PIE，常见安全设计缺陷，无绕过无链。",
+   "attack_chain": "单点：利用缓冲区溢出绕过ASLR。",
+   "bypass_technique": "无。",
+   "defensive_insight": "编译时启用PIE和ASLR。"
+  },
+  {
+   "id": 135756,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。删除的评论仍可访问，属于IDOR，但无复杂绕过。",
+   "attack_chain": "单点：直接访问删除评论的URL。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对删除的资源进行访问控制。"
+  },
+  {
+   "id": 103989,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / XSS",
+   "reasoning": "是。利用异常抛出对象属性执行JavaScript，绕过沙箱，属于框架行为利用，思路新颖。",
+   "attack_chain": "构造异常对象→抛出→执行任意JS。",
+   "bypass_technique": "利用异常对象的html属性。",
+   "defensive_insight": "对异常处理进行严格过滤，避免将对象属性直接用于渲染。"
+  },
+  {
+   "id": 402410,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 信息泄露",
+   "reasoning": "是。通过修改folder_id参数，将加密ID响应变为明文，绕过加密逻辑，属于业务逻辑缺陷，可批量解密用户ID，影响严重。",
+   "attack_chain": "添加用户到列表→修改folder_id→获取明文ID→删除用户。",
+   "bypass_technique": "修改folder_id从33到34。",
+   "defensive_insight": "对API参数进行严格校验，确保加密逻辑不可绕过。"
+  },
+  {
+   "id": 1784449,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 其他",
+   "reasoning": "是。利用正则表达式低效导致ReDoS，属于协议行为利用，可通用化，影响广泛。",
+   "attack_chain": "构造恶意输入→触发正则回溯→服务拒绝。",
+   "bypass_technique": "利用正则表达式的回溯陷阱。",
+   "defensive_insight": "使用安全的正则表达式，限制输入长度。"
+  },
+  {
+   "id": 310443,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "类型混淆 / 框架行为利用",
+   "reasoning": "是。利用lodash的merge函数原型污染，属于框架行为利用，可导致RCE，思路经典但影响大。",
+   "attack_chain": "构造恶意JSON→触发merge→污染原型→影响所有对象。",
+   "bypass_technique": "利用__proto__属性。",
+   "defensive_insight": "避免使用不安全的merge函数，对输入进行过滤。"
+  },
+  {
+   "id": 1234925,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "路径遍历",
+   "reasoning": "否。CVE-2020-3452已知漏洞，直接利用，无新意。",
+   "attack_chain": "单点：构造URL读取文件。",
+   "bypass_technique": "无。",
+   "defensive_insight": "升级Cisco ASA版本。"
+  },
+  {
+   "id": 1591403,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。Self XSS，影响有限，无绕过。",
+   "attack_chain": "单点：输入javascript:alert。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对URL输入进行协议白名单校验。"
+  }
+ ]
+}

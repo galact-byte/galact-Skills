@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   415682,
+   1767771,
+   1665156,
+   282628,
+   350418
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1767771,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 跨组件攻击链",
+   "reasoning": "是。通过一个API端点直接接管任意子域名，无需额外权限，仅需自己的siteId。这绕过了域名所有权验证，属于典型的授权缺失。技术点在于API未验证域名所有权，且影响范围广（*.zyrosite.com）。与普通子域名接管不同，这是通过API逻辑漏洞实现，而非DNS配置错误。",
+   "attack_chain": "登录Hostinger→创建网站→获取siteId→调用connect-domain-hostinger API，指定任意子域名→成功接管。",
+   "bypass_technique": "利用API端点未验证域名所有权，直接指定目标子域名。",
+   "defensive_insight": "API端点必须验证域名所有权（如DNS TXT记录或文件验证），并实施严格的访问控制。"
+  },
+  {
+   "id": 99054,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "部分。通过数组参数触发不同错误信息，泄露内部文件路径和框架细节。虽然有点非预期，但本质是调试模式未关闭，属于常见配置错误。没有绕过或攻击链，信息泄露程度有限。",
+   "attack_chain": "单点：构造特殊参数→触发异常→泄露文件路径。",
+   "bypass_technique": "无实质绕过，利用调试模式未关闭。",
+   "defensive_insight": "生产环境禁用调试模式，统一错误处理，避免泄露内部信息。"
+  },
+  {
+   "id": 1132690,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "否。在Git历史中发现提交的token，属于常见的信息泄露。没有绕过或攻击链，只是简单的秘密扫描。",
+   "attack_chain": "单点：查看Git历史→发现token→利用。",
+   "bypass_technique": "无，直接利用泄露的凭据。",
+   "defensive_insight": "使用git-secrets等工具防止敏感信息提交，定期轮换密钥。"
+  },
+  {
+   "id": 323017,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。GNU binutils的越界读取漏洞，属于已知CVE，没有提供具体细节，只是引用。没有绕过或攻击链，信息不足。",
+   "attack_chain": "单点：利用已知CVE触发越界读取。",
+   "bypass_technique": "无。",
+   "defensive_insight": "修复已知漏洞，加强输入验证。"
+  },
+  {
+   "id": 1147949,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "部分。POST型XSS结合CSRF，形成攻击链，但技术点常见。CSRF绕过防护，XSS注入，组合起来有一定启发性，但属于成熟套路。",
+   "attack_chain": "构造恶意表单→诱导用户提交→触发XSS→执行脚本。",
+   "bypass_technique": "利用CSRF无防护，通过表单提交触发XSS。",
+   "defensive_insight": "实施CSRF令牌，对输入进行严格过滤和输出编码。"
+  },
+  {
+   "id": 282628,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 0
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用CSV注入和DDE，通过Twitter的分享功能诱导用户发布恶意payload，再通过导出数据触发。技术点在于利用URL编码换行符隐藏payload，以及Excel的DDE功能。跨组件（Twitter→Excel），思路巧妙。",
+   "attack_chain": "构造恶意分享链接→诱导用户发布→用户导出CSV→Excel执行DDE→RCE。",
+   "bypass_technique": "利用URL编码换行符隐藏payload，利用Excel DDE执行命令。",
+   "defensive_insight": "CSV导出时对公式前缀进行转义，用户端应禁用DDE。"
+  },
+  {
+   "id": 2262382,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "SSRF",
+   "reasoning": "否。报告仅提及SSRF，但无具体细节，PoC被REDACTED，无法判断真实性。",
+   "attack_chain": "未知。",
+   "bypass_technique": "未知。",
+   "defensive_insight": "未知。"
+  },
+  {
+   "id": 2210038,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 业务逻辑",
+   "reasoning": "部分。存储型HTML注入，通过Circle名称注入meta refresh，分享给管理员触发。技术点在于利用HTML注入而非脚本，但属于常见XSS变种。",
+   "attack_chain": "创建Circle→注入HTML→分享给管理员→管理员访问触发重定向。",
+   "bypass_technique": "利用meta refresh标签绕过脚本过滤。",
+   "defensive_insight": "对用户输入进行HTML编码，实施内容安全策略。"
+  },
+  {
+   "id": 350418,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "反序列化 / 类型混淆",
+   "reasoning": "是。利用cryo库的反序列化，通过__proto__污染和函数序列化实现RCE。技术点在于利用JavaScript原型链污染，属于框架行为利用。",
+   "attack_chain": "构造恶意JSON→反序列化→原型链污染→触发函数执行→RCE。",
+   "bypass_technique": "利用__proto__属性覆盖原型，注入恶意函数。",
+   "defensive_insight": "反序列化时黑名单__proto__，避免使用不安全的库。"
+  },
+  {
+   "id": 713407,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 其他",
+   "reasoning": "部分。通过上传文件名包含特殊字符（如+、%20）导致ActiveStorage异常，引发全局DoS。技术点在于利用文件名解析差异，但属于配置错误。",
+   "attack_chain": "上传特殊文件名→触发异常→页面无法加载→DoS。",
+   "bypass_technique": "利用文件名中的空白字符绕过验证。",
+   "defensive_insight": "对上传文件名进行严格校验和规范化。"
+  },
+  {
+   "id": 1665156,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用多行Transfer-Encoding头导致HTTP请求走私，绕过修复。技术点在于利用解析器对多行TE头的处理差异，属于协议行为利用。",
+   "attack_chain": "构造多行TE头→前端解析为chunked→后端解析为普通请求→走私请求。",
+   "bypass_technique": "利用多行TE头（逗号后空格）造成解析分歧。",
+   "defensive_insight": "统一前后端HTTP解析，拒绝畸形TE头。"
+  },
+  {
+   "id": 777984,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 其他",
+   "reasoning": "部分。利用Cookie Bomb导致用户无法访问网站，技术点在于利用URL路径长度限制和Cookie大小限制，属于业务逻辑漏洞。",
+   "attack_chain": "访问长URL→设置大Cookie→累积到8KB→服务器拒绝请求→DoS。",
+   "bypass_technique": "利用Cookie大小限制，通过路径参数注入。",
+   "defensive_insight": "限制Cookie大小，对URL路径长度进行限制。"
+  },
+  {
+   "id": 1423704,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 业务逻辑",
+   "reasoning": "部分。通过JSON响应泄露用户隐藏的is_supporter字段，技术点在于API未遵循隐私设置，属于业务逻辑漏洞。",
+   "attack_chain": "发起会话→查看JSON响应→获取is_supporter字段。",
+   "bypass_technique": "利用API未过滤隐私字段。",
+   "defensive_insight": "API响应应遵循用户隐私设置，过滤敏感字段。"
+  },
+  {
+   "id": 167931,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。PHP内存破坏漏洞，仅引用bug报告和修复commit，无具体细节，属于已知CVE。",
+   "attack_chain": "单点：利用已知漏洞触发内存破坏。",
+   "bypass_technique": "无。",
+   "defensive_insight": "升级PHP版本，应用补丁。"
+  },
+  {
+   "id": 1551588,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用",
+   "reasoning": "部分。curl连接复用未考虑IPv6 zone index，导致连接重用错误，可能泄露信息。技术点在于协议行为利用，但影响有限。",
+   "attack_chain": "单点：利用curl连接复用漏洞，访问错误接口。",
+   "bypass_technique": "利用IPv6 zone index忽略。",
+   "defensive_insight": "修复curl，连接复用时应考虑zone index。"
+  },
+  {
+   "id": 13705,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。简单的CSRF注销，利用img标签触发GET请求，成熟套路。",
+   "attack_chain": "单点：诱导用户访问恶意页面→触发注销请求。",
+   "bypass_technique": "无，直接利用GET请求无CSRF防护。",
+   "defensive_insight": "对注销请求实施CSRF令牌，使用POST方法。"
+  },
+  {
+   "id": 342977,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。暴力破解admin页面，无速率限制，常见配置错误。",
+   "attack_chain": "单点：暴力破解登录。",
+   "bypass_technique": "无。",
+   "defensive_insight": "实施速率限制和账户锁定。"
+  },
+  {
+   "id": 1630669,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "协议行为利用",
+   "reasoning": "否。仅引用原始报告，无具体细节，信息不足。",
+   "attack_chain": "未知。",
+   "bypass_technique": "未知。",
+   "defensive_insight": "未知。"
+  },
+  {
+   "id": 415682,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 反序列化",
+   "reasoning": "是。从LFI到PHP对象注入到XXE到SSRF到Python pickle注入，形成完整攻击链，跨多个组件。技术点在于利用PHP反序列化触发XXE，再通过SSRF发现内部服务，最后利用pickle实现RCE。",
+   "attack_chain": "LFI读取源码→发现反序列化点→构造PHP对象注入→XXE→SSRF→发现内部服务→Python pickle注入→RCE。",
+   "bypass_technique": "利用PHP反序列化触发XXE，通过SSRF访问内部服务，利用pickle反序列化执行命令。",
+   "defensive_insight": "修复LFI，反序列化前验证输入，限制SSRF，使用安全的反序列化库。"
+  },
+  {
+   "id": 267075,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。简单的点击劫持，缺少X-Frame-Options，常见配置错误。",
+   "attack_chain": "单点：iframe嵌入目标页面。",
+   "bypass_technique": "无。",
+   "defensive_insight": "设置X-Frame-Options或CSP frame-ancestors。"
+  }
+ ]
+}

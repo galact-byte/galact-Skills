@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1234406,
+   697055,
+   819821,
+   2243710,
+   732431
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 697055,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 框架行为利用",
+   "reasoning": "是。利用 LGTM 构建流程中保留 .lgtm.yml 文件且不校验其是否为符号链接的行为，通过符号链接指向宿主机文件，实现容器逃逸和任意文件读取。这突破了容器隔离的信任边界，属于对构建系统文件处理逻辑的巧妙利用。",
+   "attack_chain": "创建项目→构造 lgtm.yml 和指向宿主机文件的符号链接 .lgtm.yml→触发构建→构建后 .lgtm.yml 内容被宿主机文件内容替换→读取敏感文件。",
+   "bypass_technique": "利用符号链接绕过容器文件系统隔离，使构建产物包含宿主机文件内容。",
+   "defensive_insight": "构建系统应严格校验上传文件的类型，禁止符号链接或对符号链接进行解析限制；构建后应清理或隔离非必要文件。"
+  },
+  {
+   "id": 261817,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。JS 文件中包含哈希和邮箱，属于常见的信息泄露，无绕过或攻击链，价值低。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "避免在前端代码中硬编码敏感信息，定期扫描代码仓库。"
+  },
+  {
+   "id": 819821,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 0
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 状态混淆",
+   "reasoning": "是。删除镜像后 project.mirror_user 关系未清除，导致后续创建镜像时可指定已删除镜像的用户，绕过'只能分配自己'的限制，形成后门。这是状态清理不彻底导致的逻辑漏洞，思路巧妙。",
+   "attack_chain": "永久维护者创建镜像→删除镜像→临时维护者创建新镜像并指定永久维护者为镜像用户→临时维护者被移除后仍可通过镜像推送代码。",
+   "bypass_technique": "利用删除操作未清理关联数据的逻辑缺陷，绕过镜像用户分配限制。",
+   "defensive_insight": "删除资源时应级联清理关联数据；对敏感操作应重新校验权限。"
+  },
+  {
+   "id": 2243710,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。undici-fetch 在跨域重定向时未清除 Cookie 头，而 undici 本身已修复，说明该包装库未继承修复。这属于对重定向协议行为的错误处理，可导致敏感信息泄露。",
+   "attack_chain": "构造重定向 URL→undici-fetch 发起请求→跨域重定向时 Cookie 被发送到攻击者服务器。",
+   "bypass_technique": "利用库的差异，绕过跨域重定向时的敏感头清理机制。",
+   "defensive_insight": "库的封装应同步上游安全修复；跨域重定向时应严格清除敏感头。"
+  },
+  {
+   "id": 1234406,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 协议行为利用",
+   "reasoning": "是。通过观察距离值在服务器端取整后的跳变点，推断精确距离，再结合三边测量法定位受害者。这是对服务器端取整逻辑的巧妙利用，将看似模糊的数据转化为精确位置，思路极具启发性。",
+   "attack_chain": "移动攻击者位置→观察距离跳变→记录跳变点→三边测量→精确定位。",
+   "bypass_technique": "利用服务器端取整的边界行为，通过多次测量推断精确距离。",
+   "defensive_insight": "对距离等敏感数据应添加噪声或限制查询频率；避免返回可推断精确值的取整结果。"
+  },
+  {
+   "id": 77076,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "认证绕过",
+   "reasoning": "部分。GA 码未在服务端验证，导致被拒绝的用户仍可提交验证文档。这是对认证流程的绕过，但属于常见逻辑缺陷，思路一般。",
+   "attack_chain": "被拒绝用户发起验证请求→输入任意 GA 码→服务端未验证→提交文档。",
+   "bypass_technique": "利用服务端未验证 GA 码的缺陷，绕过身份验证。",
+   "defensive_insight": "所有认证步骤必须在服务端严格验证，不能依赖客户端。"
+  },
+  {
+   "id": 732431,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "配置错误 / 加密缺陷",
+   "reasoning": "是。服务器端加密的公钥未做完整性保护，可被替换，导致新文件被攻击者密钥加密。这是对加密体系信任根的破坏，属于设计缺陷，具有通用性。",
+   "attack_chain": "获取数据目录访问权→替换公钥→新文件用攻击者公钥加密→解密读取。",
+   "bypass_technique": "利用公钥未签名或未校验的缺陷，替换密钥。",
+   "defensive_insight": "对密钥文件进行完整性校验，如存储指纹或 MAC。"
+  },
+  {
+   "id": 540301,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。wp-json 端点泄露邮箱，属于常见的信息泄露，无绕过或攻击链。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "限制 wp-json 暴露的敏感字段。"
+  },
+  {
+   "id": 1401891,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "认证绕过",
+   "reasoning": "否。密码重置令牌未失效，属于常见漏洞，无新意。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "令牌使用后应立即失效。"
+  },
+  {
+   "id": 275386,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。媒体嵌入中的存储型 XSS，常见套路，无绕过。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对媒体嵌入内容进行过滤和转义。"
+  },
+  {
+   "id": 116006,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / CSRF",
+   "reasoning": "部分。CSRF 与 XSS 组合，但 XSS 是反射型，CSRF 是辅助，整体思路常见，但组合有一定价值。",
+   "attack_chain": "CSRF 添加商品→触发 XSS。",
+   "bypass_technique": "无实质绕过。",
+   "defensive_insight": "对参数进行编码和过滤，CSRF 使用 token。"
+  },
+  {
+   "id": 842462,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 资源消耗",
+   "reasoning": "部分。利用 EXIF 数据导致内存耗尽，属于已知的像素洪水攻击，但针对特定库，有一定启发性。",
+   "attack_chain": "上传恶意图片→Jimp 解析 EXIF→分配巨大内存→DoS。",
+   "bypass_technique": "无实质绕过。",
+   "defensive_insight": "限制图片尺寸和内存分配，禁用 EXIF 自动处理。"
+  },
+  {
+   "id": 245518,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少 SPF 记录，属于常见配置问题，无攻击链。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "配置 SPF 记录。"
+  },
+  {
+   "id": 865168,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "命令注入",
+   "reasoning": "否。命令拼接导致的命令注入，常见套路，无新意。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "使用 execFile 或 spawn，避免拼接。"
+  },
+  {
+   "id": 964550,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 文件上传",
+   "reasoning": "部分。通过修改 MIME 类型上传恶意 PNG，实现存储型 XSS，属于常见绕过，但组合了文件上传和 XSS，有一定价值。",
+   "attack_chain": "上传恶意 PNG→修改 MIME 为 text/html→存储→触发 XSS。",
+   "bypass_technique": "修改 MIME 类型绕过文件类型检查。",
+   "defensive_insight": "严格校验文件内容和 MIME 类型，存储时使用安全域名。"
+  },
+  {
+   "id": 346219,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "部分。利用 Firefox 对 textarea 解码 HTML 实体的行为差异，绕过 fixSpecialSymbols 的过滤，属于浏览器行为利用，有一定启发性。",
+   "attack_chain": "发送恶意邮件→添加联系人→打开写信页面→触发 XSS。",
+   "bypass_technique": "利用 Firefox 的 textarea 解码行为绕过过滤。",
+   "defensive_insight": "避免使用 textarea 解码，使用安全的 DOM 操作。"
+  },
+  {
+   "id": 147577,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "信息泄露",
+   "reasoning": "否。错误页面可能泄露信息，但报告内容模糊，无具体细节。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "隐藏错误详情。"
+  },
+  {
+   "id": 1794462,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。JS 文件中包含 PHP 源码，属于常见信息泄露，无攻击链。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "避免将源码打包到前端。"
+  },
+  {
+   "id": 84453,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少 HSTS，常见配置问题，无攻击链。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "启用 HSTS。"
+  },
+  {
+   "id": 2438265,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "反序列化 / 命令注入",
+   "reasoning": "部分。RDoc 解析 .rdoc_options 时存在 YAML 反序列化漏洞，导致 RCE，属于已知 CVE，但利用方式有启发性。",
+   "attack_chain": "构造恶意 .rdoc_options→触发反序列化→RCE。",
+   "bypass_technique": "利用 YAML 反序列化限制不足。",
+   "defensive_insight": "限制反序列化类，使用安全解析器。"
+  }
+ ]
+}

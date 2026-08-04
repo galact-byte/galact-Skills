@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1208453,
+   54094,
+   1489141,
+   2065306,
+   480778
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 480778,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "内存破坏 / 框架行为利用",
+   "reasoning": "是。通过构造特定的正则匹配触发 Perl 解释器内部的堆缓冲区溢出，属于对解释器内部函数（Perl__byte_dump_string）的意外调用路径。技术点在于利用正则引擎的复杂行为导致内存分配不足，进而溢出。与普通内存破坏漏洞相比，它展示了如何通过高级语言特性（正则）触发底层内存问题，具有启发意义。",
+   "attack_chain": "构造恶意正则→触发Perl内部函数调用→堆缓冲区溢出→内存泄漏→可能绕过ASLR。",
+   "bypass_technique": "利用正则匹配的复杂路径导致堆缓冲区溢出，绕过常规输入验证。",
+   "defensive_insight": "对解释器内部函数进行边界检查，使用安全内存分配函数，并定期进行模糊测试。"
+  },
+  {
+   "id": 362702,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。User-Agent 头未经过滤直接反射导致 XSS，属于常见反射型 XSS 的变体，但注入点在 HTTP 头中，且影响第三方模块，有一定代表性。PoC 完整，但技术点不新颖。",
+   "attack_chain": "构造恶意User-Agent→服务器未过滤→反射到页面→执行脚本。",
+   "bypass_technique": "利用HTTP头作为注入点，绕过常规输入过滤。",
+   "defensive_insight": "对所有用户可控输入（包括HTTP头）进行输出编码和上下文感知的转义。"
+  },
+  {
+   "id": 887818,
+   "value_score": 0,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告仅包含占位符和flag，无任何漏洞描述或技术细节，无法判断真实性。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "无"
+  },
+  {
+   "id": 221289,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "内存破坏 / 框架行为利用",
+   "reasoning": "是。通过构造特定的 Sass 表达式触发 libsass 中的 use-after-free，展示了如何利用语言特性（如 if 函数）导致对象生命周期管理错误。技术点在于对共享指针引用计数的错误处理，属于框架行为利用。PoC 完整，但属于已知类型。",
+   "attack_chain": "构造恶意Sass表达式→触发函数调用→对象释放后仍被引用→use-after-free。",
+   "bypass_technique": "利用Sass的if函数和嵌套表达式导致对象生命周期混乱。",
+   "defensive_insight": "加强对象生命周期管理，使用智能指针时注意引用计数，并进行模糊测试。"
+  },
+  {
+   "id": 1208453,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 跨组件攻击链",
+   "reasoning": "是。通过多阶段 CSRF 实现账户接管，先修改安全问题答案，再修改密码，绕过了单步 CSRF 的限制。技术点在于利用两个独立功能的 CSRF 漏洞组合成攻击链，且无需知道安全问题。这种多阶段攻击思路具有通用性，可抽象为“先改凭据再改密码”的模式。",
+   "attack_chain": "诱导受害者访问恶意页面→第一步CSRF修改安全问题答案→第二步CSRF修改密码→账户接管。",
+   "bypass_technique": "利用多阶段CSRF，先修改安全问题答案，再修改密码，绕过单步CSRF的限制。",
+   "defensive_insight": "在敏感操作（如修改密码）中验证CSRF token，并考虑对关键操作进行二次确认。"
+  },
+  {
+   "id": 2065306,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "配置错误 / 命令注入",
+   "reasoning": "是。通过可控的 ODBC 驱动参数加载恶意动态链接库，实现命令执行。技术点在于利用配置项中的驱动路径参数，加载任意 DLL，属于配置错误导致的代码执行。该漏洞展示了如何将配置参数转化为攻击面，具有通用性。",
+   "attack_chain": "配置恶意ODBC驱动→点击测试→加载恶意DLL→命令执行。",
+   "bypass_technique": "利用ODBC驱动参数加载任意DLL，绕过安全限制。",
+   "defensive_insight": "对ODBC驱动参数进行白名单校验，限制可加载的驱动路径。"
+  },
+  {
+   "id": 1489141,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 其他",
+   "reasoning": "是。通过构造特定的 multipart 数据触发 Rack 中的 ReDoS，展示了如何利用正则表达式的指数级回溯导致服务不可用。技术点在于对 RFC2183 正则的深入分析，使用工具检测并构造攻击字符串。该漏洞具有通用性，可抽象为“利用正则回溯进行 DoS”。",
+   "attack_chain": "构造恶意multipart请求→触发正则指数回溯→CPU耗尽→拒绝服务。",
+   "bypass_technique": "利用正则表达式的指数级回溯，构造特定字符串导致ReDoS。",
+   "defensive_insight": "使用安全的正则表达式，避免嵌套量词，或使用超时机制。"
+  },
+  {
+   "id": 118950,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型 XSS，使用常见的 svg onload 载荷，无绕过或新颖技术，属于成熟套路。",
+   "attack_chain": "提交恶意名称→存储→页面渲染→执行脚本。",
+   "bypass_technique": "无实质绕过，直接利用未过滤输入。",
+   "defensive_insight": "对用户输入进行输出编码，使用 CSP 等安全机制。"
+  },
+  {
+   "id": 824909,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "子域名接管",
+   "reasoning": "部分。子域名接管属于常见漏洞，但该报告展示了如何通过未认领的 uptimerobot 服务进行接管，且提供了明确的 PoC。技术点在于利用第三方服务的未认领状态，但整体思路常见。",
+   "attack_chain": "发现未认领的子域名→在uptimerobot注册→接管子域名。",
+   "bypass_technique": "利用第三方服务的未认领状态进行接管。",
+   "defensive_insight": "定期检查DNS记录，确保所有子域名指向的服务已认领。"
+  },
+  {
+   "id": 38345,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。利用 IE 的 URL 编码差异导致 XSS，属于浏览器行为利用，有一定新颖性。技术点在于 IE 对 Request-URI 的编码处理不一致，但依赖特定浏览器，通用性有限。",
+   "attack_chain": "构造恶意URL→IE发送未编码的Request-URI→反射XSS。",
+   "bypass_technique": "利用IE的URL编码差异绕过过滤。",
+   "defensive_insight": "对输出进行编码，并考虑浏览器差异。"
+  },
+  {
+   "id": 54094,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。通过 MITM 攻击 Flash Player 设置管理器，利用 HTTP 与 HTTPS 的混合内容问题，修改本地设置 cookie，从而绕过沙箱限制。技术点在于利用浏览器对 HTTP 和 HTTPS 混合内容的信任，以及 Flash 设置管理器的设计缺陷。该攻击链跨网络和本地组件，具有通用性。",
+   "attack_chain": "MITM攻击→注入恶意SWF→修改设置cookie→绕过沙箱限制。",
+   "bypass_technique": "利用HTTP与HTTPS混合内容，通过MITM修改本地设置。",
+   "defensive_insight": "确保所有设置管理通过HTTPS，并验证cookie的完整性。"
+  },
+  {
+   "id": 178831,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "CSRF",
+   "reasoning": "部分。CSRF 漏洞常见，但该报告展示了如何利用注册端点进行批量账户创建，且无需任何认证。技术点在于利用无 CSRF 保护的端点进行自动化操作，但思路较直接。",
+   "attack_chain": "构造恶意表单→诱导受害者提交→创建账户。",
+   "bypass_technique": "无实质绕过，直接利用无CSRF保护的端点。",
+   "defensive_insight": "在所有状态变更请求中验证CSRF token。"
+  },
+  {
+   "id": 159955,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "内存破坏",
+   "reasoning": "否。整数溢出导致堆破坏，属于常见内存破坏类型，无新颖技术。",
+   "attack_chain": "构造恶意输入→整数溢出→堆破坏。",
+   "bypass_technique": "无实质绕过，直接利用整数溢出。",
+   "defensive_insight": "进行整数溢出检查，使用安全函数。"
+  },
+  {
+   "id": 245221,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "内存破坏",
+   "reasoning": "否。空指针解引用导致崩溃，属于常见内存错误，无新颖技术。",
+   "attack_chain": "构造恶意输入→空指针解引用→崩溃。",
+   "bypass_technique": "无实质绕过，直接利用空指针。",
+   "defensive_insight": "检查指针有效性，进行边界检查。"
+  },
+  {
+   "id": 36459,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少 SPF 记录属于常见配置问题，无技术含量。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "配置SPF记录。"
+  },
+  {
+   "id": 52181,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过",
+   "reasoning": "部分。IDOR 漏洞常见，但该报告展示了如何通过修改评论 ID 读取私有视频的评论，属于对象级授权缺失。技术点在于对评论 ID 的枚举，但思路较直接。",
+   "attack_chain": "获取评论ID→修改ID→读取私有评论。",
+   "bypass_technique": "利用IDOR，直接修改ID访问未授权资源。",
+   "defensive_insight": "实施对象级授权检查，确保用户只能访问自己的资源。"
+  },
+  {
+   "id": 77319,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。通过重复参数触发错误信息泄露，属于常见信息泄露，无新颖技术。",
+   "attack_chain": "发送重复参数→触发错误→泄露路径信息。",
+   "bypass_technique": "无实质绕过，直接利用参数处理错误。",
+   "defensive_insight": "在错误信息中隐藏敏感路径。"
+  },
+  {
+   "id": 1630668,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用",
+   "reasoning": "部分。HTTP 请求走私属于已知漏洞类型，但该报告引用了 CVE，且展示了 Transfer-Encoding 解析缺陷，有一定代表性。技术点在于利用前后端解析差异，但属于已知套路。",
+   "attack_chain": "构造恶意请求→前后端解析差异→走私请求。",
+   "bypass_technique": "利用Transfer-Encoding解析差异进行请求走私。",
+   "defensive_insight": "统一前后端HTTP解析，拒绝畸形请求。"
+  },
+  {
+   "id": 1614332,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用",
+   "reasoning": "部分。FTP-KRB 消息验证失败处理不当，导致 MITM 攻击可注入数据，属于协议实现缺陷。技术点在于对认证失败的错误处理，但场景较具体。",
+   "attack_chain": "MITM攻击→篡改FTP-KRB消息→验证失败但未处理→数据注入。",
+   "bypass_technique": "利用协议实现中的错误处理缺陷。",
+   "defensive_insight": "正确实现协议验证，失败时终止连接。"
+  },
+  {
+   "id": 83667,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。会话 ID 放在 URL 中属于常见配置错误，无新颖技术。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "使用Cookie传递会话ID。"
+  }
+ ]
+}

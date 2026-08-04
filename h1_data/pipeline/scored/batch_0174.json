@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 8,
+  "dropped": 12,
+  "avg_score": 4.6,
+  "top_n": [
+   195950,
+   1070247,
+   1065829,
+   212629,
+   80936
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 80936,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 授权绕过",
+   "reasoning": "部分。未认证访问JSON搜索响应泄露私有项目赏金信息，属于对API端点访问控制的绕过，但思路较为直接，未涉及复杂技术。",
+   "attack_chain": "直接访问搜索端点→未认证获取私有项目赏金信息。",
+   "bypass_technique": "未认证直接访问API端点，绕过前端权限控制。",
+   "defensive_insight": "对API端点实施严格的认证和授权检查，确保敏感数据仅对授权用户可见。"
+  },
+  {
+   "id": 381771,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SQL注入",
+   "reasoning": "否。POST参数curID存在SQL注入，经典注入点，无绕过或创新，属于成熟套路。",
+   "attack_chain": "单点：POST参数→SQL注入。",
+   "bypass_technique": "无实质绕过，直接利用未过滤参数。",
+   "defensive_insight": "对所有输入进行参数化查询，避免拼接SQL。"
+  },
+  {
+   "id": 107960,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 其他",
+   "reasoning": "是。利用JSONP回调参数反射特殊字符，结合下载属性实现RFD，属于对JSONP回调处理不当的利用，思路巧妙，可跨场景复用。",
+   "attack_chain": "构造恶意URL→诱导用户点击→下载恶意.cmd文件→执行任意命令。",
+   "bypass_technique": "利用JSONP回调参数未过滤特殊字符，结合下载属性实现RFD。",
+   "defensive_insight": "严格过滤回调参数，仅允许字母数字，并设置正确的Content-Disposition和X-Content-Type-Options。"
+  },
+  {
+   "id": 20072,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少HSTS头是常见配置问题，无技术难度，属于成熟套路。",
+   "attack_chain": "单点：HTTP请求→无HSTS→MITM风险。",
+   "bypass_technique": "无绕过，直接利用配置缺失。",
+   "defensive_insight": "启用HSTS并考虑预加载。"
+  },
+  {
+   "id": 175701,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。状态栏混淆是已知的UI欺骗技术，无新意，属于常见套路。",
+   "attack_chain": "单点：构造链接→状态栏显示虚假地址→点击跳转恶意网站。",
+   "bypass_technique": "利用浏览器状态栏显示与真实跳转不一致。",
+   "defensive_insight": "浏览器应显示真实目标URL，或提供安全提示。"
+  },
+  {
+   "id": 1065829,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 业务逻辑",
+   "reasoning": "是。CTF挑战中综合运用多种漏洞类型，包括IDOR、弱会话、LFI绕过、模板注入、SQL注入、哈希破解等，形成完整攻击链，展示了多种绕过技巧，启发性强。",
+   "attack_chain": "多步：信息收集→IDOR→弱会话→LFI→模板注入→SQL注入→哈希破解→最终控制。",
+   "bypass_technique": "利用过滤顺序绕过LFI，利用intval科学计数法绕过长度限制，利用模板嵌套绕过访问控制。",
+   "defensive_insight": "加强输入验证和过滤，避免使用可预测的会话标识，实施严格的访问控制。"
+  },
+  {
+   "id": 1126401,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。HTTP未强制跳转HTTPS是常见配置问题，无技术难度。",
+   "attack_chain": "单点：HTTP请求→明文传输→MITM风险。",
+   "bypass_technique": "无绕过，直接利用配置缺失。",
+   "defensive_insight": "配置HTTP到HTTPS的301重定向，并启用HSTS。"
+  },
+  {
+   "id": 212629,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 其他",
+   "reasoning": "是。利用URL解析差异（https://gitlab.com@example.com）绕过链接过滤，实现反向tabnabbing，属于对URL解析行为的利用，思路巧妙。",
+   "attack_chain": "构造恶意链接→用户点击→新标签页打开恶意网站→钓鱼。",
+   "bypass_technique": "利用URL中的@符号使浏览器解析为example.com，绕过内部链接检测。",
+   "defensive_insight": "对所有外部链接添加rel=\"noopener noreferrer\"，并严格解析URL。"
+  },
+  {
+   "id": 575562,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。iOS WebView未禁用JavaScript导致存储型XSS，属于常见漏洞类型，但利用场景在移动端，有一定启发性。",
+   "attack_chain": "上传恶意HTML→分享给受害者→受害者打开→执行脚本窃取信息。",
+   "bypass_technique": "无实质绕过，直接利用WebView默认配置。",
+   "defensive_insight": "在WebView中禁用JavaScript或实施严格的内容安全策略。"
+  },
+  {
+   "id": 1070247,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "命令注入 / 跨组件攻击链",
+   "reasoning": "是。利用git log的--output参数实现任意文件写入，进而可能覆盖pre-receive钩子实现RCE，属于对git命令参数注入的利用，思路新颖，攻击链完整。",
+   "attack_chain": "构造恶意commit参数→git log执行--output→写入任意文件→覆盖钩子→RCE。",
+   "bypass_technique": "利用git log的--output参数进行文件写入，绕过参数校验。",
+   "defensive_insight": "对git命令参数进行严格白名单校验，避免使用用户可控参数。"
+  },
+  {
+   "id": 96855,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过",
+   "reasoning": "部分。通过直接访问URL绕过前端菜单限制，属于典型的越权访问，但技术简单，启发性一般。",
+   "attack_chain": "直接访问受限URL→绕过菜单权限→操作域设置。",
+   "bypass_technique": "直接构造URL绕过前端UI限制。",
+   "defensive_insight": "后端必须实施独立的权限校验，不能依赖前端隐藏。"
+  },
+  {
+   "id": 97191,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 其他",
+   "reasoning": "部分。利用URL中的//绕过同源策略，实现跨域AJAX请求，属于对URL解析的利用，思路巧妙，但受限于旧浏览器。",
+   "attack_chain": "构造恶意URL→触发跨域AJAX→窃取数据。",
+   "bypass_technique": "利用//协议相对URL绕过同源检查。",
+   "defensive_insight": "实施CSP，严格限制跨域请求。"
+  },
+  {
+   "id": 437800,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。混合内容问题属于常见配置错误，无技术难度。",
+   "attack_chain": "单点：HTTPS页面加载HTTP资源→MITM风险。",
+   "bypass_technique": "无绕过，直接利用配置缺失。",
+   "defensive_insight": "确保所有资源通过HTTPS加载，实施CSP。"
+  },
+  {
+   "id": 303299,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少密码确认属于安全设计缺陷，但无技术难度，常见于各类应用。",
+   "attack_chain": "单点：会话劫持→修改支付方式。",
+   "bypass_technique": "无绕过，直接利用缺少二次验证。",
+   "defensive_insight": "对关键操作实施密码或OTP确认。"
+  },
+  {
+   "id": 869605,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "子域名接管",
+   "reasoning": "部分。子域名接管是常见漏洞，但利用Zendesk注册流程实现接管，步骤清晰，有一定启发性。",
+   "attack_chain": "发现未认领CNAME→注册Zendesk→绑定域名→接管子域。",
+   "bypass_technique": "利用Zendesk的域名映射功能接管未认领的子域。",
+   "defensive_insight": "定期检查DNS记录，及时删除或认领未使用的CNAME。"
+  },
+  {
+   "id": 195950,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "反序列化 / 框架行为利用",
+   "reasoning": "是。利用PHP unserialize()中的未初始化内存，通过控制内存内容实现任意代码执行，属于对PHP内部行为的深度利用，技术含量极高，启发性极强。",
+   "attack_chain": "构造恶意序列化字符串→触发未初始化内存→控制函数指针→RCE。",
+   "bypass_technique": "利用unserialize()的整数溢出和未初始化内存，覆盖对象析构函数指针。",
+   "defensive_insight": "避免对不可信数据使用unserialize，或使用安全替代方案如json_decode。"
+  },
+  {
+   "id": 145091,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型XSS是常见漏洞，无绕过或创新。",
+   "attack_chain": "提交恶意工单→管理员查看→XSS执行。",
+   "bypass_technique": "无实质绕过，直接利用未转义输出。",
+   "defensive_insight": "对所有输出进行HTML编码，实施CSP。"
+  },
+  {
+   "id": 538008,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过",
+   "reasoning": "部分。通过直接构造POST请求绕过前端限制，实现越权邀请，属于业务逻辑漏洞，但技术简单。",
+   "attack_chain": "构造POST请求→绕过好友限制→发送邀请。",
+   "bypass_technique": "直接调用AJAX端点，绕过前端UI限制。",
+   "defensive_insight": "后端必须验证用户关系，不能依赖前端限制。"
+  },
+  {
+   "id": 1173684,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "部分。shareinfo端点缺乏速率限制和访问控制，可被用于枚举和DoS，属于配置缺陷，但思路清晰。",
+   "attack_chain": "利用shareinfo端点→枚举令牌→DoS。",
+   "bypass_technique": "无实质绕过，直接利用未受保护的端点。",
+   "defensive_insight": "对敏感端点实施速率限制和认证，限制文件树大小。"
+  },
+  {
+   "id": 768327,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型HTML注入是常见漏洞，无绕过或创新。",
+   "attack_chain": "提交恶意表单→管理员查看→HTML注入执行。",
+   "bypass_technique": "无实质绕过，直接利用未过滤输入。",
+   "defensive_insight": "对所有输入进行过滤和输出编码。"
+  }
+ ]
+}

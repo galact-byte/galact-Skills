@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   172411,
+   1057216,
+   2334401,
+   631956,
+   1758174
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1758174,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 业务逻辑",
+   "reasoning": "是。通过复用 Slack 的创建 workspace 请求到 gov-slack 域，绕过了 gov-slack 上禁用创建 workspace 的 UI 限制，实现了未授权访问。技术点在于前端禁用不等于后端禁用，且请求格式完全兼容。",
+   "attack_chain": "在 slack.com 上构造创建 workspace 的请求 → 将请求发送到 slack-gov.com → 成功创建 workspace → 未授权访问 GovSlack。",
+   "bypass_technique": "利用前后端功能不一致，直接调用后端 API 绕过 UI 限制。",
+   "defensive_insight": "后端必须独立实施访问控制，不能依赖前端隐藏或禁用功能。"
+  },
+  {
+   "id": 1057216,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 协议行为利用",
+   "reasoning": "是。Rack::Sendfile 信任用户可控的 X-Sendfile-type 和 X-Accel-Mapping 头，导致正则注入（ReDoS）和内部文件访问。这是对框架信任边界的突破，可抽象为通用模式：任何从请求头读取配置的行为都应警惕。",
+   "attack_chain": "构造恶意 X-Accel-Mapping 头 → 触发正则注入 → ReDoS 或访问内部文件。",
+   "bypass_technique": "利用 Rack 对请求头的信任，注入正则表达式。",
+   "defensive_insight": "框架不应信任用户可控的请求头作为配置来源，应使用服务器内部配置。"
+  },
+  {
+   "id": 2334401,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 配置错误",
+   "reasoning": "是。利用 HTTP/2 CONTINUATION 帧不设置 END_HEADERS 标志，使服务器保持连接并累积内存，导致 OOM。这是对 HTTP/2 协议实现的滥用，且无需完整请求即可触发，难以检测。",
+   "attack_chain": "发送 HEADERS + 多个 CONTINUATION 帧 → 服务器持续分配内存 → 内存耗尽 → DoS。",
+   "bypass_technique": "利用 HTTP/2 帧的合法但异常组合，绕过常规请求限制。",
+   "defensive_insight": "服务器应限制 CONTINUATION 帧的数量和总大小，并设置超时。"
+  },
+  {
+   "id": 927661,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 类型混淆",
+   "reasoning": "部分。通过将支持骑手金额改为负数，利用后端未对金额进行非负校验，导致总价减少。这是典型的业务逻辑漏洞，但思路简单，且影响有限（最大减少1卢比）。",
+   "attack_chain": "拦截添加支持骑手金额的请求 → 将金额改为 -0.99 → 总价降低 → 支付。",
+   "bypass_technique": "利用后端对金额字段缺乏非负校验。",
+   "defensive_insight": "服务端必须对金额等关键参数进行严格校验，包括非负、范围等。"
+  },
+  {
+   "id": 47234,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "内存破坏 / 竞争条件",
+   "reasoning": "部分。Flash 的 MessageChannel 在动画重载时存在 UAF，可导致任意代码执行。这是经典的内存破坏漏洞，但利用条件需要特定场景，且已有 CVE 和公开 PoC，启发性一般。",
+   "attack_chain": "触发动画重载 → 对象被释放但引用仍存在 → 控制 EIP → 任意代码执行。",
+   "bypass_technique": "利用 UAF 漏洞，通过控制释放对象的内存布局。",
+   "defensive_insight": "及时更新 Flash 插件，或禁用 Flash 内容。"
+  },
+  {
+   "id": 154306,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 配置错误",
+   "reasoning": "部分。通过 URL 中的 CRLF 注入，在响应头中注入 Set-Cookie，可导致会话固定或 CSRF 绕过。这是经典的 CRLF 注入，但利用点在于 301 重定向的 Location 头，且需要浏览器支持 %0d。",
+   "attack_chain": "构造恶意 URL → 服务器在 Location 头中反射 CRLF → 注入 Set-Cookie → 会话固定。",
+   "bypass_technique": "利用 URL 编码的 CRLF 字符注入响应头。",
+   "defensive_insight": "对 URL 中的特殊字符进行过滤或编码，避免在响应头中反射。"
+  },
+  {
+   "id": 852841,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "部分。SecureRandom 使用 64 字符集生成 IV，导致 IV 熵降低，可能增加 IV 重用风险。这是密码学实现中的配置错误，但实际利用难度较高，且影响有限。",
+   "attack_chain": "IV 熵降低 → 增加 IV 重用概率 → 可能破坏机密性。",
+   "bypass_technique": "无直接绕过，利用弱随机性。",
+   "defensive_insight": "加密操作应使用随机字节，而非字符集生成。"
+  },
+  {
+   "id": 1657006,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型 XSS，PoC 为视频，但未提供具体参数和利用细节，属于常见漏洞类型，无特殊绕过。",
+   "attack_chain": "注入恶意脚本 → 用户访问时执行 → 窃取 Cookie。",
+   "bypass_technique": "无实质绕过，直接注入。",
+   "defensive_insight": "对用户输入进行输出编码和过滤。"
+  },
+  {
+   "id": 172411,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "类型混淆 / 内存破坏",
+   "reasoning": "是。通过构造特殊的查询字符串，使 merge_param 函数对 zend_string 调用 zend_hash_index_update，导致堆溢出。这是对 PHP 内部数据结构的类型混淆，可导致 RCE，且利用链完整。",
+   "attack_chain": "构造恶意查询字符串 → 触发类型混淆 → 堆溢出 → 控制 EIP → RCE。",
+   "bypass_technique": "利用 PHP 扩展中的类型混淆漏洞，通过控制输入触发。",
+   "defensive_insight": "在调用 zend_hash_index_update 前检查变量类型。"
+  },
+  {
+   "id": 148903,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。弱密码策略缺失，属于常见配置问题，无技术含量。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "实施强密码策略。"
+  },
+  {
+   "id": 1067037,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 2,
+    "reproducibility": 0
+   },
+   "verdict": "保留，普通",
+   "category": "跨组件攻击链 / 其他",
+   "reasoning": "部分。这是一个 CTF 挑战的完整 writeup，包含多种漏洞利用，但属于教学性质，且没有真实环境，可复现性差。",
+   "attack_chain": "多个挑战串联，从 robots.txt 到最终 DNS rebinding。",
+   "bypass_technique": "多种技术，包括 IDOR、SQL 注入、模板注入等。",
+   "defensive_insight": "CTF 挑战的防御建议不适用于真实环境。"
+  },
+  {
+   "id": 866382,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "部分。CL.TE 请求走私，利用前后端解析差异，可导致会话劫持、缓存投毒等。这是经典走私类型，但 PoC 完整，且影响明确。",
+   "attack_chain": "构造 CL.TE 请求 → 前端按 Content-Length 解析，后端按 Transfer-Encoding 解析 → 走私请求。",
+   "bypass_technique": "利用前后端对请求体的解析差异。",
+   "defensive_insight": "统一前后端 HTTP 解析，拒绝畸形请求。"
+  },
+  {
+   "id": 318594,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。SSLv3 POODLE 漏洞，属于过时协议，扫描即可发现，无技术含量。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁用 SSLv3。"
+  },
+  {
+   "id": 151786,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少 X-Content-Type-Options 头，属于安全头缺失，常见且影响低。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "添加安全响应头。"
+  },
+  {
+   "id": 1690951,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "保留，普通",
+   "category": "子域名接管",
+   "reasoning": "部分。子域名接管，利用 Kajabi 服务，PoC 简单，但属于常见漏洞类型，且影响取决于子域名的用途。",
+   "attack_chain": "子域名 DNS 指向未使用的服务 → 接管。",
+   "bypass_technique": "无。",
+   "defensive_insight": "清理不再使用的 DNS 记录。"
+  },
+  {
+   "id": 213360,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "内容注入",
+   "reasoning": "否。内容注入，利用 URL 中的 CRLF 注入文本，属于常见漏洞，影响有限。",
+   "attack_chain": "构造恶意 URL → 页面显示注入内容。",
+   "bypass_technique": "无。",
+   "defensive_insight": "过滤用户输入。"
+  },
+  {
+   "id": 230278,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型 XSS，需要管理员权限，属于常见漏洞，无特殊绕过。",
+   "attack_chain": "管理员注入恶意脚本 → 用户访问时执行。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对输出进行编码。"
+  },
+  {
+   "id": 631956,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 0
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 框架行为利用",
+   "reasoning": "是。通过 CS:GO 的 Panorama UI 框架，利用 kick 消息中的 HTML 注入，实现 XSS 到 RCE。这是对游戏 UI 框架的滥用，且攻击链完整，影响严重。",
+   "attack_chain": "构造恶意 kick 消息 → 触发 Panorama XSS → 执行 JavaScript → 调用系统命令。",
+   "bypass_technique": "利用 Panorama 的 html=true 属性，注入事件处理器。",
+   "defensive_insight": "对用户输入进行严格过滤，避免使用 html=true。"
+  },
+  {
+   "id": 841630,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "内容注入",
+   "reasoning": "否。内容注入，利用 URL 中的空格和文本，属于常见漏洞，影响有限。",
+   "attack_chain": "构造恶意 URL → 页面显示注入内容。",
+   "bypass_technique": "无。",
+   "defensive_insight": "过滤用户输入。"
+  },
+  {
+   "id": 12782,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。密码重置功能可被滥用发送垃圾邮件，属于常见业务逻辑问题，无技术含量。",
+   "attack_chain": "利用重置密码接口向任意邮箱发送邮件。",
+   "bypass_technique": "无。",
+   "defensive_insight": "限制重置密码请求频率。"
+  }
+ ]
+}

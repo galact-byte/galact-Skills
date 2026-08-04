@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   843171,
+   1377748,
+   1154003,
+   1755555,
+   924151
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 178094,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "内存破坏",
+   "reasoning": "否。PHP 函数中的整数溢出导致堆溢出，属于经典内存破坏类型，无特殊绕过或跨组件利用，PoC 在外部链接中，但信息完整。",
+   "attack_chain": "单点：调用 php_snmp_parse_oid 触发整数溢出，导致堆越界写。",
+   "bypass_technique": "无实质绕过，直接利用整数溢出。",
+   "defensive_insight": "在内存分配前检查长度计算是否溢出，使用安全整数运算。"
+  },
+  {
+   "id": 1003468,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。CSRF 导致用户注销，属于常见业务逻辑漏洞，无特殊绕过，PoC 完整但启发性低。",
+   "attack_chain": "单点：构造 CSRF 请求触发注销。",
+   "bypass_technique": "无实质绕过，直接利用缺少 CSRF token。",
+   "defensive_insight": "对敏感操作实施 CSRF 防护，如使用 token 或 SameSite cookie。"
+  },
+  {
+   "id": 211149,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。使用旧版 jQuery 导致任意脚本执行，属于依赖过时问题，无绕过或攻击链，信息完整但套路常见。",
+   "attack_chain": "单点：加载旧版 jQuery，响应被当作脚本执行。",
+   "bypass_technique": "无实质绕过，直接利用已知漏洞。",
+   "defensive_insight": "及时更新依赖库，避免使用存在已知漏洞的版本。"
+  },
+  {
+   "id": 103993,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。RubyGems 请求劫持漏洞，属于已知漏洞的引用，无新意，信息完整但套路常见。",
+   "attack_chain": "单点：利用 RubyGems 的请求劫持漏洞。",
+   "bypass_technique": "无实质绕过，直接利用已知漏洞。",
+   "defensive_insight": "升级 RubyGems 到安全版本，并验证下载源。"
+  },
+  {
+   "id": 843171,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 跨组件攻击链",
+   "reasoning": "是。通过重写 RegExp.prototype.test 绕过链接验证，结合 dispatchEvent 触发点击事件，实现 RCE。这是对 Electron 框架行为的巧妙利用，绕过看似有效的过滤，且可跨平台。",
+   "attack_chain": "构造恶意页面→重写 RegExp.prototype.test→伪造 document.closest→dispatchEvent 触发点击→shell.openExternal 执行任意程序。",
+   "bypass_technique": "重写 RegExp.prototype.test 使链接验证通过，利用 dispatchEvent 模拟用户点击。",
+   "defensive_insight": "启用 context isolation，使用 allowlist 限制协议，检查事件 isTrusted 属性。"
+  },
+  {
+   "id": 75556,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 授权绕过",
+   "reasoning": "部分。通过 reputation log 泄露重复报告标题，属于信息泄露，但思路简单，无复杂绕过，PoC 清晰。",
+   "attack_chain": "提交报告→被标记为重复→查看 reputation log 获取标题。",
+   "bypass_technique": "无实质绕过，直接利用未授权访问。",
+   "defensive_insight": "在 reputation log 中隐藏未公开报告标题。"
+  },
+  {
+   "id": 2043552,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "认证绕过 / 配置错误",
+   "reasoning": "部分。通过忘记密码功能枚举端点，绕过登录访问管理功能，属于配置错误导致的认证绕过，思路可借鉴但场景具体。",
+   "attack_chain": "访问忘记密码→枚举端点→直接访问未授权管理页面。",
+   "bypass_technique": "利用未受保护的端点绕过登录。",
+   "defensive_insight": "对所有管理端点实施统一认证，避免依赖隐藏 URL。"
+  },
+  {
+   "id": 461242,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。目录列表漏洞，属于常见配置错误，无绕过或攻击链，信息完整但套路常见。",
+   "attack_chain": "单点：访问目录列表获取文件列表。",
+   "bypass_technique": "无实质绕过，直接利用配置错误。",
+   "defensive_insight": "禁用目录列表，设置默认索引文件。"
+  },
+  {
+   "id": 152569,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。CSRF 创建分类，属于常见漏洞，无特殊绕过，PoC 完整但启发性低。",
+   "attack_chain": "单点：构造 CSRF 表单创建分类。",
+   "bypass_technique": "无实质绕过，直接利用缺少 token。",
+   "defensive_insight": "实施 CSRF 防护，如 token 或 SameSite cookie。"
+  },
+  {
+   "id": 357929,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑",
+   "reasoning": "部分。通过设置数量为 0 免费购买商品，属于业务逻辑漏洞，思路简单但有效，PoC 完整。",
+   "attack_chain": "单点：修改数量为 0 绕过价格计算。",
+   "bypass_technique": "利用服务端未校验数量值。",
+   "defensive_insight": "服务端严格校验数量必须为正整数。"
+  },
+  {
+   "id": 1154003,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 配置错误",
+   "reasoning": "是。利用 IPv6 子网分配特性绕过速率限制，这是对网络协议行为的巧妙利用，可通用化，影响广泛。",
+   "attack_chain": "攻击者从 /48 子网随机生成地址→绕过基于 /128 的速率限制→暴力破解。",
+   "bypass_technique": "利用 IPv6 子网大小差异，生成不同地址绕过限制。",
+   "defensive_insight": "根据 IPv6 子网大小动态调整限制，至少使用 /64 作为单位。"
+  },
+  {
+   "id": 1755555,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "IDOR / 授权绕过",
+   "reasoning": "是。通过修改文件 ID 删除其他用户的附件，属于 IDOR，但利用简单，PoC 完整，影响明确。",
+   "attack_chain": "构造 DELETE 请求→修改 file 参数→删除任意文件。",
+   "bypass_technique": "直接修改 ID 绕过授权检查。",
+   "defensive_insight": "服务端校验文件所有权，使用不可预测的 ID。"
+  },
+  {
+   "id": 1377748,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 跨组件攻击链",
+   "reasoning": "是。通过重命名附件为路径遍历，利用 content-disposition 头未过滤，实现 RCE。这是对文件下载逻辑的巧妙利用，跨组件（React Native 和 Java），且可绕过先前修复。",
+   "attack_chain": "重命名附件为路径遍历→受害者点击下载→文件写入 lib 目录→重启后加载恶意库→RCE。",
+   "bypass_technique": "利用 content-disposition 头中的文件名未过滤，进行路径遍历。",
+   "defensive_insight": "对下载文件名进行严格过滤，使用白名单字符，并验证路径。"
+  },
+  {
+   "id": 924151,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "命令注入 / 配置错误",
+   "reasoning": "是。通过 smb:// 协议绕过 shell.openExternal 的过滤，实现 RCE。这是对协议处理的巧妙利用，PoC 完整，影响明确。",
+   "attack_chain": "发送 smb:// 链接→用户点击→shell.openExternal 执行 .desktop 文件→RCE。",
+   "bypass_technique": "使用 smb:// 协议绕过 file:// 黑名单。",
+   "defensive_insight": "使用 allowlist 限制协议，仅允许 http/https/mailto。"
+  },
+  {
+   "id": 204198,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "点击劫持",
+   "reasoning": "否。URL 掩蔽导致钓鱼，属于常见 UI 欺骗，无特殊绕过，信息完整但套路常见。",
+   "attack_chain": "单点：构造恶意页面误导用户。",
+   "bypass_technique": "无实质绕过，直接利用 UI 欺骗。",
+   "defensive_insight": "加强 URL 显示验证，防止掩蔽。"
+  },
+  {
+   "id": 36450,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XXE",
+   "reasoning": "部分。SOAP 服务中的 XXE 漏洞，虽然无法回显但可导致 DoS，属于经典漏洞但利用思路有变形，PoC 完整。",
+   "attack_chain": "单点：构造 XXE 请求读取本地文件或 DoS。",
+   "bypass_technique": "利用外部实体加载，但无回显。",
+   "defensive_insight": "禁用 DTD，使用安全 XML 解析器。"
+  },
+  {
+   "id": 175982,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "内存破坏",
+   "reasoning": "否。unserialize 中的 UAF，属于经典内存破坏，无特殊绕过，信息完整但套路常见。",
+   "attack_chain": "单点：调用 unserialize 触发 UAF。",
+   "bypass_technique": "无实质绕过，直接利用已知漏洞。",
+   "defensive_insight": "升级 PHP 版本，避免使用不安全的反序列化。"
+  },
+  {
+   "id": 259742,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。错误提示信息不准确，属于低危问题，无安全影响，信息完整但无启发性。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "修正错误提示信息。"
+  },
+  {
+   "id": 11410,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。通过 CSS 表达式在 IE6 中触发 XSS，属于老式浏览器特定漏洞，但利用思路有变形，PoC 完整。",
+   "attack_chain": "单点：构造 URL 注入 CSS 表达式。",
+   "bypass_technique": "利用 CSS expression 绕过过滤。",
+   "defensive_insight": "对输出进行编码，禁用 CSS 表达式。"
+  },
+  {
+   "id": 44888,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 认证绕过",
+   "reasoning": "部分。通过伪造域名邮箱验证程序所有权，属于业务逻辑漏洞，思路巧妙但场景具体，PoC 完整。",
+   "attack_chain": "创建程序→伪造域名邮箱→发送验证邮件→程序被批准。",
+   "bypass_technique": "利用域名邮箱验证的缺陷。",
+   "defensive_insight": "加强域名验证，如检查 DNS 记录。"
+  }
+ ]
+}

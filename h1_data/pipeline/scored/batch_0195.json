@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 10,
+  "dropped": 10,
+  "avg_score": 4.9,
+  "top_n": [
+   1728174,
+   844428,
+   148300,
+   322661,
+   148609
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 993767,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "配置错误",
+   "reasoning": "否。报告仅指出一个端点缺少认证，未提供任何技术细节或绕过，且 substate 为 informative，无法判断真实性。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "确保所有敏感端点实施认证和授权检查。"
+  },
+  {
+   "id": 140432,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 协议行为利用",
+   "reasoning": "是。利用 OAuth 重定向 URI 未严格校验，将 token 发送到攻击者控制的页面，并通过 Referrer 或第三方图片加载泄露 token。这是对 OAuth 流程的巧妙滥用，展示了配置错误如何导致 token 泄露。",
+   "attack_chain": "构造恶意 OAuth 链接→用户点击授权→token 发送到攻击者页面→通过 Referrer 或图片加载泄露。",
+   "bypass_technique": "利用宽松的 redirect_uri 校验，将 token 重定向到攻击者控制的 URL。",
+   "defensive_insight": "严格校验 redirect_uri 白名单，并禁止在 URL 中传递敏感 token。"
+  },
+  {
+   "id": 214798,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SQL注入",
+   "reasoning": "否。典型的 Oracle 报错/时间盲注，使用 sqlmap 自动检测，无任何绕过或创新，属于成熟套路。",
+   "attack_chain": "单点：参数注入→SQL 报错/时间盲注。",
+   "bypass_technique": "无实质绕过，直接利用未过滤参数。",
+   "defensive_insight": "使用参数化查询或严格输入验证。"
+  },
+  {
+   "id": 1036995,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。HTML 注入是常见漏洞，payload 简单，无绕过或链，且 substate 为 informative，价值有限。",
+   "attack_chain": "单点：提交恶意 HTML→页面渲染。",
+   "bypass_technique": "无，直接注入 HTML 标签。",
+   "defensive_insight": "对用户输入进行 HTML 编码或使用白名单过滤。"
+  },
+  {
+   "id": 145375,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "信息泄露",
+   "reasoning": "否。内容注入（反射型）但无实际危害，且报告未提供完整利用链，substate 为 resolved 但信息不足。",
+   "attack_chain": "单点：URL 参数反射到页面。",
+   "bypass_technique": "无",
+   "defensive_insight": "对输出进行编码，避免反射内容。"
+  },
+  {
+   "id": 14529,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。服务器版本信息泄露是常见低危问题，无绕过或链，价值低。",
+   "attack_chain": "单点：HTTP 响应头泄露版本。",
+   "bypass_technique": "无",
+   "defensive_insight": "隐藏服务器版本信息，配置安全响应头。"
+  },
+  {
+   "id": 1728174,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 跨组件攻击链",
+   "reasoning": "是。通过 ingress-nginx 的 configuration-snippet 注解注入 Lua 代码，绕过对 alias 指令的黑名单，实现任意命令执行。这是对 Kubernetes 组件配置的深度利用，展示了注解注入的严重性。",
+   "attack_chain": "创建恶意 Ingress→注入 configuration-snippet→插入 Lua 代码→通过 HTTP 请求执行命令→获取服务账户 token。",
+   "bypass_technique": "利用 nginx 的 Lua 支持，绕过对 alias 的简单黑名单。",
+   "defensive_insight": "严格限制 configuration-snippet 注解的使用，或使用白名单校验。"
+  },
+  {
+   "id": 343202,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 状态混淆",
+   "reasoning": "部分。通过修改 GET 请求参数并中断 POST 请求，绕过服务端校验，实现编辑他人消息。思路有启发性，但细节不足，且 substate 为 informative。",
+   "attack_chain": "拦截转发请求→修改 GET 参数→中断 POST 校验→服务端接受篡改数据。",
+   "bypass_technique": "利用客户端与服务端状态不同步，通过中断请求绕过校验。",
+   "defensive_insight": "服务端应独立验证所有请求参数，不依赖客户端状态。"
+  },
+  {
+   "id": 148300,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "缓存投毒 / 跨组件攻击链",
+   "reasoning": "是。通过修改 Host 头，利用全页缓存将恶意 URL 写入缓存，导致存储型 XSS。这是对缓存机制的巧妙利用，展示了 Host 头校验缺失的严重后果。",
+   "attack_chain": "修改 Host 头→触发缓存生成→缓存包含恶意 URL→后续用户访问时加载恶意内容。",
+   "bypass_technique": "利用缓存键未包含 Host 头，投毒缓存。",
+   "defensive_insight": "缓存键应包含 Host 头，并严格校验 Host 头合法性。"
+  },
+  {
+   "id": 226505,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "信息泄露",
+   "reasoning": "否。仅指出目录可访问，无具体数据泄露或利用，信息不足。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "限制目录访问，实施访问控制。"
+  },
+  {
+   "id": 1698006,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "IDOR / 授权绕过",
+   "reasoning": "部分。通过修改请求中的 id 和 email 参数，实现越权修改他人资料。典型的 IDOR，但步骤清晰，且影响明确。",
+   "attack_chain": "拦截请求→修改 id/email→转发→修改受害者资料。",
+   "bypass_technique": "直接篡改对象引用参数。",
+   "defensive_insight": "服务端应验证用户对目标资源的权限。"
+  },
+  {
+   "id": 844428,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "注入 / 框架行为利用",
+   "reasoning": "是。通过反斜杠转义，利用 SOLR LocalParams 注入，展示了非传统注入点的利用。思路新颖，且 PoC 清晰。",
+   "attack_chain": "构造恶意 city 参数→注入 SOLR 查询→数据泄露或 RCE。",
+   "bypass_technique": "利用反斜杠转义闭合查询，注入 LocalParams。",
+   "defensive_insight": "对输入进行严格过滤，避免拼接查询语句。"
+  },
+  {
+   "id": 221558,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "部分。通过搜索引擎缓存泄露 auth_token，属于配置错误导致的敏感信息泄露，但利用链简单。",
+   "attack_chain": "搜索引擎爬取→缓存页面→泄露 token→账户接管。",
+   "bypass_technique": "利用搜索引擎索引公开 URL。",
+   "defensive_insight": "禁止敏感页面被索引，避免在 URL 中传递 token。"
+  },
+  {
+   "id": 322661,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "IDOR / 跨组件攻击链",
+   "reasoning": "是。通过预测 S3 文件名，替换他人上传的文件，展示了云存储权限配置不当的利用。攻击链涉及多个组件，且影响明确。",
+   "attack_chain": "上传文件→预测文件名→覆盖他人文件。",
+   "bypass_technique": "利用可预测的文件名和 S3 公共写权限。",
+   "defensive_insight": "使用不可预测的文件名，并限制 S3 桶的写权限。"
+  },
+  {
+   "id": 223723,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少 X-XSS-Protection 头是常见低危问题，无实际利用。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "配置安全响应头。"
+  },
+  {
+   "id": 181212,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。供应链安全建议，无实际漏洞利用，属于最佳实践缺失。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "验证依赖的完整性和签名。"
+  },
+  {
+   "id": 148609,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "竞争条件 / 业务逻辑",
+   "reasoning": "是。通过并发请求利用邀请码的竞争条件，创建多个账户。展示了业务逻辑中的并发问题，且 PoC 清晰。",
+   "attack_chain": "发送多个并发注册请求→竞争条件→多个账户注册成功。",
+   "bypass_technique": "利用服务端未对邀请码使用进行原子性检查。",
+   "defensive_insight": "对邀请码使用加锁或唯一约束。"
+  },
+  {
+   "id": 17287,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型 XSS 通过 email 字段，但 payload 简单，无绕过，属于常见漏洞。",
+   "attack_chain": "单点：提交恶意 email→触发 XSS。",
+   "bypass_technique": "无",
+   "defensive_insight": "对输入进行过滤和输出编码。"
+  },
+  {
+   "id": 155222,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "开放重定向",
+   "reasoning": "部分。通过 return_to 参数实现开放重定向，但利用链简单，且 substate 为 resolved，价值一般。",
+   "attack_chain": "构造恶意链接→用户登录→重定向到恶意站点。",
+   "bypass_technique": "利用未严格校验的 return_to 参数。",
+   "defensive_insight": "白名单校验重定向 URL。"
+  },
+  {
+   "id": 7962,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。CSRF 漏洞，但报告指出移除 token 后仍有效，属于常见问题，无创新。",
+   "attack_chain": "单点：构造表单→用户提交→执行操作。",
+   "bypass_technique": "移除 CSRF token 字段。",
+   "defensive_insight": "确保 CSRF token 被正确验证。"
+  }
+ ]
+}

@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 8,
+  "dropped": 12,
+  "avg_score": 4.6,
+  "top_n": [
+   2390009,
+   1404804,
+   1700276,
+   136582,
+   192896
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 78765,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。只是暴露了版本号文件，属于常见的信息泄露，无绕过无攻击链，一眼即知。",
+   "attack_chain": "直接访问readme.txt等文件获取版本信息。",
+   "bypass_technique": "无。",
+   "defensive_insight": "移除或限制访问这些文件。"
+  },
+  {
+   "id": 2390009,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 信息泄露",
+   "reasoning": "是。undici 在跨域重定向时只清除 authorization 和 cookie，却遗漏了 Proxy-Authorization，导致代理凭据泄露给第三方。这利用了 HTTP 客户端对重定向处理的不完整实现，属于框架行为利用，可抽象为通用判断条件：所有敏感头部在跨域重定向时都应被清除。",
+   "attack_chain": "构造重定向请求→undici 跟随重定向→Proxy-Authorization 头被发送到攻击者服务器→泄露代理凭据。",
+   "bypass_technique": "利用 undici 重定向时未清除 Proxy-Authorization 头的缺陷。",
+   "defensive_insight": "在重定向处理中，应清除所有认证相关头部，包括 Proxy-Authorization，并参考 fetch 规范。"
+  },
+  {
+   "id": 197238,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。.htaccess 文件暴露服务器版本，常见配置错误，无绕过无链。",
+   "attack_chain": "直接访问 .htaccess 获取服务器版本。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁止访问 .htaccess 文件。"
+  },
+  {
+   "id": 192896,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "内存破坏 / 协议行为利用",
+   "reasoning": "是。timegm 函数未检查 tm_mon 范围，导致越界读取静态数组，泄露内存。这利用了 C 语言数组边界检查缺失，属于系统调用行为利用，可抽象为通用判断条件：所有数组索引必须验证边界。",
+   "attack_chain": "构造恶意 Ruby 代码→触发 timegm 越界读取→泄露内存或崩溃。",
+   "bypass_technique": "利用 tm_mon 未验证导致越界读取。",
+   "defensive_insight": "在 timegm 中添加边界检查，确保 tm_mon 在 0-11 之间。"
+  },
+  {
+   "id": 1405673,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。Sidekiq 面板暴露，常见配置错误，无绕过无链。",
+   "attack_chain": "直接访问 Sidekiq 面板。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对 Sidekiq 面板进行认证和网络限制。"
+  },
+  {
+   "id": 1555440,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "内存破坏 / 协议行为利用",
+   "reasoning": "部分。sscanf 返回值检查不严导致未初始化内存泄露，属于 C 语言常见错误，但利用条件苛刻，需要控制环境变量和网络，启发性中等。",
+   "attack_chain": "控制环境变量→触发 sscanf 错误→泄露栈内存。",
+   "bypass_technique": "利用 sscanf 返回值检查不严。",
+   "defensive_insight": "严格检查 sscanf 返回值，并初始化缓冲区。"
+  },
+  {
+   "id": 221292,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "拒绝服务",
+   "reasoning": "否。深层嵌套导致栈溢出，常见 DoS 套路，无绕过无链。",
+   "attack_chain": "构造深层嵌套输入→触发递归→栈溢出。",
+   "bypass_technique": "无。",
+   "defensive_insight": "限制解析深度或使用迭代解析。"
+  },
+  {
+   "id": 163677,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。S3 桶可读和 HTTPS 未强制，常见配置错误，无绕过无链。",
+   "attack_chain": "直接访问 S3 桶或利用 HTTP 降级。",
+   "bypass_technique": "无。",
+   "defensive_insight": "配置 S3 桶权限和强制 HTTPS。"
+  },
+  {
+   "id": 1404804,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "是。利用 js-xss 解析差异绕过过滤器，结合 HMAC 认证和点击劫持实现账户接管。这属于框架行为利用和跨组件攻击链，思路巧妙，可抽象为通用判断条件：过滤器解析与浏览器解析不一致时可能导致绕过。",
+   "attack_chain": "构造恶意 HTML→绕过 js-xss→触发 XSS→利用 HMAC 认证让受害者预览→点击劫持获取 API token→账户接管。",
+   "bypass_technique": "利用 js-xss 对 `<![` 标签的解析差异，结合 HMAC 认证和点击劫持。",
+   "defensive_insight": "使用与浏览器一致的解析器，并加强 CSP 和 Referer 检查。"
+  },
+  {
+   "id": 174668,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "认证绕过",
+   "reasoning": "否。验证码无速率限制，可暴力破解，常见套路，无绕过无链。",
+   "attack_chain": "暴力破解验证码。",
+   "bypass_technique": "无。",
+   "defensive_insight": "添加速率限制和验证码复杂度。"
+  },
+  {
+   "id": 1700276,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "子域名接管 / 配置错误",
+   "reasoning": "是。利用 API 未检查 zone 是否激活，通过添加自定义域名接管 r2.dev 子域名。这属于配置错误和协议行为利用，可抽象为通用判断条件：添加自定义域名前必须验证 zone 所有权和激活状态。",
+   "attack_chain": "添加 r2.dev 到账户→创建 R2 bucket→添加自定义域名→接管子域名。",
+   "bypass_technique": "利用 API 未检查 zone 激活状态。",
+   "defensive_insight": "在添加自定义域名前验证 zone 所有权和激活状态。"
+  },
+  {
+   "id": 819911,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "授权绕过",
+   "reasoning": "否。知识库文章权限缺失，常见授权绕过，无绕过无链。",
+   "attack_chain": "直接编辑文章。",
+   "bypass_technique": "无。",
+   "defensive_insight": "实施基于角色的访问控制。"
+  },
+  {
+   "id": 218342,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告内容荒谬，声称 Ruby 语言本身有 RCE，实为对语言功能的误解，无实际漏洞。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "无。"
+  },
+  {
+   "id": 136582,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 跨组件攻击链",
+   "reasoning": "是。利用 Flash 的 crossdomain.xml 策略，通过 Security.loadPolicyFile 强制加载宽松策略，从而读取 OAuth 授权页面窃取 token。这属于协议行为利用，可抽象为通用判断条件：Flash 策略文件加载机制可被滥用。",
+   "attack_chain": "构造恶意 Flash→加载宽松 crossdomain.xml→读取 OAuth 授权页面→窃取 token。",
+   "bypass_technique": "利用 Flash 的 loadPolicyFile 强制加载宽松策略。",
+   "defensive_insight": "限制 crossdomain.xml 的目录范围，或使用更安全的认证流程。"
+  },
+  {
+   "id": 894198,
+   "value_score": 0,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告内容为 CTF 参与感谢，无漏洞信息。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "无。"
+  },
+  {
+   "id": 923759,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "授权绕过",
+   "reasoning": "否。编辑策略未限制评论，常见授权绕过，无绕过无链。",
+   "attack_chain": "直接评论。",
+   "bypass_technique": "无。",
+   "defensive_insight": "统一策略检查。"
+  },
+  {
+   "id": 415178,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "框架行为利用 / 跨组件攻击链",
+   "reasoning": "部分。利用书签拖拽和 Ctrl+点击绕过 chrome:// 导航限制，结合其他漏洞可能实现 RCE。这属于框架行为利用，但依赖用户交互，启发性中等。",
+   "attack_chain": "构造恶意页面→诱导用户拖拽书签→Ctrl+点击→导航到 chrome://brave→利用其他漏洞 RCE。",
+   "bypass_technique": "利用书签拖拽和 Ctrl+点击绕过导航限制。",
+   "defensive_insight": "限制 chrome:// 页面的导航方式，并修复相关漏洞。"
+  },
+  {
+   "id": 435618,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 业务逻辑",
+   "reasoning": "部分。存储型 XSS 被 CSP 限制，但可注入 HTML 伪造密码提示框，属于业务逻辑组合，思路值得借鉴。",
+   "attack_chain": "注入恶意用户名→存储 XSS→伪造密码提示框→窃取密码。",
+   "bypass_technique": "利用 CSP 允许的 HTML 注入。",
+   "defensive_insight": "对用户输入进行转义，并加强 CSP。"
+  },
+  {
+   "id": 13319,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS，常见套路，无绕过无链。",
+   "attack_chain": "构造恶意 URL→触发 XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对输出进行编码。"
+  },
+  {
+   "id": 155704,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过",
+   "reasoning": "部分。通过修改 ID 删除私有应用，属于 IDOR 变种，思路简单但有效，可抽象为通用判断条件：对资源操作必须验证权限。",
+   "attack_chain": "捕获删除请求→修改 ID→删除私有应用。",
+   "bypass_technique": "利用 IDOR 修改资源 ID。",
+   "defensive_insight": "在服务端验证资源所有权。"
+  }
+ ]
+}

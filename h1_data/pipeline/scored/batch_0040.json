@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   689314,
+   1081167,
+   502207,
+   308158,
+   915110
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 864712,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。这是典型的敏感信息泄露，通过公开链接访问Google Drive中的录音文件，属于配置错误，无技术含量，无绕过，无攻击链。",
+   "attack_chain": "单点：访问公开链接→获取录音文件→泄露PII。",
+   "bypass_technique": "无，直接利用配置错误。",
+   "defensive_insight": "确保云存储链接不公开，对敏感文件进行访问控制。"
+  },
+  {
+   "id": 753868,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。硬编码API密钥是常见问题，报告仅提及反编译APK，无具体利用链，且作者自己承认影响有限，属于成熟套路。",
+   "attack_chain": "单点：反编译APK→提取密钥→滥用API。",
+   "bypass_technique": "无，直接利用硬编码。",
+   "defensive_insight": "避免硬编码密钥，使用安全存储和动态配置。"
+  },
+  {
+   "id": 477896,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 其他",
+   "reasoning": "部分。PHP xmlrpc_decode()的UAF和越界读，属于底层库漏洞，利用畸形输入触发，但报告缺少具体PoC，且已修复，启发性中等。",
+   "attack_chain": "单点：畸形输入→xmlrpc_decode()→UAF/OOB→潜在代码执行。",
+   "bypass_technique": "无绕过，直接利用库缺陷。",
+   "defensive_insight": "及时更新PHP版本，对不可信输入进行严格验证。"
+  },
+  {
+   "id": 581939,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "路径遍历",
+   "reasoning": "否。路径遍历是经典漏洞，利用../读取文件，无绕过，无攻击链，属于成熟套路。",
+   "attack_chain": "单点：curl ../→读取系统文件。",
+   "bypass_technique": "无，直接利用未过滤的路径。",
+   "defensive_insight": "对用户输入进行规范化，禁止../序列。"
+  },
+  {
+   "id": 194721,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "部分。通过Facebook注册端点枚举邮箱，无速率限制，属于逻辑缺陷，但思路简单，无绕过，启发性一般。",
+   "attack_chain": "单点：构造请求→响应差异→枚举邮箱。",
+   "bypass_technique": "无，直接利用无速率限制。",
+   "defensive_insight": "对注册端点实施速率限制，统一错误响应。"
+  },
+  {
+   "id": 223367,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。CSRF通过激活链接改变账户信息，属于常见漏洞，无绕过，无攻击链，且报告缺少详细步骤。",
+   "attack_chain": "单点：受害者点击激活链接→CSRF→修改账户。",
+   "bypass_technique": "无，直接利用CSRF。",
+   "defensive_insight": "对激活链接添加CSRF令牌，验证来源。"
+  },
+  {
+   "id": 689314,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 跨组件攻击链",
+   "reasoning": "是。通过三个漏洞组合：参数验证缺失、权限检查不完整、导出作业无授权检查，实现复制私有项目数据。技术点在于利用用户命名空间绕过组验证，以及导出作业的TOCTOU问题，可抽象为通用授权绕过模式。",
+   "attack_chain": "创建项目→篡改参数→绕过验证→触发导出→导入到攻击者项目。",
+   "bypass_technique": "利用用户命名空间绕过组验证，利用ProjectsFinder不检查访问级别，利用导出作业无授权检查。",
+   "defensive_insight": "在服务层统一进行权限验证，导出作业执行时重新检查授权，避免TOCTOU。"
+  },
+  {
+   "id": 502207,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用UDP发现协议的ping-pong机制缺陷，通过伪造IP完成握手，实现流量放大攻击。技术点在于协议设计未验证源IP一致性，可抽象为通用协议漏洞。",
+   "attack_chain": "发送Ping→接收Pong→伪造IP→发送FindNode→放大流量。",
+   "bypass_technique": "利用协议未验证源IP，完成握手后伪造IP。",
+   "defensive_insight": "验证Pong消息的源IP与Ping一致，实施速率限制。"
+  },
+  {
+   "id": 1350095,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过",
+   "reasoning": "部分。GraphQL端点未正确检查权限，允许无权限员工创建webhook，属于授权绕过，但思路较直接，无复杂链。",
+   "attack_chain": "单点：构造GraphQL请求→创建webhook→未授权操作。",
+   "bypass_technique": "利用GraphQL端点权限检查缺失。",
+   "defensive_insight": "在GraphQL解析层实施细粒度权限控制。"
+  },
+  {
+   "id": 915110,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 业务逻辑",
+   "reasoning": "是。邀请确认链接未验证邮箱，点击即登录受害者账户，属于认证绕过，思路简单但影响大，可抽象为通用逻辑缺陷。",
+   "attack_chain": "邀请受害者→获取确认链接→点击→登录受害者账户。",
+   "bypass_technique": "利用确认链接未绑定邮箱。",
+   "defensive_insight": "确认链接应绑定邀请邮箱，验证当前用户身份。"
+  },
+  {
+   "id": 1091303,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 信息泄露",
+   "reasoning": "是。低权限用户通过GraphQL读取POS PIN，利用权限配置不一致，实现权限提升。技术点在于POS权限与商店权限分离，可抽象为权限边界混淆。",
+   "attack_chain": "创建低权限用户→获取POS token→查询GraphQL→读取PIN→提升权限。",
+   "bypass_technique": "利用POS权限与商店权限不一致，通过GraphQL泄露敏感数据。",
+   "defensive_insight": "统一权限模型，GraphQL端点实施严格访问控制。"
+  },
+  {
+   "id": 1081167,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用postMessage未验证origin，结合GA的cookie注入和读取，实现任意cookie读写。技术点在于利用GA的cookieName注入，以及linkid插件读取cookie，可抽象为通用postMessage漏洞利用。",
+   "attack_chain": "恶意页面→postMessage→GA调用→注入cookie→读取cookie。",
+   "bypass_technique": "利用postMessage未验证origin，结合GA的cookieName注入和linkid插件。",
+   "defensive_insight": "验证postMessage的origin，对GA调用进行白名单验证。"
+  },
+  {
+   "id": 119494,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "信息泄露",
+   "reasoning": "否。报告仅提及路径泄露，无具体利用细节，且substate为informative，信息不足。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "修复路径泄露，避免暴露内部信息。"
+  },
+  {
+   "id": 724253,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "其他",
+   "reasoning": "部分。tcpdump的缓冲区越界读，属于已知CVE，报告包含完整PoC和ASAN输出，但技术点常见，无绕过，启发性一般。",
+   "attack_chain": "单点：恶意pcap→tcpdump解析→越界读。",
+   "bypass_technique": "无，直接利用库缺陷。",
+   "defensive_insight": "及时更新tcpdump，对输入进行严格验证。"
+  },
+  {
+   "id": 308158,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / XSS",
+   "reasoning": "是。利用DOM clobbering绕过HTML净化，技术点在于利用name属性覆盖_sanitized属性，可抽象为通用DOM clobbering绕过。",
+   "attack_chain": "构造恶意HTML→DOM clobbering→绕过净化→XSS。",
+   "bypass_technique": "利用name属性覆盖_sanitized属性。",
+   "defensive_insight": "使用安全的净化库，避免依赖属性标记。"
+  },
+  {
+   "id": 888141,
+   "value_score": 0,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告仅包含CTF flag，无漏洞信息，无法评估。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "无。"
+  },
+  {
+   "id": 759247,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "竞争条件 / 业务逻辑",
+   "reasoning": "部分。利用竞争条件多次兑换礼品卡，属于经典竞态漏洞，但利用Turbo Intruder实现，思路清晰，启发性中等。",
+   "attack_chain": "购买礼品卡→并发兑换→多次入账。",
+   "bypass_technique": "利用并发请求绕过一次性限制。",
+   "defensive_insight": "使用数据库事务和唯一约束防止重复兑换。"
+  },
+  {
+   "id": 15412,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / CSRF",
+   "reasoning": "否。CSRF token通过HTTP泄露，属于配置错误，无绕过，无攻击链，常见套路。",
+   "attack_chain": "单点：HTTP请求→泄露token→CSRF。",
+   "bypass_technique": "无，直接利用明文传输。",
+   "defensive_insight": "强制HTTPS，避免敏感信息明文传输。"
+  },
+  {
+   "id": 865436,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SQL注入",
+   "reasoning": "否。管理员面板的SQL注入，sqlmap确认，成熟套路，无绕过，无攻击链。",
+   "attack_chain": "单点：POST注入→时间盲注→数据泄露。",
+   "bypass_technique": "无，直接利用未过滤输入。",
+   "defensive_insight": "使用参数化查询，对输入进行严格验证。"
+  },
+  {
+   "id": 165727,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "认证绕过 / 配置错误",
+   "reasoning": "部分。iOS端2FA无速率限制，可暴力破解，属于配置不一致，思路简单，但影响明确。",
+   "attack_chain": "单点：暴力破解2FA→登录账户。",
+   "bypass_technique": "利用不同端点的速率限制缺失。",
+   "defensive_insight": "统一所有端点的速率限制策略。"
+  }
+ ]
+}

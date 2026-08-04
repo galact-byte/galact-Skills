@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 8,
+  "dropped": 12,
+  "avg_score": 4.6,
+  "top_n": [
+   1429694,
+   674540,
+   66962,
+   156542,
+   1591412
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 297203,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。Referer 头反射型 XSS，经典反射型 XSS 套路，无绕过，无攻击链，一眼即知如何打。",
+   "attack_chain": "单点：构造恶意 Referer 头 → 服务端未编码反射 → 浏览器执行 JS。",
+   "bypass_technique": "无实质绕过，直接利用未过滤的 Referer 头。",
+   "defensive_insight": "对所有输出进行上下文感知编码，尤其是 HTTP 头来源的数据。"
+  },
+  {
+   "id": 281274,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。非 HTTPS 链接，属于配置错误，无技术含量，无绕过，无攻击链。",
+   "attack_chain": "单点：页面存在 HTTP 链接 → 可能被中间人攻击。",
+   "bypass_technique": "无。",
+   "defensive_insight": "全站启用 HTTPS 并强制跳转。"
+  },
+  {
+   "id": 156542,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 状态混淆",
+   "reasoning": "是。利用邮箱验证流程中的状态混淆：通过构造相似邮箱（视觉混淆）诱导用户点击“重新发送验证邮件”按钮，从而将攻击者控制的邮箱绑定到受害者账户。技术点在于业务逻辑未区分“已验证邮箱”和“未验证邮箱”的重新发送行为，导致攻击者可利用用户的无意操作完成邮箱接管。",
+   "attack_chain": "攻击者构造相似邮箱 → 诱导受害者点击验证链接 → 受害者点击“重新发送验证邮件” → 攻击者邮箱被绑定 → 攻击者接收验证链接并完成验证 → 接管通知。",
+   "bypass_technique": "利用视觉混淆（a1ice vs alice）和业务逻辑缺陷（未验证邮箱也可触发重发）绕过用户确认。",
+   "defensive_insight": "重新发送验证邮件仅对已关联账户的邮箱开放；对未关联邮箱仅显示错误，不提供操作按钮。"
+  },
+  {
+   "id": 66962,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 内存破坏",
+   "reasoning": "是。利用 FPU 寄存器栈溢出导致 JIT 编译代码中的循环无法退出，进而覆盖栈内存。技术点在于 FPU 指令的栈管理缺陷，属于底层硬件/编译器行为利用，非常反直觉。",
+   "attack_chain": "构造恶意 SWF → 触发 FPU 寄存器栈溢出 → 循环无法退出 → 栈内存被覆盖 → 崩溃或潜在 RCE。",
+   "bypass_technique": "利用 FPU 寄存器栈溢出（8个寄存器全占用）导致指令失败，进而引发逻辑错误。",
+   "defensive_insight": "JIT 编译器应正确管理 FPU 寄存器栈，确保每次调用后恢复状态。"
+  },
+  {
+   "id": 322988,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。通过搜索引擎索引泄露密码重置令牌，属于配置错误，无技术含量，无绕过。",
+   "attack_chain": "单点：搜索引擎索引了包含令牌的页面 → 攻击者搜索获取令牌 → 重置密码。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁止搜索引擎索引包含敏感令牌的页面，使用 robots.txt 或 noindex。"
+  },
+  {
+   "id": 267865,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "CSRF",
+   "reasoning": "否。CSRF 添加电影/系列，但报告缺少具体参数和请求细节，无法判断真实性。",
+   "attack_chain": "单点：诱导用户提交添加电影请求。",
+   "bypass_technique": "无。",
+   "defensive_insight": "实施 CSRF 令牌。"
+  },
+  {
+   "id": 708019,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。开发环境暴露，属于配置错误，无技术含量。",
+   "attack_chain": "单点：访问公开的开发环境页面 → 信息泄露。",
+   "bypass_technique": "无。",
+   "defensive_insight": "开发环境应隔离并限制访问。"
+  },
+  {
+   "id": 185957,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "框架行为利用 / 内存破坏",
+   "reasoning": "部分。Symbol.new 导致 inspect 崩溃，根因是 mruby 的装箱模型缺陷，属于框架行为利用，但影响有限（DoS），且修复建议明确。",
+   "attack_chain": "单点：调用 Symbol.new → inspect → 崩溃。",
+   "bypass_technique": "利用 Symbol 类未正确移除 new 方法。",
+   "defensive_insight": "正确移除 Symbol 等单例类的 new 方法。"
+  },
+  {
+   "id": 415238,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。管理员面板 CSRF 暂停/恢复 runner，经典 CSRF，无绕过，无攻击链。",
+   "attack_chain": "单点：诱导管理员点击恶意链接 → 暂停/恢复 runner。",
+   "bypass_technique": "无。",
+   "defensive_insight": "实施 CSRF 令牌。"
+  },
+  {
+   "id": 190863,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "框架行为利用 / 资源消耗",
+   "reasoning": "部分。GD 库 imagefilltoborder 对 truecolor 图像使用无效颜色导致递归栈耗尽，属于库函数行为利用，但影响为 DoS，且修复简单。",
+   "attack_chain": "单点：构造恶意图像 → 调用 imagefilltoborder → 递归栈溢出。",
+   "bypass_technique": "利用无效颜色值触发递归。",
+   "defensive_insight": "修复 GD 库，增加递归深度限制或参数校验。"
+  },
+  {
+   "id": 674540,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用 PROXY 协议解析缺陷，通过恶意 PROXY v1/v2 头触发栈溢出和空指针解引用。技术点在于协议解析未校验长度和状态，且可跨信任边界（前端代理到后端服务器）利用。",
+   "attack_chain": "攻击者控制前端 → 发送恶意 PROXY 头 → 后端 mod_remoteip 解析 → 栈溢出或 DoS → 可能 RCE。",
+   "bypass_technique": "利用 PROXY 协议头长度未校验和状态逻辑错误。",
+   "defensive_insight": "严格校验 PROXY 头长度和字段，限制可信代理来源。"
+  },
+  {
+   "id": 1087189,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "开放重定向",
+   "reasoning": "否。登录页 return_to 参数开放重定向，经典漏洞，无绕过，无攻击链。",
+   "attack_chain": "单点：构造恶意 return_to → 用户登录后跳转。",
+   "bypass_technique": "无。",
+   "defensive_insight": "校验 return_to 参数为同源 URL。"
+  },
+  {
+   "id": 1429694,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 认证绕过",
+   "reasoning": "是。Node.js 解析 OpenSSL 打印函数输出导致证书验证绕过，利用字符串注入（如逗号、空格）伪造 SAN 字段。技术点在于 OpenSSL 打印函数输出无转义，Node 错误解析，可绕过名称约束。",
+   "attack_chain": "攻击者获取含恶意 SAN 的证书 → Node 解析错误 → 绕过名称约束 → 中间人攻击。",
+   "bypass_technique": "利用 OpenSSL 打印函数输出歧义，注入额外 DNS 名称。",
+   "defensive_insight": "Node 应直接解析 DER 结构，而非打印输出。"
+  },
+  {
+   "id": 1792544,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。钱包锁定仅影响当前标签页，其他标签页仍可访问，属于业务逻辑缺陷，但无技术含量，无绕过。",
+   "attack_chain": "单点：多标签页打开钱包 → 锁定一个标签页 → 其他标签页仍可用。",
+   "bypass_technique": "无。",
+   "defensive_insight": "锁定操作应全局生效，关闭所有标签页或加密数据。"
+  },
+  {
+   "id": 984654,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。URI 路径反射型 XSS，经典套路，无绕过，无攻击链。",
+   "attack_chain": "单点：构造恶意 URL → 服务端反射 → 执行 JS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对路径参数进行编码输出。"
+  },
+  {
+   "id": 920357,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "授权绕过",
+   "reasoning": "否。验证码 cookie 仅检查存在性，可任意值绕过，属于逻辑缺陷，但无技术含量。",
+   "attack_chain": "单点：设置任意 cookie 值 → 绕过验证码。",
+   "bypass_technique": "利用 cookie 值未校验。",
+   "defensive_insight": "验证码 cookie 应签名或绑定会话。"
+  },
+  {
+   "id": 106427,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 缓存投毒",
+   "reasoning": "部分。HTTP 响应拆分，利用 CRLF 注入，可导致缓存投毒和 XSS，属于协议行为利用，但技术较老。",
+   "attack_chain": "构造恶意 URL → 服务端未过滤 CRLF → 响应拆分 → 缓存投毒。",
+   "bypass_technique": "利用 CRLF 注入。",
+   "defensive_insight": "过滤输入中的 CRLF 字符。"
+  },
+  {
+   "id": 197585,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。IP 直接访问网站，可被恶意域名绑定，属于配置问题，无技术含量。",
+   "attack_chain": "单点：绑定恶意域名到 IP → 用户访问 → 声誉损害。",
+   "bypass_technique": "无。",
+   "defensive_insight": "配置基于域名的访问控制。"
+  },
+  {
+   "id": 161932,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。HTTP 未强制跳转 HTTPS，属于配置错误，无技术含量。",
+   "attack_chain": "单点：用户通过 HTTP 访问 → 中间人攻击。",
+   "bypass_technique": "无。",
+   "defensive_insight": "强制 HTTPS 并启用 HSTS。"
+  },
+  {
+   "id": 1591412,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 跨组件攻击链",
+   "reasoning": "是。利用 GitLab Pages 域绕过 IP 限制访问 job artifacts，技术点在于不同子域（gitlab.com vs gitlab.io）的访问控制不一致，且可通过邮件泄露 job ID 组合利用。",
+   "attack_chain": "获取 job ID（如邮件） → 通过 gitlab.io 域访问 artifacts → 绕过 IP 限制。",
+   "bypass_technique": "利用不同域名的访问控制差异。",
+   "defensive_insight": "统一访问控制策略，确保所有子域应用相同限制。"
+  }
+ ]
+}

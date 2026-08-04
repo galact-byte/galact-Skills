@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1567186,
+   134321,
+   200693,
+   179034,
+   917875
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 200693,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "是。利用 RDoc 标记的 `XSS[JaVaScriPt:alert(1)]` 语法，通过大小写混合绕过过滤，实现存储型 XSS。技术点在于 RDoc 解析器对协议头的宽松处理，属于框架行为利用。与普通 XSS 的区别在于针对特定标记语言的解析器绕过，具有通用性。",
+   "attack_chain": "创建项目→上传含恶意 RDoc 标记的 README.rdoc→用户点击链接→执行 JS。",
+   "bypass_technique": "利用 RDoc 的 `XSS[protocol:payload]` 语法，大小写混合绕过协议白名单。",
+   "defensive_insight": "对 RDoc 等标记语言进行严格输入过滤，禁止 javascript: 等危险协议，或使用白名单协议。"
+  },
+  {
+   "id": 23014,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SQL注入",
+   "reasoning": "否。经典的数字型 SQL 注入，通过 `and substring(version(),1,1)=4` 进行布尔盲注，属于成熟套路，无绕过或创新。",
+   "attack_chain": "单点：fid 参数拼接 SQL 语句→布尔盲注。",
+   "bypass_technique": "无实质绕过，直接利用未过滤参数。",
+   "defensive_insight": "参数化查询，对 fid 进行类型校验。"
+  },
+  {
+   "id": 20391,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。通过 CRLF 注入在 JAD 文件中添加恶意 MIDlet-Jar-URL，导致用户下载恶意 JAR。技术点在于利用 HTTP 响应头注入修改 J2ME 应用描述符，属于协议行为利用。与普通 CRLF 注入的区别在于针对特定移动应用格式，影响严重。",
+   "attack_chain": "构造恶意 URL→服务器返回含注入头的 JAD→用户下载恶意 JAR。",
+   "bypass_technique": "在参数 u 中注入 CRLF，添加 MIDlet-Jar-URL 头。",
+   "defensive_insight": "过滤用户输入中的 CRLF 字符，对 JAD 文件内容进行严格校验。"
+  },
+  {
+   "id": 903869,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 业务逻辑",
+   "reasoning": "部分。通过 custom_field_7[] 参数注入 HTML，形成钓鱼表单，属于存储型 XSS 的变体。技术点在于利用参数数组绕过过滤，但整体思路常见。",
+   "attack_chain": "提交恶意表单→存储到服务器→用户访问触发钓鱼页面。",
+   "bypass_technique": "利用数组参数绕过输入过滤，注入 HTML 标签。",
+   "defensive_insight": "对数组参数进行递归过滤，使用 CSP 和 HttpOnly 增强防护。"
+  },
+  {
+   "id": 121461,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "子域名接管",
+   "reasoning": "部分。经典的 S3 子域名接管，通过未认领的 bucket 实现钓鱼。技术点在于 DNS CNAME 指向未拥有的 S3 bucket，属于配置错误，但步骤清晰，可复现。",
+   "attack_chain": "发现 CNAME→创建同名 bucket→上传钓鱼页面→用户访问。",
+   "bypass_technique": "无绕过，直接利用未认领的 S3 bucket。",
+   "defensive_insight": "定期检查 DNS 记录，删除未使用的 CNAME，或使用 AWS 的 bucket 策略。"
+  },
+  {
+   "id": 3441,
+   "value_score": 0,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。仅描述使用浏览器扩展 Rumola 自动填充验证码，无具体技术细节或 PoC，信息不足。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "无。"
+  },
+  {
+   "id": 917875,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 跨组件攻击链",
+   "reasoning": "是。STAFF 无权限账号通过直接调用 GraphQL mutation 获取订单详情，绕过前端权限控制。技术点在于后端 API 未校验权限，属于授权绕过。与普通 IDOR 的区别在于利用移动端 API 的信任边界，跨组件。",
+   "attack_chain": "获取 STAFF token→调用 exchangeReceiptSend→接收订单链接→获取订单详情。",
+   "bypass_technique": "直接构造 GraphQL 请求，绕过前端菜单限制。",
+   "defensive_insight": "后端对所有 API 请求进行权限校验，不依赖前端隐藏。"
+  },
+  {
+   "id": 1646554,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "子域名接管",
+   "reasoning": "部分。经典的 Zendesk 子域名接管，通过注册未认领的 Zendesk 子域名实现钓鱼。技术点在于 CNAME 指向未注册的 Zendesk 实例，属于配置错误，但步骤简单。",
+   "attack_chain": "发现 CNAME→注册 Zendesk 子域名→设置钓鱼页面。",
+   "bypass_technique": "无绕过，直接利用未认领的 CNAME。",
+   "defensive_insight": "定期检查 DNS，删除未使用的 CNAME，或使用 Zendesk 的域名验证。"
+  },
+  {
+   "id": 179034,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 框架行为利用",
+   "reasoning": "是。利用 RST 解析器的 include 指令实现 LFI，读取任意文件。技术点在于第三方库的默认功能被滥用，属于框架行为利用。与普通 LFI 的区别在于通过文档解析器触发，具有隐蔽性。",
+   "attack_chain": "上传含 include 指令的 RST 文档→解析时包含任意文件→信息泄露。",
+   "bypass_technique": "利用 RST 的 include 指令，路径穿越读取 /etc/hosts。",
+   "defensive_insight": "禁用或限制 RST 解析器的 include 指令，对文档内容进行安全过滤。"
+  },
+  {
+   "id": 1267174,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。Tomcat 默认凭据 tomcat:tomcat，属于常见配置错误，无技术含量。",
+   "attack_chain": "单点：访问 manager 页面→默认凭据登录。",
+   "bypass_technique": "无绕过，直接使用默认凭据。",
+   "defensive_insight": "修改默认凭据，限制管理页面访问。"
+  },
+  {
+   "id": 1797661,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 状态混淆",
+   "reasoning": "部分。卸载 Mattermost 桌面应用后重装仍保持登录状态，属于会话数据残留。技术点在于卸载程序未清除用户数据，属于业务逻辑缺陷。",
+   "attack_chain": "安装→登录→卸载→重装→自动登录。",
+   "bypass_technique": "无绕过，利用卸载不彻底。",
+   "defensive_insight": "卸载时清除所有用户数据，或提供选项。"
+  },
+  {
+   "id": 1271742,
+   "value_score": 0,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "配置错误",
+   "reasoning": "否。仅指出 HSTS 未预加载，无实际攻击场景，信息不足。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "无。"
+  },
+  {
+   "id": 1804174,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。MediaWiki 的 mw-config 目录未受保护，可重启安装，属于常见配置错误。",
+   "attack_chain": "单点：访问 mw-config/index.php→重启安装。",
+   "bypass_technique": "无绕过，直接访问。",
+   "defensive_insight": "限制 mw-config 目录访问。"
+  },
+  {
+   "id": 134321,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "反序列化 / 跨组件攻击链",
+   "reasoning": "是。通过公开 GitHub 仓库泄露的 session secret，结合 Rails CookieStore 反序列化实现 RCE。技术点在于秘密泄露与反序列化链的组合，属于跨组件攻击链。与普通反序列化的区别在于利用公开信息，攻击链完整。",
+   "attack_chain": "GitHub 泄露 secret→构造恶意 cookie→服务器反序列化→RCE。",
+   "bypass_technique": "利用已知 secret 签名恶意 cookie，触发 Ruby 对象反序列化。",
+   "defensive_insight": "使用环境变量存储 secret，定期轮换，避免提交到代码仓库。"
+  },
+  {
+   "id": 1574017,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。Clickjacking 因缺少 X-Frame-Options 头，属于常见配置错误，无技术含量。",
+   "attack_chain": "单点：iframe 嵌入页面→诱导点击。",
+   "bypass_technique": "无绕过，直接利用缺失头。",
+   "defensive_insight": "添加 X-Frame-Options 或 CSP frame-ancestors。"
+  },
+  {
+   "id": 1277383,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。CVE-2020-3580 的 Cisco ASA XSS，属于已知漏洞的利用，但 PoC 完整，可复现。",
+   "attack_chain": "构造恶意 SAMLResponse→提交表单→触发 XSS。",
+   "bypass_technique": "利用已知 CVE 的过滤绕过。",
+   "defensive_insight": "升级固件，应用补丁。"
+  },
+  {
+   "id": 695416,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "路径遍历",
+   "reasoning": "部分。通过 symlink 实现路径遍历，读取任意文件。技术点在于服务器未禁用符号链接，属于配置问题，但思路简单。",
+   "attack_chain": "创建 symlink→请求 symlink 路径→读取文件。",
+   "bypass_technique": "利用 symlink 绕过路径限制。",
+   "defensive_insight": "禁用符号链接跟随，或限制文件访问范围。"
+  },
+  {
+   "id": 1567186,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 跨组件攻击链",
+   "reasoning": "是。通过修改 Apple 登录的 response_type 和 response_mode，结合 redditmedia.com 的 XSS，窃取 OAuth code 实现账户劫持。技术点在于 OAuth 流程的响应模式切换和 window.name 传递，属于协议行为利用和跨组件攻击链。与普通 OAuth 劫持的区别在于利用响应模式差异和沙箱 iframe 的漏洞，攻击链复杂且优雅。",
+   "attack_chain": "准备 state→构造恶意页面→诱导点击→Apple 登录→token 泄露→攻击者接管。",
+   "bypass_technique": "修改 response_type 为 code+id_token，response_mode 为 fragment，利用 redditmedia.com 的 XSS 窃取 fragment 中的 token。",
+   "defensive_insight": "严格限制 response_type 和 response_mode，验证 redirect_uri，移除 fragment 传递。"
+  },
+  {
+   "id": 629892,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 跨组件攻击链",
+   "reasoning": "部分。CORS 配置允许 http 协议和任意子域，结合 MITM 实现 CSRF。技术点在于 CORS 信任边界过宽，属于配置错误，但攻击链涉及 MITM。",
+   "attack_chain": "MITM 劫持→注入 JS→跨域请求→数据泄露。",
+   "bypass_technique": "利用 CORS 信任 http 和子域，通过 MITM 注入。",
+   "defensive_insight": "严格限制 CORS 来源，使用 HTTPS，添加 CSRF token。"
+  },
+  {
+   "id": 410245,
+   "value_score": 0,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "配置错误",
+   "reasoning": "否。仅指出缺少 CAA 记录，无实际攻击场景，信息不足。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "无。"
+  }
+ ]
+}

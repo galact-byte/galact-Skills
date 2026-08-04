@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   2089042,
+   301432,
+   73257,
+   614355,
+   1087122
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 73257,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "反序列化 / 框架行为利用",
+   "reasoning": "是。利用 YAML 的 !php/object 标签触发 unserialize()，绕过文档声称的\"安全\"解析，实现任意类实例化。技术点在于对 YAML 解析器内部行为的深入理解，将看似安全的解析函数转化为危险的反序列化入口。",
+   "attack_chain": "构造恶意 YAML 字符串（含 !php/object 标签）→ 调用 yaml_parse 或 yaml_parse_url → 触发 unserialize() → 实例化任意类 → 执行析构函数中的代码。",
+   "bypass_technique": "利用 YAML 的 !php/object 扩展类型，绕过 YAML 解析器的类型限制，间接调用 unserialize()。",
+   "defensive_insight": "禁用或安全处理 YAML 中的 !php/object 标签；对 yaml_parse_url 等远程解析功能进行限制或移除；文档明确警告风险。"
+  },
+  {
+   "id": 279070,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "认证绕过 / 配置错误",
+   "reasoning": "否。会话 cookie 在注销后未失效，属于典型的会话管理缺陷，无绕过技巧，攻击链简单。",
+   "attack_chain": "获取受害者 cookie → 注销后重放 cookie → 以受害者身份访问聊天。",
+   "bypass_technique": "无实质绕过，直接利用服务端未销毁会话。",
+   "defensive_insight": "注销时服务端应销毁会话并清除 cookie；设置合理的会话过期时间。"
+  },
+  {
+   "id": 614355,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 信息泄露",
+   "reasoning": "是。GraphQL 端点未正确实施访问控制，导致未认证用户可查询私有命名空间信息，绕过标准 API 和 GUI 的权限检查。技术点在于 GraphQL 查询的权限模型与 REST API 不一致，形成新的攻击面。",
+   "attack_chain": "构造 GraphQL 查询（namespace 字段）→ 未认证访问 → 获取私有项目列表和描述。",
+   "bypass_technique": "利用 GraphQL 端点未继承 REST API 的访问控制，直接查询敏感字段。",
+   "defensive_insight": "统一所有 API 端点的权限校验；对 GraphQL 查询进行细粒度授权；定期审计 GraphQL schema 的暴露字段。"
+  },
+  {
+   "id": 2089042,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "是。通过 Self-XSS 结合 Cookie Bridge 功能，将攻击升级为针对其他用户的 ATO，并利用 Cookie 大小限制绕过 HttpOnly 保护窃取会话。技术点在于巧妙利用 Cookie Bridge 的跨域会话迁移机制和浏览器 Cookie 大小限制，实现从 Self-XSS 到会话窃取的完整攻击链。",
+   "attack_chain": "创建恶意邮箱触发 Self-XSS → 利用 Cookie Bridge 将受害者登录到攻击者账户 → 在受害者浏览器中执行 XSS → 设置大 Cookie 使 Cookie Bridge 请求失败 → 窃取受害者会话 URL → 攻击者登录受害者账户。",
+   "bypass_technique": "利用 Cookie Bridge 的跨域会话迁移和 Cookie 大小限制，绕过 HttpOnly 保护，窃取会话。",
+   "defensive_insight": "对用户输入进行严格过滤和编码；Cookie Bridge 应验证请求来源和一次性令牌；限制 Cookie 大小或对 Cookie Bridge 端点实施 CSRF 保护。"
+  },
+  {
+   "id": 59508,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "授权绕过",
+   "reasoning": "否。直接访问打印端点绕过权限检查，属于典型的 IDOR/功能级访问控制缺失，无特殊技巧。",
+   "attack_chain": "直接构造 URL 访问打印端点 → 绕过权限检查 → 查看所有预约。",
+   "bypass_technique": "无实质绕过，直接利用未受保护的端点。",
+   "defensive_insight": "对所有端点实施统一的权限校验；避免依赖前端隐藏功能。"
+  },
+  {
+   "id": 1429014,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "命令注入",
+   "reasoning": "否。Log4Shell 是公开的 0-day 漏洞，利用方式成熟，无新意。",
+   "attack_chain": "构造 JNDI 注入 payload → 触发 Log4j 漏洞 → 远程代码执行。",
+   "bypass_technique": "无实质绕过，直接利用已知漏洞。",
+   "defensive_insight": "升级 Log4j 版本；禁用 JNDI 或限制远程加载。"
+  },
+  {
+   "id": 301432,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 跨组件攻击链",
+   "reasoning": "是。通过 CI 缓存 key 的路径遍历，实现跨项目读取和投毒缓存，进而影响其他项目的 CI 执行。技术点在于利用缓存 key 未过滤的路径遍历，结合共享缓存机制，实现跨信任边界的攻击。",
+   "attack_chain": "构造恶意 cache key（../1/cache）→ 下载其他项目缓存 → 读取敏感文件 → 上传恶意缓存 → 目标项目 CI 运行时使用被投毒的缓存 → 执行任意代码。",
+   "bypass_technique": "利用 cache key 的路径遍历绕过项目隔离，实现跨项目缓存访问和投毒。",
+   "defensive_insight": "对 cache key 进行严格校验，禁止路径穿越；缓存存储应隔离项目；对缓存内容进行完整性校验。"
+  },
+  {
+   "id": 195156,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "CSRF / 认证绕过",
+   "reasoning": "部分。利用 HTTP 认证的浏览器自动携带凭据特性，绕过 CSRF 防护，实现跨站请求。技术点在于对 HTTP 认证与 CSRF 防护机制的交互理解，但攻击条件依赖用户已通过 HTTP 认证。",
+   "attack_chain": "诱导受害者访问恶意页面 → 自动携带 HTTP 认证凭据 → 提交表单到 API 端点 → 执行恶意操作。",
+   "bypass_technique": "利用浏览器自动携带 HTTP 认证凭据的特性，绕过 CSRF token 校验。",
+   "defensive_insight": "对 API 端点实施 CSRF 防护，包括检查 Origin/Referer；对 HTTP 认证的请求也进行 CSRF 校验。"
+  },
+  {
+   "id": 504731,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。使用不安全的 Random 类生成随机数，属于常见代码质量问题，无攻击链。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "使用 SecureRandom 替代 Random 用于安全敏感场景。"
+  },
+  {
+   "id": 142101,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过",
+   "reasoning": "部分。通过直接调用 API 端点绕过 UI 权限检查，属于典型的 API 权限缺失，但攻击链简单，无特殊技巧。",
+   "attack_chain": "直接构造 POST 请求到 /erx/favorites/ 端点 → 绕过 UI 权限检查 → 创建/编辑/删除处方。",
+   "bypass_technique": "无实质绕过，直接利用未受保护的 API 端点。",
+   "defensive_insight": "对所有 API 端点实施统一的权限校验，不依赖前端隐藏。"
+  },
+  {
+   "id": 1087122,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 业务逻辑",
+   "reasoning": "是。通过 HTML 注入修改打印的装箱单内容，影响物流流程，实现物理盗窃。技术点在于将 XSS 从数字攻击转化为物理攻击，利用打印流程的信任链。",
+   "attack_chain": "构造恶意邮箱地址（含 HTML/CSS）→ 下单 → 打印装箱单时注入内容 → 物流人员按篡改后的信息发货 → 实际发货数量与订单不符。",
+   "bypass_technique": "利用邮箱字段的 HTML 注入，结合 CSS 隐藏和伪造内容，篡改打印输出。",
+   "defensive_insight": "对用户输入进行严格过滤和编码；打印模板应使用安全的渲染方式，避免直接拼接用户输入。"
+  },
+  {
+   "id": 181871,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "类型混淆 / 内存破坏",
+   "reasoning": "是。通过覆盖 NoMethodError 的 new 方法，导致类型混淆，进而引发内存破坏。技术点在于对 Ruby 内部对象模型的深入理解，利用单例方法覆盖破坏异常处理机制。",
+   "attack_chain": "覆盖 NoMethodError.new 返回非异常对象 → 触发 NoMethodError → 类型混淆 → 内存破坏 → 可能 RCE。",
+   "bypass_technique": "利用单例方法覆盖，改变异常对象的类型，导致后续处理逻辑错误。",
+   "defensive_insight": "对异常处理机制进行加固，确保异常对象类型正确；限制单例方法的覆盖。"
+  },
+  {
+   "id": 2437131,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用",
+   "reasoning": "部分。利用 curl 协议选择逻辑的缺陷，当禁用所有协议时，默认协议集仍被保留，导致明文传输。技术点在于对 curl 内部协议处理逻辑的深入理解，但实际利用场景有限。",
+   "attack_chain": "构造 --proto -all,-http 参数 → 禁用所有协议 → 默认协议集未清除 → 使用 http 明文传输。",
+   "bypass_technique": "利用协议选择逻辑的边界条件，绕过协议禁用。",
+   "defensive_insight": "修复 curl 协议选择逻辑，确保禁用所有协议时生效；对协议选择参数进行严格校验。"
+  },
+  {
+   "id": 335779,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。WordPress 用户枚举是常见漏洞，无新意。",
+   "attack_chain": "访问 /wp-json/wp/v2/users/ → 获取用户信息 → 用于暴力破解。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁用 REST API 用户端点或限制访问。"
+  },
+  {
+   "id": 280865,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。Self-XSS 且无进一步利用，属于低危。",
+   "attack_chain": "在输入框注入脚本 → 自身浏览器执行。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对用户输入进行过滤和编码。"
+  },
+  {
+   "id": 1188643,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。使用过时的 JavaScript 库，属于依赖管理问题，无攻击链。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "定期更新依赖库，使用自动化工具检测已知漏洞。"
+  },
+  {
+   "id": 176226,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "内存破坏",
+   "reasoning": "否。CachingIterator 空指针解引用，属于常见的内存破坏漏洞，无特殊技巧。",
+   "attack_chain": "构造特定迭代器状态 → 触发空指针解引用 → 崩溃。",
+   "bypass_technique": "无。",
+   "defensive_insight": "修复 PHP 源码中的空指针检查。"
+  },
+  {
+   "id": 1814333,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用",
+   "reasoning": "是。curl 在并行请求时覆盖 HSTS 缓存，导致 HSTS 保护失效，可能降级为明文传输。技术点在于对 curl 并行处理与 HSTS 缓存交互的深入理解，属于协议行为利用。",
+   "attack_chain": "使用 --parallel 发起多个 HTTPS 请求 → HSTS 缓存被覆盖 → 后续请求可能使用 HTTP → 明文传输。",
+   "bypass_technique": "利用并行请求的竞争条件，覆盖 HSTS 缓存。",
+   "defensive_insight": "修复 curl 并行请求时的 HSTS 缓存处理逻辑；确保 HSTS 条目不被错误覆盖。"
+  },
+  {
+   "id": 456727,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "内存破坏",
+   "reasoning": "否。imap_mail 函数空指针解引用，属于常见的内存破坏漏洞，无特殊技巧。",
+   "attack_chain": "调用 imap_mail 传入 NULL 消息 → 空指针解引用 → 崩溃。",
+   "bypass_technique": "无。",
+   "defensive_insight": "修复 PHP 源码中的空指针检查。"
+  },
+  {
+   "id": 246302,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。利用邮箱的 + 别名创建多个账户，属于常见的业务逻辑缺陷，无新意。",
+   "attack_chain": "使用 abc+1@gmail.com 等别名注册 → 绕过邮箱唯一性限制。",
+   "bypass_technique": "无实质绕过，直接利用邮箱别名特性。",
+   "defensive_insight": "对邮箱进行规范化处理，忽略 + 别名部分。"
+  }
+ ]
+}

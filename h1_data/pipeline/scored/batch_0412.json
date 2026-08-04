@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 8,
+  "dropped": 12,
+  "avg_score": 4.6,
+  "top_n": [
+   395296,
+   174632,
+   1167034,
+   208363,
+   510336
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1197078,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "否。将 session token 放在 URL 中是已知的常见问题，没有绕过或攻击链，只是配置不当。",
+   "attack_chain": "无攻击链，仅信息泄露。",
+   "bypass_technique": "无。",
+   "defensive_insight": "避免在 URL 中放置敏感 token，使用 HttpOnly Cookie。"
+  },
+  {
+   "id": 510336,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "内存破坏 / 信息泄露",
+   "reasoning": "部分。未初始化读取导致内存泄露，是经典内存安全问题，但利用条件（32位构建）和影响有限，启发性中等。",
+   "attack_chain": "解析恶意 TIFF 文件 → 未初始化变量 → 内存泄露。",
+   "bypass_technique": "无绕过，直接利用未初始化读取。",
+   "defensive_insight": "初始化所有变量，使用内存安全语言或工具。"
+  },
+  {
+   "id": 208363,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "内存破坏 / 框架行为利用",
+   "reasoning": "是。mruby 的 GC 标记函数中未初始化对象导致内存破坏，利用 GC 机制触发，展示了运行时内部状态错误，可导致代码执行。",
+   "attack_chain": "构造恶意 Ruby 脚本 → 触发 GC 标记未初始化对象 → 内存破坏 → 代码执行或 DoS。",
+   "bypass_technique": "利用 GC 标记阶段的未初始化对象。",
+   "defensive_insight": "确保所有对象初始化，加强 GC 的健壮性。"
+  },
+  {
+   "id": 174632,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "内存破坏 / 协议行为利用",
+   "reasoning": "是。mmap 模块 resize 后未更新 pos 变量，导致越界读取，利用内存页相邻性泄露数据，展示了边界检查不变量被破坏的经典案例。",
+   "attack_chain": "调用 resize 缩小映射 → pos > size → 后续 read 越界 → 泄露相邻内存。",
+   "bypass_technique": "利用 resize 后 pos 未更新，绕过边界检查。",
+   "defensive_insight": "保持不变量，更新所有相关变量，使用安全的内存访问函数。"
+  },
+  {
+   "id": 198470,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。典型的 CSRF 漏洞，无绕过，无攻击链，成熟套路。",
+   "attack_chain": "诱导受害者访问恶意页面 → 自动提交表单 → 添加评论。",
+   "bypass_technique": "无。",
+   "defensive_insight": "添加 CSRF token，验证来源。"
+  },
+  {
+   "id": 84395,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。CSRF 漏洞，无细节，无绕过，常见。",
+   "attack_chain": "诱导受害者访问恶意页面 → 执行 CSRF 攻击。",
+   "bypass_technique": "无。",
+   "defensive_insight": "添加 CSRF token。"
+  },
+  {
+   "id": 129712,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。错误信息泄露堆栈和内部路径，常见的信息泄露，无绕过。",
+   "attack_chain": "触发错误 → 泄露堆栈和内部信息。",
+   "bypass_technique": "无。",
+   "defensive_insight": "隐藏详细错误信息，使用通用错误页面。"
+  },
+  {
+   "id": 395296,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "XXE / 跨组件攻击链",
+   "reasoning": "是。通过电话呼叫触发 IVR 系统处理恶意 VoiceXML，实现 XXE，跨了电话网络和 Web 服务，非常非预期。",
+   "attack_chain": "购买电话号码 → 配置恶意 VoiceXML → 呼叫触发 → 读取 /etc/passwd。",
+   "bypass_technique": "利用 VoiceXML 的 DTD 处理，通过外部实体读取文件。",
+   "defensive_insight": "禁用外部实体，使用安全的 XML 解析器。"
+  },
+  {
+   "id": 1258871,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。未认证的监控服务暴露，常见配置错误，无绕过。",
+   "attack_chain": "直接访问暴露的 Cortex API 和 pprof。",
+   "bypass_technique": "无。",
+   "defensive_insight": "限制访问，添加认证。"
+  },
+  {
+   "id": 1069105,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "保留，普通",
+   "category": "路径遍历 / 信息泄露",
+   "reasoning": "部分。直接路径遍历读取 /etc/passwd，简单直接，但无绕过，常见。",
+   "attack_chain": "构造 URL 参数 → 读取任意文件。",
+   "bypass_technique": "无。",
+   "defensive_insight": "过滤用户输入，使用白名单。"
+  },
+  {
+   "id": 176364,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。浏览器 DoS 通过 window.print()，信息不足，无细节。",
+   "attack_chain": "打开 HTML → 无限打印对话框。",
+   "bypass_technique": "无。",
+   "defensive_insight": "限制打印次数或提示用户。"
+  },
+  {
+   "id": 1565619,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用",
+   "reasoning": "部分。curl 的 URL 解析器对百分号编码的路径分隔符处理不当，导致过滤绕过，展示了协议解析差异。",
+   "attack_chain": "构造恶意 URL → 绕过过滤 → 访问未预期资源。",
+   "bypass_technique": "使用百分号编码的路径分隔符。",
+   "defensive_insight": "统一 URL 解析，规范化输入。"
+  },
+  {
+   "id": 1167034,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 过滤绕过",
+   "reasoning": "是。利用大写转换过滤，通过八进制编码绕过，实现 XSS，展示了过滤器的非预期行为。",
+   "attack_chain": "构造八进制编码的 payload → 绕过大写转换 → 执行 XSS。",
+   "bypass_technique": "使用八进制编码，避免字母。",
+   "defensive_insight": "输出编码，使用上下文感知的过滤。"
+  },
+  {
+   "id": 157956,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。CSRF 漏洞，无绕过，常见。",
+   "attack_chain": "诱导受害者访问恶意页面 → 修改设置。",
+   "bypass_technique": "无。",
+   "defensive_insight": "添加 CSRF token。"
+  },
+  {
+   "id": 84581,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。过时插件，常见配置问题，无绕过。",
+   "attack_chain": "利用已知漏洞。",
+   "bypass_technique": "无。",
+   "defensive_insight": "及时更新插件。"
+  },
+  {
+   "id": 592885,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "认证绕过 / 配置错误",
+   "reasoning": "部分。绕过 Cloudflare Access 访问内部页面，展示了访问控制的缺陷。",
+   "attack_chain": "直接访问特定 URL → 绕过 Cloudflare Access → 泄露信息。",
+   "bypass_technique": "利用未受保护的路径。",
+   "defensive_insight": "确保所有路径都经过认证。"
+  },
+  {
+   "id": 251224,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "部分。存储型 XSS 通过用户名称注入，在管理面板触发，跨了用户和管理员两个角色。",
+   "attack_chain": "创建恶意名称 → 管理员查看 → 执行 XSS。",
+   "bypass_technique": "利用名称字段的存储型 XSS。",
+   "defensive_insight": "输出编码，输入验证。"
+  },
+  {
+   "id": 1010316,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS，无绕过细节，常见。",
+   "attack_chain": "构造恶意 URL → 执行 XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "输出编码。"
+  },
+  {
+   "id": 59469,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 其他",
+   "reasoning": "部分。利用 URL 中的 @ 字符和同形异义字，展示浏览器解析差异，可导致钓鱼。",
+   "attack_chain": "构造恶意 URL → 用户点击 → 重定向到恶意网站。",
+   "bypass_technique": "利用 @ 字符和同形异义字。",
+   "defensive_insight": "显示完整 URL，警告用户。"
+  },
+  {
+   "id": 661977,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。GitHub wiki 默认可编辑，配置错误，无绕过。",
+   "attack_chain": "直接编辑 wiki。",
+   "bypass_technique": "无。",
+   "defensive_insight": "限制 wiki 编辑权限。"
+  }
+ ]
+}

@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   317321,
+   836649,
+   730779,
+   303322,
+   158016
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 2129769,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。Mapbox access_token 泄露是常见的前端密钥硬编码问题，且报告为 informative，未证明实际危害。无绕过、无攻击链，属于成熟套路。",
+   "attack_chain": "前端调用 Mapbox API 时暴露 access_token，攻击者可滥用配额。",
+   "bypass_technique": "无实质绕过，直接利用泄露的 token。",
+   "defensive_insight": "前端不应直接使用高权限 token，应通过后端代理并限制域名和配额。"
+  },
+  {
+   "id": 264481,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "部分。利用大量嵌套 <a> 标签导致 Firefox 栈溢出，属于浏览器 DoS 的已知模式，但具体触发方式有轻微变形。报告为 informative，且 Mozilla 未确认修复，可复现性一般。",
+   "attack_chain": "构造大量嵌套 <a> 标签的 SVG 图片，加载后导致浏览器崩溃。",
+   "bypass_technique": "无绕过，直接利用解析器栈深度限制。",
+   "defensive_insight": "限制 HTML 嵌套深度，或对 SVG 内容进行严格解析。"
+  },
+  {
+   "id": 158016,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "SSRF",
+   "reasoning": "是。通过图片上传功能中的 remote_image_url 参数进行 SSRF，且能探测内网端口（如 SSH），展示了 SSRF 的经典利用方式。虽然 SSRF 是常见漏洞，但此处通过错误信息泄露内网服务信息，具有启发性。",
+   "attack_chain": "修改 remote_image_url 为内网地址，服务器发起请求，通过错误信息判断端口开放情况。",
+   "bypass_technique": "直接利用未过滤的 URL 参数，无绕过。",
+   "defensive_insight": "对远程图片 URL 进行白名单校验，禁止内网地址，并统一错误信息。"
+  },
+  {
+   "id": 418474,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "授权绕过",
+   "reasoning": "否。通过直接访问 URL 绕过暂停程序的报告限制，属于简单的访问控制缺失，无技术亮点。报告信息不完整，可复现性差。",
+   "attack_chain": "直接访问暂停程序的报告提交 URL，绕过限制。",
+   "bypass_technique": "无实质绕过，直接利用 URL 访问。",
+   "defensive_insight": "在服务端对暂停程序的报告提交进行权限校验。"
+  },
+  {
+   "id": 413759,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "竞争条件 / 业务逻辑",
+   "reasoning": "是。通过并发请求绕过商店位置数量限制，属于典型的竞争条件漏洞，展示了业务逻辑中的并发问题。虽然竞争条件是已知类型，但此处利用方式简单有效，具有参考价值。",
+   "attack_chain": "拦截创建位置的请求，并发发送多个，绕过最大数量限制。",
+   "bypass_technique": "利用并发请求造成竞态条件，绕过数量校验。",
+   "defensive_insight": "在服务端使用事务或锁机制，确保数量校验的原子性。"
+  },
+  {
+   "id": 303322,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "信息泄露 / 跨组件攻击链",
+   "reasoning": "是。密码重置链接中的 token 通过 Referer 头泄露给第三方（bat.bing.com），攻击者可利用该 token 重置密码。这展示了敏感信息通过 Referer 泄露的经典问题，且攻击链完整，可导致账户接管。",
+   "attack_chain": "用户点击重置链接中的外部链接，Referer 携带 token 发送给第三方，攻击者获取 token 后重置密码。",
+   "bypass_technique": "无绕过，直接利用 Referer 泄露。",
+   "defensive_insight": "在重置密码页面禁止外部链接，或使用 Referrer-Policy 限制 Referer 发送。"
+  },
+  {
+   "id": 355859,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 其他",
+   "reasoning": "部分。点击劫持是常见漏洞，但此处影响较大（泄露邮箱、信用卡），且攻击场景多样。报告提供了详细步骤和影响分析，但技术点无新意。",
+   "attack_chain": "通过 iframe 嵌入预订页面，诱导用户点击，造成未授权预订和信息泄露。",
+   "bypass_technique": "无绕过，直接利用缺少 X-Frame-Options。",
+   "defensive_insight": "添加 X-Frame-Options 或 CSP frame-ancestors 指令。"
+  },
+  {
+   "id": 317321,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 框架行为利用",
+   "reasoning": "是。利用 tar 包中的符号链接，在解压时删除任意目录，这是对 RubyGems 解压逻辑的巧妙利用。通过构造特殊的符号链接，绕过了路径检查，实现了目录删除。这种攻击方式具有通用性，可应用于其他解压场景。",
+   "attack_chain": "构造包含符号链接的恶意 gem 包，解压时触发 rm_rf 删除目标目录。",
+   "bypass_technique": "利用符号链接指向 /tmp，再通过后续路径操作导致删除。",
+   "defensive_insight": "在解压前检查符号链接目标，避免使用 rm_rf 删除用户可控路径。"
+  },
+  {
+   "id": 478367,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "类型混淆 / 其他",
+   "reasoning": "是。imagescale 函数中的整数溢出导致释放未初始化指针，属于底层内存管理漏洞。虽然需要特定输入，但展示了整数溢出与内存安全问题的结合，具有技术深度。",
+   "attack_chain": "构造特定图像尺寸，触发整数溢出，导致释放未初始化指针，可能造成 UAF。",
+   "bypass_technique": "利用整数溢出绕过安全检查。",
+   "defensive_insight": "修复整数溢出检查，确保所有分配路径正确初始化。"
+  },
+  {
+   "id": 10037,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SQL注入",
+   "reasoning": "否。经典 SQL 注入，利用 IF 函数进行布尔盲注，无任何绕过或创新。",
+   "attack_chain": "单点注入，通过布尔盲注获取信息。",
+   "bypass_technique": "无绕过，直接利用未过滤参数。",
+   "defensive_insight": "使用参数化查询。"
+  },
+  {
+   "id": 89178,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少验证码和速率限制是常见配置问题，无技术含量。",
+   "attack_chain": "无攻击链，直接批量请求。",
+   "bypass_technique": "无绕过。",
+   "defensive_insight": "添加验证码和速率限制。"
+  },
+  {
+   "id": 2294709,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "CSRF",
+   "reasoning": "部分。Apache Airflow 的 DAG 触发缺少 CSRF 保护，属于已知 CVE，但利用方式简单，影响明确。报告提供了官方链接，可复现性高。",
+   "attack_chain": "诱导已登录用户访问恶意页面，触发 DAG 执行。",
+   "bypass_technique": "无绕过，直接利用 GET 请求触发。",
+   "defensive_insight": "为 DAG 触发添加 CSRF 令牌，并改用 POST 请求。"
+  },
+  {
+   "id": 836649,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "是。利用 ReferenceRedactor 的 data-original 属性进行 HTML 注入，绕过 CSP 实现存储型 XSS。这展示了框架内部逻辑的缺陷，且绕过 CSP 的方法具有通用性。",
+   "attack_chain": "在评论中构造恶意链接，利用 data-original 属性注入 HTML，绕过 CSP 执行脚本。",
+   "bypass_technique": "利用 data-original 属性存储编码后的 HTML，在 redact 时解码，绕过过滤。",
+   "defensive_insight": "对 data-original 属性进行双重编码或过滤，避免在 redact 时解码。"
+  },
+  {
+   "id": 1485379,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。strcpy 使用是静态分析常见问题，无实际利用场景，且报告为 not-applicable。",
+   "attack_chain": "无攻击链。",
+   "bypass_technique": "无绕过。",
+   "defensive_insight": "使用安全函数如 snprintf。"
+  },
+  {
+   "id": 977851,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 其他",
+   "reasoning": "部分。通过 X-Forwarded-Host 头进行缓存投毒，属于常见但有效的攻击。报告展示了缓存投毒的实际影响，但未深入利用。",
+   "attack_chain": "发送带恶意 X-Forwarded-Host 的请求，缓存服务器存储恶意响应，后续用户访问被投毒。",
+   "bypass_technique": "利用缓存服务器信任 X-Forwarded-Host 头。",
+   "defensive_insight": "缓存服务器应忽略或验证 X-Forwarded-Host 头。"
+  },
+  {
+   "id": 730779,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用 HTTP 解析器不修剪尾部空白，绕过基于 Host 头的访问控制。这展示了协议实现差异导致的绕过，具有通用性，可影响多个组件。",
+   "attack_chain": "构造带尾部空格的 Host 头，绕过 Envoy 的域名过滤，访问被禁止的域名。",
+   "bypass_technique": "在 Host 头值后添加空格，使解析器与过滤器不一致。",
+   "defensive_insight": "在解析器层面修剪空白，或统一前后端解析逻辑。"
+  },
+  {
+   "id": 776932,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。点击劫持是常见漏洞，报告为 informative，无新意。",
+   "attack_chain": "无攻击链。",
+   "bypass_technique": "无绕过。",
+   "defensive_insight": "添加 X-Frame-Options。"
+  },
+  {
+   "id": 156948,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。通过修改 HTML 禁用属性绕过按钮限制，属于简单的客户端绕过，无技术含量。",
+   "attack_chain": "修改 HTML 删除 disabled 属性，发送请求。",
+   "bypass_technique": "客户端绕过。",
+   "defensive_insight": "服务端校验请求合法性。"
+  },
+  {
+   "id": 796139,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "部分。GitHub OAuth 凭据泄露在 git 历史中，属于常见配置错误，但攻击链完整，可导致账户接管。报告提供了详细步骤。",
+   "attack_chain": "从 git 历史中提取 clientSecret，构造恶意 OAuth 应用，诱导用户授权，获取 access token。",
+   "bypass_technique": "无绕过，直接利用泄露的凭据。",
+   "defensive_insight": "定期轮换密钥，避免将密钥提交到仓库。"
+  },
+  {
+   "id": 189726,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。利用浏览器特性改变页面 URL，属于已知的 open redirect 变种，无新意。",
+   "attack_chain": "点击链接后，浏览器将当前页面重定向到恶意 URL。",
+   "bypass_technique": "无绕过，利用浏览器行为。",
+   "defensive_insight": "对外部链接添加 rel=\"noopener\" 或使用安全重定向。"
+  }
+ ]
+}

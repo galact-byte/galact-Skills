@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   976603,
+   137502,
+   691977,
+   586251,
+   478368
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 724243,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。这是典型的通过模糊测试发现的解析器越界读取漏洞，属于常见的内存安全漏洞类型，没有非预期或优雅的绕过。虽然提供了完整的ASAN报告和复现步骤，但技术点在于缺乏边界检查，属于成熟套路。",
+   "attack_chain": "单点：构造畸形802.11数据包→tcpdump解析时越界读取。",
+   "bypass_technique": "无绕过，直接利用解析器未检查长度。",
+   "defensive_insight": "在解析802.11帧时增加长度校验，使用安全函数或边界检查。"
+  },
+  {
+   "id": 478368,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "类型混淆 / 内存破坏",
+   "reasoning": "是。通过控制图像颜色数导致缓冲区分配过小，进而利用颜色索引越界写入，实现了对堆的越界写。这种利用图像处理函数的内部逻辑进行内存破坏的思路具有启发性，且可抽象为对类似缓冲区分配逻辑的通用检查。",
+   "attack_chain": "构造两个图像→控制第二个图像的颜色数→触发imagecolormatch→越界写入→可能实现代码执行或安全绕过。",
+   "bypass_technique": "利用颜色索引作为缓冲区偏移，绕过分配大小限制。",
+   "defensive_insight": "在分配缓冲区时考虑所有可能的索引范围，或对颜色索引进行边界检查。"
+  },
+  {
+   "id": 87531,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。这是简单的邮件轰炸，通过重放请求实现，没有技术含量，属于常见业务逻辑缺陷。",
+   "attack_chain": "单点：注册→添加受害者邮箱→重放请求→邮件轰炸。",
+   "bypass_technique": "无绕过，直接利用缺少速率限制。",
+   "defensive_insight": "对邮件发送接口实施速率限制和验证码。"
+  },
+  {
+   "id": 738,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / CSRF",
+   "reasoning": "部分。通过Referer泄露重置密码令牌，结合CSRF实现密码修改，利用了跨域Referer泄露这一非预期行为，但依赖用户点击外部链接，条件较具体。",
+   "attack_chain": "用户点击重置链接→点击外部图片→Referer泄露令牌→攻击者利用令牌CSRF修改密码。",
+   "bypass_technique": "利用Referer泄露敏感令牌，绕过CSRF防护。",
+   "defensive_insight": "在重置密码页面禁止外部引用，或使用Referrer Policy，并确保令牌一次性使用。"
+  },
+  {
+   "id": 226514,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "信息泄露",
+   "reasoning": "否。这是简单的路径泄露，通过访问不存在的类触发错误信息，属于常见配置错误，且报告为informative，信息量不足。",
+   "attack_chain": "单点：访问特定URL→触发异常→泄露服务器路径。",
+   "bypass_technique": "无绕过，直接利用错误处理不当。",
+   "defensive_insight": "在生产环境关闭详细错误信息，统一错误页面。"
+  },
+  {
+   "id": 2107,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告内容极少，仅提及jar: URI绕过AllowScriptAccess，但无具体技术细节，无法判断真实性。",
+   "attack_chain": "未知。",
+   "bypass_technique": "未知。",
+   "defensive_insight": "未知。"
+  },
+  {
+   "id": 228471,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 信息泄露",
+   "reasoning": "部分。利用DNSSEC NSEC记录的设计缺陷进行区域遍历，属于协议行为利用，但这是已知的协议设计问题，且报告为informative，可复现性一般。",
+   "attack_chain": "单点：查询NSEC记录→遍历所有子域名。",
+   "bypass_technique": "利用NSEC记录必然存在的特性，无需绕过。",
+   "defensive_insight": "使用NSEC3替代NSEC，或限制区域遍历。"
+  },
+  {
+   "id": 794395,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。这是典型的缺少速率限制导致的邮件轰炸，常见套路，无技术亮点。",
+   "attack_chain": "单点：发送忘记密码请求→重放→邮件轰炸。",
+   "bypass_technique": "无绕过，直接利用缺少速率限制。",
+   "defensive_insight": "对忘记密码接口实施速率限制和验证码。"
+  },
+  {
+   "id": 83585,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / XSS",
+   "reasoning": "部分。调试模式暴露SQL查询和反射XSS，利用了调试模式未关闭的配置错误，但XSS仅影响IE，条件受限。",
+   "attack_chain": "访问调试URL→触发反射XSS→在IE中执行。",
+   "bypass_technique": "利用调试模式未关闭，直接注入脚本。",
+   "defensive_insight": "生产环境禁用调试模式，对输出进行编码。"
+  },
+  {
+   "id": 137502,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 信息泄露",
+   "reasoning": "是。通过Ajax接口的错误响应泄露私有视频的配置令牌，从而绕过授权访问私有视频。这种利用错误信息泄露敏感令牌的思路具有启发性，且可抽象为对错误处理中敏感信息泄露的通用检查。",
+   "attack_chain": "请求share接口→错误响应泄露config令牌→使用令牌获取视频配置→播放私有视频。",
+   "bypass_technique": "利用错误响应中的令牌，绕过授权检查。",
+   "defensive_insight": "在错误响应中不包含敏感令牌，对config接口进行独立授权验证。"
+  },
+  {
+   "id": 691977,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / XSS",
+   "reasoning": "是。通过postMessage调用任意Reveal方法，结合addKeyBinding和showHelp实现XSS。利用了框架未限制postMessage来源和方法的缺陷，属于框架行为利用，思路优雅且可复用。",
+   "attack_chain": "攻击者页面→postMessage调用addKeyBinding→注入恶意描述→触发showHelp→XSS。",
+   "bypass_technique": "利用postMessage任意方法调用，绕过输入验证。",
+   "defensive_insight": "限制postMessage来源和方法白名单，对输出进行编码。"
+  },
+  {
+   "id": 685491,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。存储型XSS通过文件名触发，属于常见漏洞类型，但利用文件名作为载体有一定变形，且复现步骤清晰。",
+   "attack_chain": "上传恶意文件名→点击收藏→触发XSS。",
+   "bypass_technique": "利用文件名未编码，直接注入脚本。",
+   "defensive_insight": "对文件名进行编码输出，或限制特殊字符。"
+  },
+  {
+   "id": 145267,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "内存破坏",
+   "reasoning": "否。报告描述模糊，仅提及configure()调用导致内存崩溃，无具体细节，无法判断真实性。",
+   "attack_chain": "未知。",
+   "bypass_technique": "未知。",
+   "defensive_insight": "未知。"
+  },
+  {
+   "id": 586251,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "配置错误 / 权限提升",
+   "reasoning": "是。利用Homebrew安装的LaunchDaemon目录权限配置不当，通过替换可执行文件实现权限提升。这种利用目录写权限而非文件写权限的思路具有启发性，且可抽象为对服务文件权限的通用检查。",
+   "attack_chain": "用户可写目录→替换服务可执行文件→服务重启→以root执行恶意代码。",
+   "bypass_technique": "利用目录写权限，替换文件。",
+   "defensive_insight": "确保服务可执行文件及其目录权限最小化，或使用代码签名。"
+  },
+  {
+   "id": 976603,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 状态混淆",
+   "reasoning": "是。通过创建带有尾随空格的entityId，利用SAML响应处理中的trim不一致，导致用户被错误地添加到攻击者组织，实现SSO DOS和账户接管。这种利用字符串处理差异绕过认证逻辑的思路非常优雅，且可抽象为对输入规范化不一致的通用检查。",
+   "attack_chain": "创建恶意entityId→用户SSO→被添加到攻击者组织→攻击者接管账户。",
+   "bypass_technique": "利用尾随空格绕过entityId匹配，导致状态混淆。",
+   "defensive_insight": "在SAML处理中统一使用trim，并确保entityId唯一性校验。"
+  },
+  {
+   "id": 62294,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。这是多个反射型XSS的列表，属于常见漏洞类型，没有非预期或优雅的绕过，只是批量报告。",
+   "attack_chain": "单点：构造恶意URL→触发XSS。",
+   "bypass_technique": "无绕过，直接利用未过滤输入。",
+   "defensive_insight": "对所有输入进行编码输出，使用CSP。"
+  },
+  {
+   "id": 211065,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。反向tabnabbing是已知的浏览器行为利用，常见套路，无技术亮点。",
+   "attack_chain": "单点：点击外部链接→新页面修改原页面→钓鱼。",
+   "bypass_technique": "利用target=_blank未加rel=noopener。",
+   "defensive_insight": "为所有target=_blank链接添加rel=noopener noreferrer。"
+  },
+  {
+   "id": 2139190,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过",
+   "reasoning": "部分。通过GraphQL mutation直接锁定任意公开报告，属于IDOR，但利用了GraphQL的ID编码，有一定变形，且复现简单。",
+   "attack_chain": "单点：构造GraphQL请求→锁定任意报告。",
+   "bypass_technique": "利用GraphQL ID可预测，绕过授权检查。",
+   "defensive_insight": "在GraphQL mutation中实施对象级授权检查。"
+  },
+  {
+   "id": 221791,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 资源消耗",
+   "reasoning": "部分。利用TLS消息长度检查的时序缺陷，在检查前分配内存，导致内存消耗。这是对协议实现逻辑的巧妙利用，但影响有限。",
+   "attack_chain": "单点：发送超长TLS消息→触发提前分配→内存耗尽。",
+   "bypass_technique": "利用分配与检查的顺序差异。",
+   "defensive_insight": "在分配内存前进行长度检查，或限制单连接内存使用。"
+  },
+  {
+   "id": 145355,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。存储型XSS通过目录名触发，但依赖IE不支持CSP，条件受限，属于常见漏洞类型。",
+   "attack_chain": "创建恶意目录名→点击分享→触发XSS。",
+   "bypass_technique": "利用IE不支持CSP，绕过防护。",
+   "defensive_insight": "对目录名进行编码输出，并确保所有浏览器支持CSP。"
+  }
+ ]
+}

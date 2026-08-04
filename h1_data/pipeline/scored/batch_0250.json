@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   187542,
+   1086108,
+   895798,
+   18843,
+   93691
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 18843,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "内存破坏 / 框架行为利用",
+   "reasoning": "是。Flash Player 在 OOM 条件下未正确处理导致 use-after-free，且作者指出可通过 jit-spray 绕过 DEP，展示了从崩溃到利用的完整思路。区别于普通 UAF：根因是 OOM 处理不当，且利用需要结合 JIT spray，具有启发性。",
+   "attack_chain": "构造特定页面触发 Flash OOM → 释放对象后仍被引用 → 控制释放内存 → 通过 JIT spray 布置 shellcode → 执行任意代码。",
+   "bypass_technique": "利用 OOM 条件触发 UAF，结合 JIT spray 绕过 DEP。",
+   "defensive_insight": "确保所有内存分配失败路径都被正确处理，避免释放后使用；对 Flash 等插件实施沙箱和内存保护。"
+  },
+  {
+   "id": 221286,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。libsass 解析器对深层嵌套选择器递归调用导致栈溢出，属于典型的递归深度未限制问题，无绕过或攻击链，PoC 简单但启发性低。",
+   "attack_chain": "单点：构造深层嵌套 CSS 选择器 → 递归解析 → 栈溢出。",
+   "bypass_technique": "无实质绕过，直接利用递归未限制。",
+   "defensive_insight": "限制解析器递归深度或改用迭代实现。"
+  },
+  {
+   "id": 385381,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑 / 配置错误",
+   "reasoning": "否。房间登录接口缺少速率限制，可暴力破解密码，属于常见配置缺失，无绕过或攻击链，思路直接。",
+   "attack_chain": "单点：对 /roomlogin/user/ 进行密码暴力破解。",
+   "bypass_technique": "无实质绕过，直接利用缺少速率限制。",
+   "defensive_insight": "对登录接口实施速率限制和账户锁定策略。"
+  },
+  {
+   "id": 187542,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 跨组件攻击链",
+   "reasoning": "是。通过覆盖 Function.prototype.call 劫持 Brave 内部 IPC 消息，实现 UXSS、地址栏欺骗和设置篡改，属于框架行为利用，且可抽象为通用攻击模式。区别于普通 XSS：利用 JS 原型链污染影响浏览器内部逻辑，跨组件影响。",
+   "attack_chain": "覆盖 Function.prototype.call → 调用 alert() 触发内部 IPC → 替换消息为恶意 action → 执行任意浏览器操作。",
+   "bypass_technique": "原型链污染覆盖 Function.prototype.call，劫持内部 IPC 消息。",
+   "defensive_insight": "浏览器内部代码应避免依赖可被页面覆盖的原型方法，或使用隔离的 JS 环境。"
+  },
+  {
+   "id": 123496,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。登录错误消息区分用户存在与否，属于经典用户枚举，无绕过或攻击链，成熟套路。",
+   "attack_chain": "单点：通过错误消息枚举用户。",
+   "bypass_technique": "无实质绕过，直接利用错误消息差异。",
+   "defensive_insight": "统一错误消息，避免用户枚举。"
+  },
+  {
+   "id": 1438393,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "命令注入",
+   "reasoning": "否。Log4j RCE 是公开漏洞，直接利用，无新意，但复现步骤清晰。",
+   "attack_chain": "单点：在登录字段注入 JNDI payload → 触发 DNS 请求。",
+   "bypass_technique": "无实质绕过，直接利用已知 CVE。",
+   "defensive_insight": "升级 log4j 或禁用 JNDI。"
+  },
+  {
+   "id": 45050,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "CSRF / 业务逻辑",
+   "reasoning": "部分。CSRF 删除私信，但利用消息 ID 可猜测性批量删除，有一定逻辑组合，但整体是常见 CSRF 变体。",
+   "attack_chain": "构造恶意页面 → 受害者访问 → 发送删除请求 → 批量删除私信。",
+   "bypass_technique": "利用 CSRF 和可预测消息 ID 批量操作。",
+   "defensive_insight": "添加 CSRF token，验证 Referer，使用不可预测的 ID。"
+  },
+  {
+   "id": 2435482,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告仅引用其他报告和 CVE，无具体技术细节，无法评估。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "无"
+  },
+  {
+   "id": 109420,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 框架行为利用",
+   "reasoning": "部分。利用 Rails Mime::NullType 对象在响应头中泄露内存地址，属于框架行为利用，但影响有限。",
+   "attack_chain": "单点：请求未知文件类型 → 响应头泄露 Ruby 对象地址。",
+   "bypass_technique": "利用框架对未知 MIME 类型的默认处理。",
+   "defensive_insight": "对未知 MIME 类型返回通用错误，避免泄露内部对象。"
+  },
+  {
+   "id": 93691,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 跨组件攻击链",
+   "reasoning": "是。S3 上传策略过于宽松，允许任意写文件，结合获取合法下载链接实现替换，属于跨组件攻击链。区别于普通配置错误：策略设计缺陷导致任意写，且可影响其他用户。",
+   "attack_chain": "获取目标文件 key → 构造上传请求 → 覆盖文件 → 受害者下载恶意内容。",
+   "bypass_technique": "利用宽松的 S3 策略，仅限制 key 前缀。",
+   "defensive_insight": "S3 策略应精确到具体 key，并验证上传者身份。"
+  },
+  {
+   "id": 22093,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。内容欺骗通过 error 参数反射，属于常见反射型内容注入，无绕过或攻击链。",
+   "attack_chain": "单点：构造 URL 参数 → 页面显示伪造内容。",
+   "bypass_technique": "无实质绕过，直接利用未过滤参数。",
+   "defensive_insight": "对参数进行编码和过滤。"
+  },
+  {
+   "id": 26935,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 业务逻辑",
+   "reasoning": "部分。通过 .eml 文件 Subject 字段注入 XSS，利用邮件客户端预览功能，属于业务逻辑组合，但 XSS 本身常见。",
+   "attack_chain": "构造恶意 .eml → 发送 → 受害者预览 → 执行 JS。",
+   "bypass_technique": "利用邮件主题作为文件名，绕过过滤。",
+   "defensive_insight": "对邮件附件文件名进行严格过滤和编码。"
+  },
+  {
+   "id": 232347,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告仅提及漏洞类型和受影响产品，无具体技术细节，无法评估。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "无"
+  },
+  {
+   "id": 374053,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。直接通过 IP 访问绕过 HTTPS，属于常见配置错误，无绕过或攻击链。",
+   "attack_chain": "单点：直接访问 IP 地址。",
+   "bypass_technique": "无实质绕过，直接利用未配置重定向。",
+   "defensive_insight": "配置强制 HTTPS 重定向。"
+  },
+  {
+   "id": 264177,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 业务逻辑",
+   "reasoning": "部分。通过邮件 From 字段注入 XSS，在回复/转发时触发，属于业务逻辑组合，但 XSS 本身常见。",
+   "attack_chain": "构造恶意 From 字段 → 受害者回复/转发 → 执行 JS。",
+   "bypass_technique": "利用邮件头编码绕过过滤。",
+   "defensive_insight": "对邮件头进行严格过滤和编码。"
+  },
+  {
+   "id": 1086108,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 授权绕过",
+   "reasoning": "是。利用 RFC 1034 尾随点绕过域名所有权检查，实现 FQDN 接管，属于协议行为利用，且可通用化。区别于普通子域名接管：利用 DNS 语义差异绕过验证。",
+   "attack_chain": "添加带尾随点的域名 → 绕过检查 → 接管客户域名。",
+   "bypass_technique": "利用尾随点在 DNS 解析中的等价性。",
+   "defensive_insight": "域名验证时应规范化，忽略尾随点。"
+  },
+  {
+   "id": 135288,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "SQL注入 / 跨组件攻击链",
+   "reasoning": "部分。WordPress 插件存在多处 SQL 注入和 CSRF，组合利用可导致管理员账户被攻击，但漏洞类型常见。",
+   "attack_chain": "构造恶意页面 → 管理员访问 → CSRF 触发 SQL 注入 → 数据泄露。",
+   "bypass_technique": "利用 CSRF 绕过身份验证，触发 SQL 注入。",
+   "defensive_insight": "更新插件，使用参数化查询，添加 CSRF 防护。"
+  },
+  {
+   "id": 2453328,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "竞争条件 / 协议行为利用",
+   "reasoning": "部分。利用 HTTP/2 CONTINUATION 帧和 TCP 连接关闭触发竞争条件，导致服务器崩溃，属于协议行为利用，但影响有限。",
+   "attack_chain": "发送恶意 HTTP/2 帧 → 触发竞争条件 → 服务器崩溃。",
+   "bypass_technique": "利用 HTTP/2 帧处理与连接关闭的竞争。",
+   "defensive_insight": "修复 nghttp2 内存管理，确保连接关闭时正确处理未完成帧。"
+  },
+  {
+   "id": 361131,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。CSRF token 未轮换，属于常见配置问题，无绕过或攻击链。",
+   "attack_chain": "单点：利用固定 token 进行 CSRF。",
+   "bypass_technique": "无实质绕过，直接利用 token 未更新。",
+   "defensive_insight": "登录/注销后应轮换 CSRF token。"
+  },
+  {
+   "id": 895798,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 业务逻辑",
+   "reasoning": "是。CTF 挑战展示了从子域名枚举到 SSRF、路径遍历、Android 逆向、CSS 注入提取 2FA 的完整攻击链，跨多个组件，思路极具启发性。",
+   "attack_chain": "子域名枚举 → 发现 .git 泄露 → 获取凭据 → 绕过 2FA → SSRF → 路径遍历 → 下载 APK → 逆向 → 利用 deep link 和 CSS 注入获取 2FA → 接管账户。",
+   "bypass_technique": "利用多种技术组合：.git 泄露、MD5 挑战绕过、SSRF、路径遍历、CSS 注入。",
+   "defensive_insight": "加强子域名管理，避免敏感文件泄露，实施严格的访问控制，对输入进行验证。"
+  }
+ ]
+}

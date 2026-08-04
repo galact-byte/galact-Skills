@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1752146,
+   698708,
+   1067087,
+   316713,
+   6389
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 117385,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。仅通过响应头泄露服务器和PHP版本，无绕过、无攻击链，属于常见的信息泄露，一眼即知。",
+   "attack_chain": "单点：直接请求页面，响应头泄露版本信息。",
+   "bypass_technique": "无。",
+   "defensive_insight": "隐藏或混淆服务器版本信息，避免暴露具体版本。"
+  },
+  {
+   "id": 50358,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型XSS，通过描述字段注入payload，属于常见漏洞类型，无特殊绕过或攻击链。",
+   "attack_chain": "单点：在描述字段注入XSS payload，生成链接后触发。",
+   "bypass_technique": "无，直接利用未过滤输入。",
+   "defensive_insight": "对用户输入进行HTML编码和过滤，实施CSP。"
+  },
+  {
+   "id": 1752146,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。curl的PUT和POST混淆导致信息泄露和释放后使用，利用HTTP方法语义的误解，可导致敏感数据发送到错误主机。区别于普通漏洞，它涉及库的API使用不当，可抽象为通用判断条件。",
+   "attack_chain": "用户意图POST但实际执行PUT，数据从READDATA缓冲区或stdin读取，可能泄露敏感信息或导致UAF。",
+   "bypass_technique": "利用curl的API行为差异，通过设置CURLOPT_POSTFIELDS和CURLOPT_READDATA触发混淆。",
+   "defensive_insight": "明确API文档，强制方法一致性，检查用户输入。"
+  },
+  {
+   "id": 698708,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 状态混淆",
+   "reasoning": "是。通过刷新签名URL的timestamp和path_hmac，已移除的员工可永久保持访问权限，绕过授权失效机制。区别于普通IDOR，它利用签名URL的刷新机制，可抽象为通用判断条件。",
+   "attack_chain": "获取签名URL→在有效期内刷新timestamp→永久保持访问权限→修改连接配置。",
+   "bypass_technique": "利用签名URL的timestamp可刷新特性，绕过权限撤销。",
+   "defensive_insight": "签名URL应绑定用户身份，并在权限变更后失效。"
+  },
+  {
+   "id": 1067087,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 框架行为利用",
+   "reasoning": "是。CTF挑战展示了多种攻击技术，包括LFI、SQL注入、类型混淆等，组合成完整攻击链。区别于单一漏洞，它展示了多步骤、多组件的攻击链，启发性强。",
+   "attack_chain": "信息收集→LFI→SQL注入→类型混淆→权限提升→获取flag。",
+   "bypass_technique": "利用str_replace非递归、intval类型混淆、二次注入等。",
+   "defensive_insight": "输入验证、参数化查询、避免危险函数。"
+  },
+  {
+   "id": 126377,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 认证绕过",
+   "reasoning": "部分。通过更改邮箱绕过密码重置流程，实现账户接管。属于业务逻辑漏洞，但思路清晰，可复用。",
+   "attack_chain": "更改邮箱→重置密码→接管账户。",
+   "bypass_technique": "利用邮箱更改无需密码验证的缺陷。",
+   "defensive_insight": "敏感操作需二次验证。"
+  },
+  {
+   "id": 146910,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。检测到RC4密码套件，属于配置错误，无绕过或攻击链，常见于老旧系统。",
+   "attack_chain": "单点：检测到弱加密套件。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁用RC4，使用强加密套件。"
+  },
+  {
+   "id": 547630,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "类型混淆 / 其他",
+   "reasoning": "部分。整数溢出导致缓冲区溢出，属于经典漏洞，但利用条件苛刻（2GB URL），启发性一般。",
+   "attack_chain": "单点：构造超长URL触发整数溢出。",
+   "bypass_technique": "利用整数溢出绕过大小检查。",
+   "defensive_insight": "检查整数溢出，使用安全分配函数。"
+  },
+  {
+   "id": 159890,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。通过响应差异枚举报告ID，属于常见的信息泄露，无特殊绕过。",
+   "attack_chain": "单点：枚举报告ID，监控提交活动。",
+   "bypass_technique": "无。",
+   "defensive_insight": "统一错误响应，避免信息泄露。"
+  },
+  {
+   "id": 776461,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。利用OpenSSH版本漏洞进行用户名枚举，属于已知漏洞，无新意。",
+   "attack_chain": "单点：利用已知漏洞枚举用户名。",
+   "bypass_technique": "无。",
+   "defensive_insight": "升级OpenSSH版本。"
+  },
+  {
+   "id": 1048457,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用",
+   "reasoning": "是。OCSP验证未检查证书序列号，导致可接受错误响应，绕过证书撤销检查。区别于普通证书验证漏洞，它利用协议实现缺陷，可抽象为通用判断条件。",
+   "attack_chain": "单点：替换OCSP响应，绕过撤销检查。",
+   "bypass_technique": "利用OCSP响应不匹配序列号。",
+   "defensive_insight": "严格验证OCSP响应与证书匹配。"
+  },
+  {
+   "id": 200351,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。Flash XSS，属于已知漏洞，无特殊绕过。",
+   "attack_chain": "单点：通过SWF参数注入XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "更新Flash，移除或修复。"
+  },
+  {
+   "id": 316713,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 跨组件攻击链",
+   "reasoning": "是。zip解压和CSV处理均存在路径遍历，可写入任意文件并引用系统文件，形成完整攻击链。区别于普通路径遍历，它结合了zip解压和CSV处理，可抽象为通用判断条件。",
+   "attack_chain": "上传恶意zip→解压路径遍历→写入文件→引用系统文件→信息泄露或RCE。",
+   "bypass_technique": "利用zip文件名和CSV字段中的../。",
+   "defensive_insight": "安全解压，验证文件路径，限制写入目录。"
+  },
+  {
+   "id": 6389,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "类型混淆 / 其他",
+   "reasoning": "是。整数溢出导致缓冲区溢出，可导致代码执行。区别于普通溢出，它利用字符串处理函数的边界条件，可抽象为通用判断条件。",
+   "attack_chain": "构造特殊字符串→触发整数溢出→堆溢出→代码执行。",
+   "bypass_technique": "利用expandtabs的整数溢出。",
+   "defensive_insight": "检查整数溢出，使用安全函数。"
+  },
+  {
+   "id": 1005020,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "IDOR",
+   "reasoning": "部分。通过修改API参数获取其他用户ID，属于IDOR，但思路简单，无特殊绕过。",
+   "attack_chain": "单点：修改API参数，获取用户ID。",
+   "bypass_technique": "无。",
+   "defensive_insight": "实施访问控制，验证用户权限。"
+  },
+  {
+   "id": 1543770,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 授权绕过",
+   "reasoning": "部分。通过API绕过禁止子版块发消息的限制，属于业务逻辑漏洞，但思路清晰。",
+   "attack_chain": "使用API发送消息→绕过限制。",
+   "bypass_technique": "利用API与Web界面行为差异。",
+   "defensive_insight": "统一业务规则，加强API验证。"
+  },
+  {
+   "id": 87588,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。文件名XSS，属于常见漏洞，无特殊绕过。",
+   "attack_chain": "单点：上传恶意文件名触发XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对文件名进行编码和过滤。"
+  },
+  {
+   "id": 648348,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，需要用户交互，属于常见漏洞。",
+   "attack_chain": "单点：注入XSS payload，触发鼠标事件。",
+   "bypass_technique": "无。",
+   "defensive_insight": "输入验证和输出编码。"
+  },
+  {
+   "id": 906322,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。GitHub wiki可被任意用户编辑，属于配置错误，无技术含量。",
+   "attack_chain": "单点：直接编辑wiki。",
+   "bypass_technique": "无。",
+   "defensive_insight": "限制wiki编辑权限。"
+  },
+  {
+   "id": 1777077,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "子域名接管",
+   "reasoning": "部分。S3子域名接管，属于常见漏洞，但利用简单，影响明确。",
+   "attack_chain": "单点：注册未绑定的S3 bucket。",
+   "bypass_technique": "无。",
+   "defensive_insight": "清理DNS记录，监控子域名。"
+  }
+ ]
+}

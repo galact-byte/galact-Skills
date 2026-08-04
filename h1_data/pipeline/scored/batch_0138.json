@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   493324,
+   1065468,
+   1341957,
+   1063039,
+   172545
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 2052795,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。忘记密码接口无速率限制，属于常见业务逻辑缺陷，无绕过或创新，攻击链简单。",
+   "attack_chain": "直接对忘记密码接口发送大量请求，导致邮件轰炸。",
+   "bypass_technique": "无，直接利用缺失的速率限制。",
+   "defensive_insight": "对忘记密码接口实施速率限制和验证码。"
+  },
+  {
+   "id": 184472,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "信息泄露",
+   "reasoning": "否。直接访问公开的 data.json 泄露敏感信息，属于配置错误，无技术亮点，且报告信息不足（URL 被 REDACTED）。",
+   "attack_chain": "直接访问公开的 JSON 文件。",
+   "bypass_technique": "无。",
+   "defensive_insight": "确保敏感文件不公开可访问。"
+  },
+  {
+   "id": 172545,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。通过 API 端点绕过前端对未发布列表的访问控制，展示了前端限制与后端 API 不一致的典型问题。",
+   "attack_chain": "创建自己的列表，拦截 API 请求，替换 ID 为未发布列表的 ID，获取其详情。",
+   "bypass_technique": "直接调用后端 API 绕过前端访问控制。",
+   "defensive_insight": "后端 API 必须独立实施访问控制，不能依赖前端隐藏。"
+  },
+  {
+   "id": 210779,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 配置错误",
+   "reasoning": "是。利用 OAuth2 的 token 失效接口，配合硬编码的 consumer key/secret，使 TweetDeck 的 bearer token 失效，造成 DoS。",
+   "attack_chain": "提取客户端中的 consumer key/secret，调用 invalidate_token 接口使生产 token 失效。",
+   "bypass_technique": "利用公开的 OAuth2 接口和硬编码凭据。",
+   "defensive_insight": "不要在客户端硬编码高权限凭据，对 token 失效操作进行权限验证。"
+  },
+  {
+   "id": 2354136,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 授权绕过",
+   "reasoning": "部分。通过目录爆破发现未受保护的管理功能，可添加管理员，属于配置错误，但影响严重。",
+   "attack_chain": "访问未受保护的管理 URL，添加管理员账户。",
+   "bypass_technique": "直接访问未认证的管理端点。",
+   "defensive_insight": "确保所有管理功能都有认证和授权。"
+  },
+  {
+   "id": 1492896,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "命令注入",
+   "reasoning": "部分。Airflow 示例 DAG 中的模板参数未过滤导致命令注入，属于已知 CVE，但利用链清晰，可复现。",
+   "attack_chain": "通过触发 DAG 并注入恶意参数，执行系统命令。",
+   "bypass_technique": "利用 Jinja2 模板注入和 BashOperator 执行命令。",
+   "defensive_insight": "对模板参数进行严格过滤，避免将用户输入直接拼接到命令中。"
+  },
+  {
+   "id": 1125752,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SQL注入",
+   "reasoning": "否。典型的 SQL 注入，使用 union 和 time-based 技术，无新意。",
+   "attack_chain": "直接注入 SQL 语句，获取数据库信息。",
+   "bypass_technique": "无。",
+   "defensive_insight": "使用参数化查询。"
+  },
+  {
+   "id": 145950,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。通过 Android 客户端的复制功能，绕过共享文件夹的编辑权限限制，展示了客户端与服务器端权限检查不一致。",
+   "attack_chain": "邀请用户无编辑权限，但通过 Android 客户端复制文件到共享文件夹。",
+   "bypass_technique": "利用客户端功能绕过服务器端权限检查。",
+   "defensive_insight": "服务器端必须对所有操作进行权限验证，不能依赖客户端限制。"
+  },
+  {
+   "id": 362118,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "路径遍历 / 反序列化",
+   "reasoning": "部分。Zip Slip 是已知漏洞，但影响广泛，利用简单，属于常见套路。",
+   "attack_chain": "上传恶意 zip 文件，解压时写入任意文件。",
+   "bypass_technique": "利用 zip 中的路径遍历。",
+   "defensive_insight": "解压时验证文件路径，防止目录穿越。"
+  },
+  {
+   "id": 761158,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。SharePoint Web 服务暴露，属于配置错误，无技术含量。",
+   "attack_chain": "直接访问暴露的 Web 服务。",
+   "bypass_technique": "无。",
+   "defensive_insight": "限制对 SharePoint Web 服务的访问。"
+  },
+  {
+   "id": 493324,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 状态混淆 / 跨组件攻击链",
+   "reasoning": "是。利用管理员模拟用户时的会话切换，通过复制会话 ID 并手动设置 cookie，实现权限提升。这是对会话管理机制的巧妙利用。",
+   "attack_chain": "管理员模拟用户 -> 用户获取模拟会话 ID -> 手动设置 cookie -> 点击停止模拟 -> 成为管理员。",
+   "bypass_technique": "利用会话切换时的状态混淆，手动设置 cookie 接管模拟会话。",
+   "defensive_insight": "模拟会话应绑定 IP 或设备，停止模拟时应使模拟会话立即失效。"
+  },
+  {
+   "id": 1162443,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "会话管理",
+   "reasoning": "否。登出后会话未失效，属于常见会话管理缺陷，无新意。",
+   "attack_chain": "获取受害者 cookie，登出后仍可复用。",
+   "bypass_technique": "无。",
+   "defensive_insight": "登出时应使会话失效。"
+  },
+  {
+   "id": 90643,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。注册无邮箱验证，常见问题，无技术亮点。",
+   "attack_chain": "使用他人邮箱注册，占用邮箱。",
+   "bypass_technique": "无。",
+   "defensive_insight": "注册时应发送验证邮件。"
+  },
+  {
+   "id": 13506,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。隐藏参数未过滤导致 XSS，常见套路。",
+   "attack_chain": "修改隐藏参数注入脚本。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对所有参数进行输出编码。"
+  },
+  {
+   "id": 1065468,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 其他",
+   "reasoning": "是。CTF 挑战的完整 walkthrough，展示了多种漏洞利用技巧，包括文件读取、SQL 注入、SSRF 等，具有很高的教学价值。",
+   "attack_chain": "多步骤，涉及信息泄露、文件读取、SQL 注入、SSRF 等。",
+   "bypass_technique": "多种，包括 str_replace 绕过、模板注入、二次注入等。",
+   "defensive_insight": "综合防御，包括输入验证、输出编码、权限控制等。"
+  },
+  {
+   "id": 1063039,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "反序列化 / 跨组件攻击链",
+   "reasoning": "是。通过 phar:// 流包装器触发反序列化，利用文件上传和日志配置实现 RCE，展示了 PHP 对象注入的经典利用链。",
+   "attack_chain": "上传恶意 phar 文件 -> 在日志配置中指定 phar:// 路径 -> 触发反序列化 -> 执行代码。",
+   "bypass_technique": "利用 phar:// 流包装器绕过文件类型检查。",
+   "defensive_insight": "对 phar:// 等流包装器进行过滤，避免反序列化不可信数据。"
+  },
+  {
+   "id": 578138,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型 XSS，通过文件名注入，常见套路。",
+   "attack_chain": "上传恶意文件名，触发 XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对文件名进行 HTML 编码。"
+  },
+  {
+   "id": 1341957,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 其他",
+   "reasoning": "是。利用哈希碰撞和重复条目导致算法复杂度 DoS，展示了哈希表实现的缺陷，具有通用性。",
+   "attack_chain": "构造大量碰撞的引用名，导致哈希表性能下降。",
+   "bypass_technique": "利用弱哈希函数和重复条目。",
+   "defensive_insight": "使用安全的哈希函数，并禁止重复条目。"
+  },
+  {
+   "id": 8010,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。邮件中的 javascript: URI 触发 XSS，常见套路。",
+   "attack_chain": "发送包含 javascript: 链接的邮件，点击触发。",
+   "bypass_technique": "无。",
+   "defensive_insight": "过滤 javascript: 等危险协议。"
+  },
+  {
+   "id": 111950,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "SSRF",
+   "reasoning": "部分。通过头像上传功能进行 SSRF 探测，展示了利用远程加载功能进行端口扫描。",
+   "attack_chain": "利用头像上传功能，请求内网地址，探测端口。",
+   "bypass_technique": "利用远程加载功能。",
+   "defensive_insight": "限制远程加载的 URL，防止 SSRF。"
+  }
+ ]
+}

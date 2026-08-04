@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1595299,
+   436928,
+   180563,
+   129771,
+   714215
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 221908,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。Host header 注入导致开放重定向，经典套路，无绕过，无攻击链。substate 为 informative，可复现性受限。",
+   "attack_chain": "单点：修改 Host 头→服务器生成基于 Host 的 Location 重定向。",
+   "bypass_technique": "无实质绕过，直接利用服务器对 Host 头的信任。",
+   "defensive_insight": "生成重定向 URL 时使用白名单域名，不信任 Host 头。"
+  },
+  {
+   "id": 54610,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 状态混淆",
+   "reasoning": "部分。利用无效密码重置链接触发登出，绕过'保持登录'选项，属于业务逻辑缺陷。攻击链简单但思路有启发性：将错误处理与会话状态混淆。",
+   "attack_chain": "构造无效重置链接→用户访问→服务器登出用户→会话失效。",
+   "bypass_technique": "利用密码重置流程的错误处理逻辑，未验证链接有效性即登出。",
+   "defensive_insight": "密码重置链接无效时应重定向到首页而非登出用户；对登出操作增加 CSRF 防护。"
+  },
+  {
+   "id": 1761505,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型 XSS，标签功能未过滤，经典套路，无绕过，无攻击链。",
+   "attack_chain": "单点：提交恶意标签→存储→触发执行。",
+   "bypass_technique": "无实质绕过，直接注入脚本。",
+   "defensive_insight": "对用户输入进行输出编码，实施 CSP。"
+  },
+  {
+   "id": 1595299,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "类型混淆 / 协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。ap_rwrite() 的 int 参数被隐式转换为 apr_size_t，导致负数被符号扩展为巨大长度，造成越界读取。这是类型混淆的典型，且通过 Lua 脚本和 DATA 过滤器组合触发，跨组件。",
+   "attack_chain": "构造超大 POST 请求→触发 ap_rwrite() 负数长度→符号扩展→越界读取→泄露堆数据。",
+   "bypass_technique": "利用 C 语言隐式类型转换，将负数转换为巨大无符号数。",
+   "defensive_insight": "在 API 边界检查参数范围，避免隐式类型转换；使用安全整数运算。"
+  },
+  {
+   "id": 714215,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "配置错误 / 跨组件攻击链",
+   "reasoning": "是。利用 OpenSSL 默认配置路径可写，通过环境变量注入恶意配置，实现提权。绕过现代防御（默认安全假设），且影响多个组件。",
+   "attack_chain": "设置 OPENSSL_CONF 环境变量→OpenSSL 加载恶意配置→动态引擎加载 DLL→代码执行。",
+   "bypass_technique": "利用环境变量覆盖默认配置路径，绕过安全修复。",
+   "defensive_insight": "OpenSSL 应使用安全默认路径，并验证配置文件的完整性；应用程序应限制环境变量影响。"
+  },
+  {
+   "id": 180563,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "类型混淆 / 内存破坏",
+   "reasoning": "是。bzdecompress() 中整数溢出导致堆溢出，可控制 EIP。这是经典整数溢出，但 PoC 完整，且展示了如何通过构造压缩数据触发。",
+   "attack_chain": "构造恶意压缩数据→整数溢出→堆溢出→控制 EIP。",
+   "bypass_technique": "利用整数溢出绕过长度检查。",
+   "defensive_insight": "在分配内存前检查计算值是否溢出，使用安全整数运算。"
+  },
+  {
+   "id": 158979,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "部分。通过直接构造 HTTP 请求绕过前端限制，实现越权操作。属于经典 IDOR，但思路清晰，可抽象为通用判断条件。",
+   "attack_chain": "构造 POST 请求→服务器未校验权限→添加邮箱→获取发票信息。",
+   "bypass_technique": "直接调用 API，绕过前端 UI 限制。",
+   "defensive_insight": "服务端对所有请求进行权限校验，不依赖前端隐藏。"
+  },
+  {
+   "id": 29491,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。IDN 同形字攻击，已知问题，无绕过，无攻击链。",
+   "attack_chain": "单点：构造同形字域名→用户误信。",
+   "bypass_technique": "无实质绕过，利用视觉混淆。",
+   "defensive_insight": "显示 punycode 或警告用户。"
+  },
+  {
+   "id": 1081817,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。敏感文件暴露，配置错误，无绕过，无攻击链。",
+   "attack_chain": "单点：直接访问文件。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁止 Web 目录下存放敏感文件，配置访问控制。"
+  },
+  {
+   "id": 436928,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 跨组件攻击链",
+   "reasoning": "是。通过 wp_mkdir_p() 的路径遍历，利用 chmod 修改目录权限，绕过 WordPress 加固措施，最终实现 RCE。这是优雅的链式攻击，绕过多个防御。",
+   "attack_chain": "设置 upload_path 为恶意路径→触发 mkdir→chmod 修改权限→上传 shell→包含执行。",
+   "bypass_technique": "利用路径遍历和权限继承逻辑，chmod 修改任意目录权限。",
+   "defensive_insight": "对 upload_path 进行规范化验证，限制目录权限，禁用不必要的功能。"
+  },
+  {
+   "id": 1425882,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型 XSS，产品名未过滤，经典套路，无绕过。",
+   "attack_chain": "单点：创建恶意产品名→删除时触发。",
+   "bypass_technique": "无实质绕过，直接注入。",
+   "defensive_insight": "输出编码，CSP。"
+  },
+  {
+   "id": 1283605,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。私钥泄露在 GitHub，配置错误，无技术含量。",
+   "attack_chain": "单点：公开仓库泄露密钥。",
+   "bypass_technique": "无。",
+   "defensive_insight": "使用密钥管理工具，扫描代码库。"
+  },
+  {
+   "id": 1023787,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "部分。利用 javascript: URL 绕过 CSP，但仅影响 IE，场景受限。",
+   "attack_chain": "编辑 markdown→注入 javascript: URL→点击触发。",
+   "bypass_technique": "利用 javascript: 协议绕过 CSP。",
+   "defensive_insight": "过滤 javascript: 协议，加强 CSP。"
+  },
+  {
+   "id": 406387,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "SSRF",
+   "reasoning": "部分。WordPress pingback SSRF，经典漏洞，但 PoC 完整，可用于端口扫描。",
+   "attack_chain": "构造 XML-RPC 请求→服务器发起请求→探测内网。",
+   "bypass_technique": "无实质绕过，直接利用功能。",
+   "defensive_insight": "禁用 XML-RPC 或限制请求目标。"
+  },
+  {
+   "id": 1891795,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "命令注入 / 跨组件攻击链",
+   "reasoning": "部分。通过 -libjars 参数注入恶意 Jar，实现 RCE。属于配置错误导致的命令注入，但思路有启发性。",
+   "attack_chain": "设置恶意 libjars→MR 任务加载→执行代码。",
+   "bypass_technique": "利用 -libjars 参数注入。",
+   "defensive_insight": "对用户输入进行白名单校验，限制 Jar 来源。"
+  },
+  {
+   "id": 20122,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少会话管理功能，非漏洞，无技术含量。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "提供会话管理功能。"
+  },
+  {
+   "id": 125200,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 业务逻辑",
+   "reasoning": "部分。通过枚举邀请码，泄露用户信息。属于业务逻辑缺陷，思路有启发性。",
+   "attack_chain": "枚举邀请码→判断有效性→统计用户。",
+   "bypass_technique": "利用可预测的邀请码和响应差异。",
+   "defensive_insight": "增加速率限制，使用不可预测的邀请码。"
+  },
+  {
+   "id": 221260,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "其他",
+   "reasoning": "部分。libsass 解析器栈溢出，通过嵌套括号触发。属于解析器缺陷，PoC 完整。",
+   "attack_chain": "单点：构造嵌套括号→栈溢出。",
+   "bypass_technique": "无实质绕过，利用递归深度。",
+   "defensive_insight": "限制解析深度，使用迭代解析。"
+  },
+  {
+   "id": 203088,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。清除数据不彻底，功能缺陷，无技术含量。",
+   "attack_chain": "单点：清除数据后残留。",
+   "bypass_technique": "无。",
+   "defensive_insight": "确保清除所有存储。"
+  },
+  {
+   "id": 129771,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "类型混淆 / 内存破坏",
+   "reasoning": "是。strop.replace() 整数溢出导致堆溢出，可导致代码执行。经典整数溢出，但 PoC 完整，且展示了如何利用。",
+   "attack_chain": "构造大替换→整数溢出→堆溢出→代码执行。",
+   "bypass_technique": "利用整数溢出绕过长度检查。",
+   "defensive_insight": "在计算长度时检查溢出，使用安全整数运算。"
+  }
+ ]
+}

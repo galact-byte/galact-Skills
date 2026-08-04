@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   53004,
+   1363672,
+   1011767,
+   255991,
+   1691501
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 53004,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "SSRF / 协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用DNS rebinding绕过基于IP的黑名单，使过滤器和代理解析到不同IP，从而访问内网。技术点在于利用DNS解析时间差和代理与过滤器解析不一致，实现黑名单绕过。与同类SSRF报告的区别在于：不是简单的IP黑名单绕过，而是利用DNS rebinding这一通用技术，且攻击链完整，从提交URL到内网访问，展示了跨组件（应用、DNS、代理）的协作。",
+   "attack_chain": "提交恶意URL→应用解析DNS（第一次）→IP不在黑名单→代理再次解析DNS（第二次）→解析到内网IP→访问内网服务。",
+   "bypass_technique": "DNS rebinding：使用自定义DNS服务器，对同一域名在不同时间返回不同IP，使过滤器和代理解析结果不一致。",
+   "defensive_insight": "在代理层也实施IP黑名单，或使用统一的DNS解析并缓存结果，避免多次解析；对回调URL进行二次验证。"
+  },
+  {
+   "id": 1363672,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 业务逻辑",
+   "reasoning": "是。通过给email末尾添加空格绕过登录尝试次数限制，虽然修复了之前的漏洞，但未考虑空白字符。技术点在于输入规范化不完整，导致限流机制被绕过。与同类报告的区别在于：展示了修复不彻底的问题，且绕过方法简单通用，可抽象为“输入规范化需考虑空白字符”的通用原则。",
+   "attack_chain": "发送登录请求→触发限流→在email末尾添加空格→绕过限流→继续暴力破解。",
+   "bypass_technique": "利用服务端对email末尾空格的处理不一致，绕过基于次数的限流。",
+   "defensive_insight": "在限流判断前对输入进行规范化（如trim），并考虑各种Unicode空白字符。"
+  },
+  {
+   "id": 1210424,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "跨组件攻击链 / 配置错误",
+   "reasoning": "部分。联邦编辑功能允许iframe加载远程服务器，若远程服务器被攻陷，可向用户推送恶意代码。技术点在于信任链的扩展，用户不仅信任自己的服务器，还隐式信任联邦服务器。虽然攻击条件较苛刻，但思路有启发性，属于跨组件信任问题。",
+   "attack_chain": "建立联邦信任→用户编辑文档→iframe加载远程服务器→远程服务器返回恶意内容→用户被攻击。",
+   "bypass_technique": "利用联邦信任机制，通过iframe加载远程内容，绕过同源策略。",
+   "defensive_insight": "对iframe加载的远程内容进行严格验证，或限制联邦服务器的来源，明确告知用户风险。"
+  },
+  {
+   "id": 159393,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "部分。项目管理员可以删除任意发票的付款，因为HTTP请求未检查项目权限。技术点在于对象级授权缺失，属于常见的IDOR，但影响明确，且步骤清晰。与同类报告的区别在于：展示了角色权限与对象权限的分离问题，有借鉴意义。",
+   "attack_chain": "构造删除付款请求→修改Invoice_ID和Payment_ID→服务器未校验权限→删除成功。",
+   "bypass_technique": "直接修改URL中的ID，利用服务端未对对象所有权进行校验。",
+   "defensive_insight": "在服务端对每个对象操作进行权限校验，确保用户有权限访问该对象。"
+  },
+  {
+   "id": 212508,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。通过cookie注入导致用户无法使用服务，属于典型的cookie注入DoS，技术点在于未对cookie值进行过滤，但这是常见问题，无特殊绕过。",
+   "attack_chain": "构造恶意URL→设置恶意cookie→用户访问后服务异常。",
+   "bypass_technique": "无实质绕过，直接利用未过滤的cookie参数。",
+   "defensive_insight": "对cookie值进行严格校验和编码，避免注入。"
+  },
+  {
+   "id": 1691501,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "SSRF / 信息泄露",
+   "reasoning": "是。通过图片URL下载功能实现盲SSRF，且能访问内网IP，并泄露服务器信息。技术点在于利用URL下载器未过滤内网地址，且响应中泄露了内部信息。与同类报告的区别在于：展示了SSRF的完整利用链，包括内网探测和信息泄露，且步骤详细。",
+   "attack_chain": "上传图片URL→服务器请求该URL→访问内网IP→响应泄露内部信息。",
+   "bypass_technique": "直接使用内网IP作为URL，绕过外部访问限制。",
+   "defensive_insight": "对URL下载功能实施白名单，禁止内网IP和敏感端口，并过滤响应中的敏感信息。"
+  },
+  {
+   "id": 167489,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "认证绕过 / 状态混淆",
+   "reasoning": "部分。通过未使用的密码重置令牌重新激活已关闭的账户。技术点在于账户关闭后未使相关令牌失效，导致状态混淆。虽然步骤不完整，但思路有启发性，属于令牌生命周期管理问题。",
+   "attack_chain": "获取密码重置令牌→账户被关闭→使用令牌重置密码→重新登录。",
+   "bypass_technique": "利用未失效的密码重置令牌，绕过账户关闭状态。",
+   "defensive_insight": "账户关闭时，应使所有关联的令牌和会话失效。"
+  },
+  {
+   "id": 1048571,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。开放调试接口导致数据泄露和存储型XSS，属于配置错误，无特殊绕过，且信息大量打码，无法判断具体技术点。",
+   "attack_chain": "访问调试接口→未授权获取数据→注入XSS。",
+   "bypass_technique": "无实质绕过，直接利用未保护的调试端点。",
+   "defensive_insight": "移除或保护调试接口，实施访问控制。"
+  },
+  {
+   "id": 384255,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。存储型XSS，通过Markdown图片语法注入onload事件。技术点在于Markdown渲染未过滤事件属性，属于常见XSS变体，但步骤清晰，可复现。",
+   "attack_chain": "提交恶意Markdown→渲染时执行脚本。",
+   "bypass_technique": "利用Markdown图片语法，注入事件处理器。",
+   "defensive_insight": "对Markdown渲染进行白名单过滤，禁止事件属性。"
+  },
+  {
+   "id": 59505,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "部分。权限设置未生效，直接访问患者详情可修改。技术点在于权限检查不完整，只检查了列表页，未检查详情页。属于常见的授权绕过，但思路清晰。",
+   "attack_chain": "直接访问患者详情URL→绕过权限检查→修改信息。",
+   "bypass_technique": "直接构造URL，绕过列表页的权限检查。",
+   "defensive_insight": "对所有对象操作进行统一的权限校验，而非仅依赖页面级检查。"
+  },
+  {
+   "id": 357954,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。点击劫持，标准漏洞，无特殊技术点。",
+   "attack_chain": "构造iframe页面→诱导用户点击。",
+   "bypass_technique": "无实质绕过，直接利用缺少X-Frame-Options。",
+   "defensive_insight": "设置X-Frame-Options或CSP frame-ancestors。"
+  },
+  {
+   "id": 945990,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。安全重定向绕过，通过URL编码空字节，属于常见绕过，无新意。",
+   "attack_chain": "构造恶意URL→绕过重定向检查→跳转到恶意网站。",
+   "bypass_technique": "使用%00编码，绕过重定向验证。",
+   "defensive_insight": "对重定向URL进行严格解析和验证，拒绝包含空字节的URL。"
+  },
+  {
+   "id": 214087,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。点击劫持，标准漏洞，无特殊技术点。",
+   "attack_chain": "构造iframe页面→诱导用户点击。",
+   "bypass_technique": "无实质绕过，直接利用缺少X-Frame-Options。",
+   "defensive_insight": "设置X-Frame-Options或CSP frame-ancestors。"
+  },
+  {
+   "id": 1011767,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 配置错误",
+   "reasoning": "是。通过伪造X-Forwarded-For头，使服务器认为请求来自内网，从而访问受限端点。技术点在于服务器信任客户端提供的头，未验证其真实性。与同类报告的区别在于：展示了信任边界错误，且利用简单，可抽象为“不信任客户端可控制的头”的通用原则。",
+   "attack_chain": "发送请求→添加X-Forwarded-For: 127.0.0.1→服务器认为内网→返回受限数据。",
+   "bypass_technique": "伪造X-Forwarded-For头，绕过IP限制。",
+   "defensive_insight": "在可信代理处设置或覆盖X-Forwarded-For，并验证其来源。"
+  },
+  {
+   "id": 406388,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。服务器版本泄露，属于信息收集，无技术含量。",
+   "attack_chain": "访问特定路径→获取服务器版本。",
+   "bypass_technique": "无实质绕过，直接利用信息泄露。",
+   "defensive_insight": "隐藏服务器版本信息。"
+  },
+  {
+   "id": 926093,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "信息泄露",
+   "reasoning": "否。GitHub上泄露密钥，但影响不明确，且报告者自己也不清楚，信息不足。",
+   "attack_chain": "搜索GitHub→发现密钥→可能被利用。",
+   "bypass_technique": "无实质绕过，直接利用公开信息。",
+   "defensive_insight": "定期扫描代码库，防止密钥泄露。"
+  },
+  {
+   "id": 99424,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 类型混淆",
+   "reasoning": "部分。通过修改表单字段实现批量赋值，可能影响CSV导出和账户转让。技术点在于未对提交字段进行严格校验，属于批量赋值漏洞，但影响有限。",
+   "attack_chain": "修改表单→提交额外字段→影响后端处理。",
+   "bypass_technique": "利用批量赋值，注入额外参数。",
+   "defensive_insight": "使用白名单机制，只接受预期字段。"
+  },
+  {
+   "id": 255991,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 其他",
+   "reasoning": "是。利用URL解析差异，使浏览器和Node.js解析结果不同，导致安全设置被绕过。技术点在于不同URL解析器对特殊字符的处理不一致，属于协议行为利用。与同类报告的区别在于：展示了跨组件解析差异，可抽象为“统一URL解析标准”的通用原则。",
+   "attack_chain": "构造特殊URL→浏览器解析为恶意域名→Node.js解析为安全域名→安全设置被绕过。",
+   "bypass_technique": "利用URL解析器差异，通过特殊字符（如反引号）混淆域名。",
+   "defensive_insight": "统一使用WHATWG URL标准，避免解析差异。"
+  },
+  {
+   "id": 270454,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。点击劫持，标准漏洞，无特殊技术点。",
+   "attack_chain": "构造iframe页面→诱导用户点击。",
+   "bypass_technique": "无实质绕过，直接利用缺少X-Frame-Options。",
+   "defensive_insight": "设置X-Frame-Options或CSP frame-ancestors。"
+  },
+  {
+   "id": 1565615,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 其他",
+   "reasoning": "部分。curl允许为尾随点TLD设置cookie，导致cookie发送到无关域名。技术点在于对TLD的解析不严格，属于协议行为利用。虽然已有CVE，但展示了协议实现的细节问题。",
+   "attack_chain": "设置cookie for trailing dot TLD→cookie被发送到其他域名。",
+   "bypass_technique": "利用curl对尾随点TLD的处理，实现cookie注入。",
+   "defensive_insight": "严格验证cookie的域名属性，拒绝尾随点TLD。"
+  }
+ ]
+}

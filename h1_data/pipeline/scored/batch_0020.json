@@ -1,0 +1,334 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 2,
+  "dropped": 18,
+  "avg_score": 3.1,
+  "top_n": [
+   2237099,
+   813159
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 813159,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "认证绕过 / 授权绕过 / 业务逻辑",
+   "reasoning": "部分。邀请链接 URL 明文包含组织名与收件人 ID，篡改邮箱参数后注册即成为该组织管理员——'邀请凭据可篡改且未绑定收件人'的流程授权缺陷，注册流程信任 URL 参数而非邮箱验证，链路由邀请→篡改→注册→管理员完成；非预期点在于'邀请链接即管理员任命书'的设计，但机制本质是邀请 IDOR 变体。",
+   "attack_chain": "收管理员邀请→改 URL 中接收者邮箱→用新邮箱注册→成为该组织管理员。",
+   "bypass_technique": "篡改邀请链接中的邮箱参数，使注册流程把攻击者身份绑定到管理员角色。",
+   "defensive_insight": "邀请 token 与收件人邮箱强绑定且一次性；注册时校验邀请接收者与注册身份一致。"
+  },
+  {
+   "id": 273560,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "认证绕过",
+   "reasoning": "否。生成多个密码重置 token 时旧 token 不失效，全部可用直至被消费——token 轮换/失效管理缺陷的经典问题，无请求细节，informative，机制零变形。",
+   "attack_chain": "生成多个重置 token→任意旧 token 仍可改密。",
+   "bypass_technique": "无绕过，利用旧 token 未失效。",
+   "defensive_insight": "新 token 生成即失效旧 token；重置 token 单次有效+短时效。"
+  },
+  {
+   "id": 301924,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SSRF",
+   "reasoning": "否。GitLab webhook URL 可填内网地址，按响应差异（404 vs refused）扫描端口——webhook SSRF 的经典形态，无绕过技巧（直接填内网 URL），无链。",
+   "attack_chain": "单点：webhook 填 127.0.0.1:port→按响应差异探测内网端口。",
+   "bypass_technique": "无绕过，直接利用未限制的内网目标。",
+   "defensive_insight": "webhook URL 做 SSRF 防护（IP 黑名单+重定向跟随后重校验）；统一错误语义防端口侧信道。"
+  },
+  {
+   "id": 221287,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。特殊 Sass 输入触发 Eval::operator()(Map*) 空指针解引用——解析器对畸形 AST 的空指针经典缺陷，PoC 与 ASAN 完整但仅 DoS，无绕过无链。",
+   "attack_chain": "单点：编译特定 Sass 表达式→求值空指针→崩溃。",
+   "bypass_technique": "无绕过，直接利用解析器缺陷。",
+   "defensive_insight": "求值器对节点类型做防御性判空；fuzz 纳入 CI。"
+  },
+  {
+   "id": 46379,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "授权绕过",
+   "reasoning": "否。群组邀请 API 无权限校验，任何用户凭群组 ID 可给自己发邀请——对象级授权缺失的经典 IDOR，正文极简无请求细节。",
+   "attack_chain": "单点：调 /api/groups/invites 带目标群组 ID→收到邀请进入群组。",
+   "bypass_technique": "无绕过，直接调用未鉴权的邀请端点。",
+   "defensive_insight": "邀请端点校验当前用户对目标群组的成员/邀请权限。"
+  },
+  {
+   "id": 2237099,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链 / 其他",
+   "reasoning": "是。Node.js 18 官方内置 HTTP 服务对 Content-Length 前带空格的畸形头解析错误（未正确识别 CL），请求体被当作下一个请求解析，实现 CL.TE 式请求走私——'官方最新版自带解析器的头部容忍分歧'是框架行为利用，可毒化 socket 影响其他用户请求并窃取会话数据；可抽象为通用判据（任何'解析分歧'都是走私判据），Turbo Intruder 复现与影响演示完整。",
+   "attack_chain": "发送 ' Content-length'（前置空格）头+走私请求→前端按 0 长度、Node 按实际解析→脱同步→污染他人请求/窃会话。",
+   "bypass_technique": "用前置空格的 Content-Length 制造头部解析分歧，走私第二个请求。",
+   "defensive_insight": "HTTP 解析器对畸形头（前置空格/重复 CL）严格拒绝；反代与后端统一头部解析规范。"
+  },
+  {
+   "id": 9919,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SQL注入",
+   "reasoning": "否。vBulletin 搜索的 categoryid 数组参数 updatexml 报错注入提取管理员密码 MD5——经典报错注入，payload 完整但机制零变形。",
+   "attack_chain": "单点：categoryid 注入 updatexml→报错回显提取密码哈希。",
+   "bypass_technique": "无绕过，直接利用报错注入回显。",
+   "defensive_insight": "论坛引擎升级并参数化查询；报错信息不携带 SQL 细节。"
+  },
+  {
+   "id": 674774,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "否。mopub-android-mediation 仓库硬编码 AppLovin API key——公开仓库凭据硬编码经典，可能仅为 mediation 测试 key（影响存疑），无利用演示。",
+   "attack_chain": "单点：搜公开仓库→复用硬编码 API key。",
+   "bypass_technique": "无绕过，直接利用已公开凭据。",
+   "defensive_insight": "SDK/测试仓库密钥一律走密钥管理并做泄露扫描；无效化已泄露 key。"
+  },
+  {
+   "id": 111262,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。CSRF token 登录前后不变，共享工作站场景可被复用——token 生命周期管理缺陷，前置需物理访问工作站，影响场景具体且机制成熟。",
+   "attack_chain": "共享工作站复制 token→对后续登录用户构造 CSRF 请求。",
+   "bypass_technique": "无绕过，利用不轮换的静态 token。",
+   "defensive_insight": "CSRF token 绑定会话并在登录/登出后轮换；会话隔离敏感操作。"
+  },
+  {
+   "id": 147388,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "认证绕过",
+   "reasoning": "否。登出并删除 cookie 后，已窃取的旧 cookie 仍可登录——会话不失效的经典缺陷，需先窃取 cookie 为前提，无技术新意。",
+   "attack_chain": "窃取 cookie→受害者登出→注入旧 cookie 仍可访问。",
+   "bypass_technique": "无绕过，直接利用登出后未失效的会话。",
+   "defensive_insight": "登出服务端销毁会话并轮换 session id；绑定设备指纹降低复用。"
+  },
+  {
+   "id": 1059758,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "认证绕过 / 配置错误",
+   "reasoning": "否。忘记密码的 OTP 验证无速率限制可爆破致 ATO——无防护爆破经典，目标与请求全 REDACTED，技术零变形。",
+   "attack_chain": "单点：触发重置→爆破 OTP→设置新密码接管。",
+   "bypass_technique": "无绕过，直接利用缺失的速率限制。",
+   "defensive_insight": "OTP 校验限速+失败锁定+时效窗口；重置流程绑定会话。"
+  },
+  {
+   "id": 17297,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。CHANGELOG.txt 泄露 Drupal 版本号——纯信息性发现，影响仅辅助信息收集，无技术含量。",
+   "attack_chain": "单点：读 CHANGELOG.txt→获版本→查对应漏洞。",
+   "bypass_technique": "无。",
+   "defensive_insight": "部署基线删除版本说明文件；响应头隐藏 X-Generator 类标识。"
+  },
+  {
+   "id": 530464,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。评论列表页渲染未消毒评论，<script>alert(1)</script> 存储 XSS——经典存储 XSS，步骤完整但机制零变形。",
+   "attack_chain": "发布含 script 的评论→他人打开评论列表页→执行。",
+   "bypass_technique": "无绕过，直接利用未转义输出。",
+   "defensive_insight": "评论渲染统一上下文编码；富文本白名单解析。"
+  },
+  {
+   "id": 1271276,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。重定向脚本把 %0D%0A 反射进响应头，可设置任意 cookie（含父域）——CRLF 注入经典，可做 cookie 固定/CSRF 绕过，payload 简单但机制零变形。",
+   "attack_chain": "单点：URL 注入 Set-Cookie→受害者被种任意 cookie。",
+   "bypass_technique": "无绕过，直接利用未过滤的 CRLF 输入。",
+   "defensive_insight": "重定向 Location 拼接前过滤 CR/LF；响应头注入统一拦截。"
+  },
+  {
+   "id": 95564,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。图片标题存 <marquee><font> 标签，任何访客打开图片页触发——持久 XSS 经典，PoC 完整但机制零变形。",
+   "attack_chain": "图片标题存 HTML→他人访问图片页→渲染执行。",
+   "bypass_technique": "无绕过，直接利用标题未转义。",
+   "defensive_insight": "标题/描述字段输出转义；富文本走白名单。"
+  },
+  {
+   "id": 904059,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。Rails 6.0.3.1 的 /rails/actions 调试端点 location 参数未校验可开放重定向（POST→302）——open redirect 经典，位置在框架调试中间件，影响与 CVE-2020-8185 有差异（POST→GET 跳转可绕 referrer 检查），PoC 完整但机制成熟。",
+   "attack_chain": "单点：构造 POST /rails/actions?location=https://evil→302 跳转。",
+   "bypass_technique": "无绕过，直接利用未校验的重定向参数。",
+   "defensive_insight": "框架调试端点生产禁用；重定向目标做同源校验。"
+  },
+  {
+   "id": 255020,
+   "value_score": 0,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "认证绕过",
+   "reasoning": "无法判断。正文仅一行'重置密码后页面会话被固定'，无任何技术细节，not-applicable。",
+   "attack_chain": "无法确认。",
+   "bypass_technique": "无法确认。",
+   "defensive_insight": "重置密码后必须轮换会话并重新认证。"
+  },
+  {
+   "id": 265775,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "认证绕过",
+   "reasoning": "部分。去掉 token 直接访问 /password-reset 仍可改密——重置流程的 token 校验缺失使'认证凭据'形同虚设，有反直觉性（URL 去掉 token 后功能不变）；但报告步骤简略、无请求细节，前置条件不明（是否需已认证会话），可复现性不足。",
+   "attack_chain": "单点：访问 /password-reset 不带 token→仍进入改密流程。",
+   "bypass_technique": "无绕过，利用重置端点未强制 token 校验。",
+   "defensive_insight": "重置流程所有入口强制校验一次性 token；无 token 一律拒绝并重定向。"
+  },
+  {
+   "id": 77067,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。send-reset-pw.json 对不存在邮箱返回 user not found（code 203）且 1000 请求不限速——用户枚举+无速率限制的经典组合，请求响应完整但机制零变形。",
+   "attack_chain": "单点：批量调重置接口→按 203 响应枚举有效邮箱。",
+   "bypass_technique": "无绕过，直接利用差异化响应。",
+   "defensive_insight": "重置接口统一响应文案并限速；用户枚举与爆破防护联动。"
+  },
+  {
+   "id": 774792,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。搜索参数反射 <script>alert>——经典反射 XSS，目标与参数 REDACTED，无绕过无链。",
+   "attack_chain": "单点：构造恶意搜索词→反射执行。",
+   "bypass_technique": "无绕过，直接利用未转义输出。",
+   "defensive_insight": "搜索词输出统一编码；响应头加 CSP 兜底。"
+  }
+ ]
+}

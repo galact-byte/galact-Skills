@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1448218,
+   409943,
+   1327196,
+   727330,
+   1069039
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1448218,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "是。多个子域名暴露敏感信息（Grafana metrics、SAP 内部信息、AWS bucket listing），虽然每个都是常见配置错误，但组合起来形成跨组件的攻击面，且无需认证即可获取内部网络信息，为后续攻击提供跳板。技术点在于未授权访问和敏感信息聚合。",
+   "attack_chain": "扫描子域名→发现多个暴露端点→获取内部IP、OS、AWS bucket列表→进一步渗透内网。",
+   "bypass_technique": "无绕过，直接利用配置错误。",
+   "defensive_insight": "限制敏感端点访问，禁用目录列表，定期扫描子域名暴露面。"
+  },
+  {
+   "id": 409943,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 框架行为利用",
+   "reasoning": "是。Node.js 的 HTTP 解析器对 URL 中的特殊字符（如 \\u0120）处理不当，导致请求拆分，这是对协议实现的非预期利用。该漏洞影响多个版本，且修复不明确，具有通用性。技术点在于利用 HTTP 解析器的差异。",
+   "attack_chain": "构造恶意URL→Node.js解析错误→请求拆分→注入额外请求。",
+   "bypass_technique": "利用URL中的特殊字符（如 \\u0120）绕过解析器。",
+   "defensive_insight": "升级Node.js到修复版本，严格校验URL输入。"
+  },
+  {
+   "id": 766633,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，payload 直接注入URL，无绕过，无攻击链，属于常见套路。",
+   "attack_chain": "单点：URL注入→反射XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对输出进行编码，使用CSP。"
+  },
+  {
+   "id": 1327196,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / XSS",
+   "reasoning": "是。Rails 的 CSP 仅对 HTML 响应生效，对 image/svg+xml 不生效，导致恶意 SVG 中的 JavaScript 可以执行。这是对框架行为边界的利用，绕过了看似生效的 CSP 策略。技术点在于 CSP 的 Content-Type 限制。",
+   "attack_chain": "上传恶意SVG→发送链接→受害者点击→SVG中JS执行。",
+   "bypass_technique": "利用CSP仅对HTML生效的缺陷，使用SVG绕过。",
+   "defensive_insight": "扩展CSP到所有内容类型，或对SVG进行消毒。"
+  },
+  {
+   "id": 727330,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "SSRF / 协议行为利用",
+   "reasoning": "是。通过 X-Forwarded-Host 头绕过 Host 验证，并利用 @ 符号绕过主机名校验，实现盲 SSRF。该漏洞可扫描内网端口，且服务器来自后端，具有通用性。技术点在于对 X-Forwarded-Host 的信任和 URL 解析差异。",
+   "attack_chain": "上传文件→拦截请求→添加X-Forwarded-Host→绕过验证→SSRF到内网。",
+   "bypass_technique": "使用X-Forwarded-Host和@符号绕过主机校验。",
+   "defensive_insight": "始终信任Host头，忽略X-Forwarded-Host，严格校验URL。"
+  },
+  {
+   "id": 218287,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。使用 Lucky Patcher 等工具绕过应用内购买，属于客户端篡改，常见且无技术含量。",
+   "attack_chain": "单点：客户端篡改→绕过支付。",
+   "bypass_technique": "使用第三方工具修改应用。",
+   "defensive_insight": "服务端验证购买凭证。"
+  },
+  {
+   "id": 1595905,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。存储型XSS，但触发需要管理员预览，且payload简单，属于常见套路，但攻击链涉及低权限用户到管理员，有一定价值。",
+   "attack_chain": "低权限用户注入payload→管理员预览→XSS执行。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对输入进行编码，限制预览权限。"
+  },
+  {
+   "id": 1196989,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，payload 使用 javascript: 协议，但需要用户点击，无绕过，无攻击链。",
+   "attack_chain": "单点：URL注入→用户点击→XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对输出编码，禁止javascript:协议。"
+  },
+  {
+   "id": 1314172,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "认证绕过 / 业务逻辑",
+   "reasoning": "部分。通过修改响应状态绕过OTP验证，属于客户端响应篡改，但需要拦截响应，且影响NIN验证，有一定启发性。",
+   "attack_chain": "提交NIN→拦截响应→修改状态为成功→绕过OTP。",
+   "bypass_technique": "修改响应状态。",
+   "defensive_insight": "服务端验证OTP，不信任客户端响应。"
+  },
+  {
+   "id": 258710,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 其他",
+   "reasoning": "是。Brave 浏览器未执行 file:// 下载限制，允许下载本地文件，这是对浏览器安全策略的绕过，可用于钓鱼。技术点在于浏览器对 download 属性的处理差异。",
+   "attack_chain": "构造恶意页面→诱导点击→下载本地文件→信息泄露。",
+   "bypass_technique": "利用download属性绕过file://限制。",
+   "defensive_insight": "浏览器应统一执行file://下载限制。"
+  },
+  {
+   "id": 570035,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "路径遍历",
+   "reasoning": "否。路径遍历，直接使用../，无绕过，无攻击链，常见。",
+   "attack_chain": "单点：URL包含../→读取任意文件。",
+   "bypass_technique": "无。",
+   "defensive_insight": "过滤../，规范化路径。"
+  },
+  {
+   "id": 1392287,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 配置错误",
+   "reasoning": "部分。删除账户端点无速率限制，可暴力破解密码，但需要受害者已登录，且属于常见问题，但影响严重。",
+   "attack_chain": "受害者登录→攻击者暴力破解密码→删除账户。",
+   "bypass_technique": "无。",
+   "defensive_insight": "添加速率限制和验证码。"
+  },
+  {
+   "id": 417170,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 信息泄露",
+   "reasoning": "是。GraphQL 查询未正确检查权限，无权限员工可获取支付余额，这是对授权机制的绕过，且影响财务数据。技术点在于 GraphQL 的权限缺失。",
+   "attack_chain": "无权限员工→构造GraphQL查询→获取支付信息。",
+   "bypass_technique": "直接调用GraphQL端点，绕过UI权限。",
+   "defensive_insight": "GraphQL解析器应检查权限。"
+  },
+  {
+   "id": 50645,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型XSS，payload 简单，无绕过，无攻击链。",
+   "attack_chain": "单点：注入payload→存储→触发。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对输入编码。"
+  },
+  {
+   "id": 1890719,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "SSRF",
+   "reasoning": "部分。WordPress xmlrpc.php 的 pingback.ping 功能可发起SSRF，但这是已知漏洞，无新意，但影响面广。",
+   "attack_chain": "构造XML-RPC请求→SSRF到内网。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁用xmlrpc或限制请求。"
+  },
+  {
+   "id": 168358,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。点击劫持，缺少X-Frame-Options，常见且无技术含量。",
+   "attack_chain": "单点：iframe嵌入→诱导点击。",
+   "bypass_technique": "无。",
+   "defensive_insight": "添加X-Frame-Options或CSP frame-ancestors。"
+  },
+  {
+   "id": 1198517,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "是。GitLab 自定义 emoji 功能中 src 属性未转义，导致存储型XSS，且需要开启功能标志，但代码审计清晰，技术点在于对HTML属性转义不完整。",
+   "attack_chain": "创建自定义emoji→注入payload→渲染时触发XSS。",
+   "bypass_technique": "利用未转义的src属性。",
+   "defensive_insight": "对属性值进行HTML编码。"
+  },
+  {
+   "id": 177184,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。设置恶意主页导致浏览器崩溃，属于客户端拒绝服务，无技术含量。",
+   "attack_chain": "单点：设置恶意URL→浏览器崩溃。",
+   "bypass_technique": "无。",
+   "defensive_insight": "浏览器应验证URL格式。"
+  },
+  {
+   "id": 1069039,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "信息泄露 / 协议行为利用",
+   "reasoning": "是。HEIC 转 PNG 时保留 GPS 元数据，导致用户隐私泄露，这是对格式转换行为的非预期利用，且影响大量用户。技术点在于元数据清理不完整。",
+   "attack_chain": "上传HEIC→转换PNG→GPS泄露→被爬取。",
+   "bypass_technique": "无。",
+   "defensive_insight": "转换时剥离所有元数据。"
+  },
+  {
+   "id": 221893,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "部分。AngularJS 模板注入，利用 ng-bindable 和表达式执行，属于框架行为利用，但需要特定环境，且payload复杂。",
+   "attack_chain": "单点：搜索框注入Angular表达式→执行JS。",
+   "bypass_technique": "利用AngularJS沙箱绕过。",
+   "defensive_insight": "升级AngularJS或禁用模板注入。"
+  }
+ ]
+}

@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   2248328,
+   211477,
+   221787,
+   91421,
+   173681
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 687908,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。通过 Censys 找到源 IP 并直接访问内部实例，属于典型的配置错误利用，没有绕过或非预期行为。虽然暴露了多个管理面板，但攻击链简单，缺乏启发性。",
+   "attack_chain": "Censys 搜索源 IP → 直接访问 Grafana/PgHero 等实例 → 利用未授权访问或弱口令。",
+   "bypass_technique": "无实质绕过，直接利用源 IP 暴露。",
+   "defensive_insight": "隐藏源 IP，限制管理面板的访问来源，使用 VPN 或 IP 白名单。"
+  },
+  {
+   "id": 221787,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 其他",
+   "reasoning": "是。利用 TLS 会话票据中 SHA512 HMAC 的 OOB 读取导致崩溃，属于协议实现层面的非预期行为。虽然需要特定配置，但攻击方式新颖，且 PoC 清晰。",
+   "attack_chain": "构造畸形 TLS 会话票据 → 服务器解析时 OOB 读取 → 进程崩溃 → DoS。",
+   "bypass_technique": "利用 SHA512 会话票据的边界条件触发 OOB 读取。",
+   "defensive_insight": "升级 OpenSSL 到修复版本，避免使用 SHA512 作为会话票据 HMAC。"
+  },
+  {
+   "id": 181826,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "SQL注入",
+   "reasoning": "部分。经典的布尔盲注，但注入点在 locId 参数，且使用了 CASE WHEN 语句，有一定变形。PoC 完整，但技术点常见。",
+   "attack_chain": "单点：locId 参数 → 布尔盲注 → 提取数据库信息。",
+   "bypass_technique": "无实质绕过，直接利用未过滤参数。",
+   "defensive_insight": "使用参数化查询，对输入进行严格校验。"
+  },
+  {
+   "id": 211477,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 业务逻辑",
+   "reasoning": "是。将多个低危漏洞（CSRF、开放重定向、图片 URL 注入）组合成窃取 Facebook token 的完整攻击链，思路巧妙，展示了如何将看似无用的漏洞串联成高影响攻击。",
+   "attack_chain": "攻击者注册店铺 → 设置恶意图片 URL → 诱导受害者访问恶意页面 → CSRF 登录攻击者店铺和 kitcrm → 重定向到 Facebook OAuth → 受害者授权后返回 kitcrm → 图片请求携带 token 到攻击者服务器。",
+   "bypass_technique": "利用 CSRF 和开放重定向组合，通过图片加载窃取 referrer 中的 token。",
+   "defensive_insight": "严格限制 OAuth redirect_uri，对图片 URL 进行白名单校验，增加 CSRF 防护。"
+  },
+  {
+   "id": 10081,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SQL注入",
+   "reasoning": "否。典型的 Cookie 注入，直接拼接 SQL，无绕过，无攻击链，属于成熟套路。",
+   "attack_chain": "单点：Cookie 参数 → SQL 注入 → 数据泄露。",
+   "bypass_technique": "无实质绕过。",
+   "defensive_insight": "参数化查询，对 Cookie 输入进行过滤。"
+  },
+  {
+   "id": 1198877,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "配置错误",
+   "reasoning": "否。只是链接配置错误，无安全影响，且信息不完整。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "检查并修正链接。"
+  },
+  {
+   "id": 173681,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "子域名接管",
+   "reasoning": "是。经典的子域名接管，但通过付费购买 WordPress 托管实现，展示了低成本高影响的攻击方式。虽然套路常见，但 PoC 完整，且影响明确。",
+   "attack_chain": "发现未映射的 CNAME → 在 WordPress.com 注册并绑定域名 → 完全控制子域名。",
+   "bypass_technique": "利用未删除的 DNS 记录，通过第三方服务接管。",
+   "defensive_insight": "定期清理不再使用的 DNS 记录，监控子域名解析状态。"
+  },
+  {
+   "id": 38157,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "开放重定向",
+   "reasoning": "否。典型的开放重定向，利用 hash 和反斜杠绕过，但无新意，且影响有限。",
+   "attack_chain": "单点：构造 URL → 重定向到恶意站点。",
+   "bypass_technique": "利用反斜杠和路径规范化绕过。",
+   "defensive_insight": "对重定向目标进行白名单校验。"
+  },
+  {
+   "id": 426275,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。DOM XSS 的变体，但只是重复了已知漏洞，没有新意。PoC 清晰，但技术点常见。",
+   "attack_chain": "单点：构造 URL → DOM XSS 执行。",
+   "bypass_technique": "无实质绕过，直接利用未过滤参数。",
+   "defensive_insight": "对 DOM 操作进行输入编码，使用 CSP。"
+  },
+  {
+   "id": 1194293,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "配置错误",
+   "reasoning": "否。只是链接配置错误，无安全影响，且信息不完整。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "检查并修正链接。"
+  },
+  {
+   "id": 159498,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "是。利用 MIME 嗅探绕过文件类型限制，实现存储型 XSS，并窃取员工会话。展示了如何利用浏览器行为绕过防护，且 PoC 完整。",
+   "attack_chain": "上传恶意 SVG 文件 → 员工打开时触发 XSS → 窃取 Cookie 和 IP。",
+   "bypass_technique": "利用 IE 的 MIME 嗅探，将文本文件解析为 SVG。",
+   "defensive_insight": "设置正确的 Content-Type，禁用 MIME 嗅探，对上传文件进行严格校验。"
+  },
+  {
+   "id": 506644,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "SQL注入",
+   "reasoning": "部分。npm 包中的 SQL 注入，属于供应链漏洞，但技术点常见。PoC 完整，但影响范围有限。",
+   "attack_chain": "单点：orderby 参数 → 盲注 → 数据泄露。",
+   "bypass_technique": "无实质绕过，直接利用未转义参数。",
+   "defensive_insight": "使用参数化查询，对输入进行严格校验。"
+  },
+  {
+   "id": 45516,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "开放重定向",
+   "reasoning": "否。典型的开放重定向，利用路径规范化绕过，但无新意。",
+   "attack_chain": "单点：构造 URL → 重定向到恶意站点。",
+   "bypass_technique": "利用路径中的点号绕过。",
+   "defensive_insight": "对重定向目标进行白名单校验。"
+  },
+  {
+   "id": 2248328,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "反序列化 / 跨组件攻击链",
+   "reasoning": "是。通过 Cookie 中的反序列化漏洞，利用 WordPress 插件中的 Monolog 链实现 RCE，展示了如何将多个组件组合成完整攻击链。PoC 完整，影响严重。",
+   "attack_chain": "构造恶意 Cookie → 触发 unserialize → 利用 Monolog 链 → 执行系统命令。",
+   "bypass_technique": "利用 PHP 反序列化漏洞，通过 gadget chain 实现 RCE。",
+   "defensive_insight": "避免对用户输入进行反序列化，使用安全的序列化格式，更新依赖库。"
+  },
+  {
+   "id": 997070,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。典型的缺少速率限制，导致邮件轰炸，属于常见业务逻辑漏洞，无新意。",
+   "attack_chain": "单点：重复请求 → 发送大量邮件。",
+   "bypass_technique": "无实质绕过，直接利用缺少速率限制。",
+   "defensive_insight": "增加速率限制，对邮件发送进行频率控制。"
+  },
+  {
+   "id": 1739099,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "反序列化",
+   "reasoning": "部分。已知 CVE 的利用，但提供了完整的 PoC 和攻击链，展示了如何利用 Logback 的漏洞。技术点常见，但 PoC 完整。",
+   "attack_chain": "发送恶意序列化对象 → 触发反序列化 → RCE。",
+   "bypass_technique": "利用 Logback 的 SocketServer 反序列化漏洞。",
+   "defensive_insight": "升级 Logback 到修复版本，对反序列化数据进行过滤。"
+  },
+  {
+   "id": 1039315,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SQL注入",
+   "reasoning": "否。典型的 time-based 盲注，无绕过，无攻击链，属于成熟套路。",
+   "attack_chain": "单点：search 参数 → 时间盲注 → 数据泄露。",
+   "bypass_technique": "无实质绕过。",
+   "defensive_insight": "使用参数化查询。"
+  },
+  {
+   "id": 91421,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "是。利用 Flash 的按钮事件与 HTML 内容之间的竞争条件，通过快速重载绕过事件拦截，实现 XSS。思路巧妙，展示了如何利用时序问题绕过限制。",
+   "attack_chain": "构造恶意 SWF 参数 → 快速重载 → 点击时触发 XSS。",
+   "bypass_technique": "利用重载竞争条件，在按钮事件接管前触发 HTML 事件。",
+   "defensive_insight": "将 SWF 文件隔离到独立域名，避免直接注入参数。"
+  },
+  {
+   "id": 1330455,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。只是公开的敏感文件，无绕过，无攻击链，属于配置错误。",
+   "attack_chain": "单点：直接访问公开文件。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对敏感文件进行访问控制，定期审计。"
+  },
+  {
+   "id": 1173593,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。已知 CVE 的利用，无新意，且信息被大量打码，无法判断具体细节。",
+   "attack_chain": "单点：构造 URL → 反射 XSS。",
+   "bypass_technique": "无实质绕过。",
+   "defensive_insight": "升级组件，对输入进行编码。"
+  }
+ ]
+}

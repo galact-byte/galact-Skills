@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1865991,
+   1976449,
+   756149,
+   345162,
+   927567
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 288966,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。POODLE 是公开多年的 SSLv3 漏洞，利用 nmap 脚本扫描即可发现，无任何绕过或创新，属于成熟套路。",
+   "attack_chain": "单点：扫描 SMTP 服务器 SSLv3 支持 → 利用 POODLE 进行 padding oracle 攻击。",
+   "bypass_technique": "无实质绕过，直接利用过时协议。",
+   "defensive_insight": "禁用 SSLv3，启用 TLS1.2+。"
+  },
+  {
+   "id": 1865991,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 认证绕过",
+   "reasoning": "是。Rails 7.0 引入的 open redirect 防护被精心构造的 URL 绕过，属于框架安全机制的反直觉行为。该绕过可抽象为通用判断条件，影响所有使用该版本的 Rails 应用，具有高通用性。",
+   "attack_chain": "构造特殊 URL → 绕过 redirect_to 的开放重定向检查 → 用户被重定向到恶意站点。",
+   "bypass_technique": "利用 URL 解析差异，如包含特殊字符或编码，使 Rails 的验证逻辑失效。",
+   "defensive_insight": "框架应使用严格的 URL 解析库，并允许开发者配置允许的重定向白名单。"
+  },
+  {
+   "id": 221631,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "子域名接管",
+   "reasoning": "部分。子域名接管是常见漏洞，但该报告展示了完整的 PoC（注册 Tumblr 博客），且 CNAME 指向第三方服务，属于配置错误导致的接管，思路清晰但非全新。",
+   "attack_chain": "发现 CNAME 指向 Tumblr → 注册未使用的子域名 → 完全控制该子域名。",
+   "bypass_technique": "利用第三方服务未认领的子域名。",
+   "defensive_insight": "定期检查 DNS 记录，删除不再使用的 CNAME，或使用通配符证书。"
+  },
+  {
+   "id": 1976449,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "缓存投毒 / 跨组件攻击链",
+   "reasoning": "是。通过 X-Forwarded-Host 头导致后端 404，并利用缓存配置错误将错误响应缓存，实现持久化 DoS。该攻击链涉及请求头、后端处理和缓存层，跨组件且可无限期维持，具有高启发性。",
+   "attack_chain": "发送带恶意 X-Forwarded-Host 的请求 → 后端返回 404 → 缓存服务器缓存该响应 → 所有用户访问被缓存页面 → 服务不可用。",
+   "bypass_technique": "利用缓存键未包含 X-Forwarded-Host，导致缓存投毒。",
+   "defensive_insight": "缓存服务器应忽略 X-Forwarded-Host 或将其纳入缓存键，并限制后端错误响应的缓存。"
+  },
+  {
+   "id": 591786,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型 XSS 通过上传 HTML 文件触发，属于常见攻击方式，无特殊绕过或创新。",
+   "attack_chain": "上传恶意 HTML 文件 → 点击文件触发 XSS → 窃取 cookie。",
+   "bypass_technique": "无实质绕过，直接利用文件上传功能。",
+   "defensive_insight": "对上传文件进行内容安全检测，并设置正确的 Content-Disposition 和 CSP。"
+  },
+  {
+   "id": 756149,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "SSRF / 配置错误",
+   "reasoning": "是。利用 Sentry 默认开启的 source code scraping 功能，通过构造恶意请求触发服务器发起 GET 请求，实现盲 SSRF。该攻击链涉及第三方组件配置和服务器行为，具有跨组件特性，且思路新颖。",
+   "attack_chain": "构造恶意 Sentry 事件 → 服务器解析 filename 参数 → 发起 GET 请求到攻击者控制的服务器 → 实现 SSRF。",
+   "bypass_technique": "利用 Sentry 的 source code scraping 功能，通过 filename 参数控制请求目标。",
+   "defensive_insight": "关闭 Sentry 的 source code scraping 功能，或对 filename 参数进行白名单校验。"
+  },
+  {
+   "id": 345162,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 信息泄露",
+   "reasoning": "是。通过遍历 blob_id 参数，未授权访问服务器上的所有文件，包括邮件和日志。该漏洞属于 IDOR 的变体，但影响范围大，且展示了如何通过简单参数遍历获取敏感信息，具有启发性。",
+   "attack_chain": "获取 blob_id 参数 → 遍历 ID → 下载任意文件 → 泄露敏感信息。",
+   "bypass_technique": "无实质绕过，直接利用不安全的直接对象引用。",
+   "defensive_insight": "实施严格的访问控制，对 blob_id 进行所有权验证，并使用不可预测的 ID。"
+  },
+  {
+   "id": 799898,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "部分。通过 GitHub 搜索泄露的凭据，进而访问 Gitlab 实例，属于配置错误导致的凭据泄露。攻击链涉及多个组件，但思路较为直接，无特殊绕过。",
+   "attack_chain": "GitHub 搜索泄露的凭据 → 使用默认用户名和密码登录 Gitlab → 获得管理员权限。",
+   "bypass_technique": "利用公开泄露的凭据。",
+   "defensive_insight": "定期扫描公开代码仓库，避免提交敏感信息，并实施多因素认证。"
+  },
+  {
+   "id": 1886143,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "信息泄露",
+   "reasoning": "否。报告描述的是 HackerOne 平台上的信息泄露问题，但未提供具体技术细节，且涉及第三方公司，无法判断真实性。",
+   "attack_chain": "无明确攻击链。",
+   "bypass_technique": "无。",
+   "defensive_insight": "平台应审查公开报告，避免泄露第三方敏感信息。"
+  },
+  {
+   "id": 220774,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。API 最后请求时间未更新，属于功能缺陷，无安全影响，且无绕过或攻击链。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "确保 API 审计日志正确记录。"
+  },
+  {
+   "id": 696360,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。debug.log 文件暴露服务器路径，属于配置错误，无绕过或创新。",
+   "attack_chain": "直接访问 debug.log → 获取路径信息。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁止将日志文件放在 Web 根目录下。"
+  },
+  {
+   "id": 109483,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过",
+   "reasoning": "部分。只读用户组可以请求公开披露，属于权限校验缺失，绕过逻辑简单但影响明确，思路清晰。",
+   "attack_chain": "创建只读用户组 → 登录该用户 → 对关闭的报告请求公开披露 → 权限绕过。",
+   "bypass_technique": "利用权限校验缺失。",
+   "defensive_insight": "在服务端严格校验用户权限，确保只读用户不能执行写操作。"
+  },
+  {
+   "id": 124889,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "框架行为利用 / 钓鱼",
+   "reasoning": "部分。利用 target=\"_blank\" 的 opener 属性修改父页面 URL，属于浏览器行为利用，可导致钓鱼攻击。思路有一定启发性，但属于已知技术。",
+   "attack_chain": "在报告中插入恶意链接 → 用户点击 → 父页面 URL 被修改 → 钓鱼。",
+   "bypass_technique": "利用 window.opener 对象。",
+   "defensive_insight": "为所有外部链接添加 rel=\"noopener noreferrer\"。"
+  },
+  {
+   "id": 107358,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS 通过 Cookie 注入，属于常见类型，无特殊绕过。",
+   "attack_chain": "构造恶意 Cookie → 触发 XSS → 执行脚本。",
+   "bypass_technique": "无实质绕过，直接利用未过滤的 Cookie 输入。",
+   "defensive_insight": "对 Cookie 输入进行编码和过滤。"
+  },
+  {
+   "id": 90805,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。银行账号在 GitHub 上泄露，属于配置错误，无技术含量。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "避免在公开平台发布敏感信息。"
+  },
+  {
+   "id": 356566,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 业务逻辑",
+   "reasoning": "部分。通过不同邮箱联系支持团队获取报告状态，属于身份验证缺失，思路简单但影响明确。",
+   "attack_chain": "使用不同邮箱联系支持 → 获取未公开报告的状态。",
+   "bypass_technique": "利用支持团队未验证用户身份。",
+   "defensive_insight": "支持团队应验证用户身份后再提供信息。"
+  },
+  {
+   "id": 2011431,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 业务逻辑",
+   "reasoning": "部分。CSV 导出功能泄露内部描述，属于功能设计缺陷，思路清晰但无绕过。",
+   "attack_chain": "导出 CSV → 查看内部描述。",
+   "bypass_technique": "无。",
+   "defensive_insight": "在导出功能中过滤内部字段。"
+  },
+  {
+   "id": 988272,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。存储型 XSS 通过邮件内容注入，绕过 CSP 的尝试展示了攻击者的思路，但未完全绕过，属于常见类型。",
+   "attack_chain": "构造恶意邮件内容 → 受害者查看邮件 → XSS 执行。",
+   "bypass_technique": "尝试绕过 CSP，但未成功。",
+   "defensive_insight": "对邮件内容进行严格过滤，并实施 CSP。"
+  },
+  {
+   "id": 927567,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 授权绕过",
+   "reasoning": "是。通过修改 GraphQL 请求中的主题 ID，绕过付费主题的购买限制，实现未购买即可发布。该漏洞展示了业务逻辑中的 IDOR 问题，且 PoC 完整，具有启发性。",
+   "attack_chain": "安装免费主题 → 获取付费主题 ID → 修改发布请求中的 ID → 发布付费主题。",
+   "bypass_technique": "利用不安全的直接对象引用，修改 ID 参数。",
+   "defensive_insight": "在服务端验证主题的购买状态，并确保 ID 不可预测。"
+  },
+  {
+   "id": 1948562,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。目录列表暴露日志文件，属于配置错误，无技术含量。",
+   "attack_chain": "直接访问目录 → 下载日志文件。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁用目录列表，并保护日志文件。"
+  }
+ ]
+}

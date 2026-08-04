@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   240821,
+   195088,
+   163338,
+   384477,
+   1690093
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 2424815,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "路径遍历",
+   "reasoning": "否。直接使用双斜杠绕过路径拼接，属于经典路径遍历变形，无新意。PoC 简单，但技术点常见，无绕过现代防御或跨组件。",
+   "attack_chain": "单点：URL 双斜杠导致路径拼接错误，读取 /etc/shadow。",
+   "bypass_technique": "双斜杠绕过路径规范化。",
+   "defensive_insight": "严格校验请求路径，禁止包含 .. 或双斜杠，使用白名单。"
+  },
+  {
+   "id": 1320976,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑 / 配置错误",
+   "reasoning": "否。IP 轮换绕过速率限制是常见思路，无新意。报告主要依赖外部资源（VPN），无技术绕过。",
+   "attack_chain": "单点：登录接口 IP 限速，攻击者轮换 IP 绕过。",
+   "bypass_technique": "IP 轮换（IPv6 子网）。",
+   "defensive_insight": "基于账户或设备指纹限速，引入验证码。"
+  },
+  {
+   "id": 240821,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 授权绕过",
+   "reasoning": "是。服务端完全未验证 Facebook 认证 token，仅凭用户提供的 email 即可创建会话，属于认证逻辑缺失。技术点在于信任客户端提供的身份信息，可抽象为通用判断条件。",
+   "attack_chain": "攻击者构造请求，指定受害者 email，获取有效 token，接管账户。",
+   "bypass_technique": "伪造 Facebook 认证请求，不提供有效 token。",
+   "defensive_insight": "服务端必须验证第三方认证 token 的有效性，并关联用户身份。"
+  },
+  {
+   "id": 195088,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。API 删除操作作用于共享资源而非关联关系，导致任意用户可删除公共部署密钥。技术点在于对象关系与资源本身的混淆，可抽象为通用授权检查缺陷。",
+   "attack_chain": "普通用户启用公共密钥→通过 API 删除密钥对象→影响所有使用该密钥的项目。",
+   "bypass_technique": "利用 API 删除操作未区分资源与关联关系。",
+   "defensive_insight": "删除操作应验证用户对资源的权限，并区分删除关联与删除资源本身。"
+  },
+  {
+   "id": 2078527,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 框架行为利用",
+   "reasoning": "部分。利用大小写不敏感绕过垃圾回收端点限制，属于框架行为利用，但技术点简单，无跨组件。",
+   "attack_chain": "单点：请求 /api/METRICS 绕过 /api/metrics 的访问控制。",
+   "bypass_technique": "大小写变换绕过 URL 匹配。",
+   "defensive_insight": "统一 URL 规范化，使用大小写不敏感匹配。"
+  },
+  {
+   "id": 124173,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "认证绕过",
+   "reasoning": "否。删除验证码参数即可绕过，属于常见参数篡改，无新意。",
+   "attack_chain": "单点：登录请求去掉 g-recaptcha-response 参数。",
+   "bypass_technique": "参数删除。",
+   "defensive_insight": "服务端强制校验验证码参数存在且有效。"
+  },
+  {
+   "id": 1429148,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "子域名接管",
+   "reasoning": "部分。子域名接管是常见漏洞，但利用 GitHub Pages 未认领域名，PoC 完整，可复现。",
+   "attack_chain": "单点：DNS 指向未认领的 GitHub Pages，攻击者认领并托管恶意内容。",
+   "bypass_technique": "无绕过，直接利用配置错误。",
+   "defensive_insight": "定期检查 DNS 记录，删除未使用的子域名。"
+  },
+  {
+   "id": 1014593,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "CSRF / XSS",
+   "reasoning": "部分。CSRF 链接触发存储型 HTML 注入，属于组合攻击，但技术点常见。",
+   "attack_chain": "CSRF 表单提交恶意 keyword 参数→存储型 HTML 注入→受害者访问页面执行。",
+   "bypass_technique": "CSRF 绕过同源策略，利用 POST 请求存储注入。",
+   "defensive_insight": "对输入进行 HTML 编码，CSRF 令牌验证。"
+  },
+  {
+   "id": 1690093,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "配置错误 / 权限提升",
+   "reasoning": "是。利用 daemon 模式下的 umask 0 导致文件可写，结合符号链接和 DAG 注入实现权限提升。技术点在于默认配置不安全，可抽象为通用配置审计。",
+   "attack_chain": "本地用户利用 umask 0 创建符号链接→诱导 Airflow 写入恶意 DAG→重启后执行代码。",
+   "bypass_technique": "符号链接替换日志文件，利用不安全 umask。",
+   "defensive_insight": "设置安全 umask，限制文件权限，避免使用 daemon 模式或加强隔离。"
+  },
+  {
+   "id": 7051,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。CSRF 创建账户是常见漏洞，无新意。",
+   "attack_chain": "单点：CSRF 表单提交创建账户。",
+   "bypass_technique": "无绕过，直接利用 CSRF。",
+   "defensive_insight": "添加 CSRF 令牌，验证 Origin 头。"
+  },
+  {
+   "id": 809212,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。S3 桶无 ACL 是常见配置错误，无技术含量。",
+   "attack_chain": "单点：直接访问 S3 桶，下载/上传文件。",
+   "bypass_technique": "无绕过，直接利用配置错误。",
+   "defensive_insight": "配置 S3 桶 ACL，禁止公共读写。"
+  },
+  {
+   "id": 163338,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "是。利用 vCard 的 PHOTO 字段控制 Content-Type 和内容，实现 XSS。技术点在于对用户输入的直接信任，可抽象为通用输入验证缺陷。",
+   "attack_chain": "上传恶意 VCF→访问 photo 端点→浏览器解析为 HTML 执行脚本。",
+   "bypass_technique": "控制 Content-Type 为空，绕过 CSP。",
+   "defensive_insight": "对上传文件内容进行严格校验，固定 Content-Type，使用白名单。"
+  },
+  {
+   "id": 384477,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "整数溢出 / 堆溢出",
+   "reasoning": "是。32 位系统下整数溢出绕过长度检查，导致堆溢出。技术点在于整数溢出与内存安全结合，可抽象为通用边界检查缺陷。",
+   "attack_chain": "构造恶意 EXIF 数据→触发整数溢出→堆溢出→可能 RCE。",
+   "bypass_technique": "整数溢出绕过长度检查。",
+   "defensive_insight": "使用安全整数运算，检查溢出，使用 64 位系统。"
+  },
+  {
+   "id": 318068,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。SSH 弱算法是常见配置问题，无新意。",
+   "attack_chain": "单点：SSH 支持弱算法，可被中间人攻击。",
+   "bypass_technique": "无绕过，直接利用配置错误。",
+   "defensive_insight": "禁用弱算法，升级 SSH 版本。"
+  },
+  {
+   "id": 1245972,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "点击劫持",
+   "reasoning": "否。缺少 X-Frame-Options 是常见配置问题，无新意。",
+   "attack_chain": "单点：iframe 嵌入目标页面。",
+   "bypass_technique": "无绕过，直接利用配置错误。",
+   "defensive_insight": "添加 X-Frame-Options 或 CSP frame-ancestors。"
+  },
+  {
+   "id": 222096,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。路径泄露是常见信息泄露，无新意。",
+   "attack_chain": "单点：访问日志端点泄露路径。",
+   "bypass_technique": "无绕过，直接访问。",
+   "defensive_insight": "限制日志访问，隐藏敏感路径。"
+  },
+  {
+   "id": 50170,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 0
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用 TLS 导出级加密套件和客户端库的缺陷，实现服务器冒充。技术点在于协议设计的历史遗留问题，可抽象为通用协议审计。",
+   "attack_chain": "中间人攻击→降级到 EXPORT_RSA→破解 512 位密钥→冒充服务器。",
+   "bypass_technique": "利用客户端接受 EXPORT_RSA 的缺陷。",
+   "defensive_insight": "禁用 EXPORT 套件，升级客户端库。"
+  },
+  {
+   "id": 309058,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "开放重定向",
+   "reasoning": "部分。利用 @ 符号构造 URL，属于常见开放重定向变形，但技术点简单。",
+   "attack_chain": "单点：构造 /@google.com 触发 301 重定向到外部。",
+   "bypass_technique": "URL 解析差异。",
+   "defensive_insight": "严格校验重定向目标，使用白名单。"
+  },
+  {
+   "id": 77221,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "开放重定向",
+   "reasoning": "否。开放重定向是常见漏洞，无新意。",
+   "attack_chain": "单点：构造 return_path=//google.com 触发重定向。",
+   "bypass_technique": "无绕过，直接利用参数。",
+   "defensive_insight": "校验重定向参数，使用白名单。"
+  },
+  {
+   "id": 1083231,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。反射型 XSS 是常见漏洞，但 PoC 完整，可复现。",
+   "attack_chain": "单点：构造恶意 URL 触发 XSS。",
+   "bypass_technique": "无绕过，直接利用未过滤参数。",
+   "defensive_insight": "对输出进行编码，使用 CSP。"
+  }
+ ]
+}

@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   341876,
+   307675,
+   526325,
+   578119,
+   114476
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 526325,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "是。利用 Wiki 特有的层级链接 Markdown 语法，将 `.` 转换为 `javascript:`，从而绕过 XSS 过滤。这种利用框架自身转换逻辑的方式，产生了'原来还能这样'的感受。技术点在于 GitLab 的 Markdown 渲染器对层级链接的解析，将相对路径 `.` 转换为 `javascript:` 协议，导致原本安全的链接变成可执行脚本。与普通存储型 XSS 不同，它利用了应用自身的功能特性，而非简单的输入过滤缺陷。",
+   "attack_chain": "创建 Wiki 页面，标题设为 `javascript:`，内容为 `[XSS](.alert(1);)` → 点击链接触发 XSS。",
+   "bypass_technique": "利用 Wiki 层级链接语法，将 `.` 转换为 `javascript:` 协议，绕过链接协议白名单。",
+   "defensive_insight": "对 Markdown 渲染后的链接进行协议白名单校验，禁止 `javascript:` 等危险协议；对 Wiki 层级链接的转换结果进行安全过滤。"
+  },
+  {
+   "id": 307675,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 认证绕过",
+   "reasoning": "是。通过让受害者 fork 攻击者的 gist，攻击者可以声称拥有受害者的 GitHub 句柄，从而在 Keybase 上冒充受害者。这种利用社交工程和平台信任链的漏洞，产生了'原来还能这样'的感受。技术点在于 Keybase 验证 GitHub 所有权时，未检查 gist 是否为 fork，导致 fork 的 gist 也被视为所有权证明。与普通身份验证绕过不同，它利用了平台间的信任关系和用户行为，而非直接攻击认证机制。",
+   "attack_chain": "攻击者创建包含验证代码的 gist → 诱导受害者 fork → Keybase 验证时误认为攻击者拥有受害者句柄 → 攻击者冒充受害者。",
+   "bypass_technique": "利用 Keybase 未检查 gist 是否为 fork 的缺陷，通过 fork 攻击者的 gist 来伪造所有权证明。",
+   "defensive_insight": "在验证 GitHub 所有权时，应检查 gist 是否为 fork，并确保验证代码由用户本人创建；同时，对所有权验证过程进行更严格的上下文检查。"
+  },
+  {
+   "id": 341876,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "SSRF / 跨组件攻击链",
+   "reasoning": "是。通过 SSRF 访问 Google Cloud Metadata 服务，利用 v1beta1 端点绕过 Metadata-Flavor 头限制，进而获取 kube-env 中的 Kubelet 证书和密钥，最终通过 Kubernetes API 执行任意命令。这种从 SSRF 到 RCE 的完整攻击链，产生了'原来还能这样'的感受。技术点在于利用 Google Cloud Metadata 的 v1beta1 端点不需要特殊头，以及 Kubernetes 的 kube-env 属性未启用 metadata concealment。与普通 SSRF 不同，它展示了如何将 SSRF 升级为集群级 RCE，且攻击链完整、可复用。",
+   "attack_chain": "创建商店 → 修改模板为恶意 JS → 通过 Exchange 截图触发 SSRF → 访问 metadata 获取 token → 递归获取 kube-env → 使用 Kubelet 证书访问 Kubernetes API → 创建 pod 并获取 service account token → 在容器内执行命令。",
+   "bypass_technique": "利用 Google Cloud Metadata v1beta1 端点无需 Metadata-Flavor 头；通过递归参数获取 kube-env；利用 Kubelet 证书和密钥认证 Kubernetes API。",
+   "defensive_insight": "启用 metadata concealment；限制 SSRF 访问内网；对截图服务进行出站流量控制；对 Kubernetes API 进行严格的 RBAC 和网络策略。"
+  },
+  {
+   "id": 81083,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。通过 JSON 响应泄露内部赏金和 swag 信息，属于常见的信息泄露类型，没有绕过或攻击链。技术点在于 API 响应中包含了未公开的字段，但这是典型的配置错误或信息泄露，启发性低。",
+   "attack_chain": "单点：访问 API 端点 → 响应中包含内部信息。",
+   "bypass_technique": "无实质绕过，直接利用未过滤的 API 响应。",
+   "defensive_insight": "对 API 响应进行字段级权限控制，避免泄露内部配置信息。"
+  },
+  {
+   "id": 39428,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 代码注入",
+   "reasoning": "是。通过路径遍历设置 Phame 博客的皮肤路径，导致 LFI，进而可能实现 RCE。这种利用路径遍历加载任意 PHP 文件的方式，产生了'原来还能这样'的感受。技术点在于 Phabricator 未对皮肤路径进行规范化，允许 `../` 跳出根目录。与普通 LFI 不同，它结合了文件上传和路径遍历，形成完整的攻击链。",
+   "attack_chain": "上传恶意 PHP 文件到 /tmp → 设置皮肤路径为 ../../../../tmp/test → 访问博客时加载恶意 PHP 文件 → 执行代码。",
+   "bypass_technique": "利用路径遍历绕过皮肤路径限制，加载任意 PHP 文件。",
+   "defensive_insight": "对皮肤路径进行规范化，禁止包含 `..` 的路径；限制皮肤文件只能从指定目录加载。"
+  },
+  {
+   "id": 1174185,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "反序列化",
+   "reasoning": "否。利用已知 CVE-2019-18935 进行反序列化攻击，属于成熟套路，没有新的绕过或攻击链。技术点在于 Telerik UI 的已知漏洞，但报告只是复现已知漏洞，启发性低。",
+   "attack_chain": "确认上传处理器 → 识别版本 → 上传恶意 DLL → 触发反序列化 → RCE。",
+   "bypass_technique": "无实质绕过，直接利用已知 CVE。",
+   "defensive_insight": "升级 Telerik UI 到最新版本；对上传文件进行严格校验。"
+  },
+  {
+   "id": 138244,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 信息泄露",
+   "reasoning": "部分。通过 `context=edit` 参数绕过访问控制，获取所有用户详细信息。这种利用 API 上下文参数绕过权限检查的方式，产生了'原来还能这样'的感受。技术点在于 WP REST API 插件未对 'edit' 上下文进行权限验证。与普通信息泄露不同，它利用了 API 设计缺陷，但攻击链简单。",
+   "attack_chain": "单点：发送 GET /wp-json/wp/v2/users?context=edit → 获取用户详细信息。",
+   "bypass_technique": "利用 API 的 context 参数绕过权限检查。",
+   "defensive_insight": "对 API 的 context 参数进行权限验证，确保只有授权用户才能访问敏感上下文。"
+  },
+  {
+   "id": 143076,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告声称存在 Header Injection 和 DoS，但实际只是发送超长请求导致 500 错误，没有明确的注入点或安全影响。技术点不明确，且 substate 为 informative，信息不足。",
+   "attack_chain": "单点：发送超长请求 → 服务器返回 500。",
+   "bypass_technique": "无实质绕过。",
+   "defensive_insight": "限制请求头大小，避免资源耗尽。"
+  },
+  {
+   "id": 1057419,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS，路径参数未过滤，属于常见套路。技术点在于错误页面反射路径，没有绕过或攻击链。",
+   "attack_chain": "单点：访问恶意 URL → 路径反射 → XSS。",
+   "bypass_technique": "无实质绕过，直接利用未过滤的路径。",
+   "defensive_insight": "对错误页面中的路径进行 HTML 编码。"
+  },
+  {
+   "id": 1841408,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。通过错误消息泄露服务器路径，属于常见的信息泄露，没有绕过或攻击链。技术点在于 SMTP 配置错误导致异常堆栈泄露，启发性低。",
+   "attack_chain": "单点：触发邮件发送失败 → 错误消息包含路径。",
+   "bypass_technique": "无实质绕过，直接利用配置错误。",
+   "defensive_insight": "在生产环境禁用详细错误消息，避免泄露内部路径。"
+  },
+  {
+   "id": 578119,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "竞争条件 / 权限提升",
+   "reasoning": "是。利用 logrotate 的竞争条件，将日志目录替换为符号链接，从而以 root 权限写入任意文件，实现权限提升。这种利用系统工具行为缺陷的方式，产生了'原来还能这样'的感受。技术点在于 logrotate 在轮转日志时未正确处理符号链接，导致可以写入任意目录。与普通权限提升不同，它利用了系统工具的固有缺陷，且攻击链完整。",
+   "attack_chain": "以 git 用户创建日志文件 → 运行 logrotten 等待轮转 → 替换目录为符号链接 → logrotate 以 root 写入恶意文件 → 触发恶意代码 → 获得 root shell。",
+   "bypass_technique": "利用 logrotate 的竞争条件，通过符号链接替换目录，使 logrotate 以 root 权限写入任意文件。",
+   "defensive_insight": "确保日志目录的所有权为 root，并在 logrotate 配置中使用 'su' 指令；对 logrotate 的路径进行规范化检查。"
+  },
+  {
+   "id": 1069034,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "其他",
+   "reasoning": "部分。这是一个 CTF 挑战的 writeup，包含多种漏洞利用，如路径遍历、SQL 注入、XSS 等。虽然攻击链复杂，但属于 CTF 场景，实际应用价值有限。技术点在于多种漏洞的组合利用，但启发性一般。",
+   "attack_chain": "多步：从 robots.txt 发现 flag → 通过路径遍历读取源码 → 利用 SQL 注入获取凭据 → 通过 DNS rebinding 攻击内部服务。",
+   "bypass_technique": "利用路径遍历、SQL 注入、DNS rebinding 等多种技术。",
+   "defensive_insight": "对输入进行严格过滤，避免路径遍历和 SQL 注入；对内部服务进行访问控制。"
+  },
+  {
+   "id": 16568,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。SSL 证书验证失败，属于常见的配置错误，没有绕过或攻击链。技术点在于未验证证书信任链，启发性低。",
+   "attack_chain": "单点：连接自定义服务器 → 未验证证书 → 中间人攻击。",
+   "bypass_technique": "无实质绕过，直接利用配置错误。",
+   "defensive_insight": "确保所有 SSL 连接都验证证书信任链。"
+  },
+  {
+   "id": 154425,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "子域名接管",
+   "reasoning": "部分。通过 Fastly 服务取消后未删除 DNS 记录，导致子域名接管。这种利用服务生命周期管理缺陷的方式，产生了'原来还能这样'的感受。技术点在于 DNS 记录残留，但风险较低，且报告信息有限。",
+   "attack_chain": "单点：发现未使用的 Fastly 域名 → 创建 Fastly 实例 → 接管域名。",
+   "bypass_technique": "无实质绕过，直接利用配置错误。",
+   "defensive_insight": "在取消服务时及时清理 DNS 记录；定期审计域名所有权。"
+  },
+  {
+   "id": 114476,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XXE / 协议行为利用",
+   "reasoning": "是。通过 XML 外部实体注入，利用 Java 的 FTP 协议特性进行数据外带，实现了文件读取和端口扫描。这种利用协议行为进行数据外带的方式，产生了'原来还能这样'的感受。技术点在于 Java 的 XML 解析器支持外部实体，且 FTP 协议可用于数据外带。与普通 XXE 不同，它展示了如何利用协议特性进行更广泛的影响。",
+   "attack_chain": "构造恶意 XML → 包含外部实体 → 服务器解析时读取本地文件或发起请求 → 通过 FTP 外带数据。",
+   "bypass_technique": "利用 XML 外部实体和 FTP 协议进行数据外带。",
+   "defensive_insight": "禁用 XML 外部实体；对 XML 解析进行安全配置。"
+  },
+  {
+   "id": 9460,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告声称存在 OAuth 漏洞，但实际只是尝试绕过失败，没有明确漏洞。技术点不明确，信息不足。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "无。"
+  },
+  {
+   "id": 52982,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "授权绕过",
+   "reasoning": "否。使用泄露的 access token 操作其他用户的 watchlater 列表，属于常见的授权绕过，没有新的技术点。技术点在于 token 泄露，但报告未说明如何获取 token，且攻击链简单。",
+   "attack_chain": "单点：使用泄露的 token → 操作其他用户数据。",
+   "bypass_technique": "无实质绕过，直接利用泄露的 token。",
+   "defensive_insight": "确保 access token 的安全存储和传输；对 API 请求进行严格的权限验证。"
+  },
+  {
+   "id": 783356,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。密码长度无限制导致 DoS，属于常见的资源耗尽问题，没有绕过或攻击链。技术点在于未限制密码长度，启发性低。",
+   "attack_chain": "单点：创建超长密码 → 服务器资源耗尽。",
+   "bypass_technique": "无实质绕过，直接利用配置缺陷。",
+   "defensive_insight": "对密码长度进行限制，防止资源耗尽。"
+  },
+  {
+   "id": 348090,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 协议行为利用",
+   "reasoning": "是。通过篡改 HTTP 方法和 URL 路径，绕过签名保护，删除任意身份或关联。这种利用签名覆盖范围缺陷的方式，产生了'原来还能这样'的感受。技术点在于签名只覆盖 body 和 Authorization 头，而 URL 路径和 HTTP 方法未受保护。与普通授权绕过不同，它利用了协议设计缺陷，且可抽象为通用判断条件。",
+   "attack_chain": "截获正常请求 → 修改 HTTP 方法为 DELETE → 修改 URL 路径为目标身份 → 发送请求 → 删除身份。",
+   "bypass_technique": "利用签名未覆盖 URL 路径和 HTTP 方法的缺陷，篡改请求以执行未授权操作。",
+   "defensive_insight": "确保签名覆盖所有关键请求参数，包括 URL 路径和 HTTP 方法；对请求进行完整性校验。"
+  },
+  {
+   "id": 196222,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。利用 RTLO 字符伪装文件扩展名，属于常见的 UI 欺骗，没有绕过或攻击链。技术点在于未过滤 Unicode 控制字符，启发性低。",
+   "attack_chain": "单点：发送包含 RTLO 字符的消息 → 用户误点击恶意链接。",
+   "bypass_technique": "无实质绕过，直接利用未过滤的 Unicode 字符。",
+   "defensive_insight": "过滤或转义 Unicode 控制字符，防止 UI 欺骗。"
+  }
+ ]
+}

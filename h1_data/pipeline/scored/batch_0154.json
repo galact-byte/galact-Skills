@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1741430,
+   1590071,
+   684152,
+   1017576,
+   530458
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1741430,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 框架行为利用",
+   "reasoning": "是。通过深链接触发桌面客户端发起任意POST请求，利用token和路径未编码的缺陷，将请求重定向到内部API并注入参数，实现创建管理员账户。技术点在于客户端对深链接参数的处理不当，以及路径穿越和参数注入的组合，绕过修复补丁并引入CSRF。",
+   "attack_chain": "恶意深链接→客户端解析token和relPath→未编码拼接→请求路径穿越至内部API→POST参数注入→创建管理员账户。",
+   "bypass_technique": "利用token和relPath未编码，通过路径穿越改变请求目标，并通过参数注入构造任意POST body。",
+   "defensive_insight": "对深链接参数进行严格编码和验证，使用白名单校验请求目标，避免将用户输入直接拼接到URL和请求体中。"
+  },
+  {
+   "id": 1133118,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。账户删除后别名邮箱仍可接收邮件，属于典型的账户生命周期管理缺陷，无绕过或攻击链，思路常见。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "删除账户时应同时注销关联的别名邮箱，确保数据彻底清除。"
+  },
+  {
+   "id": 971304,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，通过修改路径参数绕过长度限制，属于常见绕过手法，无新意。",
+   "attack_chain": "单点：路径参数→反射→XSS。",
+   "bypass_technique": "通过修改路径中的数字值绕过长度限制。",
+   "defensive_insight": "对路径参数进行严格过滤和编码，限制输入长度并验证格式。"
+  },
+  {
+   "id": 145265,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "内存破坏",
+   "reasoning": "部分。直接调用内部函数导致内存破坏，属于对API非预期使用的利用，但无绕过，且为已知CVE，启发性中等。",
+   "attack_chain": "单点：直接调用retrieveOpportunityGenerators()→内存破坏。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对内部函数进行参数验证，避免直接暴露敏感API。"
+  },
+  {
+   "id": 247246,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "是。通过构造畸形HTML标签绕过正则过滤，实现DOM XSS，绕过方式巧妙，但属于常见XSS绕过。",
+   "attack_chain": "单点：参数→stripHtml正则绕过→DOM XSS。",
+   "bypass_technique": "使用`<a/:`等畸形标签绕过正则。",
+   "defensive_insight": "使用更健壮的HTML净化库，避免基于正则的过滤。"
+  },
+  {
+   "id": 146735,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。内容欺骗，无实际攻击链，且报告自述为informative，信息不足。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对404页面进行内容过滤，避免反射用户输入。"
+  },
+  {
+   "id": 145150,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 业务逻辑",
+   "reasoning": "部分。通过公开邀请码枚举UUID，并绕过设备限制，属于业务逻辑缺陷，但思路常见。",
+   "attack_chain": "公开邀请码→注册请求→响应泄露inviter_uuid→批量枚举。",
+   "bypass_technique": "通过随机化设备参数绕过每设备3账户限制。",
+   "defensive_insight": "不要在响应中泄露敏感UUID，对邀请码进行访问控制，限制注册频率。"
+  },
+  {
+   "id": 42154,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "IDOR",
+   "reasoning": "否。通过修改PID参数查看他人邮箱，典型的IDOR，无绕过。",
+   "attack_chain": "单点：修改PID→查看他人邮箱。",
+   "bypass_technique": "无。",
+   "defensive_insight": "使用会话中的UID而非URL参数进行授权。"
+  },
+  {
+   "id": 861170,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "DoS",
+   "reasoning": "否。通过重复Accept-Encoding头导致后端延迟，属于配置错误，无绕过。",
+   "attack_chain": "单点：重复头→后端处理异常→502。",
+   "bypass_technique": "无。",
+   "defensive_insight": "规范请求头处理，限制重复头。"
+  },
+  {
+   "id": 1017576,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / SQL注入",
+   "reasoning": "是。通过构造`1 OR 2`等输入，利用后端SQL拼接，实现订单枚举，绕过正常查询逻辑，思路巧妙。",
+   "attack_chain": "订单查询接口→注入OR条件→枚举订单。",
+   "bypass_technique": "利用OR操作符绕过订单号验证。",
+   "defensive_insight": "使用参数化查询，对输入进行严格验证，增加速率限制。"
+  },
+  {
+   "id": 197878,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。WordPress已知漏洞，无新意。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "升级WordPress。"
+  },
+  {
+   "id": 495525,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 跨组件攻击链",
+   "reasoning": "是。通过XSSI泄露私有文章标题，利用JSONP端点，属于跨组件信息泄露，思路有启发性。",
+   "attack_chain": "恶意页面→加载JSONP→读取全局变量→泄露标题。",
+   "bypass_technique": "利用JSONP回调泄露数据。",
+   "defensive_insight": "对敏感数据端点进行认证和CSRF保护，避免使用JSONP。"
+  },
+  {
+   "id": 298990,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。静态文件未认证即可访问，属于配置错误，无绕过。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对敏感目录进行认证和访问控制。"
+  },
+  {
+   "id": 950845,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，通过HTML编码绕过，常见。",
+   "attack_chain": "单点：路径参数→反射→XSS。",
+   "bypass_technique": "HTML编码绕过过滤。",
+   "defensive_insight": "对输出进行上下文感知编码。"
+  },
+  {
+   "id": 1590071,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 内存破坏",
+   "reasoning": "是。利用GSSAPI错误处理缺陷，注入FTP响应，并导致堆内存泄露，属于协议行为利用，跨组件。",
+   "attack_chain": "恶意FTP服务器→gss_unwrap错误→注入响应→控制会话/泄露堆内存。",
+   "bypass_technique": "利用错误处理不完善，注入伪造响应。",
+   "defensive_insight": "正确处理GSSAPI错误，避免使用未初始化缓冲区。"
+  },
+  {
+   "id": 150540,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。密码修改后未销毁会话，常见会话管理缺陷。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "密码修改后应销毁所有会话。"
+  },
+  {
+   "id": 243277,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "SSRF",
+   "reasoning": "部分。通过webhook触发SSRF，探测内网，但属于常见SSRF利用。",
+   "attack_chain": "创建webhook→触发→访问内网。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对webhook URL进行SSRF防护，黑名单内网地址。"
+  },
+  {
+   "id": 530458,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 业务逻辑",
+   "reasoning": "是。通过富文本嵌入中的javascript URI触发存储型XSS，绕过过滤，且可针对管理员，思路巧妙。",
+   "attack_chain": "构造嵌入→存储XSS→点击触发→窃取信息/执行操作。",
+   "bypass_technique": "利用javascript URI绕过URL过滤。",
+   "defensive_insight": "对嵌入内容进行严格白名单验证，禁止javascript协议。"
+  },
+  {
+   "id": 587687,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "IDOR",
+   "reasoning": "部分。通过修改projectId参数更新他人文件夹名，典型IDOR，但无绕过。",
+   "attack_chain": "单点：修改projectId→更新他人文件夹。",
+   "bypass_technique": "无。",
+   "defensive_insight": "服务端校验资源所有权。"
+  },
+  {
+   "id": 684152,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 跨组件攻击链",
+   "reasoning": "是。利用flap.kick缺乏参数验证，创建虚假拍卖，在清算阶段窃取MKR，属于智能合约逻辑漏洞，跨组件攻击链。",
+   "attack_chain": "创建虚假拍卖→触发清算→yank提取MKR。",
+   "bypass_technique": "利用bid参数未验证，构造任意金额。",
+   "defensive_insight": "对关键函数参数进行严格验证，确保拍卖状态一致性。"
+  }
+ ]
+}

@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   894569,
+   1382919,
+   1954658,
+   1400238,
+   589739
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 226203,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "部分。利用IE不支持CSP绕过现代防御，属于浏览器行为差异，但依赖特定浏览器，通用性差。",
+   "attack_chain": "存储XSS→IE执行→窃取会话",
+   "bypass_technique": "利用IE不支持CSP绕过内容安全策略",
+   "defensive_insight": "服务端应进行输入过滤，不依赖客户端CSP"
+  },
+  {
+   "id": 15047,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。仅提及浏览器扩展可自动填充验证码，无实际攻击步骤或验证，信息不足。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "使用服务端验证码校验，不依赖客户端"
+  },
+  {
+   "id": 894569,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 跨组件攻击链",
+   "reasoning": "是。利用GitLab镜像触发管道时，账户删除后管道触发者变为其他owner，从而以受害者身份运行攻击者控制的CI脚本，窃取CI_JOB_TOKEN。跨组件、多步、可抽象为通用条件。",
+   "attack_chain": "创建恶意仓库→镜像到受害者拥有的项目→删除账户→触发管道→以受害者身份运行恶意CI→窃取token",
+   "bypass_technique": "利用账户删除后管道触发者身份转移，结合镜像更新触发管道",
+   "defensive_insight": "管道触发应验证用户身份，删除账户时清理相关权限"
+  },
+  {
+   "id": 114389,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。使用已知漏洞插件，无新意，直接利用。",
+   "attack_chain": "利用已知插件漏洞上传文件",
+   "bypass_technique": "无",
+   "defensive_insight": "及时更新插件，移除不必要组件"
+  },
+  {
+   "id": 386596,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "部分。账户删除后邮箱未完全解除关联，导致可重新注册并继承旧数据，但属于常见数据清理不彻底问题。",
+   "attack_chain": "删除账户→重新注册→旧邮箱关联",
+   "bypass_technique": "无",
+   "defensive_insight": "账户删除时应彻底清除关联数据"
+  },
+  {
+   "id": 399174,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 信息泄露",
+   "reasoning": "部分。利用API密钥未重置，即使被移除仍可访问报告，属于权限残留，思路清晰但依赖管理员忘记重置。",
+   "attack_chain": "记录API密钥→被移除→利用密钥访问报告",
+   "bypass_technique": "利用未重置的API密钥",
+   "defensive_insight": "用户移除时自动重置API密钥"
+  },
+  {
+   "id": 1400238,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 框架行为利用",
+   "reasoning": "是。CVE-2021-41773修复不完整，利用编码绕过路径遍历，属于框架行为利用，可通用。",
+   "attack_chain": "构造编码路径→遍历目录→读取文件或执行CGI",
+   "bypass_technique": "使用编码绕过路径过滤",
+   "defensive_insight": "升级Apache，严格限制路径规范化"
+  },
+  {
+   "id": 1954658,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 状态混淆",
+   "reasoning": "是。libcurl的CURLOPT_POSTFIELDS未重置upload标志，导致POST被当作PUT发送，属于API行为利用，可通用。",
+   "attack_chain": "设置POSTFIELDS→未重置upload→发送PUT而非POST",
+   "bypass_technique": "利用libcurl选项间状态未重置",
+   "defensive_insight": "修复libcurl，确保选项间状态正确重置"
+  },
+  {
+   "id": 1487793,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "子域名接管",
+   "reasoning": "否。经典子域名接管，无新意。",
+   "attack_chain": "CNAME指向未使用服务→注册域名",
+   "bypass_technique": "无",
+   "defensive_insight": "定期清理DNS记录"
+  },
+  {
+   "id": 1042746,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SQL注入",
+   "reasoning": "否。时间盲注，成熟套路。",
+   "attack_chain": "参数注入sleep函数",
+   "bypass_technique": "无",
+   "defensive_insight": "参数化查询"
+  },
+  {
+   "id": 170301,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "部分。无效用户名临时显示，但无实际危害，属于UI状态问题。",
+   "attack_chain": "输入无效用户名→临时显示",
+   "bypass_technique": "无",
+   "defensive_insight": "服务端验证并回滚"
+  },
+  {
+   "id": 589739,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 资源消耗",
+   "reasoning": "是。多种HTTP/2 DoS攻击，利用协议特性导致资源耗尽，可通用。",
+   "attack_chain": "发送特定HTTP/2帧序列→内存/CPU耗尽",
+   "bypass_technique": "利用HTTP/2窗口、优先级等机制",
+   "defensive_insight": "限制并发流、控制帧大小、优化内存管理"
+  },
+  {
+   "id": 224072,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 状态混淆",
+   "reasoning": "部分。通过Google Auth添加邮箱后删除，再重新添加，导致两个账户共享邮箱，属于状态混淆。",
+   "attack_chain": "添加邮箱→删除→重新添加→两个账户共享",
+   "bypass_technique": "利用邮箱验证状态未清除",
+   "defensive_insight": "邮箱关联应唯一，删除时解除所有关联"
+  },
+  {
+   "id": 126109,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "CSV注入 / 信息泄露",
+   "reasoning": "部分。利用CSV公式注入，可导致数据泄露或代码执行，但需要管理员权限，且依赖用户点击。",
+   "attack_chain": "设置恶意用户名→导出CSV→用户点击→执行公式",
+   "bypass_technique": "利用CSV公式注入",
+   "defensive_insight": "过滤CSV中的公式字符"
+  },
+  {
+   "id": 685344,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "路径遍历 / 信息泄露",
+   "reasoning": "部分。直接路径遍历读取文件，但无绕过，属于常见漏洞。",
+   "attack_chain": "构造路径参数→读取文件",
+   "bypass_technique": "无",
+   "defensive_insight": "限制文件访问路径"
+  },
+  {
+   "id": 1690044,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "IDOR / 信息泄露",
+   "reasoning": "部分。经典IDOR，但PoC完整，可复现。",
+   "attack_chain": "修改VendorId参数→访问他人数据",
+   "bypass_technique": "无",
+   "defensive_insight": "实施访问控制检查"
+  },
+  {
+   "id": 120293,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "IDOR",
+   "reasoning": "否。经典IDOR，无新意。",
+   "attack_chain": "修改ID参数→获取认证信息",
+   "bypass_technique": "无",
+   "defensive_insight": "实施访问控制"
+  },
+  {
+   "id": 1382919,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 配置错误",
+   "reasoning": "是。利用ingress-nginx的alias配置注入，读取service account token，跨组件（ingress到pod），可通用。",
+   "attack_chain": "创建恶意ingress→注入nginx配置→访问token→提升权限",
+   "bypass_technique": "利用nginx alias配置注入",
+   "defensive_insight": "限制ingress注解，验证路径"
+  },
+  {
+   "id": 774050,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。无速率限制导致邮件轰炸，常见。",
+   "attack_chain": "重复请求发送邮件",
+   "bypass_technique": "无",
+   "defensive_insight": "实施速率限制"
+  },
+  {
+   "id": 2467999,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。凭据泄露在公开渠道，无技术含量。",
+   "attack_chain": "搜索公开文件→获取凭据",
+   "bypass_technique": "无",
+   "defensive_insight": "避免在公开渠道存储凭据"
+  }
+ ]
+}

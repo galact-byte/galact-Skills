@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   364904,
+   1131465,
+   193143,
+   291522,
+   449356
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1131465,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 框架行为利用",
+   "reasoning": "是。利用 Windows 路径解析中反斜杠与正斜杠的等价性，在 Tempfile 的 basename 参数中注入反斜杠路径穿越，绕过看似安全的临时文件创建逻辑。技术点在于框架未对 Windows 特有路径分隔符进行规范化，导致任意文件写入。区别于普通路径遍历，这是对跨平台框架行为差异的利用，可抽象为通用判断条件。",
+   "attack_chain": "构造恶意 basename 参数（含反斜杠穿越）→ Tempfile 创建文件到任意目录 → 可能结合其他漏洞实现 RCE。",
+   "bypass_technique": "利用 Windows 路径解析中反斜杠与正斜杠的等价性，在 basename 参数中注入反斜杠路径穿越。",
+   "defensive_insight": "在 Windows 上对路径参数进行规范化，拒绝包含路径分隔符的 basename；使用安全的临时文件 API。"
+  },
+  {
+   "id": 229909,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。缺少删除账户后的邮件通知，属于功能缺失，非安全漏洞。无攻击链，无绕过，无安全影响。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "确保账户删除等敏感操作有通知机制。"
+  },
+  {
+   "id": 193143,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "内存破坏 / 框架行为利用",
+   "reasoning": "是。mruby 的 String#replace 在自替换时发生 use-after-free，导致内存内容被覆盖。技术点在于对同一对象进行原地替换时，释放了原缓冲区但未正确处理自引用，属于典型的自赋值 UAF。区别于普通 UAF，这是对语言运行时内部行为的利用，可抽象为通用判断条件。",
+   "attack_chain": "构造自替换字符串 → 触发 UAF → 内存内容被覆盖 → 可能导致任意代码执行。",
+   "bypass_technique": "利用 String#replace 自替换时的 UAF，通过释放后重用覆盖内存。",
+   "defensive_insight": "在替换操作中检测自引用，避免释放后使用；对字符串操作进行边界检查。"
+  },
+  {
+   "id": 364904,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 协议行为利用",
+   "reasoning": "是。利用 Monero 交易中 tx pubkey 重复出现导致金额重复计算，从而虚报收款金额。技术点在于协议允许重复字段，而钱包逻辑未去重，导致金额放大。区别于普通逻辑漏洞，这是对协议字段重复性的利用，可抽象为通用判断条件，且攻击链完整。",
+   "attack_chain": "构造含重复 tx pubkey 的交易 → 接收方钱包重复计算金额 → 虚报收款 → 诈骗交易所。",
+   "bypass_technique": "在交易 extra 字段中重复添加 tx pubkey，导致接收方钱包重复计算金额。",
+   "defensive_insight": "在解析交易时对 tx pubkey 去重；对金额计算进行严格校验。"
+  },
+  {
+   "id": 1516520,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。备份文件直接暴露在 web 根目录，属于典型配置错误。无绕过，无攻击链，成熟套路。",
+   "attack_chain": "直接访问备份文件 → 下载 → 获取源码和数据库凭据。",
+   "bypass_technique": "无",
+   "defensive_insight": "备份文件不应放在 web 可访问目录；定期清理敏感文件。"
+  },
+  {
+   "id": 183568,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 授权绕过",
+   "reasoning": "是。通过修改 original_file 参数实现任意文件删除，绕过仅能删除头像的限制。技术点在于未对文件路径进行充分验证，允许路径穿越。区别于普通路径遍历，这是对业务逻辑中文件操作参数的滥用，可抽象为通用判断条件。",
+   "attack_chain": "上传头像 → 拦截裁剪请求 → 修改 original_file 为任意文件路径 → 删除目标文件。",
+   "bypass_technique": "利用路径穿越修改 original_file 参数，删除任意文件。",
+   "defensive_insight": "对文件路径进行严格验证，限制在指定目录内；使用随机文件名。"
+  },
+  {
+   "id": 14747,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。开放代理，属于配置错误。无绕过，无攻击链，成熟套路。",
+   "attack_chain": "直接使用代理服务器访问任意网站。",
+   "bypass_technique": "无",
+   "defensive_insight": "关闭不必要的开放代理功能。"
+  },
+  {
+   "id": 49357,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 加密问题",
+   "reasoning": "是。仅凭 remember_user_token 即可访问用户数据，且该 token 可预测性高。技术点在于会话认证仅依赖单一 cookie，且 token 生成存在时间相关性。区别于普通认证绕过，这是对 token 生成机制的统计分析，可抽象为通用判断条件。",
+   "attack_chain": "获取 remember_user_token → 直接访问用户数据 → 绕过完整会话认证。",
+   "bypass_technique": "利用 remember_user_token 的弱随机性，通过统计分析预测 token。",
+   "defensive_insight": "使用强随机数生成 token；会话认证应同时验证多个因素。"
+  },
+  {
+   "id": 688270,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "命令注入 / 配置错误",
+   "reasoning": "是。通过绕过 CVE-2019-5475 的补丁，利用 ${IFS} 绕过空格过滤，实现命令注入。技术点在于补丁未完全过滤所有危险字符，可被绕过。区别于普通命令注入，这是对补丁的绕过，可抽象为通用判断条件。",
+   "attack_chain": "配置 Yum 能力 → 注入恶意命令 → 执行系统命令。",
+   "bypass_technique": "使用 ${IFS} 代替空格，绕过命令注入过滤。",
+   "defensive_insight": "对命令参数进行白名单校验，避免拼接用户输入；使用安全的进程执行方式。"
+  },
+  {
+   "id": 291522,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "是。通过 DNS 劫持和参数注入，将恶意脚本加载到受信任域，实现 XSS。技术点在于利用参数 v 未验证，结合 DNS 重绑定和用户代理匹配，跨组件攻击链完整。区别于普通 XSS，这是对 DNS 和浏览器行为的利用，可抽象为通用判断条件。",
+   "attack_chain": "控制 DNS → 劫持 img.imgsmail.ru → 注入恶意脚本 → 执行 XSS。",
+   "bypass_technique": "利用 DNS 重绑定和参数注入，加载恶意脚本。",
+   "defensive_insight": "严格验证参数；对加载资源进行完整性校验；使用 CSP。"
+  },
+  {
+   "id": 1354334,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。错误信息泄露完整路径，属于常见信息泄露。无绕过，无攻击链，成熟套路。",
+   "attack_chain": "触发错误 → 获取完整路径。",
+   "bypass_technique": "无",
+   "defensive_insight": "在生产环境隐藏详细错误信息。"
+  },
+  {
+   "id": 7357,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。Host 头未验证导致开放重定向，属于常见配置错误。无绕过，无攻击链，成熟套路。",
+   "attack_chain": "构造恶意 Host 头 → 触发重定向。",
+   "bypass_technique": "无",
+   "defensive_insight": "验证 Host 头，使用白名单。"
+  },
+  {
+   "id": 1337178,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 开放重定向",
+   "reasoning": "部分。通过修改 objectId 参数，使分享位置打开任意 URL，属于业务逻辑漏洞。技术点在于未对 objectId 进行验证，可被滥用。区别于普通开放重定向，这是对分享功能的滥用，可抽象为通用判断条件。",
+   "attack_chain": "分享位置 → 修改 objectId → 用户点击地图 → 打开恶意 URL。",
+   "bypass_technique": "利用未验证的 objectId 参数，实现任意 URL 打开。",
+   "defensive_insight": "对分享内容进行严格验证，限制 URL 协议。"
+  },
+  {
+   "id": 1015283,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "部分。通过 referrer 泄露预览链接，绕过密码保护。技术点在于未设置 referrer 策略，导致敏感链接泄露。区别于普通信息泄露，这是对 referrer 行为的利用，可抽象为通用判断条件。",
+   "attack_chain": "点击社交链接 → referrer 泄露预览链接 → 未授权访问。",
+   "bypass_technique": "利用 referrer 泄露敏感链接。",
+   "defensive_insight": "设置 referrer 策略，避免泄露敏感信息。"
+  },
+  {
+   "id": 449356,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "类型混淆 / 认证绕过",
+   "reasoning": "是。通过传递数组作为 api_key 参数，使 SQL 查询变为 IN 子句，大幅提高暴力破解效率。技术点在于类型混淆导致 SQL 语义变化，可抽象为通用判断条件。区别于普通暴力破解，这是对类型处理的利用，可抽象为通用判断条件。",
+   "attack_chain": "构造数组 api_key → SQL 查询变为 IN 子句 → 提高暴力破解效率。",
+   "bypass_technique": "利用类型混淆，将 api_key 参数改为数组，使查询变为 IN 子句。",
+   "defensive_insight": "严格校验参数类型，避免类型混淆；使用参数化查询。"
+  },
+  {
+   "id": 683298,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "开放重定向 / XSS",
+   "reasoning": "部分。通过 next 参数实现开放重定向，且支持 javascript URI 导致 XSS。技术点在于未对 next 参数进行协议限制。区别于普通开放重定向，这是对 javascript URI 的利用，可抽象为通用判断条件。",
+   "attack_chain": "构造恶意 next 参数 → 登录后重定向到恶意 URL。",
+   "bypass_technique": "利用 javascript URI 实现 XSS。",
+   "defensive_insight": "对重定向参数进行白名单校验，禁止 javascript 协议。"
+  },
+  {
+   "id": 901775,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 跨组件攻击链",
+   "reasoning": "是。通过 apps 权限获取 analytics token，进而访问报告数据，绕过权限限制。技术点在于权限分离不彻底，可跨组件利用。区别于普通授权绕过，这是对权限模型的利用，可抽象为通用判断条件。",
+   "attack_chain": "获取 apps 权限 → 提取 analytics token → 访问报告数据。",
+   "bypass_technique": "利用 apps 权限提取 analytics token，绕过权限限制。",
+   "defensive_insight": "严格分离权限，确保 token 不泄露。"
+  },
+  {
+   "id": 16935,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 协议行为利用",
+   "reasoning": "部分。通过 CRLF 注入控制 SMS 内容，实现自定义短信发送。技术点在于未对用户输入进行过滤，导致 CRLF 注入。区别于普通注入，这是对短信服务的滥用，可抽象为通用判断条件。",
+   "attack_chain": "构造恶意参数 → 注入 CRLF → 发送自定义短信。",
+   "bypass_technique": "利用 CRLF 注入控制短信内容。",
+   "defensive_insight": "对用户输入进行严格过滤，禁止 CRLF 字符。"
+  },
+  {
+   "id": 318399,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。profile_metrics.json 泄露 triage 时间，属于信息泄露。无绕过，无攻击链，成熟套路。",
+   "attack_chain": "直接访问 profile_metrics.json → 获取敏感信息。",
+   "bypass_technique": "无",
+   "defensive_insight": "确保敏感数据在关闭时不被泄露。"
+  },
+  {
+   "id": 223435,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。开放 SMTP 端口，属于配置错误。无绕过，无攻击链，成熟套路。",
+   "attack_chain": "直接连接 SMTP 端口 → 发送钓鱼邮件。",
+   "bypass_technique": "无",
+   "defensive_insight": "限制 SMTP 端口访问，实施邮件安全策略。"
+  }
+ ]
+}

@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   986386,
+   1727221,
+   1702859,
+   642515,
+   199779
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 2263294,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "配置错误",
+   "reasoning": "否。报告描述了一个云电脑实例可能对所有人可访问，但关键信息大量打码，且未提供清晰的访问路径或验证步骤。无法判断是否为真实漏洞，信息不足。",
+   "attack_chain": "未明确。",
+   "bypass_technique": "无。",
+   "defensive_insight": "确保云电脑实例的访问控制严格，定期审计。"
+  },
+  {
+   "id": 415967,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 授权绕过",
+   "reasoning": "是。利用 noopener 弹窗绕过浏览器对 chrome:// 页面的导航限制，违反 SOP，且可能升级为 RCE。技术点在于对弹窗属性行为的利用，思路新颖。",
+   "attack_chain": "构造恶意页面→用户点击→打开 chrome://brave 特权页面→可能进一步利用。",
+   "bypass_technique": "使用 noopener 属性的弹窗绕过导航限制。",
+   "defensive_insight": "浏览器应限制从 Web 内容导航到特权页面，或对 noopener 弹窗进行额外检查。"
+  },
+  {
+   "id": 1702859,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "反序列化 / 框架行为利用",
+   "reasoning": "是。Kredis 使用 JSON.load 导致意外反序列化，可加载任意类，若加载 json/add/core 可反序列化正则表达式等，引发 ReDoS。技术点在于对 JSON.load 行为的滥用，通用性强。",
+   "attack_chain": "用户输入→存入 Kredis→读取时 JSON.load 反序列化→触发 ReDoS 或意外对象。",
+   "bypass_technique": "利用 JSON.load 的类加载特性，通过构造 json_class 字段。",
+   "defensive_insight": "使用 JSON.parse 替代 JSON.load，或限制可反序列化的类。"
+  },
+  {
+   "id": 423506,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 跨组件攻击链",
+   "reasoning": "部分。通过图片标签设置 cookie 实现 CSRF 式攻击，利用 Shopify 联盟计划的信任链，获取商店信息。技术点在于利用 GET 请求设置 cookie 和业务逻辑缺陷，思路有启发性。",
+   "attack_chain": "攻击者嵌入图片链接→受害者访问设置 cookie→受害者注册商店→攻击者获取商店信息。",
+   "bypass_technique": "利用图片标签跨域设置 cookie，无需用户交互。",
+   "defensive_insight": "对设置 cookie 的请求进行 CSRF 防护，或限制联盟计划的敏感信息访问。"
+  },
+  {
+   "id": 345,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告内容混乱，包含无关链接和占位符，无法判断具体漏洞。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "无。"
+  },
+  {
+   "id": 642515,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 状态混淆",
+   "reasoning": "是。通过重命名文件夹绕过同步客户端的权限检查，导致未授权用户覆盖共享文件夹内容。技术点在于利用同步客户端的本地状态与服务器权限不一致，思路巧妙。",
+   "attack_chain": "创建临时文件夹→重命名为受限文件夹名→同步覆盖服务器内容。",
+   "bypass_technique": "利用同步客户端的重命名操作绕过权限检查。",
+   "defensive_insight": "同步客户端应重新验证权限，或服务器端应拒绝覆盖操作。"
+  },
+  {
+   "id": 1918362,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 授权绕过",
+   "reasoning": "部分。通过 API 端点泄露协作者邮箱，属于 IDOR 类问题，但技术点在于对参与者列表的访问控制缺失，思路常规但可复现。",
+   "attack_chain": "邀请未注册用户→查看参与者列表→泄露邮箱。",
+   "bypass_technique": "直接访问未授权端点。",
+   "defensive_insight": "对参与者列表进行权限校验，确保只有报告相关人员可访问。"
+  },
+  {
+   "id": 358112,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "路径遍历 / 配置错误",
+   "reasoning": "部分。正则表达式缺少 $ 导致路径遍历，属于常见漏洞但利用方式有轻微变形，可读取任意文件。",
+   "attack_chain": "构造 URL 包含 .markdown 和 ../ → 读取任意文件。",
+   "bypass_technique": "利用正则表达式缺陷绕过文件类型检查。",
+   "defensive_insight": "正确使用正则表达式锚点，并过滤路径遍历字符。"
+  },
+  {
+   "id": 1727221,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 认证绕过",
+   "reasoning": "是。利用 CSRF 漏洞在 OAuth 流程中劫持授权，将受害者账户链接到攻击者账户，进而通过 Tray.io GraphQL 访问受害者数据。技术点在于对 OAuth state 参数和 CSRF 保护的绕过，攻击链完整。",
+   "attack_chain": "攻击者构造恶意链接→受害者点击→授权攻击者→攻击者通过 GraphQL 访问受害者数据。",
+   "bypass_technique": "利用 CSRF 漏洞，通过预生成的授权链接诱导受害者授权。",
+   "defensive_insight": "加强 OAuth 流程的 CSRF 防护，验证 state 参数，并限制授权回调的跨域。"
+  },
+  {
+   "id": 56936,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 授权绕过",
+   "reasoning": "部分。通过修改请求中的用户 ID 泄露其他商店的员工信息，属于 IDOR 类问题，但利用方式有轻微变形，可枚举用户。",
+   "attack_chain": "修改请求中的用户 ID→系统返回受害者信息。",
+   "bypass_technique": "直接修改参数值。",
+   "defensive_insight": "对用户 ID 进行所有权验证。"
+  },
+  {
+   "id": 864091,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS，参数直接输出，无绕过，成熟套路。",
+   "attack_chain": "构造 URL→触发 XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "输入过滤和输出编码。"
+  },
+  {
+   "id": 241610,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用",
+   "reasoning": "部分。ap_find_token() 缓冲区过度读取，属于协议解析缺陷，可导致崩溃或错误值。技术点在于对 HTTP 解析行为的利用，但影响有限。",
+   "attack_chain": "构造恶意请求头→触发缓冲区过度读取。",
+   "bypass_technique": "利用解析器缺陷。",
+   "defensive_insight": "修复解析器边界检查。"
+  },
+  {
+   "id": 986386,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用 Wistia 脚本的 prototype pollution 注入 HTML，再通过 CSP 允许的 cloudflare 加载 AngularJS 绕过 CSP，实现 XSS。技术点在于对 prototype pollution 和 CSP 白名单的利用，攻击链完整。",
+   "attack_chain": "构造 URL 触发 prototype pollution→注入 HTML→加载 AngularJS 绕过 CSP→执行脚本。",
+   "bypass_technique": "利用 prototype pollution 设置 innerHTML，并利用 CSP 允许的域名加载 AngularJS。",
+   "defensive_insight": "修复第三方脚本的 prototype pollution，收紧 CSP 白名单。"
+  },
+  {
+   "id": 89624,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS，参数直接输出，无绕过，成熟套路。",
+   "attack_chain": "构造 URL→触发 XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "输入过滤和输出编码。"
+  },
+  {
+   "id": 1087382,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "认证绕过",
+   "reasoning": "部分。移动应用缺少密码确认，可删除或出售商店，属于认证绕过，但需要物理访问，场景有限。",
+   "attack_chain": "物理访问设备→进入设置→删除商店。",
+   "bypass_technique": "利用移动应用缺少密码确认。",
+   "defensive_insight": "在移动应用中增加敏感操作的二次认证。"
+  },
+  {
+   "id": 1753224,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。CVE-2022-35260 是已知漏洞，报告仅引用，无新意。",
+   "attack_chain": "提供恶意 netrc 文件→触发越界访问。",
+   "bypass_technique": "无。",
+   "defensive_insight": "修复已知漏洞。"
+  },
+  {
+   "id": 272097,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。整数溢出导致越界写，属于常见内存破坏漏洞，无新意。",
+   "attack_chain": "构造输入→触发整数溢出→越界写。",
+   "bypass_technique": "无。",
+   "defensive_insight": "修复整数溢出。"
+  },
+  {
+   "id": 435144,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS，参数直接输出，无绕过，成熟套路。",
+   "attack_chain": "构造 URL→触发 XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "输入过滤和输出编码。"
+  },
+  {
+   "id": 199779,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用 CSP 允许的 google-analytics.com 进行数据外泄，通过 dangling markup 攻击窃取 CSRF 令牌。技术点在于对 CSP 白名单的滥用，思路新颖。",
+   "attack_chain": "注入恶意 img 标签→利用 dangling markup 窃取数据→发送到 google-analytics。",
+   "bypass_technique": "利用 CSP 允许的域名进行数据外泄。",
+   "defensive_insight": "收紧 CSP，避免允许用户可控内容的域名。"
+  },
+  {
+   "id": 347282,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "保留，普通",
+   "category": "其他",
+   "reasoning": "部分。CVE-2017-6074 是已知漏洞，但报告提供了详细 PoC 和影响，可复现，但无新意。",
+   "attack_chain": "利用 DCCP 双释放漏洞→提权。",
+   "bypass_technique": "无。",
+   "defensive_insight": "修复已知漏洞。"
+  }
+ ]
+}

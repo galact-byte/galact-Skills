@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   248609,
+   287666,
+   1046630,
+   1785079,
+   1438052
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 97161,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 信息泄露",
+   "reasoning": "是。TweetDeck 的搜索功能绕过了 Twitter 的隐私设置，使得私有推文可通过关键词搜索被非关注者看到。这种跨客户端的功能差异导致隐私泄露，属于业务逻辑层面的非预期行为。技术点在于 TweetDeck 与主站搜索索引不一致，未正确应用隐私过滤。",
+   "attack_chain": "攻击者使用 TweetDeck 搜索关键词 → 返回私有推文 → 泄露用户隐私。",
+   "bypass_technique": "利用 TweetDeck 与 Twitter 主站搜索权限校验不一致，绕过隐私设置。",
+   "defensive_insight": "确保所有客户端（包括第三方）在搜索时统一应用隐私过滤逻辑。"
+  },
+  {
+   "id": 15454,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。这是一个典型的 CSRF 漏洞，缺少 token，直接构造表单即可。没有绕过或非预期行为，属于成熟套路。",
+   "attack_chain": "诱导用户访问恶意页面 → 自动提交表单 → 修改用户资料。",
+   "bypass_technique": "无，直接利用缺少 CSRF token。",
+   "defensive_insight": "在所有状态变更请求中添加 CSRF token 并验证。"
+  },
+  {
+   "id": 180908,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "反序列化 / 内存破坏",
+   "reasoning": "部分。WDDX 反序列化中的空指针解引用，属于特定格式处理缺陷。虽然是非预期行为，但属于已知漏洞类型，且 PoC 完整。",
+   "attack_chain": "构造恶意 WDDX 数据 → 触发空指针解引用 → DoS。",
+   "bypass_technique": "无，直接利用反序列化缺陷。",
+   "defensive_insight": "在反序列化过程中增加输入验证和空值检查。"
+  },
+  {
+   "id": 203002,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "内存破坏 / 框架行为利用",
+   "reasoning": "是。Python 的 xxlimited 模块在特定条件下触发 GC 错误导致 UAF，属于框架内部行为利用。PoC 提供了寄存器控制，但利用条件较特定。",
+   "attack_chain": "构造特定输入 → 触发 GC 错误 → 导致 UAF → 可能代码执行。",
+   "bypass_technique": "利用 GC 与对象生命周期管理缺陷。",
+   "defensive_insight": "修复 GC 处理逻辑，确保对象引用计数正确。"
+  },
+  {
+   "id": 103178,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "点击劫持",
+   "reasoning": "否。缺少 X-Frame-Options 导致点击劫持，是常见配置问题，没有绕过或非预期行为。",
+   "attack_chain": "诱导用户访问恶意页面 → 通过 iframe 覆盖 → 用户点击触发敏感操作。",
+   "bypass_technique": "无，直接利用缺少 X-Frame-Options。",
+   "defensive_insight": "添加 X-Frame-Options 或 CSP frame-ancestors 头。"
+  },
+  {
+   "id": 233402,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "子域名接管",
+   "reasoning": "否。子域名指向 webflow.io 且 404，可能被接管，但报告者不确定，属于常见套路。",
+   "attack_chain": "注册 webflow.io 上的同名站点 → 接管子域名。",
+   "bypass_technique": "无，直接利用悬空 DNS。",
+   "defensive_insight": "清理不再使用的 DNS 记录，定期检查子域名。"
+  },
+  {
+   "id": 174882,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 信息泄露",
+   "reasoning": "是。通过修改 UserID 参数，非好友用户也能触发 CheckIn 提醒，属于业务逻辑漏洞。虽然简单，但暴露了对象级授权缺失。",
+   "attack_chain": "修改请求中的 UserID → 服务器未校验好友关系 → 获取非好友的 CheckIn 信息。",
+   "bypass_technique": "直接篡改参数，绕过好友关系校验。",
+   "defensive_insight": "在服务端对每个对象操作进行授权检查，确保用户只能操作自己的数据。"
+  },
+  {
+   "id": 13794,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。Gravatar 上的 XSS，报告声称有 171 个，但 PoC 不完整，且属于常见反射型 XSS。",
+   "attack_chain": "构造恶意链接 → 触发 XSS → 执行脚本。",
+   "bypass_technique": "无，直接利用未过滤参数。",
+   "defensive_insight": "对所有输入进行输出编码，使用 CSP。"
+  },
+  {
+   "id": 1054526,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 存储型",
+   "reasoning": "是。在 wordpress.com 的 Custom Style 中存储 XSS，通过 <noscript> 标签绕过过滤，属于非预期行为。但整体是常见存储 XSS 的变体。",
+   "attack_chain": "攻击者创建恶意样式 → 受害者查看 → 执行脚本 → 窃取会话。",
+   "bypass_technique": "使用 <noscript> 标签绕过输入过滤。",
+   "defensive_insight": "对用户输入进行严格的 HTML 过滤，使用白名单。"
+  },
+  {
+   "id": 182474,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "反序列化 / 内存破坏",
+   "reasoning": "部分。PHP unserialize() 的 UAF，属于已知漏洞类型，但 PoC 完整，且是框架行为利用。",
+   "attack_chain": "构造恶意序列化数据 → 触发 UAF → 可能代码执行。",
+   "bypass_technique": "无，直接利用反序列化缺陷。",
+   "defensive_insight": "修复 unserialize 中的对象生命周期管理。"
+  },
+  {
+   "id": 248609,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "内存破坏 / 协议行为利用",
+   "reasoning": "是。PHP 的 openssl_seal() 在处理恶意 PEM 证书时，由于 OpenSSL 的 EVP_SealInit() 返回 -1 而 PHP 未检查，导致负长度 memcpy，造成堆溢出。这是对 OpenSSL 库行为的非预期利用，且 PoC 完整，可导致 DoS 或潜在代码执行。",
+   "attack_chain": "构造恶意 PEM 证书 → 调用 openssl_seal() → EVP_SealInit 返回 -1 → 负长度 memcpy → 堆溢出。",
+   "bypass_technique": "利用 OpenSSL 文档未说明的 -1 返回值，PHP 未做错误处理。",
+   "defensive_insight": "PHP 应检查 EVP_SealInit() 的返回值，并对 eksl[i] 进行非负校验。"
+  },
+  {
+   "id": 1397564,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 配置错误",
+   "reasoning": "是。通过修改 302 响应为 200，绕过重定向，访问到未认证的管理面板，属于 EAR 攻击。虽然简单，但展示了重定向后的代码执行问题。",
+   "attack_chain": "访问管理面板 → 拦截 302 响应 → 改为 200 → 访问管理功能 → 上传文件。",
+   "bypass_technique": "利用 Execution After Redirect，修改响应状态码。",
+   "defensive_insight": "在重定向后应终止执行，使用 die() 或 return。"
+  },
+  {
+   "id": 1785079,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 信息泄露 / 跨组件攻击链",
+   "reasoning": "是。司机在提交报价后，即使未被接受，也能通过 getTenderStatus 接口获取客户的电话和位置，这是对业务逻辑的滥用。攻击链涉及多个 API 调用，且跨组件（司机端、服务端）。",
+   "attack_chain": "司机提交报价 → 获取 tender_id 和 order_id → 调用 getTenderStatus → 获取客户电话和坐标 → 调用 getaddresses 获取地址。",
+   "bypass_technique": "利用业务逻辑漏洞，在报价未接受时仍可访问敏感信息。",
+   "defensive_insight": "在服务端对敏感信息访问进行状态校验，确保只有接受报价后才能查看。"
+  },
+  {
+   "id": 1438052,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "竞争条件 / 业务逻辑",
+   "reasoning": "是。通过并发请求绕过 faucet 的限额，属于典型的竞争条件。虽然原理常见，但利用方式清晰，且影响明确。",
+   "attack_chain": "发送并发请求 → 绕过限额检查 → 获取超额代币。",
+   "bypass_technique": "利用并发请求导致竞态条件，绕过 coins_max 限制。",
+   "defensive_insight": "使用原子操作或数据库事务确保限额检查的原子性。"
+  },
+  {
+   "id": 287666,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "内存破坏 / 协议行为利用",
+   "reasoning": "是。wget 在处理 chunked 响应时，未检查 chunk 长度是否为负，导致 fd_read() 接收攻击者控制的长度，造成栈溢出。这是对 HTTP 协议解析的非预期利用，且 PoC 完整。",
+   "attack_chain": "恶意服务器发送负 chunk 长度 → wget 解析错误 → fd_read 溢出 → 栈破坏。",
+   "bypass_technique": "利用 strtol() 未检查负数，MIN 宏导致负长度传递。",
+   "defensive_insight": "在解析 chunk 长度时检查非负，并确保长度在合理范围内。"
+  },
+  {
+   "id": 23010,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS / 第三方组件",
+   "reasoning": "否。第三方插件 sharethis 的 XSS，属于供应链问题，但报告不完整，且是常见 XSS。",
+   "attack_chain": "创建含 XSS 的相册 → 通过分享功能触发 → 执行脚本。",
+   "bypass_technique": "无，直接利用第三方插件漏洞。",
+   "defensive_insight": "对第三方内容进行安全审查，实施 CSP。"
+  },
+  {
+   "id": 486629,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑",
+   "reasoning": "是。Zomato Gold 的解锁功能未正确限制每日使用次数，导致可重复解锁。这是业务逻辑漏洞，但思路简单。",
+   "attack_chain": "重复点击解锁 → 生成多个 Visit ID → 多次享受优惠。",
+   "bypass_technique": "无，直接利用缺少状态校验。",
+   "defensive_insight": "在服务端记录解锁状态，确保每日只能解锁一次。"
+  },
+  {
+   "id": 1046630,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "CSRF / 认证绕过",
+   "reasoning": "是。通过在 OAuth state 参数中添加 null byte，绕过 CSRF 防护，实现账户接管。这是对 OAuth 流程的非预期利用，且可通用化。",
+   "attack_chain": "攻击者构造恶意链接 → 受害者点击 → OAuth 回调带 null byte → 绕过 state 校验 → 绑定攻击者账户。",
+   "bypass_technique": "在 state 参数中注入 %00，导致服务端校验失效。",
+   "defensive_insight": "对 state 参数进行严格校验，拒绝包含 null byte 的输入。"
+  },
+  {
+   "id": 128493,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少 X-XSS-Protection 头，属于配置问题，无实际漏洞。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "添加安全响应头。"
+  },
+  {
+   "id": 1084638,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 信息泄露",
+   "reasoning": "是。通过修改 GraphQL 请求中的用户 ID，即使操作失败，也会触发邮件泄露目标用户信息。这是对错误处理逻辑的利用，属于非预期行为。",
+   "attack_chain": "修改用户 ID → 发送请求 → 操作失败但触发邮件 → 泄露 PII。",
+   "bypass_technique": "利用服务端在错误处理时未完全阻止信息泄露。",
+   "defensive_insight": "在授权检查失败时，不应执行任何副作用，包括发送邮件。"
+  }
+ ]
+}

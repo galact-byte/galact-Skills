@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 19,
+  "kept": 12,
+  "dropped": 7,
+  "avg_score": 5.4,
+  "top_n": [
+   816254,
+   151231,
+   593712,
+   265050,
+   1212337
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 147220,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "业务逻辑",
+   "reasoning": "否。报告仅提供视频链接，无文字描述，无法判断具体绕过机制，信息严重不足。",
+   "attack_chain": "未知",
+   "bypass_technique": "未知",
+   "defensive_insight": "需补充详细复现步骤和请求细节。"
+  },
+  {
+   "id": 89505,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "部分。Self-XSS 通过格式化代码触发，但需要用户交互，且为自XSS，影响有限，属于常见套路。",
+   "attack_chain": "用户创建帖子→输入payload→格式化→触发XSS。",
+   "bypass_technique": "利用代码格式化功能未过滤HTML。",
+   "defensive_insight": "对用户输入进行HTML编码，尤其在富文本编辑器中。"
+  },
+  {
+   "id": 151231,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 协议行为利用",
+   "reasoning": "是。利用IE的MIME嗅探行为，通过ZIP头绕过内容类型检查，实现存储型XSS。这是对浏览器行为的巧妙利用，且提供了完整补丁。",
+   "attack_chain": "上传ZIP头+HTML payload→IE访问→MIME嗅探→执行HTML→XSS。",
+   "bypass_technique": "利用IE的MIME嗅探，通过ZIP头伪装文件类型。",
+   "defensive_insight": "设置X-Content-Type-Options: nosniff，使用沙箱域存储用户上传文件。"
+  },
+  {
+   "id": 456333,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，参数直接输出，无绕过，常见套路。",
+   "attack_chain": "构造恶意URL→用户点击→XSS执行。",
+   "bypass_technique": "无，直接注入。",
+   "defensive_insight": "对输出进行编码，使用CSP。"
+  },
+  {
+   "id": 27511,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。存储型XSS，通过card[name]参数注入，但利用的是常见标签闭合，无特殊绕过。",
+   "attack_chain": "创建卡片→注入payload→存储→触发。",
+   "bypass_technique": "闭合title标签注入script。",
+   "defensive_insight": "对输入进行HTML编码，使用白名单。"
+  },
+  {
+   "id": 112304,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。404页面反射用户输入，用于钓鱼，但无技术难度，常见配置错误。",
+   "attack_chain": "构造URL→404页面显示攻击者文本→钓鱼。",
+   "bypass_technique": "无，直接利用404页面未过滤。",
+   "defensive_insight": "404页面不包含用户输入，或进行编码。"
+  },
+  {
+   "id": 143669,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 业务逻辑",
+   "reasoning": "是。通过修改URL参数（添加问号）绕过图片模糊处理，获取原始图片。这是对URL解析的巧妙利用，简单有效。",
+   "attack_chain": "获取模糊图片URL→添加?→获取原图。",
+   "bypass_technique": "利用URL参数解析差异，添加?绕过size参数。",
+   "defensive_insight": "服务端验证请求参数，对图片处理进行签名。"
+  },
+  {
+   "id": 593712,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 信息泄露",
+   "reasoning": "是。利用Web缓存欺骗，通过添加.css后缀使缓存服务器缓存动态页面，从而窃取用户私密信息。这是对缓存机制的巧妙利用，可通用化。",
+   "attack_chain": "构造URL→受害者访问→缓存页面→攻击者获取缓存内容。",
+   "bypass_technique": "利用路径解析差异，添加.css后缀使缓存服务器缓存动态页面。",
+   "defensive_insight": "配置缓存规则，不缓存动态页面，或验证Content-Type。"
+  },
+  {
+   "id": 265050,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "SSRF / 协议行为利用",
+   "reasoning": "是。利用SVG的url()函数进行盲SSRF，且需要包含fragment才能触发，这是对SVG解析的巧妙利用。",
+   "attack_chain": "上传SVG→fill属性引用外部URL→服务器请求→SSRF。",
+   "bypass_technique": "利用SVG的url()函数，添加fragment绕过过滤。",
+   "defensive_insight": "过滤SVG中的外部引用，限制服务器请求。"
+  },
+  {
+   "id": 1165748,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 拒绝服务",
+   "reasoning": "是。利用FTP协议中时间解析的正则表达式，通过超大数字导致CPU和内存消耗。这是对正则表达式性能的利用，但需要攻击者控制FTP服务器。",
+   "attack_chain": "恶意FTP服务器返回超大数字→客户端解析→资源耗尽。",
+   "bypass_technique": "利用正则表达式回溯，构造超大数字。",
+   "defensive_insight": "限制输入长度，优化正则表达式。"
+  },
+  {
+   "id": 238117,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "开放重定向",
+   "reasoning": "否。开放重定向，next参数未验证，常见套路。",
+   "attack_chain": "构造URL→用户点击→重定向到恶意网站。",
+   "bypass_technique": "无，直接利用next参数。",
+   "defensive_insight": "验证重定向URL，使用白名单。"
+  },
+  {
+   "id": 816254,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "SQL注入 / 命令注入 / 跨组件攻击链",
+   "reasoning": "是。通过XML接口的SCEN_ID参数注入SQL，进而利用xp_cmdshell执行系统命令，实现RCE。这是从SQL注入到RCE的完整攻击链，且利用ExpectSigned=No绕过签名验证。",
+   "attack_chain": "构造XML请求→SQL注入→xp_cmdshell→RCE。",
+   "bypass_technique": "利用ExpectSigned=No绕过签名，SQL注入链式执行。",
+   "defensive_insight": "参数化查询，禁用xp_cmdshell，验证签名。"
+  },
+  {
+   "id": 439075,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "开放重定向",
+   "reasoning": "是。通过index.php的路径解析差异，构造重定向到攻击者域名，绕过原有修复。这是对URL解析的巧妙利用。",
+   "attack_chain": "构造URL→重定向到恶意域名。",
+   "bypass_technique": "利用路径解析差异，添加index.php前缀。",
+   "defensive_insight": "严格验证重定向目标，使用白名单。"
+  },
+  {
+   "id": 718241,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "命令注入",
+   "reasoning": "是。git-lib模块将用户输入直接拼接到git命令中，导致命令注入。这是对命令拼接的常见问题，但PoC清晰。",
+   "attack_chain": "调用git.add→拼接命令→执行任意命令。",
+   "bypass_technique": "利用分号拼接命令。",
+   "defensive_insight": "使用参数化命令，避免拼接。"
+  },
+  {
+   "id": 486667,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。邮件服务器未配置SPF/DKIM，导致邮件伪造，常见配置错误。",
+   "attack_chain": "使用邮件伪造工具→发送伪造邮件。",
+   "bypass_technique": "无，直接利用未配置SPF。",
+   "defensive_insight": "配置SPF、DKIM、DMARC。"
+  },
+  {
+   "id": 1212337,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 3,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "开放重定向 / 认证绕过",
+   "reasoning": "是。通过注册以.org开头的域名，绕过URL验证，实现开放重定向。这是对域名边界检查的巧妙绕过，可通用化。",
+   "attack_chain": "注册恶意域名→构造URL→重定向到恶意网站。",
+   "bypass_technique": "利用域名后缀匹配，注册以.org开头的域名。",
+   "defensive_insight": "使用精确匹配或解析URL后验证主机名。"
+  },
+  {
+   "id": 197755,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SQL注入",
+   "reasoning": "否。经典SQL注入，使用sqlmap扫描，无特殊技巧。",
+   "attack_chain": "扫描→发现注入点→利用。",
+   "bypass_technique": "无，直接注入。",
+   "defensive_insight": "使用参数化查询。"
+  },
+  {
+   "id": 1058427,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。通过修改redirect_url参数为javascript:协议，实现反射型XSS。但需要用户交互，且为javascript协议，常见。",
+   "attack_chain": "构造恶意URL→用户点击→XSS执行。",
+   "bypass_technique": "利用javascript:协议。",
+   "defensive_insight": "验证redirect_url，禁止javascript协议。"
+  },
+  {
+   "id": 163381,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告为理论性讨论，无实际漏洞证明，信息不足。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "无"
+  },
+  {
+   "id": 2071554,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "反序列化",
+   "reasoning": "是。Kredis JSON反序列化漏洞，可能导致反序列化攻击。但报告为CVE引用，无具体PoC，但漏洞明确。",
+   "attack_chain": "构造恶意JSON→反序列化→执行代码。",
+   "bypass_technique": "利用JSON反序列化。",
+   "defensive_insight": "使用安全的反序列化库，验证输入。"
+  }
+ ]
+}

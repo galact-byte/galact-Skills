@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1267677,
+   206650,
+   47384,
+   92472,
+   377206
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1309237,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，参数直接注入，无绕过，无链，成熟套路。",
+   "attack_chain": "单点：URL参数→反射XSS。",
+   "bypass_technique": "无，直接注入。",
+   "defensive_insight": "输出编码，CSP。"
+  },
+  {
+   "id": 683792,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型XSS，payload有变形但无绕过，无链，常见。",
+   "attack_chain": "单点：聊天消息→存储XSS。",
+   "bypass_technique": "无，直接注入。",
+   "defensive_insight": "输入过滤，输出编码。"
+  },
+  {
+   "id": 1066410,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "部分。API key泄露+错误正则导致开放重定向，组合利用，但技术点常见。",
+   "attack_chain": "JS文件泄露key→滥用短链接服务→开放重定向。",
+   "bypass_technique": "利用错误正则，添加/clario.co/路径绕过限制。",
+   "defensive_insight": "限制API key权限，修复正则，监控滥用。"
+  },
+  {
+   "id": 206650,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 认证绕过",
+   "reasoning": "是。密码重置链接使用http明文传输，可被中间人截获，导致账户接管。技术点：明文传输敏感令牌，看似简单但影响巨大。",
+   "attack_chain": "请求重置→邮件发送http链接→中间人截获→令牌泄露→账户接管。",
+   "bypass_technique": "利用http明文传输，中间人窃取令牌。",
+   "defensive_insight": "强制https，HSTS，令牌绑定。"
+  },
+  {
+   "id": 1267677,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用双Content-Type头绕过图片代理限制，实现XSS/重定向/钓鱼。技术点：RFC违规响应头，可抽象为通用绕过。",
+   "attack_chain": "构造恶意服务器→双Content-Type→代理返回任意内容→XSS/钓鱼。",
+   "bypass_technique": "双Content-Type头，绕过内容类型检查。",
+   "defensive_insight": "严格校验Content-Type，拒绝多值头。"
+  },
+  {
+   "id": 1641475,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。APK中硬编码密钥，常见配置错误，无绕过无链。",
+   "attack_chain": "单点：APK反编译→密钥泄露。",
+   "bypass_technique": "无。",
+   "defensive_insight": "密钥服务端存储，混淆。"
+  },
+  {
+   "id": 54719,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。存储型XSS通过sticker的alt属性注入，绕过过滤，但无链。",
+   "attack_chain": "单点：发送sticker消息→alt属性注入→XSS。",
+   "bypass_technique": "利用alt属性绕过过滤。",
+   "defensive_insight": "属性值编码，输入过滤。"
+  },
+  {
+   "id": 179164,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。SVG上传存储XSS，常见，无绕过。",
+   "attack_chain": "单点：上传SVG→存储XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "限制SVG上传，消毒。"
+  },
+  {
+   "id": 1461194,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。HTML注入，常见，无绕过。",
+   "attack_chain": "单点：输入→HTML注入。",
+   "bypass_technique": "无。",
+   "defensive_insight": "输入过滤，输出编码。"
+  },
+  {
+   "id": 675580,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。已知CVE，无新意。",
+   "attack_chain": "单点：EXIF解析→越界读。",
+   "bypass_technique": "无。",
+   "defensive_insight": "升级PHP。"
+  },
+  {
+   "id": 377206,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用settingcontent-ms文件缺少mark of the web，双击执行代码。技术点：Windows特性，跨组件。",
+   "attack_chain": "下载文件→双击→代码执行。",
+   "bypass_technique": "利用缺少MOTW。",
+   "defensive_insight": "添加MOTW，限制下载文件执行。"
+  },
+  {
+   "id": 106797,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XXE",
+   "reasoning": "部分。XXE，通过Content-Type切换绕过，但无链。",
+   "attack_chain": "单点：XML注入→XXE。",
+   "bypass_technique": "Content-Type切换。",
+   "defensive_insight": "禁用DTD，严格校验。"
+  },
+  {
+   "id": 869888,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "路径遍历",
+   "reasoning": "部分。路径遍历，利用../绕过，但无链。",
+   "attack_chain": "单点：URL../→路径遍历。",
+   "bypass_technique": "../绕过。",
+   "defensive_insight": "规范化路径，拒绝../。"
+  },
+  {
+   "id": 273099,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过",
+   "reasoning": "部分。权限撤销后仍可操作，业务逻辑缺陷，但无链。",
+   "attack_chain": "单点：权限撤销→旧请求仍有效。",
+   "bypass_technique": "利用会话缓存。",
+   "defensive_insight": "每次请求校验权限。"
+  },
+  {
+   "id": 1252155,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。存储型HTML注入，无JS，常见。",
+   "attack_chain": "单点：输入→HTML注入。",
+   "bypass_technique": "无。",
+   "defensive_insight": "输入过滤，输出编码。"
+  },
+  {
+   "id": 47384,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 授权绕过",
+   "reasoning": "是。发送者可以批准自己的请求，业务逻辑缺陷，可抽象为通用判断。",
+   "attack_chain": "单点：发送请求→自己批准。",
+   "bypass_technique": "利用请求参数。",
+   "defensive_insight": "校验操作者身份。"
+  },
+  {
+   "id": 92472,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。postMessage使用*，导致token泄露，可抽象为通用。",
+   "attack_chain": "单点：postMessage→token泄露。",
+   "bypass_technique": "利用*通配符。",
+   "defensive_insight": "指定origin，校验来源。"
+  },
+  {
+   "id": 289568,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露",
+   "reasoning": "部分。关闭指标后仍泄露，配置错误，但无链。",
+   "attack_chain": "单点：端点→信息泄露。",
+   "bypass_technique": "无。",
+   "defensive_insight": "正确配置权限。"
+  },
+  {
+   "id": 62778,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。debug.log泄露，常见配置错误。",
+   "attack_chain": "单点：访问文件→信息泄露。",
+   "bypass_technique": "无。",
+   "defensive_insight": "删除敏感文件，限制访问。"
+  },
+  {
+   "id": 969223,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "IDOR / 认证绕过",
+   "reasoning": "是。IDOR改邮箱，无需旧密码，链到ATO。",
+   "attack_chain": "IDOR→改邮箱→重置密码→ATO。",
+   "bypass_technique": "利用ID参数。",
+   "defensive_insight": "对象级授权，验证旧密码。"
+  }
+ ]
+}

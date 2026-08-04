@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   2051257,
+   185041,
+   1747596,
+   1596663,
+   126652
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 126652,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "类型混淆 / 框架行为利用",
+   "reasoning": "是。通过 phar 反序列化触发 PHP 内部类型混淆，进而控制 EIP 实现 RCE。技术点在于利用 phar 元数据反序列化时对对象类型的错误处理，绕过常规安全检查。区别于普通反序列化，此报告展示了如何利用 PHP 内部 bug 实现代码执行，具有通用性。",
+   "attack_chain": "构造恶意 phar 文件→触发反序列化→类型混淆→控制 EIP→RCE",
+   "bypass_technique": "利用 phar 反序列化时的类型混淆，绕过类型检查",
+   "defensive_insight": "升级 PHP 版本，禁用 phar 反序列化或严格校验输入"
+  },
+  {
+   "id": 1747596,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "SSRF / 协议行为利用",
+   "reasoning": "是。利用 URL 解析差异（反斜杠作为用户信息分隔符）绕过白名单，实现 SSRF 内网扫描。技术点在于前端白名单校验与后端 URL 解析不一致，反斜杠被后端视为凭据分隔符，从而请求到任意主机。可抽象为通用绕过条件，优雅且可复用。",
+   "attack_chain": "构造 url=http://internal\\@whitelisted→前端校验通过→后端解析为 internal 主机→SSRF 内网扫描",
+   "bypass_technique": "利用反斜杠在 URL 解析中的歧义，绕过域名白名单",
+   "defensive_insight": "统一前后端 URL 解析逻辑，禁止反斜杠作为分隔符，严格校验目标 IP"
+  },
+  {
+   "id": 579116,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。仅是检测到过时插件版本，未提供具体利用，属于信息泄露/配置错误，无绕过或攻击链。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "及时更新插件，隐藏版本信息"
+  },
+  {
+   "id": 986459,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "认证绕过",
+   "reasoning": "否。邮箱更改后旧邮箱仍可登录，属于会话管理缺陷，常见于未正确失效旧会话。无特殊绕过，思路普通。",
+   "attack_chain": "更改邮箱→旧邮箱仍可登录→账户接管",
+   "bypass_technique": "无，直接利用会话未失效",
+   "defensive_insight": "邮箱更改后应使所有旧会话失效"
+  },
+  {
+   "id": 425719,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。新网站未加访问控制导致内部问题泄露，属于配置错误，无绕过或攻击链。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "新服务上线前进行访问控制检查"
+  },
+  {
+   "id": 2051257,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 路径遍历",
+   "reasoning": "是。利用 process.binding('fs') 绕过 Node.js 权限模型的路径遍历校验。技术点在于内部 API 未经过权限模型检查，且路径规范化不完整。可抽象为通用绕过条件，优雅且影响广泛。",
+   "attack_chain": "调用 process.binding('fs').mkdir→路径包含../→绕过权限模型→创建任意目录",
+   "bypass_technique": "使用内部 API process.binding 绕过权限模型，路径遍历未规范化",
+   "defensive_insight": "对内部 API 也进行权限校验，统一路径规范化"
+  },
+  {
+   "id": 213190,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。反射型 XSS 通过 URL 编码绕过过滤，但属于常见绕过，无特殊技术点。",
+   "attack_chain": "构造恶意 URL→参数未过滤→XSS 执行",
+   "bypass_technique": "URL 编码绕过输入过滤",
+   "defensive_insight": "对输出进行编码，使用 CSP"
+  },
+  {
+   "id": 129209,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "认证绕过",
+   "reasoning": "否。OAuth 会话未随应用移除而失效，常见会话管理缺陷，无特殊绕过。",
+   "attack_chain": "移除应用→会话未失效→仍可访问",
+   "bypass_technique": "无",
+   "defensive_insight": "OAuth 提供商应通知应用撤销会话"
+  },
+  {
+   "id": 255041,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。仅报告 TLS 漏洞存在，无利用细节，属于已知 CVE 扫描，无启发性。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "更新 TLS 库"
+  },
+  {
+   "id": 1039504,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 跨组件攻击链",
+   "reasoning": "部分。构建依赖通过 HTTP 下载且无完整性校验，可被 MITM 注入恶意代码。技术点在于供应链攻击，但属于已知问题，无特殊绕过。",
+   "attack_chain": "MITM 拦截 HTTP 下载→替换依赖→注入恶意代码→影响构建产物",
+   "bypass_technique": "无，利用不安全的 HTTP 通道",
+   "defensive_insight": "使用 HTTPS 下载依赖，并校验哈希"
+  },
+  {
+   "id": 31383,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 信息泄露",
+   "reasoning": "部分。通过篡改 common_response_id 获取其他团队的响应标题，属于 IDOR 变体，但影响有限。",
+   "attack_chain": "篡改 common_response_id→获取其他团队数据",
+   "bypass_technique": "直接修改 ID 参数",
+   "defensive_insight": "实施对象级授权检查"
+  },
+  {
+   "id": 1264832,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。文件名中的 XSS 载荷在页面上执行，属于存储型 XSS 的变体，但技术点常见。",
+   "attack_chain": "上传恶意文件名→页面渲染→XSS",
+   "bypass_technique": "利用文件名未过滤",
+   "defensive_insight": "对文件名进行编码和过滤"
+  },
+  {
+   "id": 8996,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。无暴力破解保护，属于配置缺失，无技术含量。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "实施速率限制和账户锁定"
+  },
+  {
+   "id": 112935,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "部分。利用 Markdown 解析器的递归行为注入 HTML 属性，属于解析器缺陷的利用，有一定启发性。",
+   "attack_chain": "构造特殊 Markdown→解析器错误处理→注入 HTML 属性",
+   "bypass_technique": "利用解析器的递归引用",
+   "defensive_insight": "修复解析器，对输出进行严格过滤"
+  },
+  {
+   "id": 98247,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。通过修改 iframe 中的 PIN 参数即可登录任意用户现金账户，属于参数篡改导致的授权绕过。技术点在于敏感参数未绑定会话，可被直接修改。可抽象为通用判断条件，优雅且影响大。",
+   "attack_chain": "获取 iframe 参数→修改 PIN 为受害者 ID→登录受害者账户→信息泄露",
+   "bypass_technique": "直接篡改 URL 参数中的账户标识",
+   "defensive_insight": "服务端校验参数与会话绑定，使用不可预测的令牌"
+  },
+  {
+   "id": 1596663,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 0
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 状态混淆",
+   "reasoning": "是。通过多次邀请同一用户不同角色，利用状态混淆创建隐藏管理员账户。技术点在于角色变更未正确清理旧权限，且邀请机制存在逻辑缺陷。可抽象为通用判断条件，攻击链完整。",
+   "attack_chain": "邀请同一用户为 admin→再邀请为 analyst→接受后利用旧 token 重新邀请为 admin→隐藏账户",
+   "bypass_technique": "利用角色变更后的权限残留和 token 重用",
+   "defensive_insight": "角色变更时撤销所有旧权限和令牌，邀请机制应唯一化"
+  },
+  {
+   "id": 59666,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。Host 头注入影响 URL 生成，属于常见设计缺陷，无特殊绕过。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "使用配置的域名而非 Host 头"
+  },
+  {
+   "id": 185041,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "类型混淆 / 框架行为利用",
+   "reasoning": "是。通过重新定义异常类为非异常类型，导致 mrb_exc_set 类型混淆，实现内存破坏。技术点在于宏定义可被用户代码覆盖，且异常处理未检查类型。可抽象为通用绕过条件，优雅且影响深远。",
+   "attack_chain": "重新定义异常类→触发 mrb_raise→类型混淆→内存破坏→RCE",
+   "bypass_technique": "利用宏定义可覆盖，将异常类改为非异常类型",
+   "defensive_insight": "在 mrb_exc_set 中检查类型，宏定义应使用常量"
+  },
+  {
+   "id": 125791,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "开放重定向",
+   "reasoning": "否。URL 路径中的域名导致重定向，属于常见开放重定向，无特殊绕过。",
+   "attack_chain": "构造 URL→服务器重定向到外部",
+   "bypass_technique": "无",
+   "defensive_insight": "校验重定向目标域名"
+  },
+  {
+   "id": 1370731,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "保留，普通",
+   "category": "SSRF",
+   "reasoning": "部分。利用已知 CVE 进行 SSRF，属于已知漏洞利用，无新意。",
+   "attack_chain": "构造恶意 URL→触发 Apache 漏洞→SSRF",
+   "bypass_technique": "无，直接利用已知 CVE",
+   "defensive_insight": "及时更新 Apache"
+  }
+ ]
+}

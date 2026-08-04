@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   622170,
+   416983,
+   302651,
+   319951,
+   159202
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 159202,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 业务逻辑",
+   "reasoning": "是。OTP 仅 4 位且无速率限制，可暴力枚举所有组合实现任意账户接管。技术点在于对 OTP 长度与尝试次数的双重缺失，看似已生效的 OTP 验证被暴力破解绕过。区别于普通逻辑漏洞，此攻击链完整且影响严重，可抽象为通用判断条件：任何短 OTP 且无速率限制均可被枚举。",
+   "attack_chain": "输入受害者手机号→进入OTP验证→暴力枚举所有4位组合→登录成功→账户接管。",
+   "bypass_technique": "利用 OTP 长度短（4位）且无速率限制，直接枚举所有可能值。",
+   "defensive_insight": "增加 OTP 长度或使用时间限制、IP/设备指纹速率限制、失败次数锁定、验证码复杂度提升。"
+  },
+  {
+   "id": 416983,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。path_hmac 仅基于路径和 shop 信息，不绑定用户会话，导致已移除员工仍可修改连接设置。技术点在于 HMAC 的生成未包含用户身份或权限状态，使得权限变更后旧链接仍有效。这是对'权限撤销'策略的优雅绕过，可抽象为通用判断：任何基于静态参数的授权令牌都应绑定用户会话。",
+   "attack_chain": "员工保存连接设置→获取path_hmac→被移除后仍使用该hmac修改连接→数据泄露。",
+   "bypass_technique": "利用静态 HMAC 不绑定用户身份，权限撤销后仍可重用。",
+   "defensive_insight": "HMAC 应包含用户ID和权限版本，并在每次权限变更时失效；服务端应验证当前用户权限。"
+  },
+  {
+   "id": 4777,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。未转义输出导致反射型 XSS，经典漏洞，无绕过或链。",
+   "attack_chain": "单点：参数未转义→XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "输出编码。"
+  },
+  {
+   "id": 770209,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 授权绕过",
+   "reasoning": "部分。GraphQL 对象暴露了私有程序属性，未授权用户可查询。技术点在于 GraphQL 查询未对敏感字段进行权限过滤，导致信息泄露。虽无复杂绕过，但可抽象为通用判断：GraphQL 字段级授权缺失。",
+   "attack_chain": "构造GraphQL查询→获取report_sources字段→判断程序私有性。",
+   "bypass_technique": "直接查询未授权字段。",
+   "defensive_insight": "GraphQL 字段级权限校验，敏感字段需授权。"
+  },
+  {
+   "id": 622170,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。OpenSSL 默认配置路径在 Windows 上可被低权限用户创建，导致 DLL 劫持和任意代码执行。技术点在于编译时未指定 openssldir，导致默认路径在 Windows 上可写，这是对'默认安全'假设的利用。攻击链跨组件：低权限用户创建文件→管理员启动应用→代码执行。可抽象为通用判断：任何使用默认配置路径的库在 Windows 上可能被劫持。",
+   "attack_chain": "低权限用户创建 c:\\usr\\local\\ssl\\openssl.cnf→放置恶意DLL→管理员启动Nextcloud→加载恶意配置→执行任意代码→提权。",
+   "bypass_technique": "利用 OpenSSL 默认配置路径在 Windows 上可写，通过配置文件加载恶意 DLL。",
+   "defensive_insight": "编译时指定安全的 openssldir；运行时验证配置文件路径的完整性；使用 Windows 目录权限限制。"
+  },
+  {
+   "id": 302651,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 信息泄露",
+   "reasoning": "是。Burp Repeater 在跟随重定向时泄露 HTTP Basic 凭据，这是对'重定向跟随'行为的意外利用。技术点在于客户端自动携带 Authorization 头到任意域，可被攻击者捕获。可抽象为通用判断：任何自动跟随重定向的客户端都可能泄露凭据。",
+   "attack_chain": "配置平台认证→请求开放重定向→点击跟随重定向→凭据发送到攻击者域→捕获。",
+   "bypass_technique": "利用重定向跟随行为，自动携带 Authorization 头。",
+   "defensive_insight": "客户端应限制重定向时携带凭据；服务端应避免开放重定向。"
+  },
+  {
+   "id": 16439,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露 / 用户枚举",
+   "reasoning": "否。通过密码重置页面的不同响应枚举用户，经典用户枚举，无绕过或链。",
+   "attack_chain": "单点：输入邮箱→响应差异→枚举用户。",
+   "bypass_technique": "无。",
+   "defensive_insight": "统一响应消息。"
+  },
+  {
+   "id": 329400,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "反序列化",
+   "reasoning": "部分。Java 反序列化 RCE，CVE-2017-10366 已知漏洞，但 PoC 完整，利用 ysoserial 和 DNS 外带验证。技术点在于未验证的 readObject()，但这是成熟套路。",
+   "attack_chain": "发送恶意序列化对象→触发DNS查询→确认RCE。",
+   "bypass_technique": "利用已知 gadget 链。",
+   "defensive_insight": "禁止反序列化不可信数据；更新库；网络层过滤。"
+  },
+  {
+   "id": 429679,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。POST-based XSS，参数未转义，经典漏洞，无绕过。",
+   "attack_chain": "单点：参数注入→XSS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "输出编码。"
+  },
+  {
+   "id": 1940788,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型 XSS，经典漏洞，无绕过或链。",
+   "attack_chain": "单点：输入payload→存储→触发。",
+   "bypass_technique": "无。",
+   "defensive_insight": "输入验证和输出编码。"
+  },
+  {
+   "id": 1877185,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / DoS",
+   "reasoning": "否。日期范围无限制导致资源消耗，常见 DoS，无绕过。",
+   "attack_chain": "单点：扩大日期范围→资源消耗。",
+   "bypass_technique": "无。",
+   "defensive_insight": "限制日期范围。"
+  },
+  {
+   "id": 319951,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 协议行为利用",
+   "reasoning": "是。superstatic 仅检查 '../'，但 Windows 下 '..\\' 可绕过，这是对路径分隔符差异的利用。技术点在于跨平台路径解析不一致，可抽象为通用判断：任何基于字符串匹配的路径校验都应考虑平台差异。",
+   "attack_chain": "构造 ..%5c..%5c..%5c/Windows/notepad.exe→绕过检查→读取任意文件。",
+   "bypass_technique": "使用反斜杠替代正斜杠，绕过 '../' 检查。",
+   "defensive_insight": "使用规范化的路径解析，统一处理分隔符。"
+  },
+  {
+   "id": 2208647,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 信息泄露",
+   "reasoning": "部分。Airflow 的 dagWarnings 接口未正确校验 DAG 权限，导致越权查看。技术点在于 API 端点缺少对象级授权，可抽象为通用判断：API 应验证用户对每个资源的权限。",
+   "attack_chain": "创建低权限角色→调用 /api/v1/dagWarnings→获取所有DAG警告。",
+   "bypass_technique": "直接调用未授权接口。",
+   "defensive_insight": "在 API 层实施对象级权限检查。"
+  },
+  {
+   "id": 1352429,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "类型混淆 / 内存破坏",
+   "reasoning": "部分。SM2 解密缓冲区大小计算错误导致堆溢出，技术点在于两次调用间大小不一致，属于协议行为利用。可抽象为通用判断：任何两次调用间大小计算不一致的 API 都可能存在溢出。",
+   "attack_chain": "构造恶意SM2密文→第一次调用返回错误大小→第二次调用溢出。",
+   "bypass_technique": "利用 ASN.1 解析差异导致大小计算错误。",
+   "defensive_insight": "修复大小计算逻辑；使用安全内存分配。"
+  },
+  {
+   "id": 500686,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / DoS",
+   "reasoning": "部分。无效十六进制字符导致客户端崩溃，属于输入验证缺失，但影响有限且无绕过。",
+   "attack_chain": "单点：发送 %xx URL→客户端崩溃。",
+   "bypass_technique": "无。",
+   "defensive_insight": "输入验证。"
+  },
+  {
+   "id": 113268,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "内存破坏",
+   "reasoning": "否。整数溢出，经典漏洞，无绕过或链。",
+   "attack_chain": "单点：整数溢出→内存破坏。",
+   "bypass_technique": "无。",
+   "defensive_insight": "使用安全整数运算。"
+  },
+  {
+   "id": 1631364,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "命令注入",
+   "reasoning": "否。Log4j RCE，已知 CVE，成熟套路，无绕过。",
+   "attack_chain": "单点：注入 JNDI  payload→RCE。",
+   "bypass_technique": "无。",
+   "defensive_insight": "升级 Log4j；禁用 JNDI。"
+  },
+  {
+   "id": 1703733,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。源码中硬编码凭据，经典配置错误，无绕过。",
+   "attack_chain": "单点：查看源码→获取凭据。",
+   "bypass_technique": "无。",
+   "defensive_insight": "不要硬编码凭据。"
+  },
+  {
+   "id": 1294062,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。算法偏见问题，非安全漏洞，且信息不足。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "无。"
+  },
+  {
+   "id": 218233,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "内存破坏",
+   "reasoning": "否。空指针解引用，经典漏洞，无绕过。",
+   "attack_chain": "单点：特定代码→空指针→崩溃。",
+   "bypass_technique": "无。",
+   "defensive_insight": "空指针检查。"
+  }
+ ]
+}

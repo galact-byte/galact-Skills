@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   10373,
+   334709,
+   1519099,
+   1785378,
+   110578
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1519099,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 框架行为利用",
+   "reasoning": "是。Electron 默认配置下 renderer 进程本应无系统资源权限，但通过 Web Bluetooth API 可直接访问蓝牙设备，绕过进程隔离。技术点在于 Electron 对 Chromium 权限模型的默认配置错误，导致 renderer 获得超出预期的能力。区别于普通权限漏洞，这是框架级默认配置缺陷，影响所有使用默认配置的 Electron 应用。",
+   "attack_chain": "加载远程内容→调用 navigator.bluetooth.requestDevice→获得蓝牙设备读写权限→控制附近设备。",
+   "bypass_technique": "利用 Electron 默认未禁用 Web Bluetooth API，绕过 renderer 进程的权限限制。",
+   "defensive_insight": "Electron 应默认禁用敏感 API，或通过权限请求处理程序显式控制；加载远程内容时启用上下文隔离和沙箱。"
+  },
+  {
+   "id": 690330,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 其他",
+   "reasoning": "否。WordPress load-scripts.php 的 DoS 是已知 CVE-2018-6389，利用无速率限制加载大量脚本消耗资源，属于成熟套路，无绕过或创新。",
+   "attack_chain": "单点：构造大量 load[] 参数→服务器资源耗尽。",
+   "bypass_technique": "无实质绕过，直接利用未限制的资源加载。",
+   "defensive_insight": "对 load-scripts.php 实施速率限制和文件数量限制，或禁用该端点。"
+  },
+  {
+   "id": 1819329,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "其他 / 配置错误",
+   "reasoning": "部分。IDN homograph 攻击在地址栏有防护，但 Brave Shield 面板未处理，导致显示 apple.com 的假域名。技术点在于安全功能覆盖不一致，属于 UI 层防护缺失，思路有启发性但影响有限。",
+   "attack_chain": "单点：访问恶意 IDN 域名→Shield 面板显示合法域名→用户被钓鱼。",
+   "bypass_technique": "利用 IDN 同形字绕过 UI 显示过滤。",
+   "defensive_insight": "所有显示域名的地方统一使用 punycode 或视觉混淆检测。"
+  },
+  {
+   "id": 984947,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 其他",
+   "reasoning": "部分。Tab nabbing 是已知技术，但通过 window.opener 在 Tumblr 多个场景实现，展示了业务逻辑组合的利用。技术点在于 target=\"_blank\" 未加 rel=\"noopener\"，导致新页面可控制原页面，属于常见但易被忽视的漏洞。",
+   "attack_chain": "用户点击链接→新标签页脚本修改 opener 位置→原页面跳转到钓鱼站。",
+   "bypass_technique": "利用 window.opener 引用，无需用户交互即可重定向原页面。",
+   "defensive_insight": "所有 target=\"_blank\" 链接添加 rel=\"noopener noreferrer\"。"
+  },
+  {
+   "id": 29185,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。通过重定向行为判断私有程序存在，是常见的信息泄露，无技术含量。",
+   "attack_chain": "单点：访问私有程序 URL→重定向到登录页→确认存在。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对私有程序返回 404 而非重定向。"
+  },
+  {
+   "id": 390881,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "命令注入 / 跨组件攻击链",
+   "reasoning": "是。morgan 的 format 参数使用 Function() 导致代码注入，但更精彩的是与原型污染组合，通过 Object.prototype 污染触发，无需直接控制 format。技术点在于原型污染与代码执行的链式利用，可抽象为通用攻击模式。",
+   "attack_chain": "原型污染→污染 morgan 的 format 键→morgan 调用 Function() 执行任意代码→RCE。",
+   "bypass_technique": "利用原型污染间接控制 format 参数，绕过直接输入限制。",
+   "defensive_insight": "避免使用 Function() 或 eval，对 format 参数进行白名单校验。"
+  },
+  {
+   "id": 181686,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。location.reload() 循环导致浏览器挂起，是简单的 DoS，无技术含量。",
+   "attack_chain": "单点：setInterval 频繁 reload→浏览器资源耗尽。",
+   "bypass_technique": "无。",
+   "defensive_insight": "浏览器应限制 reload 频率。"
+  },
+  {
+   "id": 1066083,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSRF",
+   "reasoning": "否。CSRF 导致账户接管是常见漏洞，虽然可以获取有效 token，但仍是标准 CSRF 攻击，无创新。",
+   "attack_chain": "单点：诱导用户访问恶意页面→提交表单修改邮箱→接管账户。",
+   "bypass_technique": "利用可预测的 CSRF token（通过自己账户获取）。",
+   "defensive_insight": "确保 CSRF token 与用户会话绑定且不可预测。"
+  },
+  {
+   "id": 1195593,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 配置错误",
+   "reasoning": "部分。未授权访问 TURN 服务器凭据，可被用于代理流量进入内网。技术点在于敏感信息未做访问控制，属于配置错误，但影响较大。",
+   "attack_chain": "单点：请求 signaling/settings→获取 TURN 凭据→代理流量进入内网。",
+   "bypass_technique": "无绕过，直接利用未授权端点。",
+   "defensive_insight": "对 TURN 凭据实施访问控制，仅向已认证用户发放。"
+  },
+  {
+   "id": 137404,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。GitHub 上泄露内部服务器信息，属于配置错误，无技术含量。",
+   "attack_chain": "单点：搜索 GitHub→发现内部信息。",
+   "bypass_technique": "无。",
+   "defensive_insight": "定期扫描 GitHub 泄露，加强员工培训。"
+  },
+  {
+   "id": 331428,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "协议行为利用 / 其他",
+   "reasoning": "是。禁用第三方 cookie 后，仍可通过 SharedWorker 跨域跟踪用户，利用浏览器存储隔离的漏洞。技术点在于 SharedWorker 的全局性，绕过隐私保护机制，具有启发性。",
+   "attack_chain": "第三方脚本创建 SharedWorker→跨域共享状态→跟踪用户行为。",
+   "bypass_technique": "利用 SharedWorker 不受第三方 cookie 限制的特性。",
+   "defensive_insight": "浏览器应限制第三方 SharedWorker 或将其隔离。"
+  },
+  {
+   "id": 10373,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用 JSONP 回调参数控制响应首字节，结合 Flash 对畸形 SWF 的容错，构造可执行的 SWF 文件，绕过同源策略。技术点在于 Flash 解析器的宽松行为与 JSONP 的拼接，可抽象为通用攻击模式，影响大量网站。",
+   "attack_chain": "构造 SWF 文件→作为 JSONP 回调参数→Flash 加载并执行→跨域请求并读取响应。",
+   "bypass_technique": "利用 Flash 忽略尾部多余字节的特性，以及 DEFLATE 压缩生成纯字母数字的 SWF。",
+   "defensive_insight": "JSONP 响应前添加空 JS 注释，或使用沙箱域名，或修复 Flash 解析器。"
+  },
+  {
+   "id": 241596,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。Unicode 校验不完整，属于输入验证问题，无技术含量。",
+   "attack_chain": "单点：提交特殊 Unicode 字符→绕过验证。",
+   "bypass_technique": "无。",
+   "defensive_insight": "使用正规化函数处理 Unicode。"
+  },
+  {
+   "id": 334709,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "缓存投毒 / 跨组件攻击链",
+   "reasoning": "是。利用 NULL 字节截断和超长 URL 注入，污染 CDN 缓存，导致持久 DoS。技术点在于 NULL 字节处理不当和缓存机制的结合，可抽象为通用缓存投毒模式。",
+   "attack_chain": "构造含 NULL 字节的 for 参数→注入超长字符串→污染 JS 文件→缓存→用户访问时 URL 超长导致连接关闭。",
+   "bypass_technique": "利用 NULL 字节截断和 URL 长度限制绕过过滤。",
+   "defensive_insight": "对输入进行严格过滤，禁止 NULL 字节，限制参数长度，缓存键应规范化。"
+  },
+  {
+   "id": 541606,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "部分。通过 Settings 权限获取 Multipass 密钥，进而访问客户数据，属于权限提升。技术点在于功能设计未考虑权限边界，但未完全验证，可复现性较低。",
+   "attack_chain": "低权限员工→访问 Settings→获取 Multipass 密钥→模拟任意客户。",
+   "bypass_technique": "利用功能设计缺陷，通过低权限功能获取高权限能力。",
+   "defensive_insight": "敏感密钥应仅对高权限角色可见，实施最小权限原则。"
+  },
+  {
+   "id": 59661,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS 是常见漏洞，无具体细节，信息不足。",
+   "attack_chain": "单点：注入脚本→执行。",
+   "bypass_technique": "无。",
+   "defensive_insight": "输出编码。"
+  },
+  {
+   "id": 110578,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "HTML注入 / 信息泄露",
+   "reasoning": "是。利用 HTML 注入和单引号未转义，构造 meta 标签窃取后续数据，绕过 CSP。技术点在于 CSP 不阻止 meta 跳转，且单引号未编码导致属性注入，可抽象为通用数据窃取模式。",
+   "attack_chain": "注入 meta refresh→单引号闭合属性→窃取后续文本→发送到外部。",
+   "bypass_technique": "利用 meta refresh 和未转义的单引号，绕过 CSP。",
+   "defensive_insight": "对所有用户输入进行 HTML 实体编码，特别是单引号。"
+  },
+  {
+   "id": 1785378,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "命令注入 / 框架行为利用",
+   "reasoning": "是。利用 bash PS1 变量中的命令替换，通过恶意 git 分支名执行任意命令。技术点在于 PS1 的二次求值，属于 shell 行为利用，可抽象为通用模式。",
+   "attack_chain": "创建恶意分支名→进入目录→PS1 求值→执行命令。",
+   "bypass_technique": "利用 PS1 中的命令替换，无需用户交互。",
+   "defensive_insight": "避免在 PS1 中直接使用未转义的命令替换，对输出进行转义。"
+  },
+  {
+   "id": 1216408,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。仅提供 flag，无技术细节，无法评估。",
+   "attack_chain": "未知。",
+   "bypass_technique": "未知。",
+   "defensive_insight": "无。"
+  },
+  {
+   "id": 47341,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 业务逻辑",
+   "reasoning": "部分。通过用户名中的 XSS payload 注入到 cookie 中的 flash 消息，需要特定业务场景（授权操作），但展示了 cookie 中存储 XSS 的利用方式。",
+   "attack_chain": "用户 A 设置恶意用户名→用户 B 授权→flash 消息包含 payload→执行 XSS。",
+   "bypass_technique": "利用 cookie 中的 flash 消息未编码。",
+   "defensive_insight": "对 cookie 中的消息进行编码，或避免在 cookie 中存储用户输入。"
+  }
+ ]
+}

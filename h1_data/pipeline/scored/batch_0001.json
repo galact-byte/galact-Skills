@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   509930,
+   297751,
+   642886,
+   226191,
+   381129
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 491753,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。DMARC 记录缺失是常见的配置检查，无绕过、无攻击链，属于成熟套路。",
+   "attack_chain": "无，单点配置缺失。",
+   "bypass_technique": "无。",
+   "defensive_insight": "配置 DMARC 记录，并定期检查 DNS 记录。"
+  },
+  {
+   "id": 374057,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。利用 ctredirector.dll 的错误消息显示 URL，并通过 @_TEXTDESCRIPTIONEN 参数控制页面内容，实现反射型 XSS。虽然 XSS 类型常见，但利用方式有一定变形，且需要两个参数配合。",
+   "attack_chain": "构造恶意 URL → 触发错误消息 → 注入 XSS 载荷 → 执行脚本。",
+   "bypass_technique": "利用错误消息回显 URL，并通过额外参数控制页面内容。",
+   "defensive_insight": "对错误消息中的 URL 进行编码或过滤，避免直接输出。"
+  },
+  {
+   "id": 642886,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 认证绕过",
+   "reasoning": "是。通过添加并确认新邮箱，然后将其设为主邮箱，从而绕过密码重置时的旧密码验证。这利用了业务逻辑中密码重置与邮箱变更的分离，实现了认证绕过。",
+   "attack_chain": "添加新邮箱 → 确认 → 设为主邮箱 → 通过新邮箱重置密码。",
+   "bypass_technique": "利用邮箱变更流程与密码重置流程的分离，绕过旧密码验证。",
+   "defensive_insight": "在修改主邮箱或添加邮箱时要求重新认证，并确保密码重置流程与邮箱变更联动。"
+  },
+  {
+   "id": 226191,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 0
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 竞争条件",
+   "reasoning": "是。利用软链接和竞争条件，在发送邮件时替换附件指向，导致任意文件被发送到外部，实现数据窃取。这涉及文件系统操作和 Android 组件交互，跨组件且需要精确时序。",
+   "attack_chain": "创建软链接 → 发送邮件 → 竞争窗口内替换链接 → 附件指向敏感文件 → 邮件发送后下载泄露。",
+   "bypass_technique": "利用软链接和竞争条件，在发送过程中替换附件路径。",
+   "defensive_insight": "对附件路径进行规范化，避免使用软链接；在发送前锁定文件。"
+  },
+  {
+   "id": 400826,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 状态混淆",
+   "reasoning": "部分。密码重置令牌在密码更改后未失效，导致旧令牌仍可使用。这属于令牌生命周期管理缺陷，但思路较常见。",
+   "attack_chain": "请求密码重置 → 不立即使用 → 更改密码 → 旧令牌仍可再次更改密码。",
+   "bypass_technique": "利用令牌未失效的缺陷，在密码更改后仍可使用旧令牌。",
+   "defensive_insight": "密码更改后应使所有旧令牌失效。"
+  },
+  {
+   "id": 96229,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "是。利用用户名字符长度限制，通过 window.name 存储载荷，再以 <svg onload=eval(name)> 触发 XSS。这利用了浏览器 window.name 的跨页面持久性，绕过长度限制。",
+   "attack_chain": "设置 window.name → 用户名为载荷 → 触发 onload → 执行任意 JS。",
+   "bypass_technique": "利用 window.name 存储载荷，绕过长度限制。",
+   "defensive_insight": "对用户输入进行严格转义，避免在 HTML 属性中直接输出。"
+  },
+  {
+   "id": 509930,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "是。WordPress 的 wp_targeted_link_rel() 过滤器在解析 rel 属性时未考虑属性位置，导致属性注入，进而存储型 XSS。这利用了正则解析的缺陷，且影响多个插件。",
+   "attack_chain": "构造恶意链接 → 过滤器错误解析 → 注入属性 → 存储 XSS。",
+   "bypass_technique": "利用正则解析缺陷，在 rel 属性中注入引号。",
+   "defensive_insight": "使用 HTML 解析器而非正则，并确保属性顺序正确。"
+  },
+  {
+   "id": 7924,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "点击劫持",
+   "reasoning": "否。点击劫持是常见漏洞，无绕过，无攻击链。",
+   "attack_chain": "无，单点。",
+   "bypass_technique": "无。",
+   "defensive_insight": "添加 X-Frame-Options 或 CSP frame-ancestors。"
+  },
+  {
+   "id": 223851,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。密码策略绕过，通过空格和字母组合，属于常见弱密码问题。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "加强密码复杂度校验，禁止空格作为有效字符。"
+  },
+  {
+   "id": 1966083,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "跨组件攻击链 / 命令注入",
+   "reasoning": "部分。通过恶意 JDBC URL 实现任意文件读取，并可能升级为 RCE。这利用了 JDBC 连接参数未过滤，属于已知攻击面，但攻击链完整。",
+   "attack_chain": "修改连接配置 → 恶意 JDBC URL → 文件读取 → 反序列化 RCE。",
+   "bypass_technique": "利用 JDBC URL 参数注入。",
+   "defensive_insight": "过滤 JDBC URL 参数，限制连接目标。"
+  },
+  {
+   "id": 983077,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。程序名称未净化直接传入 Markdown 组件，导致存储型 XSS。虽然影响有限，但利用了组件信任边界。",
+   "attack_chain": "设置恶意程序名 → 生成文档 → 触发 XSS。",
+   "bypass_technique": "利用 Markdown 组件信任已净化 HTML 的假设。",
+   "defensive_insight": "对输入进行净化，或使用安全的渲染组件。"
+  },
+  {
+   "id": 1403302,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。WordPress 用户枚举和暴力破解是常见问题，无绕过。",
+   "attack_chain": "枚举用户 → 暴力破解。",
+   "bypass_technique": "无。",
+   "defensive_insight": "限制 REST API 用户枚举，增加登录保护。"
+  },
+  {
+   "id": 381129,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "SSRF / 协议行为利用",
+   "reasoning": "是。利用 HTTP 重定向到 IPv6 地址 [::]:22，绕过 SSRF 防护。这利用了 URL 解析差异和 IPv6 表示法。",
+   "attack_chain": "创建 slash command → 重定向到内网 IPv6 → 扫描内网端口。",
+   "bypass_technique": "利用重定向和 IPv6 地址绕过 SSRF 过滤。",
+   "defensive_insight": "过滤重定向目标，禁止内网 IP 和 IPv6 特殊地址。"
+  },
+  {
+   "id": 8091,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。通过数组参数触发错误信息，泄露路径，属于常见 FPD。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "关闭错误显示，记录日志。"
+  },
+  {
+   "id": 775531,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。SPF 记录缺失是常见配置问题。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "配置 SPF 记录。"
+  },
+  {
+   "id": 297751,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "IDOR / 授权绕过",
+   "reasoning": "是。通过修改 authtoken ID，可以修改其他用户的 app 密码权限。这利用了 IDOR，且影响范围广。",
+   "attack_chain": "获取受害者 token ID → 修改权限 → 访问文件。",
+   "bypass_technique": "直接修改 ID 参数。",
+   "defensive_insight": "服务端校验资源所有权。"
+  },
+  {
+   "id": 980511,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "IDOR / 授权绕过",
+   "reasoning": "部分。通过未文档化的 GraphQL API，无权限员工可修改商店客户邮箱。这利用了 API 权限缺失。",
+   "attack_chain": "调用 GraphQL mutation → 修改邮箱。",
+   "bypass_technique": "利用未授权 API。",
+   "defensive_insight": "对 GraphQL API 进行权限校验。"
+  },
+  {
+   "id": 1183296,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "子域名接管",
+   "reasoning": "否。子域名接管是常见漏洞，无绕过。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "清理 DNS 记录。"
+  },
+  {
+   "id": 1873655,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。反射型 XSS，通过 HTML 编码绕过 WAF，但整体套路常见。",
+   "attack_chain": "构造 URL → 触发 XSS。",
+   "bypass_technique": "HTML 编码绕过 WAF。",
+   "defensive_insight": "输出编码，使用 CSP。"
+  },
+  {
+   "id": 305974,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 0
+   },
+   "verdict": "保留，普通",
+   "category": "SSRF / 协议行为利用",
+   "reasoning": "是。利用 parse_url 和 cURL 的解析差异，导致 SSRF。这属于框架行为利用，但缺少具体 PoC。",
+   "attack_chain": "构造 URL → 解析差异 → SSRF。",
+   "bypass_technique": "利用 URL 解析差异。",
+   "defensive_insight": "统一 URL 解析，过滤内网地址。"
+  }
+ ]
+}

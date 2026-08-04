@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   889886,
+   248659,
+   159946,
+   2121960,
+   2377760
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 2121960,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 状态混淆",
+   "reasoning": "是。密码重置后已认证会话仍然有效，这违反了安全直觉——管理员认为重置密码会撤销旧会话，但系统未使会话失效。技术点在于会话状态与用户凭证的同步缺失，属于典型的会话管理缺陷。",
+   "attack_chain": "攻击者先获取用户会话→管理员重置密码→攻击者会话仍有效→继续访问受保护资源。",
+   "bypass_technique": "利用密码重置不使旧会话失效的缺陷，保持已认证状态。",
+   "defensive_insight": "密码重置或凭证变更时，应使所有现有会话失效，并强制重新认证。"
+  },
+  {
+   "id": 248659,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 反序列化",
+   "reasoning": "是。通过WDDX反序列化触发timelib_meridian()的堆越界读，利用畸形日期时间字符串导致内存泄漏。技术点在于反序列化器对日期格式的宽松解析，以及timelib库的边界检查缺失。",
+   "attack_chain": "构造恶意WDDX包→wddx_deserialize()解析→timelib_meridian()越界读→泄露进程内存。",
+   "bypass_technique": "利用畸形日期时间字符串（如'I06.00am 0'）触发越界读。",
+   "defensive_insight": "修复timelib的边界检查，对反序列化输入进行严格验证。"
+  },
+  {
+   "id": 415350,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少CSRF保护是常见配置错误，没有绕过或创新，且报告为informative，影响有限。",
+   "attack_chain": "单点：构造恶意页面→用户访问→触发状态更改请求。",
+   "bypass_technique": "无，直接利用缺失CSRF令牌。",
+   "defensive_insight": "为所有状态更改端点添加CSRF令牌验证。"
+  },
+  {
+   "id": 925513,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。任意文件上传是常见漏洞，没有绕过或创新，报告内容多为通用影响描述，缺乏具体利用细节。",
+   "attack_chain": "单点：上传恶意文件→服务器执行或客户端触发。",
+   "bypass_technique": "无，直接利用未限制文件类型。",
+   "defensive_insight": "限制上传文件类型，使用白名单，并确保上传目录不可执行。"
+  },
+  {
+   "id": 159946,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "反序列化 / 框架行为利用",
+   "reasoning": "是。PHP会话处理器的解析漏洞允许攻击者注入任意会话数据，进而导致对象注入等。技术点在于会话序列化器对非法名称的跳过逻辑，可被利用来注入恶意数据。",
+   "attack_chain": "控制会话名称→注入恶意序列化数据→触发反序列化→对象注入或UAF。",
+   "bypass_technique": "利用会话处理器对非法名称的跳过行为，注入任意数据。",
+   "defensive_insight": "严格验证会话名称，使用安全的会话序列化器，并避免将用户输入直接用于会话键。"
+  },
+  {
+   "id": 18371,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "路径遍历",
+   "reasoning": "否。经典的编码绕过路径遍历，使用%c0%af等，属于成熟套路，无创新。",
+   "attack_chain": "单点：构造编码路径→读取任意文件。",
+   "bypass_technique": "使用UTF-8编码绕过路径过滤。",
+   "defensive_insight": "规范化路径，拒绝包含编码字符的请求。"
+  },
+  {
+   "id": 138262,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。反射型XSS通过callback参数，但结合了敏感数据泄露，形成信息窃取链，但技术点仍是常见XSS。",
+   "attack_chain": "构造恶意callback参数→触发XSS→窃取页面内容。",
+   "bypass_technique": "无，直接利用未过滤的callback参数。",
+   "defensive_insight": "对callback参数进行白名单校验，输出编码。"
+  },
+  {
+   "id": 1748961,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "命令注入",
+   "reasoning": "否。CSV注入是已知套路，利用Excel公式执行，无创新。",
+   "attack_chain": "单点：注入公式→用户打开CSV→执行命令。",
+   "bypass_technique": "无，直接利用CSV公式。",
+   "defensive_insight": "对CSV导出内容进行转义，前缀单引号。"
+  },
+  {
+   "id": 889886,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 业务逻辑",
+   "reasoning": "是。这是一条完整的攻击链，从信息泄露到2FA绕过，再到SSRF和CSS注入，最终获取flag。技术点在于多个漏洞的组合利用，包括JWT篡改、路径遍历、SSRF、CSS注入等，展示了跨组件攻击的威力。",
+   "attack_chain": "信息泄露获取凭证→绕过2FA→SSRF访问内部资源→APK逆向获取密钥→提升权限→绕过支付2FA→获取flag。",
+   "bypass_technique": "利用JWT篡改、路径遍历、SSRF、CSS注入等多种技术绕过安全控制。",
+   "defensive_insight": "加强输入验证，修复SSRF和路径遍历，实施严格的访问控制，对2FA进行强化。"
+  },
+  {
+   "id": 1225164,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 业务逻辑",
+   "reasoning": "部分。通过错误消息差异枚举手机号，属于逻辑漏洞，但依赖大量请求和概率，可复现性一般。",
+   "attack_chain": "利用忘记密码功能→枚举手机号→通过错误消息差异识别目标。",
+   "bypass_technique": "利用不同错误消息区分手机号是否关联账户。",
+   "defensive_insight": "统一错误消息，限制请求频率，实施验证码。"
+  },
+  {
+   "id": 7033,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。缺少HttpOnly标志是常见配置问题，无绕过或创新。",
+   "attack_chain": "单点：XSS窃取cookie。",
+   "bypass_technique": "无。",
+   "defensive_insight": "设置HttpOnly标志。"
+  },
+  {
+   "id": 318571,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。路径泄露是常见信息泄露，无绕过或创新。",
+   "attack_chain": "单点：触发错误→泄露路径。",
+   "bypass_technique": "无。",
+   "defensive_insight": "隐藏错误详情，配置日志。"
+  },
+  {
+   "id": 403707,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "路径遍历",
+   "reasoning": "否。Node.js静态服务器路径遍历，常见套路。",
+   "attack_chain": "单点：构造路径→读取任意文件。",
+   "bypass_technique": "无。",
+   "defensive_insight": "使用安全的路径解析，限制访问范围。"
+  },
+  {
+   "id": 240989,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型XSS，常见套路，无创新。",
+   "attack_chain": "单点：提交恶意名称→管理员查看时执行。",
+   "bypass_technique": "无。",
+   "defensive_insight": "输入验证和输出编码。"
+  },
+  {
+   "id": 271355,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "内存破坏 / 信息泄露",
+   "reasoning": "是。利用ImageMagick未初始化调色板漏洞泄露内存，技术点在于图像处理库的缺陷，可导致敏感信息泄露。",
+   "attack_chain": "上传恶意GIF→ImageMagick处理→内存泄露→提取敏感数据。",
+   "bypass_technique": "利用未初始化调色板，通过gifoeb工具生成恶意图像。",
+   "defensive_insight": "更新ImageMagick，限制上传图像类型，进行安全处理。"
+  },
+  {
+   "id": 2434904,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型XSS，常见套路，无创新。",
+   "attack_chain": "单点：构造恶意搜索参数→执行JS。",
+   "bypass_technique": "无。",
+   "defensive_insight": "输入验证和输出编码。"
+  },
+  {
+   "id": 1165919,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。内容欺骗，常见套路，无创新。",
+   "attack_chain": "单点：构造URL→显示恶意内容。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对URL参数进行过滤。"
+  },
+  {
+   "id": 180695,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告信息不足，仅提到发送大量数据导致崩溃，缺乏细节。",
+   "attack_chain": "单点：发送大量数据→服务崩溃。",
+   "bypass_technique": "无。",
+   "defensive_insight": "限制请求大小，实施资源控制。"
+  },
+  {
+   "id": 2377760,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用",
+   "reasoning": "是。SRI检查的解析缺陷，当哈希值格式错误时，整个检查被跳过，导致资源加载不受保护。技术点在于解析逻辑对无效哈希的处理不当。",
+   "attack_chain": "构造无效哈希→SRI检查被跳过→加载恶意资源。",
+   "bypass_technique": "利用无效哈希值（如'sha256--'）使解析失败，从而跳过SRI检查。",
+   "defensive_insight": "修复解析逻辑，对无效哈希应视为不匹配，而不是跳过检查。"
+  },
+  {
+   "id": 391390,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型XSS，常见套路，无创新。",
+   "attack_chain": "单点：成员名称注入XSS→管理员查看时执行。",
+   "bypass_technique": "无。",
+   "defensive_insight": "输入验证和输出编码。"
+  }
+ ]
+}

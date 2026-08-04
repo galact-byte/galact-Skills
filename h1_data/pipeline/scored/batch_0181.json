@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.4,
+  "top_n": [
+   736522,
+   1820955,
+   240886,
+   748375,
+   326639
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 865354,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 跨组件攻击链",
+   "reasoning": "部分。任意文件上传本身是常见漏洞，但攻击链延伸到客服代表打开恶意SVG触发存储XSS，形成跨用户攻击，有一定启发性。但技术点仍是经典的文件类型过滤缺失，无特殊绕过。",
+   "attack_chain": "上传恶意SVG/HTML→客服代表下载并打开→浏览器执行XSS→窃取会话或钓鱼。",
+   "bypass_technique": "无实质绕过，直接利用未限制文件类型。",
+   "defensive_insight": "实施上传文件白名单，对SVG/HTML等危险类型进行内容消毒或禁止上传。"
+  },
+  {
+   "id": 97683,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型自XSS，经典payload，无绕过，无攻击链，仅影响自身，价值极低。",
+   "attack_chain": "单点：搜索框注入XSS→自身浏览器执行。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对搜索输入进行输出编码，设置CSP。"
+  },
+  {
+   "id": 152477,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "路径遍历 / 配置错误",
+   "reasoning": "部分。用户名设为'..'导致路径解析异常，但影响仅为404页面，无安全影响，且substate为informative，信息不足。",
+   "attack_chain": "单点：用户名'..'→路径归一化→404。",
+   "bypass_technique": "利用路径归一化，但无实际危害。",
+   "defensive_insight": "对用户名进行严格校验，禁止特殊字符。"
+  },
+  {
+   "id": 1820955,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 框架行为利用",
+   "reasoning": "是。undici库对host头未进行CRLF过滤，而其他头都过滤了，这种不一致性导致CRLF注入。技术点在于库的防御不一致，可抽象为通用判断条件：所有头必须统一过滤。",
+   "attack_chain": "构造含CRLF的host头→注入额外头或请求走私→可能影响下游。",
+   "bypass_technique": "利用host头未过滤的CRLF注入，绕过其他头的过滤。",
+   "defensive_insight": "对所有HTTP头统一进行CRLF过滤，包括host头。"
+  },
+  {
+   "id": 7931,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑 / 认证绕过",
+   "reasoning": "部分。remember_user_token不重新生成，可能导致会话固定，但影响有限，且无详细利用链，属于常见会话管理缺陷。",
+   "attack_chain": "单点：登录后token不变→可能被固定会话。",
+   "bypass_technique": "无。",
+   "defensive_insight": "登录成功后应重新生成remember token。"
+  },
+  {
+   "id": 240886,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 框架行为利用",
+   "reasoning": "是。利用null字节绕过'..'过滤，这是对过滤逻辑的经典绕过，但null字节在现代PHP中可能已失效，不过报告指出在特定环境下仍有效，且影响广泛（多处代码）。技术点在于过滤不完整，可抽象为通用判断条件：过滤必须考虑编码和特殊字符。",
+   "attack_chain": "构造.%00.../.%00.../路径→绕过过滤→删除任意文件。",
+   "bypass_technique": "使用null字节插入点，绕过str_replace('..', '')过滤。",
+   "defensive_insight": "使用realpath规范化路径，并拒绝包含null字节的输入。"
+  },
+  {
+   "id": 326639,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 配置错误",
+   "reasoning": "是。通过HTTP参数污染（数组参数）导致缓存投毒，影响第三方站点（Airbnb）。技术点在于参数解析差异和缓存机制，可抽象为通用判断条件：参数污染可导致缓存键冲突。",
+   "attack_chain": "构造for[]=twitter&for[]=...→污染boardURI→缓存投毒→第三方iframe加载失败→DoS。",
+   "bypass_technique": "利用数组参数污染，使缓存键包含恶意值。",
+   "defensive_insight": "对参数进行严格校验，避免数组参数，缓存键应基于规范化参数。"
+  },
+  {
+   "id": 748375,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 状态混淆",
+   "reasoning": "是。将公共组转为私有组后，Elasticsearch索引未更新，导致私有代码仍可通过API搜索到。技术点在于状态变更未同步到索引，可抽象为通用判断条件：权限变更必须触发索引更新。",
+   "attack_chain": "公共组转私有→索引未更新→未授权用户通过API搜索到私有代码。",
+   "bypass_technique": "利用索引与权限状态不一致。",
+   "defensive_insight": "权限变更时同步更新搜索索引，或搜索时实时检查权限。"
+  },
+  {
+   "id": 1069531,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SQL注入",
+   "reasoning": "否。经典时间盲注，payload为常见XOR技巧，无绕过，无攻击链，成熟套路。",
+   "attack_chain": "单点：phone_number参数注入→时间盲注。",
+   "bypass_technique": "无。",
+   "defensive_insight": "参数化查询。"
+  },
+  {
+   "id": 736522,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 类型混淆",
+   "reasoning": "是。JWT验证逻辑缺陷：只验证refreshToken，不验证token本身，导致可篡改token payload。技术点在于验证逻辑不完整，可抽象为通用判断条件：所有JWT必须验证签名和过期。",
+   "attack_chain": "获取合法refreshToken→篡改token payload→重放→身份伪造。",
+   "bypass_technique": "利用checkRefreshToken只验证refreshToken，不验证token的缺陷。",
+   "defensive_insight": "对token和refreshToken都进行完整验证，包括签名、过期和payload完整性。"
+  },
+  {
+   "id": 2297561,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 其他",
+   "reasoning": "部分。Swagger UI的configUrl参数允许加载外部配置，导致钓鱼，但这是已知CVE，无新意，且信息被大量REDACTED。",
+   "attack_chain": "构造恶意configUrl→加载外部OpenAPI定义→钓鱼。",
+   "bypass_technique": "利用configUrl参数未限制。",
+   "defensive_insight": "升级Swagger UI，禁用外部配置加载。"
+  },
+  {
+   "id": 227230,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 授权绕过",
+   "reasoning": "部分。权限移除后webhook仍触发，且webhook不再列出，形成隐蔽后门。技术点在于权限变更未级联到webhook，可抽象为通用判断条件：权限变更应影响相关资源。",
+   "attack_chain": "创建webhook→移除权限→webhook仍触发→数据外泄。",
+   "bypass_technique": "利用权限移除后webhook未失效。",
+   "defensive_insight": "权限变更时级联禁用相关webhook，并确保webhook列表可见。"
+  },
+  {
+   "id": 420115,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "其他",
+   "reasoning": "部分。mruby解析器崩溃，PoC极短，但属于内存破坏，无绕过，无攻击链，但可复现性高。",
+   "attack_chain": "单点：构造特殊Ruby代码→触发空指针解引用→崩溃。",
+   "bypass_technique": "无。",
+   "defensive_insight": "修复mrb_ary_push中的空指针检查。"
+  },
+  {
+   "id": 192127,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "部分。mruby的sprintf缓冲区下溢，但报告内容简略，且是已知问题，无新意。",
+   "attack_chain": "单点：构造格式化字符串→缓冲区下溢。",
+   "bypass_technique": "无。",
+   "defensive_insight": "修复sprintf的边界检查。"
+  },
+  {
+   "id": 1244403,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "信息泄露",
+   "reasoning": "否。仅发现一个标记为CUI的文件公开可访问，但无具体敏感内容，且信息被大量REDACTED，无法判断实际危害。",
+   "attack_chain": "单点：访问公开URL→看到CUI标记。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对敏感文件进行访问控制。"
+  },
+  {
+   "id": 122256,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "其他",
+   "reasoning": "部分。Flash Player未初始化内存漏洞，有详细调试信息，但属于已知CVE，无新意。",
+   "attack_chain": "单点：打开恶意SWF→触发未初始化内存→崩溃或代码执行。",
+   "bypass_technique": "无。",
+   "defensive_insight": "修复未初始化内存使用。"
+  },
+  {
+   "id": 298265,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 0
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 业务逻辑",
+   "reasoning": "是。利用分号作为参数分隔符，在iframe URL中注入额外参数，覆盖原有参数，加载任意Greenhouse表单。技术点在于URL解析差异，可抽象为通用判断条件：参数分隔符应统一处理。",
+   "attack_chain": "构造gh_jid=795069;for=airbnb→iframe URL参数覆盖→加载任意表单→钓鱼。",
+   "bypass_technique": "利用分号作为参数分隔符，绕过参数顺序限制。",
+   "defensive_insight": "对iframe URL参数进行严格编码，避免使用分号作为分隔符。"
+  },
+  {
+   "id": 162147,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "IDOR / 授权绕过",
+   "reasoning": "部分。通过IDOR创建列表时未校验label_id归属，泄露私有标签信息。技术点在于对象引用未校验，可抽象为通用判断条件：创建资源时必须校验关联对象权限。",
+   "attack_chain": "创建列表→指定他人label_id→泄露标签名称和描述。",
+   "bypass_technique": "直接使用他人label_id。",
+   "defensive_insight": "创建列表时校验label_id属于当前项目。"
+  },
+  {
+   "id": 223531,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。用户枚举，通过添加邮箱接口可暴力枚举注册邮箱，常见漏洞，无新意。",
+   "attack_chain": "单点：枚举邮箱→确认注册。",
+   "bypass_technique": "无。",
+   "defensive_insight": "添加验证码或统一响应。"
+  },
+  {
+   "id": 947690,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。点击劫持，仅测试iframe加载，无实际攻击场景，且substate为not-applicable，信息不足。",
+   "attack_chain": "单点：iframe加载目标站点。",
+   "bypass_technique": "无。",
+   "defensive_insight": "设置X-Frame-Options或CSP frame-ancestors。"
+  }
+ ]
+}

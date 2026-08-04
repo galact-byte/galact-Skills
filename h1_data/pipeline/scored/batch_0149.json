@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1069388,
+   1036886,
+   1518036,
+   650085,
+   167896
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 167896,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "类型混淆 / 框架行为利用",
+   "reasoning": "是。利用 tar phar 中未校验的 uncompressed_filesize 导致签名长度下溢，进而造成堆越界读取。技术点在于对文件格式字段的信任，导致整数溢出，属于框架行为利用。与普通内存破坏不同，它展示了如何通过构造恶意归档触发解析器缺陷，具有通用性。",
+   "attack_chain": "构造恶意 tar phar → 设置 uncompressed_filesize 小于8 → 触发 phar_verify_signature 长度下溢 → 堆越界读取。",
+   "bypass_technique": "利用未校验的文件大小字段，使 sig_len 下溢，绕过长度检查。",
+   "defensive_insight": "解析归档时严格校验所有长度字段，确保不小于最小合法值，并验证签名缓冲区大小。"
+  },
+  {
+   "id": 301973,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。评论回复功能中作者名未编码直接插入 DOM，导致存储型 XSS。技术点在于客户端 DOM 操作未进行编码，属于常见 XSS 变体，但需要用户点击回复触发，且 CSP 可缓解。",
+   "attack_chain": "提交恶意评论名 → 受害者点击回复 → 脚本执行 → 窃取会话或执行操作。",
+   "bypass_technique": "利用未编码的 DOM 插入，绕过服务端过滤。",
+   "defensive_insight": "客户端插入用户数据时使用 textContent 或转义，并保持 CSP 严格。"
+  },
+  {
+   "id": 1069561,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SQL注入",
+   "reasoning": "否。典型的 GET 参数 SQL 注入，sqlmap 自动检测，布尔盲注和时间盲注，成熟套路，无绕过或创新。",
+   "attack_chain": "单点：acctid 参数 → 后端 SQL 拼接 → 盲注。",
+   "bypass_technique": "无实质绕过，直接利用未过滤参数。",
+   "defensive_insight": "使用参数化查询，对所有输入进行严格过滤。"
+  },
+  {
+   "id": 216812,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS / 信息泄露",
+   "reasoning": "否。错误页面 HTML 注入，属于反射型 XSS 的变体，但受 CSP 和浏览器限制，利用困难。路径泄露是附带问题。整体为常见套路。",
+   "attack_chain": "构造恶意 URL → 错误页面反射注入 → 可能钓鱼或 XSS。",
+   "bypass_technique": "利用错误页面未过滤输出，但受安全头限制。",
+   "defensive_insight": "对所有输出进行编码，尤其是错误页面。"
+  },
+  {
+   "id": 549364,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。短信中使用了错误的域名，属于配置错误，可被用于钓鱼，但无技术绕过，影响有限。",
+   "attack_chain": "用户设置恢复 → 收到含错误域名的短信 → 可能被钓鱼。",
+   "bypass_technique": "无，直接利用配置错误。",
+   "defensive_insight": "确保所有通信中的域名正确且受控。"
+  },
+  {
+   "id": 361368,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。删除账户未要求重新认证，属于常见业务逻辑缺陷，但需要物理访问，且影响有限。",
+   "attack_chain": "共享电脑 → 未锁定账户 → 删除账户。",
+   "bypass_technique": "无，直接利用缺少认证。",
+   "defensive_insight": "敏感操作应要求重新认证。"
+  },
+  {
+   "id": 17383,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 状态混淆",
+   "reasoning": "是。密码重置链接在用户更改邮箱后仍然有效，导致账户接管。技术点在于状态管理缺陷：重置令牌未与邮箱变更关联。属于逻辑漏洞，但需要特定条件。",
+   "attack_chain": "请求重置链接 → 更改邮箱 → 使用旧链接重置密码 → 接管账户。",
+   "bypass_technique": "利用重置令牌未失效，绕过邮箱变更后的安全措施。",
+   "defensive_insight": "邮箱变更后应使所有重置令牌失效。"
+  },
+  {
+   "id": 10027,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。登录未强制 HTTPS，属于常见配置问题，无技术难度。",
+   "attack_chain": "中间人攻击 → 窃取密码。",
+   "bypass_technique": "无，直接利用明文传输。",
+   "defensive_insight": "强制 HTTPS 并启用 HSTS。"
+  },
+  {
+   "id": 98559,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "反序列化 / 配置错误",
+   "reasoning": "部分。利用 Jenkins 反序列化漏洞实现 RCE，但属于已知漏洞的利用，配置错误导致暴露。技术点在于未打补丁的 Jenkins 实例，无新意。",
+   "attack_chain": "访问 Jenkins → 发送恶意序列化数据 → RCE。",
+   "bypass_technique": "无，直接利用已知漏洞。",
+   "defensive_insight": "及时更新组件，限制网络暴露。"
+  },
+  {
+   "id": 1069388,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 业务逻辑",
+   "reasoning": "是。这是一个 CTF 挑战的完整 writeup，展示了多种攻击技术，包括 IDOR、LFI 绕过、SSTI 递归、SQLi 嵌套、DNS rebinding 等。技术点在于多个漏洞的组合利用，尤其是 SQLi 嵌套和 DNS rebinding 绕过 SSRF 防护，具有高度启发性。",
+   "attack_chain": "多阶段：信息收集 → IDOR → LFI → SSTI → SQLi → SSRF → DNS rebinding → 最终控制。",
+   "bypass_technique": "利用正则过滤顺序绕过、模板递归、SQLi 嵌套、DNS rebinding 等。",
+   "defensive_insight": "加强输入验证、访问控制、模板引擎安全配置，并防止 SSRF 和 TOCTOU。"
+  },
+  {
+   "id": 1036886,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 0
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 协议行为利用",
+   "reasoning": "是。利用 kubelet 的 /logs 端点跟随符号链接，实现从 pod 到节点文件系统的权限提升。技术点在于 kubelet 以 root 运行且未检查符号链接目标，属于框架行为利用，可跨组件攻击。",
+   "attack_chain": "创建 pod 挂载 /var/log → 创建符号链接 → 通过 /logs 端点读取任意文件。",
+   "bypass_technique": "利用符号链接绕过路径限制，实现目录遍历。",
+   "defensive_insight": "kubelet 应验证符号链接目标，限制在允许的目录内。"
+  },
+  {
+   "id": 508493,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。组管理员可以创建与系统目录同名的用户，然后删除用户导致目录被删除。技术点在于用户创建时未检查目录冲突，属于业务逻辑缺陷，可导致任意数据删除。",
+   "attack_chain": "创建特殊用户 → 删除用户 → 删除对应目录。",
+   "bypass_technique": "利用用户创建与目录删除的关联，绕过权限限制。",
+   "defensive_insight": "创建用户时检查目录是否存在，删除时验证目录内容。"
+  },
+  {
+   "id": 133375,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。错误页面泄露堆栈信息，属于常见信息泄露，无技术难度。",
+   "attack_chain": "触发错误 → 泄露堆栈。",
+   "bypass_technique": "无，直接利用错误处理不当。",
+   "defensive_insight": "生产环境关闭详细错误信息。"
+  },
+  {
+   "id": 276244,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。过期域名链接可被用于钓鱼，属于常见配置问题，无技术含量。",
+   "attack_chain": "购买过期域名 → 钓鱼。",
+   "bypass_technique": "无，直接利用链接未更新。",
+   "defensive_insight": "定期检查并更新外部链接。"
+  },
+  {
+   "id": 67377,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "SSRF",
+   "reasoning": "是。通过图片 URL 功能，利用重定向绕过 URL 验证，实现端口扫描。技术点在于重定向绕过，属于常见 SSRF 绕过，但思路清晰。",
+   "attack_chain": "提交恶意 URL → 重定向到内网端口 → 根据响应时间判断端口状态。",
+   "bypass_technique": "利用重定向绕过 URL 白名单。",
+   "defensive_insight": "禁止重定向或验证重定向目标。"
+  },
+  {
+   "id": 176042,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS / 信息泄露",
+   "reasoning": "否。错误页面文本注入，属于反射型 XSS 变体，但无实际利用，常见。",
+   "attack_chain": "构造 URL → 错误页面注入文本 → 钓鱼。",
+   "bypass_technique": "无，直接利用未过滤输出。",
+   "defensive_insight": "对错误页面输出进行编码。"
+  },
+  {
+   "id": 99857,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。CSRF 令牌缺失但请求仍被接受，属于配置错误，无技术难度。",
+   "attack_chain": "删除 CSRF 令牌 → 上传照片。",
+   "bypass_technique": "无，直接利用缺失校验。",
+   "defensive_insight": "强制校验 CSRF 令牌。"
+  },
+  {
+   "id": 1518036,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 其他",
+   "reasoning": "是。利用正则表达式中的空子表达式重复，绕过内存限制，导致 CPU 耗尽。技术点在于编译器对空子表达式的处理，属于框架行为利用，可导致 DoS。",
+   "attack_chain": "提交恶意正则 → 编译器创建大量空实例 → CPU 耗尽。",
+   "bypass_technique": "利用空子表达式重复绕过内存限制。",
+   "defensive_insight": "限制正则表达式长度和复杂度，或使用安全解析器。"
+  },
+  {
+   "id": 650085,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 0
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 协议行为利用",
+   "reasoning": "是。Kaspersky 扩展在沙箱 iframe 中自动填充凭据，无视有效 origin。技术点在于扩展未遵循沙箱 origin 规则，属于协议行为利用，可导致凭据泄露。",
+   "attack_chain": "加载恶意页面 → 沙箱 iframe 自动填充凭据 → 窃取。",
+   "bypass_technique": "利用沙箱 iframe 的 origin 处理缺陷。",
+   "defensive_insight": "扩展应检查 iframe 的有效 origin，不自动填充到沙箱环境。"
+  },
+  {
+   "id": 792295,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 其他",
+   "reasoning": "部分。OTP 不失效且可暴力破解，属于业务逻辑缺陷，但需要大量请求，且可能受速率限制。",
+   "attack_chain": "获取 OTP → 暴力破解 → 验证他人手机号。",
+   "bypass_technique": "利用 OTP 不失效，结合 IP 轮换绕过速率限制。",
+   "defensive_insight": "设置 OTP 有效期和尝试次数限制，并添加验证码。"
+  }
+ ]
+}

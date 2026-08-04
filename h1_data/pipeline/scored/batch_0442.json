@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1438028,
+   391611,
+   141239,
+   1439026,
+   1555441
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 381185,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "原型污染 / 框架行为利用",
+   "reasoning": "是。利用 extend 深拷贝时对 __proto__ 的处理，将属性注入 Object.prototype，影响所有对象。这是原型污染攻击的经典变体，但利用的是库的默认行为，且已有类似报告，启发性中等。",
+   "attack_chain": "构造 JSON 对象含 __proto__ → 调用 extend(true, {}, payload) → 污染 Object.prototype → 影响应用逻辑（如权限提升）。",
+   "bypass_technique": "利用 JSON.parse 解析 __proto__ 键，绕过 extend 的浅拷贝检查，实现原型污染。",
+   "defensive_insight": "使用 Object.create(null) 或白名单键，避免深拷贝时处理 __proto__。"
+  },
+  {
+   "id": 768574,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "命令注入 / 配置错误",
+   "reasoning": "是。正则白名单允许 '-' 字符，导致参数注入，可传递 --help 等参数使服务器重启。这是对输入验证不严的巧妙利用，思路可借鉴。",
+   "attack_chain": "登录管理后台 → 拦截安装插件请求 → 修改 plugin 参数为 '-h' → execa 执行 npm run strapi -- install -h → 服务器重启。",
+   "bypass_technique": "利用正则白名单中的 '-' 字符，注入命令行参数，绕过命令注入防护。",
+   "defensive_insight": "严格校验插件名，禁止 '-' 开头或使用参数白名单，避免参数注入。"
+  },
+  {
+   "id": 2245437,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "认证绕过",
+   "reasoning": "否。暴力破解 4 位 PIN 是常见攻击，无绕过技巧，仅因无限尝试次数导致。",
+   "attack_chain": "无限尝试 PIN → 暴力破解成功 → 绕过认证。",
+   "bypass_technique": "无，直接暴力破解。",
+   "defensive_insight": "限制尝试次数，增加锁定机制或延迟。"
+  },
+  {
+   "id": 151583,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。用户枚举通过错误消息差异，是常见信息泄露，无新意。",
+   "attack_chain": "尝试登录 → 根据错误消息判断用户是否存在。",
+   "bypass_technique": "无，直接利用错误消息差异。",
+   "defensive_insight": "统一错误消息，避免用户枚举。"
+  },
+  {
+   "id": 1858574,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 信息泄露",
+   "reasoning": "是。利用 ImageMagick 的 CVE-2022-44268，通过上传恶意图片，在图片中嵌入文件内容，下载后提取。这是对已知漏洞的实战利用，但攻击链完整，影响大。",
+   "attack_chain": "构造恶意 PNG → 上传为头像 → 服务器处理时读取 /etc/passwd 嵌入图片 → 下载图片 → 提取内容。",
+   "bypass_technique": "利用 ImageMagick 的 PNG 文本块特性，嵌入任意文件内容。",
+   "defensive_insight": "更新 ImageMagick，禁用危险操作，或对上传图片进行严格校验。"
+  },
+  {
+   "id": 265706,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。登录表单无速率限制，是常见配置错误，无绕过技巧。",
+   "attack_chain": "暴力破解登录。",
+   "bypass_technique": "无。",
+   "defensive_insight": "添加速率限制或验证码。"
+  },
+  {
+   "id": 171879,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告仅描述服务器宕机，无漏洞细节，无法判断真实性。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "无。"
+  },
+  {
+   "id": 660563,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 0
+   },
+   "verdict": "保留，高优先级",
+   "category": "代码注入 / 跨组件攻击链",
+   "reasoning": "是。利用 script-manager 的 execModulePath 参数，通过路径遍历加载任意 JS 文件，实现代码执行。这是对 Node.js 模块设计缺陷的利用，思路新颖，可抽象为通用攻击模式。",
+   "attack_chain": "扫描端口 → 发送恶意请求指定 execModulePath → 服务器 require 恶意文件 → 代码执行。",
+   "bypass_technique": "利用路径遍历和未校验的 require 参数，加载任意文件。",
+   "defensive_insight": "限制 execModulePath 为白名单，或使用沙箱执行。"
+  },
+  {
+   "id": 141239,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 协议行为利用",
+   "reasoning": "是。Nginx 的 auth_basic 模块在密码包含 @ 时，只验证 @ 之前的部分，导致密码截断。这是对 Nginx 解析行为的利用，影响广泛，可抽象为通用判断条件。",
+   "attack_chain": "设置密码含 @ → 攻击者输入 @ 前部分 → 认证通过。",
+   "bypass_technique": "利用 Nginx 对密码中 @ 的截断行为，绕过认证。",
+   "defensive_insight": "避免在密码中使用 @，或修复 Nginx 解析逻辑。"
+  },
+  {
+   "id": 1395068,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。响应头泄露 nginx 版本，是常见信息泄露，无新意。",
+   "attack_chain": "发送请求 → 响应头显示版本。",
+   "bypass_technique": "无。",
+   "defensive_insight": "隐藏服务器版本信息。"
+  },
+  {
+   "id": 404126,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。buttle 使用 kramed 渲染 markdown 未开启 sanitize，导致 XSS。这是常见配置错误，但利用方式简单，PoC 完整。",
+   "attack_chain": "上传恶意 markdown → 用户访问 → 执行 JS。",
+   "bypass_technique": "利用 markdown 渲染未过滤 HTML。",
+   "defensive_insight": "开启 sanitize 或使用安全的 markdown 渲染器。"
+  },
+  {
+   "id": 424669,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "子域名接管",
+   "reasoning": "是。CNAME 指向未认领的 Heroku 实例，可注册并接管。这是常见子域名接管，但利用简单，影响明确。",
+   "attack_chain": "发现 CNAME 指向未认领 Heroku → 注册该实例 → 控制子域名。",
+   "bypass_technique": "利用未认领的云服务实例。",
+   "defensive_insight": "定期检查 DNS 记录，删除未使用的 CNAME。"
+  },
+  {
+   "id": 1439026,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 0
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。通过 Android 客户端的重复检查流程，绕过隐私设置获取用户 ID。这是对业务逻辑的巧妙利用，影响大量用户，可抽象为通用枚举方法。",
+   "attack_chain": "发起登录流程 → 输入邮箱/手机号 → 获取用户 ID → 枚举用户。",
+   "bypass_technique": "利用重复检查接口未验证隐私设置。",
+   "defensive_insight": "在重复检查接口中强制校验隐私设置。"
+  },
+  {
+   "id": 88719,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "是。多个 DOM XSS 点，包括 jQuery $.get 未指定数据类型、iframe src 未验证、ctaLink 未验证，可组合成点击劫持攻击。这是对前端框架行为的利用，攻击链完整。",
+   "attack_chain": "构造恶意 URL → 触发 $.get 加载远程 JS → XSS → 结合点击劫持。",
+   "bypass_technique": "利用 jQuery 的 $.get 默认数据类型和 URL 验证缺失。",
+   "defensive_insight": "指定数据类型，验证 URL 协议，使用 CSP。"
+  },
+  {
+   "id": 142221,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "认证绕过 / 业务逻辑",
+   "reasoning": "是。OTP 验证错误消息泄露 session code，可直接使用。这是对错误处理不当的利用，思路简单但有效。",
+   "attack_chain": "下单 → 输入错误 OTP → 错误消息泄露 session code → 使用该 code 验证。",
+   "bypass_technique": "利用错误消息泄露的验证码。",
+   "defensive_insight": "错误消息不包含敏感信息，OTP 一次性使用。"
+  },
+  {
+   "id": 459532,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "CSV注入",
+   "reasoning": "否。CSV 注入是已知漏洞类型，利用公式执行命令，无新意。",
+   "attack_chain": "输入公式 → 导出 CSV → 打开执行。",
+   "bypass_technique": "无。",
+   "defensive_insight": "对 CSV 输出进行转义。"
+  },
+  {
+   "id": 391611,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用随机数三角分布的特性，构造接近总输出数的请求，导致无限循环。这是对算法行为的深入利用，可抽象为通用 DoS 模式。",
+   "attack_chain": "发送 outs_count 接近总输出数 → 循环尝试随机选择 → 无限循环。",
+   "bypass_technique": "利用三角分布的低概率区间，使循环无法完成。",
+   "defensive_insight": "限制 outs_count 最大值，或使用均匀随机。"
+  },
+  {
+   "id": 1438028,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 协议行为利用",
+   "reasoning": "是。通过 ReaderViewLoading.html 泄露 uuidKey，再结合 SessionRestoreHandler 的 javascript: URL 执行，实现内部域 XSS。这是对 iOS 版本差异和组件组合的利用，攻击链完整。",
+   "attack_chain": "打开恶意页面 → 进入阅读模式 → 新开标签页 → 泄露 uuidKey → 点击恶意链接 → XSS。",
+   "bypass_technique": "利用 referrer 策略缺失和 URL 验证缺失。",
+   "defensive_insight": "统一 referrer 策略，验证恢复的 URL。"
+  },
+  {
+   "id": 1555441,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 其他",
+   "reasoning": "是。利用证书链中的循环，使 curl 的 CERTINFO 计数陷入无限循环。这是对证书链解析逻辑的利用，可抽象为通用 DoS 模式。",
+   "attack_chain": "构造循环证书链 → 服务器发送 → curl 计数循环 → CPU 100%。",
+   "bypass_technique": "利用证书链循环导致无限循环。",
+   "defensive_insight": "限制证书链长度，检测循环。"
+  },
+  {
+   "id": 772886,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 状态混淆",
+   "reasoning": "是。通过两个不同端点获取两个有效重置令牌，可多次使用，导致账户锁定。这是对令牌管理逻辑的利用，思路有趣。",
+   "attack_chain": "请求两个重置令牌 → 使用第一个 → 使用第二个 → 账户状态异常。",
+   "bypass_technique": "利用不同端点未共享令牌失效状态。",
+   "defensive_insight": "统一令牌管理，使用后立即失效所有令牌。"
+  }
+ ]
+}

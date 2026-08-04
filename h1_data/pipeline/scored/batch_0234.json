@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1580493,
+   1198434,
+   779910,
+   268984,
+   308489
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1198434,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 配置错误",
+   "reasoning": "是。利用缓存服务器对Host头中端口号的反射和存储，实现缓存投毒导致DoS。技术点在于通过添加随机参数和端口号，使缓存服务器存储错误的端口，从而影响所有用户。这展示了缓存投毒的另一种利用方式，且可抽象为通用判断条件。",
+   "attack_chain": "构造带随机参数和恶意端口的请求→缓存服务器存储错误端口→后续请求被重定向到错误端口→服务不可用。",
+   "bypass_technique": "利用缓存服务器对Host头中端口号的反射和存储，通过添加随机参数和端口号，使缓存服务器存储错误的端口。",
+   "defensive_insight": "配置缓存服务器不存储Host头，或对Host头进行严格验证和规范化。"
+  },
+  {
+   "id": 17235,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。这是典型的反射型XSS，由于双引号转义不充分导致。攻击向量简单，无绕过，无攻击链，属于常见套路。",
+   "attack_chain": "构造恶意URL→触发XSS→执行脚本。",
+   "bypass_technique": "无实质绕过，直接利用未转义的双引号。",
+   "defensive_insight": "对输出进行上下文感知的编码，特别是属性值中的双引号。"
+  },
+  {
+   "id": 482200,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "反序列化 / 内存破坏",
+   "reasoning": "部分。这是一个经典的堆缓冲区溢出，但触发点在于解析畸形密钥文件时的边界条件。虽然漏洞类型常见，但具体触发路径和利用方式有一定启发性，且复现步骤详细。",
+   "attack_chain": "构造恶意PPK文件→puttygen解析→mp_get_decimal越界读取→崩溃或潜在代码执行。",
+   "bypass_technique": "无绕过，直接利用解析逻辑缺陷。",
+   "defensive_insight": "在解析外部输入时进行严格的长度和边界检查。"
+  },
+  {
+   "id": 779910,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 跨组件攻击链",
+   "reasoning": "是。通过邮箱地址的字符混淆（添加{或}）绕过认证，结合QR码恢复功能接管账户，再通过XSS和PDF生成漏洞获取敏感信息。整个攻击链跨多个组件，思路巧妙，展示了业务逻辑漏洞的深度利用。",
+   "attack_chain": "添加特殊字符到邮箱→注册新账户→使用恢复功能接管目标账户→提交盲XSS→提取document.location→修改用户ID→在用户名中放置XSS→生成PDF→访问调试端口→获取secret。",
+   "bypass_technique": "利用邮箱地址的字符混淆绕过认证，结合QR码恢复功能接管账户。",
+   "defensive_insight": "对邮箱地址进行规范化处理，防止字符混淆；对恢复功能进行严格验证；对PDF生成进行沙箱隔离。"
+  },
+  {
+   "id": 115291,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "SQL注入",
+   "reasoning": "部分。这是典型的Union-based SQL注入，但注入点在GET参数last_id，且输出在JSON响应中，利用简单。虽然套路常见，但PoC清晰，可复现。",
+   "attack_chain": "构造恶意last_id参数→Union注入→获取数据库信息。",
+   "bypass_technique": "无实质绕过，直接利用未过滤的参数拼接。",
+   "defensive_insight": "使用参数化查询，对输入进行严格过滤。"
+  },
+  {
+   "id": 805027,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。这是简单的敏感信息泄露，由于未授权访问PDF文档。无绕过，无攻击链，属于配置错误。",
+   "attack_chain": "直接访问公开URL→获取敏感信息。",
+   "bypass_technique": "无绕过，直接利用未授权访问。",
+   "defensive_insight": "对敏感文档实施访问控制，定期审查公开资源。"
+  },
+  {
+   "id": 1021906,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 信息泄露",
+   "reasoning": "否。这是S3桶配置错误导致公开访问，属于常见配置问题。无绕过，无攻击链，但复现步骤清晰。",
+   "attack_chain": "发现S3桶URL→直接访问桶列表→获取所有用户图片。",
+   "bypass_technique": "无绕过，直接利用公开的S3桶。",
+   "defensive_insight": "配置S3桶为私有，实施最小权限原则。"
+  },
+  {
+   "id": 170144,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "反序列化 / 内存破坏",
+   "reasoning": "部分。这是PHP WDDX反序列化中的use-after-free漏洞，触发条件特殊（缺少闭合标签）。虽然漏洞类型常见，但具体触发机制和修复方式有一定启发性。",
+   "attack_chain": "构造恶意WDDX数据→wddx_deserialize解析→触发use-after-free→崩溃或潜在代码执行。",
+   "bypass_technique": "无绕过，直接利用解析逻辑缺陷。",
+   "defensive_insight": "对反序列化输入进行严格验证，及时更新PHP版本。"
+  },
+  {
+   "id": 30787,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。这是PHP版本信息泄露，通过特定查询字符串暴露PHP版本。无绕过，无攻击链，属于信息泄露。",
+   "attack_chain": "构造特定URL→获取PHP版本信息。",
+   "bypass_technique": "无绕过，直接利用PHP的默认行为。",
+   "defensive_insight": "隐藏PHP版本信息，配置服务器不显示敏感信息。"
+  },
+  {
+   "id": 230194,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。HTTP OPTIONS方法启用，属于常见配置问题，无实际危害。无绕过，无攻击链。",
+   "attack_chain": "发送OPTIONS请求→获取允许的方法列表。",
+   "bypass_technique": "无绕过，直接利用配置。",
+   "defensive_insight": "禁用不必要的HTTP方法。"
+  },
+  {
+   "id": 308489,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "反序列化 / 业务逻辑",
+   "reasoning": "是。WordPress插件wpjobmanager存在未授权反序列化漏洞，通过用户输入直接触发。虽然反序列化漏洞常见，但此案例展示了在插件中如何通过AJAX接口实现未授权利用，且可抽象为通用判断条件。",
+   "attack_chain": "构造恶意序列化数据→通过AJAX接口触发→反序列化→潜在RCE。",
+   "bypass_technique": "无绕过，直接利用未授权接口。",
+   "defensive_insight": "对用户输入进行严格验证，避免反序列化不可信数据。"
+  },
+  {
+   "id": 268984,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 认证绕过",
+   "reasoning": "是。通过IDN同形异义词攻击，利用@符号绕过URL验证，实现钓鱼。这展示了浏览器对URL解析的差异，可抽象为通用判断条件。",
+   "attack_chain": "构造恶意URL（含@和IDN）→浏览器解析错误→跳转到钓鱼网站。",
+   "bypass_technique": "利用@符号和IDN同形异义词绕过URL验证。",
+   "defensive_insight": "浏览器应正确解析URL，对IDN进行punycode转换，并警告用户。"
+  },
+  {
+   "id": 311216,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "路径遍历",
+   "reasoning": "部分。这是典型的路径遍历漏洞，由于未对路径进行规范化。虽然套路常见，但PoC清晰，可复现。",
+   "attack_chain": "构造恶意路径→读取任意文件。",
+   "bypass_technique": "无绕过，直接利用未过滤的路径。",
+   "defensive_insight": "对路径进行规范化，限制访问范围。"
+  },
+  {
+   "id": 491319,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 信息泄露",
+   "reasoning": "部分。访客角色可以通过活动订阅源泄露私有项目活动，这展示了角色权限控制不严的问题。虽然信息泄露常见，但具体场景和利用方式有一定启发性。",
+   "attack_chain": "创建私有项目→邀请访客→访客访问活动订阅源→泄露活动信息。",
+   "bypass_technique": "利用访客角色的权限，通过订阅源泄露信息。",
+   "defensive_insight": "严格控制访客权限，对订阅源进行访问控制。"
+  },
+  {
+   "id": 275293,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "信息泄露",
+   "reasoning": "部分。程序名称变更后，旧邀请链接仍可显示新名称，导致信息泄露。但影响有限，且复现步骤不完整，缺少关键细节。",
+   "attack_chain": "获取旧邀请链接→访问→显示新名称。",
+   "bypass_technique": "无绕过，直接利用旧链接。",
+   "defensive_insight": "在程序名称变更时，应使旧邀请链接失效。"
+  },
+  {
+   "id": 1342422,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "子域名接管",
+   "reasoning": "部分。这是典型的子域名接管，由于NS记录指向未认领的DNS区域。虽然套路常见，但PoC清晰，且影响较大。",
+   "attack_chain": "发现未认领的NS区域→认领→控制子域名。",
+   "bypass_technique": "无绕过，直接利用配置错误。",
+   "defensive_insight": "定期检查DNS记录，确保所有子域名都有有效归属。"
+  },
+  {
+   "id": 736800,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 隐私侵犯",
+   "reasoning": "部分。通过图片预览功能泄露用户IP地址，这展示了客户端请求处理不当导致的信息泄露。虽然信息泄露常见，但具体场景和利用方式有一定启发性。",
+   "attack_chain": "发送恶意图片链接→受害者预览→请求外部服务器→泄露IP。",
+   "bypass_technique": "无绕过，直接利用预览功能。",
+   "defensive_insight": "对图片预览进行代理，避免直接请求外部资源。"
+  },
+  {
+   "id": 1121900,
+   "value_score": 0,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "XSS",
+   "reasoning": "否。报告内容模糊，没有具体PoC或细节，无法判断是否为真漏洞。",
+   "attack_chain": "未知。",
+   "bypass_technique": "未知。",
+   "defensive_insight": "需要更多信息。"
+  },
+  {
+   "id": 1580493,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "认证绕过 / 协议行为利用",
+   "reasoning": "是。通过利用AWS IAM Authenticator对查询参数大小写处理的缺陷，可以绕过签名验证，控制K8s用户名和组。这展示了协议解析差异导致的认证绕过，可抽象为通用判断条件。",
+   "attack_chain": "构造恶意token（利用大小写参数覆盖）→发送到authenticator→绕过验证→控制K8s身份。",
+   "bypass_technique": "利用参数名大小写差异，覆盖签名参数，绕过验证。",
+   "defensive_insight": "对查询参数进行严格规范化，避免大小写歧义。"
+  },
+  {
+   "id": 639682,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "点击劫持 / 认证绕过",
+   "reasoning": "部分。通过点击劫持窃取用户凭据，展示了OAuth流程中的安全缺陷。虽然点击劫持常见，但具体场景和利用方式有一定启发性。",
+   "attack_chain": "构造恶意页面→诱导用户点击→窃取OAuth凭据。",
+   "bypass_technique": "利用点击劫持，覆盖登录页面。",
+   "defensive_insight": "实施X-Frame-Options或CSP frame-ancestors，防止点击劫持。"
+  }
+ ]
+}

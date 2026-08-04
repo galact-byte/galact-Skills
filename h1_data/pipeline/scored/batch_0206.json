@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 8,
+  "dropped": 12,
+  "avg_score": 4.6,
+  "top_n": [
+   695005,
+   904672,
+   400982,
+   111417,
+   169699
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 904672,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 命令注入",
+   "reasoning": "是。lodash 的 _.template 函数在拼接用户输入时，未对模板语法进行转义，导致用户可控的 `${...}` 表达式被当作代码执行。这利用了模板引擎的固有行为，且 PoC 完整，可复现。虽然属于已知的模板注入类型，但针对 lodash 这一广泛使用的库，具有通用性和实际影响。",
+   "attack_chain": "用户输入 → _.template 拼接 → 模板表达式执行 → RCE",
+   "bypass_technique": "利用 lodash 模板语法 `${...}` 注入任意 JavaScript 表达式，绕过输入转义。",
+   "defensive_insight": "避免将用户输入直接拼接到模板中，应使用参数化模板或对用户输入进行严格过滤和转义。"
+  },
+  {
+   "id": 294505,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。这是典型的存储型 XSS，管理员在联系客户时注入 HTML，属于常见漏洞，无特殊绕过或攻击链。",
+   "attack_chain": "管理员输入 HTML → 存储 → 客户查看时执行",
+   "bypass_technique": "无，直接注入 HTML 标签。",
+   "defensive_insight": "对用户输入进行 HTML 编码或使用安全的富文本过滤。"
+  },
+  {
+   "id": 145854,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "配置错误",
+   "reasoning": "否。报告仅提供了一个 URL，声称存在内容注入，但未提供任何技术细节或验证步骤，无法判断真实性。",
+   "attack_chain": "未知",
+   "bypass_technique": "未知",
+   "defensive_insight": "确保服务器配置正确，防止内容注入。"
+  },
+  {
+   "id": 297547,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 其他",
+   "reasoning": "部分。在笔记应用中嵌入完整表单，利用用户信任进行钓鱼，属于业务逻辑缺陷。虽然不涉及复杂技术，但思路巧妙，且 PoC 详细。",
+   "attack_chain": "用户创建含表单的笔记 → 受害者预览时看到伪造登录表单 → 输入凭据被窃取",
+   "bypass_technique": "利用应用允许嵌入 HTML 的功能，构造钓鱼表单。",
+   "defensive_insight": "对笔记内容进行严格的 HTML 过滤，禁止表单等交互元素。"
+  },
+  {
+   "id": 111417,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 信息泄露",
+   "reasoning": "是。通过修改 API 参数（friends_only 改为 0）绕过权限检查，泄露用户点赞状态，即使被屏蔽也能获取信息。这利用了 API 参数校验不严的缺陷，属于非预期解。",
+   "attack_chain": "构造 API 请求 → 修改 friends_only 参数 → 绕过屏蔽 → 获取点赞信息",
+   "bypass_technique": "修改 API 参数绕过权限检查。",
+   "defensive_insight": "服务端应严格校验所有参数，确保权限检查不依赖客户端输入。"
+  },
+  {
+   "id": 400982,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 跨组件攻击链",
+   "reasoning": "是。通过构造 prejoin_data 参数，在特定条件下触发开放重定向，且可链式利用 external_link 形成二次跳转。这利用了参数拼接逻辑的缺陷，且影响多个域名。",
+   "attack_chain": "构造 URL → 触发 Location 头 → 重定向到恶意站点 → 钓鱼",
+   "bypass_technique": "利用 prejoin_data 参数控制重定向目标，绕过域名限制。",
+   "defensive_insight": "对重定向目标进行白名单校验，避免基于用户输入构造 Location 头。"
+  },
+  {
+   "id": 36586,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。文档元数据泄露是常见的信息泄露问题，无特殊绕过或攻击链，属于配置不当。",
+   "attack_chain": "访问文档 → 提取元数据 → 获取用户名、路径等",
+   "bypass_technique": "无，直接利用未清理的元数据。",
+   "defensive_insight": "上传前清理文档元数据，限制敏感文件访问。"
+  },
+  {
+   "id": 695005,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 认证绕过",
+   "reasoning": "是。利用已知 CVE 链（任意文件读取 + 命令注入）实现 RCE，且 PoC 清晰。虽然漏洞已知，但攻击链完整，影响严重，且可复现。",
+   "attack_chain": "读取 /etc/passwd → 获取明文凭据 → 登录 VPN → 命令注入 → RCE",
+   "bypass_technique": "利用路径遍历读取任意文件，结合命令注入。",
+   "defensive_insight": "及时更新软件，修复已知漏洞，限制文件访问。"
+  },
+  {
+   "id": 324006,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过",
+   "reasoning": "部分。通过直接调用 Ajax 接口绕过页面权限检查，获取用户信息。这属于典型的 API 权限缺失，但思路清晰，可复现。",
+   "attack_chain": "直接访问 Ajax 接口 → 绕过页面权限 → 获取用户信息",
+   "bypass_technique": "绕过前端权限控制，直接调用后端接口。",
+   "defensive_insight": "后端接口必须独立进行权限校验，不能依赖前端隐藏。"
+  },
+  {
+   "id": 461429,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。GitHub wiki 默认公开可编辑，属于配置问题，无技术含量。",
+   "attack_chain": "直接编辑 wiki → 植入恶意链接",
+   "bypass_technique": "无，利用默认配置。",
+   "defensive_insight": "限制 wiki 编辑权限，或监控变更。"
+  },
+  {
+   "id": 225777,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告仅提及 DOMPurify 版本更新，未提供具体漏洞细节或 PoC，无法评估。",
+   "attack_chain": "未知",
+   "bypass_technique": "未知",
+   "defensive_insight": "关注依赖库的安全更新。"
+  },
+  {
+   "id": 189768,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。在 429 错误页面中，用户输入未转义导致反射型 XSS。虽然属于常见类型，但触发条件特殊（需要触发 429），且 PoC 完整。",
+   "attack_chain": "构造 URL → 触发 429 → 错误页面执行脚本",
+   "bypass_technique": "利用错误页面的参数反射。",
+   "defensive_insight": "对所有错误页面进行输出编码。"
+  },
+  {
+   "id": 348801,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。服务器版本泄露是常见的信息泄露，无技术含量。",
+   "attack_chain": "查看响应头 → 获取版本信息",
+   "bypass_technique": "无",
+   "defensive_insight": "隐藏服务器版本信息。"
+  },
+  {
+   "id": 545136,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。HTTP PUT 方法启用导致任意文件上传，属于配置错误，无特殊绕过。",
+   "attack_chain": "PUT 请求 → 上传文件 → 访问文件",
+   "bypass_technique": "无，直接利用配置错误。",
+   "defensive_insight": "禁用不必要的 HTTP 方法。"
+  },
+  {
+   "id": 1982630,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。cPanel 已知 CVE 的利用，属于已知漏洞，无新意。",
+   "attack_chain": "访问特定 URL → 触发 XSS",
+   "bypass_technique": "无，利用已知漏洞。",
+   "defensive_insight": "及时更新软件。"
+  },
+  {
+   "id": 169699,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "CSRF",
+   "reasoning": "部分。CSRF 防护配置错误（X-CSRF-TOKEN 为 Undefined），导致可伪造请求。虽然属于常见漏洞，但利用方式需要两步请求，且 PoC 详细。",
+   "attack_chain": "构造恶意页面 → 触发上传请求 → 添加图片",
+   "bypass_technique": "利用 CSRF token 未正确设置。",
+   "defensive_insight": "正确配置 CSRF 防护，确保 token 有效。"
+  },
+  {
+   "id": 2011298,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 跨组件攻击链",
+   "reasoning": "部分。官方仓库链接到不受控制的域名，可能导致供应链攻击。这属于配置错误，但影响广泛，且 PoC 清晰。",
+   "attack_chain": "控制域名 → 替换内容 → 用户下载恶意代码",
+   "bypass_technique": "利用域名控制权。",
+   "defensive_insight": "确保所有链接的域名受控，定期检查。"
+  },
+  {
+   "id": 1385844,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "信息泄露",
+   "reasoning": "否。错误信息泄露代码，但未提供具体细节，无法判断真实性。",
+   "attack_chain": "未知",
+   "bypass_technique": "未知",
+   "defensive_insight": "隐藏错误详细信息。"
+  },
+  {
+   "id": 2731,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "开放重定向",
+   "reasoning": "否。典型的开放重定向，无特殊绕过。",
+   "attack_chain": "构造 URL → 重定向到恶意站点",
+   "bypass_technique": "无",
+   "defensive_insight": "校验重定向目标。"
+  },
+  {
+   "id": 13200,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。密码自动填充是常见配置问题，无技术含量。",
+   "attack_chain": "本地访问 → 获取缓存密码",
+   "bypass_technique": "无",
+   "defensive_insight": "禁用密码自动填充。"
+  }
+ ]
+}

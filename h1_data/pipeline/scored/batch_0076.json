@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   899103,
+   778610,
+   192318,
+   112632,
+   1912783
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1912783,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 配置错误",
+   "reasoning": "是。libcurl 连接池复用机制未将 SSH 相关选项纳入匹配检查，导致指定不同 SSH 密钥时仍复用旧连接，属于框架行为利用。技术点在于连接池配置匹配不完整，可抽象为通用判断条件：连接复用需校验所有安全相关选项。",
+   "attack_chain": "设置不同 SSH 密钥→libcurl 复用旧连接→使用错误密钥认证→潜在越权或连接劫持。",
+   "bypass_technique": "利用连接池复用逻辑缺陷，绕过密钥变更后的连接重建。",
+   "defensive_insight": "连接池复用必须校验所有影响安全性的选项，包括 SSH 密钥、认证方式等。"
+  },
+  {
+   "id": 54631,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS / 配置错误",
+   "reasoning": "否。Android WebView 默认启用 JavaScript 导致注入，属于常见配置错误，无绕过或攻击链。",
+   "attack_chain": "恶意应用修改本地 HTML→WebView 执行 JS→信息窃取。",
+   "bypass_technique": "无实质绕过，直接利用默认配置。",
+   "defensive_insight": "禁用 WebView JavaScript，输入验证。"
+  },
+  {
+   "id": 203384,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。HTTP TRACE 方法启用是常见配置问题，无绕过或攻击链，信息完整但价值低。",
+   "attack_chain": "单点：TRACE 方法反射请求头。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁用 TRACE 方法。"
+  },
+  {
+   "id": 819333,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "业务逻辑",
+   "reasoning": "否。报告描述模糊，缺少具体参数和复现细节，且 substate 为 not-applicable，无法确认真实性。",
+   "attack_chain": "未知。",
+   "bypass_technique": "无。",
+   "defensive_insight": "需详细复现步骤。"
+  },
+  {
+   "id": 831803,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS，参数直接输出，无绕过，成熟套路。",
+   "attack_chain": "单点：URL 参数注入脚本。",
+   "bypass_technique": "无。",
+   "defensive_insight": "输出编码。"
+  },
+  {
+   "id": 667188,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 业务逻辑",
+   "reasoning": "部分。通过修改 media_code 参数注入 SVG payload，实现存储型 XSS，属于参数篡改，思路有借鉴性，但仍是常见 XSS 变体。",
+   "attack_chain": "上传图片→修改 media_code 参数→存储 XSS→用户访问触发。",
+   "bypass_technique": "利用参数未过滤，注入 SVG onload。",
+   "defensive_insight": "服务端校验 media_code 参数，输出编码。"
+  },
+  {
+   "id": 669440,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。链接混淆是常见钓鱼手法，无技术绕过，且 substate 为 informative，信息不足。",
+   "attack_chain": "单点：恶意链接显示与跳转不一致。",
+   "bypass_technique": "无。",
+   "defensive_insight": "浏览器应显示实际跳转 URL。"
+  },
+  {
+   "id": 112632,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 内存破坏",
+   "reasoning": "是。DNS 名称解析中的指针跳转机制被利用，导致越界读取，属于协议行为利用。技术点在于未检查 label 长度与缓冲区边界，可抽象为通用判断条件。",
+   "attack_chain": "构造恶意 DNS 响应→指针跳转至缓冲区末尾→越界读取 63 字节。",
+   "bypass_technique": "利用 DNS 压缩指针循环跳转，绕过长度检查。",
+   "defensive_insight": "解析 DNS 名称时严格检查边界，防止越界。"
+  },
+  {
+   "id": 153618,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。利用 callback 参数和路径穿越实现反射 XSS，属于常见技巧，无新意。",
+   "attack_chain": "单点：URL 构造触发 JSONP 回调 XSS。",
+   "bypass_technique": "路径穿越 + callback 注入。",
+   "defensive_insight": "限制 callback 参数，输出编码。"
+  },
+  {
+   "id": 899103,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 协议行为利用",
+   "reasoning": "是。利用 CAP_NET_RAW 和 hostNetwork=true 进行中间人攻击，篡改云元数据服务响应，实现权限提升。技术点在于容器默认能力与网络命名空间的组合，跨组件攻击链完整。",
+   "attack_chain": "进入 hostNetwork 容器→CAP_NET_RAW 嗅探→篡改元数据响应→注入 SSH 密钥→获取主机 root。",
+   "bypass_technique": "利用默认能力 CAP_NET_RAW 进行网络嗅探和注入。",
+   "defensive_insight": "移除默认 CAP_NET_RAW，限制 hostNetwork 使用。"
+  },
+  {
+   "id": 197880,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。Nginx 版本泄露是常见信息泄露，无绕过或攻击链。",
+   "attack_chain": "单点：错误页面显示版本。",
+   "bypass_technique": "无。",
+   "defensive_insight": "隐藏版本号。"
+  },
+  {
+   "id": 192318,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "内存破坏 / 框架行为利用",
+   "reasoning": "是。mrb_vformat 未检查格式化参数中的数字，导致堆溢出，可控制 mrb_value 对象。技术点在于格式化字符串处理缺陷，可抽象为通用判断条件。",
+   "attack_chain": "构造恶意格式化字符串→堆溢出→控制对象→代码执行。",
+   "bypass_technique": "利用未检查的 % 参数数字。",
+   "defensive_insight": "严格验证格式化字符串参数。"
+  },
+  {
+   "id": 1977168,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。RDoc 生成的文档未转义，导致存储 XSS，属于常见漏洞，但影响面广，PoC 清晰。",
+   "attack_chain": "构造恶意 rdoc 文件→生成 HTML→XSS。",
+   "bypass_technique": "无实质绕过，直接注入。",
+   "defensive_insight": "输出转义。"
+  },
+  {
+   "id": 341869,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "命令注入",
+   "reasoning": "部分。npm 模块未转义参数导致命令注入，常见但 PoC 完整，影响明确。",
+   "attack_chain": "控制 path 参数→拼接命令→执行。",
+   "bypass_technique": "无实质绕过，直接注入。",
+   "defensive_insight": "使用参数化调用，避免拼接。"
+  },
+  {
+   "id": 145722,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。HTTP Basic 认证可暴力破解，常见配置问题，无绕过或攻击链。",
+   "attack_chain": "单点：暴力破解。",
+   "bypass_technique": "无。",
+   "defensive_insight": "使用强认证，限制尝试次数。"
+  },
+  {
+   "id": 778610,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "内存破坏 / 协议行为利用",
+   "reasoning": "是。Squid 反向代理解析 Host 头时栈溢出，利用协议行为，可导致 RCE 和数据泄露。技术点在于 Host 头长度未检查，可抽象为通用判断条件。",
+   "attack_chain": "构造超长 Host 头→栈溢出→代码执行或崩溃。",
+   "bypass_technique": "利用 Host 头长度未检查。",
+   "defensive_insight": "严格限制 Host 头长度。"
+  },
+  {
+   "id": 182358,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 业务逻辑",
+   "reasoning": "部分。新功能导出报告时泄露部分披露报告的评论，属于业务逻辑缺陷，思路有借鉴性。",
+   "attack_chain": "导出报告→评论泄露。",
+   "bypass_technique": "利用导出功能未过滤权限。",
+   "defensive_insight": "导出时检查权限。"
+  },
+  {
+   "id": 826176,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 授权绕过",
+   "reasoning": "部分。GraphQL 查询返回未公开数据，属于授权绕过，思路有借鉴性。",
+   "attack_chain": "构造 GraphQL 查询→获取隐藏数据。",
+   "bypass_technique": "利用 GraphQL 查询未授权。",
+   "defensive_insight": "GraphQL 查询需权限校验。"
+  },
+  {
+   "id": 165862,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 业务逻辑",
+   "reasoning": "是。IDOR 允许跨账户添加发票到任意 retainer，属于授权绕过，思路清晰，可抽象为通用判断条件。",
+   "attack_chain": "构造 URL 指定 retainer_id→跨账户添加发票。",
+   "bypass_technique": "利用未校验的 retainer_id。",
+   "defensive_insight": "校验资源所有权。"
+  },
+  {
+   "id": 148914,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "会话管理",
+   "reasoning": "否。密码修改后其他会话未失效，常见会话管理缺陷，无绕过或攻击链。",
+   "attack_chain": "单点：密码修改后旧会话仍有效。",
+   "bypass_technique": "无。",
+   "defensive_insight": "密码修改后使所有会话失效。"
+  }
+ ]
+}

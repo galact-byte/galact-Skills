@@ -1,0 +1,335 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 3,
+  "dropped": 17,
+  "avg_score": 3.3,
+  "top_n": [
+   1072868,
+   1553841,
+   454949
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 2215434,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。hacktivity 提交流程在特定路径泄露 hack 邮箱（引用 #2134874 同类）——UI/流程信息泄露经典，证据在视频中，无请求细节，机制零变形。",
+   "attack_chain": "单点：提交 hacktivity 报告→特定视图/响应泄露提交者邮箱。",
+   "bypass_technique": "无绕过，直接利用流程中的冗余展示。",
+   "defensive_insight": "提交/公开流程字段级最小化；邮箱仅本人可见。"
+  },
+  {
+   "id": 636013,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "部分。curl --progress-bar 解析 COLUMNS 时 long→int 截断使'宽度>20'校验失效（9223372032559808515 变 3，3-7 变负再转巨量 memset）——'类型截断绕过数值校验'的经典细节有启发，但前置需环境变量可控+本地运行，informative，无远程攻击面。",
+   "attack_chain": "单点：设超大 COLUMNS→progress-bar 宽度截断→memset 越界写→崩溃。",
+   "bypass_technique": "无绕过，利用 long→int 截断使校验值失真。",
+   "defensive_insight": "环境变量解析后做范围校验而非依赖类型宽度；memset 前二次限制。"
+  },
+  {
+   "id": 959987,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。supermixer 的 merge 处理 __proto__ 导致原型污染——npm 原型污染经典套路，PoC 标准（JSON __proto__ 注入），影响视调用方而定。",
+   "attack_chain": "单点：merge 注入 __proto__→污染 Object.prototype→DoS/RCE（视实现）。",
+   "bypass_technique": "无绕过，直接利用 merge 未过滤特殊键。",
+   "defensive_insight": "合并库拒绝 __proto__/constructor 键；输入键名白名单。"
+  },
+  {
+   "id": 1072868,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 跨组件攻击链 / 框架行为利用",
+   "reasoning": "是。GitLab 用旧版 swagger-ui（DOMpurify 已知绕过）渲染仓库内 openapi.yaml，可注入任意属性；再借 data-remote/data-method/data-type=script 属性让 jQuery UJS 加载外部 JS 完成 CSP 绕过，点击页面任意处触发——'sanitizer 版本滞后+框架 data 属性脚本加载语义'的组合链在 GitLab.com 实测生效，且 url 参数可跨仓库投递；可抽象为通用判据（第三方渲染组件升级并禁止 data 属性脚本加载）。",
+   "attack_chain": "仓库提交恶意 openapi.yaml→swagger-ui 渲染注入属性→data-type=script 属性加载外部 JS→点击触发。",
+   "bypass_technique": "旧版 DOMpurify 属性注入 + jQuery UJS data-* 脚本加载绕过 CSP。",
+   "defensive_insight": "升级 swagger-ui 及 sanitizer；外部渲染组件禁用 data-remote/script 加载语义并强化 CSP。"
+  },
+  {
+   "id": 1421413,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。auth/ 路径后任意文字在错误页回显——错误页内容注入经典，报告者自认 out of scope/轻微，机制零变形。",
+   "attack_chain": "单点：auth/后注入文字→错误页回显。",
+   "bypass_technique": "无绕过，直接利用错误页回显。",
+   "defensive_insight": "错误页固定文案不回显路径；未知路径统一 404。"
+  },
+  {
+   "id": 380158,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "子域名接管 / 配置错误",
+   "reasoning": "否。DNS 指向 dead Azure cloudapp VM 可接管——云 VM 弃用未删 DNS 的经典子域接管，影响场景描述详细（Responder 打支持人员）但未实际认领。",
+   "attack_chain": "单点：认领 dead cloudapp VM→托管恶意内容→钓鱼/打支持人员。",
+   "bypass_technique": "无绕过，直接认领未清理的云资源。",
+   "defensive_insight": "弃用 VM 即删 DNS；云资源生命周期与 DNS 联动。"
+  },
+  {
+   "id": 175403,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑 / 其他",
+   "reasoning": "否。大使申请字段注入 HTML 进事务邮件——邮件注入钓鱼经典，字段即可触发，机制零变形，步骤简略。",
+   "attack_chain": "字段填恶意链接→官方邮件含假链接→钓鱼。",
+   "bypass_technique": "无绕过，直接利用邮件正文未转义。",
+   "defensive_insight": "事务邮件用户字段纯文本插入并转义。"
+  },
+  {
+   "id": 413077,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。注册全名存 script 触发——经典存储 XSS，步骤完整但机制零变形。",
+   "attack_chain": "注册名存 payload→登录后 dashboard 渲染执行。",
+   "bypass_technique": "无绕过，直接利用未转义输出。",
+   "defensive_insight": "注册字段统一输出编码。"
+  },
+  {
+   "id": 346217,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。MR 审批人下拉渲染 username 未消毒（与 CVE-2018-10379 同类）——username 字段存储 XSS 经典，Starter+ 功能限制，机制零变形。",
+   "attack_chain": "用户名存 payload→审批人下拉渲染→Master 用户触发。",
+   "bypass_technique": "无绕过，直接利用 JS 渲染未转义。",
+   "defensive_insight": "前端渲染用户数据统一转义；username 字段限制字符集。"
+  },
+  {
+   "id": 91343,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。忘记密码差异化响应枚举邮箱+无限速——用户枚举经典组合，无请求细节，机制零变形。",
+   "attack_chain": "单点：批量重置请求→按响应区分有效邮箱。",
+   "bypass_technique": "无绕过，直接利用差异化响应。",
+   "defensive_insight": "重置接口统一响应文案并限速。"
+  },
+  {
+   "id": 5596,
+   "value_score": 0,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "无法判断。印地语搞笑报告'盯着 MS-DOS 提示符 365 天会死'——无效内容。",
+   "attack_chain": "无法确认。",
+   "bypass_technique": "无法确认。",
+   "defensive_insight": "无有效信息。"
+  },
+  {
+   "id": 1553841,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "SSRF / 协议行为利用",
+   "reasoning": "部分。curl 代理字符串的 host 被整体 URL 解码（%2F→/），SSRF 校验器按 RFC3986 解析（不解码）判例 allowlist 通过、curl 实际请求却打到 127.0.0.1——'校验器与请求器的编码处理分歧'（CVE-2022-27780）是 SSRF 过滤器绕过的精细变体，可抽象为通用判据（SSRF 校验必须在最终解码后的请求目标上执行）；复现完整。",
+   "attack_chain": "代理串填 example.com%2F127.0.0.1→校验器按域名判例放行→curl 解码后请求 127.0.0.1→盲/全 SSRF。",
+   "bypass_technique": "用 %2F 编码路径分隔符使 host 校验与请求目标分歧。",
+   "defensive_insight": "SSRF 防护在解码/规范化后的最终目标上校验；代理串 host 禁止解码。"
+  },
+  {
+   "id": 337680,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 其他",
+   "reasoning": "否。Burp Collaborator 轮询不校验证书 CN（任意有效 CA 证书即通过）——安全工具自身证书校验缺失的 MITM 面，PoC 明确但影响需 MITM 位置，机制成熟。",
+   "attack_chain": "MITM 拦截轮询→任意域有效证书通过→读取 collaborator 记录。",
+   "bypass_technique": "无绕过，利用未校验 CN 的证书信任。",
+   "defensive_insight": "工具自身 TLS 校验完整（CN/SAN+固定证书）；轮询通道绑定证书指纹。"
+  },
+  {
+   "id": 127914,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。删除名字后 mouseover 仍显示旧名——数据未级联清除的缓存/冗余泄露，影响轻微，报告者自认非安全 bug。",
+   "attack_chain": "单点：鼠标悬停 handle→显示已删名字。",
+   "bypass_technique": "无绕过，利用冗余缓存数据。",
+   "defensive_insight": "用户删除字段级联更新派生视图；悬停提示用实时数据。"
+  },
+  {
+   "id": 181232,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。特定语法（splat+redo block）触发 mrb_ary_push 空指针——解释器空指针经典 DoS，PoC 与补丁完整但无利用链。",
+   "attack_chain": "单点：执行特定语法→空指针崩溃。",
+   "bypass_technique": "无绕过，直接利用 VM 缺陷。",
+   "defensive_insight": "内部 API 入参判空；fuzz 纳入 CI。"
+  },
+  {
+   "id": 1819832,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "授权绕过",
+   "reasoning": "否。DeleteStorySnaps mutation 的 ids 无归属校验，替换他人 Spotlight ID（分享 URL 可得）即删除——IDOR 经典（删除破坏性影响），ID 公开可得算轻亮点，机制零变形。",
+   "attack_chain": "单点：改 ids 为目标视频 ID→删除他人 Spotlight。",
+   "bypass_technique": "无绕过，直接替换对象引用（ID 公开）。",
+   "defensive_insight": "删除类 mutation 校验资源归属；公开 ID 视为可利用引用。"
+  },
+  {
+   "id": 390860,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。mpath set 路径可写 __proto__——npm 原型污染经典套路（mongoose 依赖），PoC 标准，影响视路径可控性而定。",
+   "attack_chain": "单点：set('__proto__.x')→污染 Object.prototype。",
+   "bypass_technique": "无绕过，直接利用路径未过滤特殊键。",
+   "defensive_insight": "路径写入拒绝 __proto__/constructor 段；库级防护+调用方输入校验。"
+  },
+  {
+   "id": 168293,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。认证中 hex2bin 解码的 validator 未 memzero——内存敏感数据清理遗漏的最佳实践提醒，informative，无实际利用路径。",
+   "attack_chain": "单点（理论）：内存中解码值残留→本机读内存获取。",
+   "bypass_technique": "无绕过，依赖内存读取前置。",
+   "defensive_insight": "敏感中间值（含解码后）一律 memzero；异常路径同样清理。"
+  },
+  {
+   "id": 454949,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "竞争条件 / 业务逻辑",
+   "reasoning": "部分。HackerOne 竞赛 flag 提交无幂等去重，并发重放同一 flag 多次计分（TOCTOU 竞态）——'计分逻辑的并发缺陷'可刷分换私测邀请，竞态条件经典但影响是积分游戏化而非数据安全；复现完整（Race The Web，70 次刷 2 邀请）。",
+   "attack_chain": "单点：并发提交同一 flag→检查与计分间竞态→重复加分。",
+   "bypass_technique": "无绕过，利用提交检查与计分不同步的竞态窗口。",
+   "defensive_insight": "flag 提交幂等（唯一约束/事务）；计分与校验原子化。"
+  },
+  {
+   "id": 176929,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。document.write+定时 location 跳转保持地址栏显示目标域——Brave iOS 地址栏欺骗经典，需用户点击触发，PoC 完整但机制成熟。",
+   "attack_chain": "点击按钮→write 替换内容+定时跳转→地址栏显示 google.com:1234 钓鱼。",
+   "bypass_technique": "无绕过，利用定时重定向维持地址栏状态。",
+   "defensive_insight": "浏览器对非标准端口重定向展示警告；document.write 限制跨域替换。"
+  }
+ ]
+}

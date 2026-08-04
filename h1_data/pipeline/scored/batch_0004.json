@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1365738,
+   1119120,
+   541502,
+   315760,
+   1074047
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 288912,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误 / 跨组件攻击链",
+   "reasoning": "否。CORS 任意源信任是常见配置错误，虽然报告提到缺少 Vary: Origin 可能导致缓存投毒，但未提供实际利用链，且 substate 为 informative，可复现性有限。",
+   "attack_chain": "任意源反射 → 可能缓存投毒（未验证）",
+   "bypass_technique": "无实质绕过，直接利用配置错误",
+   "defensive_insight": "使用白名单校验 Origin，并添加 Vary: Origin 防止缓存投毒。"
+  },
+  {
+   "id": 1563139,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 配置错误",
+   "reasoning": "部分。直接访问 /settings/builtin/global/ 绕过重定向，非管理员可修改全局设置，属于路径直接访问导致的授权绕过，思路简单但有效，可抽象为对直接路径访问的检查。",
+   "attack_chain": "直接访问管理路径 → 修改全局设置",
+   "bypass_technique": "绕过前端重定向，直接请求管理端点",
+   "defensive_insight": "服务端对每个管理端点进行权限校验，而非依赖前端隐藏。"
+  },
+  {
+   "id": 1365738,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "配置错误 / 跨组件攻击链",
+   "reasoning": "是。利用旧 Flickr 服务器未清理的数据库访问权限，通过公开图片名搜索获取用户敏感数据，属于跨组件攻击链，且利用了业务逻辑（图片名作为查询键）和配置错误，思路新颖。",
+   "attack_chain": "旧服务器 /start 搜索图片名 → 拦截响应 → 获取 Y.listData 中的用户数据",
+   "bypass_technique": "利用遗留服务器未授权访问数据库，通过公开信息关联用户",
+   "defensive_insight": "退役服务器应彻底清理权限和敏感数据，并监控异常访问。"
+  },
+  {
+   "id": 315760,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 框架行为利用",
+   "reasoning": "是。利用 Windows 路径特性（C:../../）绕过路径验证，属于框架行为利用，影响广泛（Koa 等），可抽象为对路径规范化不足的通用判断。",
+   "attack_chain": "构造特殊路径 → 绕过验证 → 访问任意文件",
+   "bypass_technique": "利用 Windows 盘符和相对路径组合绕过路径检查",
+   "defensive_insight": "使用平台无关的路径规范化，并拒绝包含盘符的路径。"
+  },
+  {
+   "id": 1131473,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "CSRF / 业务逻辑",
+   "reasoning": "部分。CSRF 漏洞常见，但此处利用循环批量触发测试邮件，属于业务逻辑组合，思路略有新意，但整体套路成熟。",
+   "attack_chain": "构造恶意页面 → 批量触发测试转发 → 发送邮件",
+   "bypass_technique": "绕过 CSRF Token 校验，利用 GET 请求触发敏感操作",
+   "defensive_insight": "对敏感操作实施 CSRF Token 校验，并限制请求频率。"
+  },
+  {
+   "id": 1555582,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS，payload 为经典 svg onload，无绕过，无攻击链，信息完整但套路常见。",
+   "attack_chain": "单点：参数注入 → 执行脚本",
+   "bypass_technique": "无实质绕过，直接注入",
+   "defensive_insight": "输入过滤和输出编码，实施 CSP。"
+  },
+  {
+   "id": 11861,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SQL注入",
+   "reasoning": "否。时间盲注，payload 为 XOR 技巧，但属于常见套路，无绕过，无攻击链。",
+   "attack_chain": "单点：参数注入 → 时间盲注",
+   "bypass_technique": "无实质绕过，直接利用拼接",
+   "defensive_insight": "参数化查询，最小化错误信息。"
+  },
+  {
+   "id": 1074047,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 认证绕过",
+   "reasoning": "是。OAuth 登录未校验邮箱是否已被注册，导致预账户接管，属于业务逻辑缺陷，思路清晰，可抽象为对 OAuth 邮箱绑定校验的通用问题。",
+   "attack_chain": "攻击者用受害者邮箱注册 → 受害者 OAuth 登录 → 攻击者用密码登录",
+   "bypass_technique": "利用 OAuth 登录绕过邮箱验证流程",
+   "defensive_insight": "OAuth 登录时检查邮箱是否已存在，并提示用户确认。"
+  },
+  {
+   "id": 1119120,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "反序列化 / 跨组件攻击链",
+   "reasoning": "是。利用 Marshal 反序列化漏洞，通过恶意服务器响应实现 RCE，属于框架行为利用和跨组件攻击链，可抽象为对反序列化数据源信任的通用问题。",
+   "attack_chain": "恶意服务器返回 Marshal 数据 → 客户端反序列化 → RCE",
+   "bypass_technique": "利用 Ruby Marshal 通用 gadget 链",
+   "defensive_insight": "避免反序列化不可信数据，使用安全格式如 JSON。"
+  },
+  {
+   "id": 17785,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。报告仅引用其他报告和视频，无具体技术细节，无法判断漏洞真实性。",
+   "attack_chain": "未知",
+   "bypass_technique": "未知",
+   "defensive_insight": "需补充详细复现步骤。"
+  },
+  {
+   "id": 541502,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 配置错误",
+   "reasoning": "是。https-proxy-agent 在非 200 CONNECT 响应时未进行 TLS 升级，导致明文发送请求数据，属于协议行为利用，可抽象为对代理响应状态处理的通用问题。",
+   "attack_chain": "恶意代理返回非 200 → 客户端明文发送数据 → 窃取凭据",
+   "bypass_technique": "利用代理对 CONNECT 响应的错误处理",
+   "defensive_insight": "代理客户端应确保 TLS 升级成功后才发送数据。"
+  },
+  {
+   "id": 221792,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。CVE-2016-6308 是已知漏洞，报告为分析，无新意，属于常见套路。",
+   "attack_chain": "单点：内存分配缺陷 → DoS",
+   "bypass_technique": "无实质绕过，利用已知缺陷",
+   "defensive_insight": "升级 OpenSSL 版本。"
+  },
+  {
+   "id": 20279,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 3
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。SQL 错误信息泄露是常见配置问题，无绕过，无攻击链。",
+   "attack_chain": "单点：触发错误 → 泄露信息",
+   "bypass_technique": "无实质绕过，直接利用配置错误",
+   "defensive_insight": "关闭详细错误信息，使用通用错误页面。"
+  },
+  {
+   "id": 107849,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。弱口令是常见配置错误，无技术含量。",
+   "attack_chain": "单点：弱口令登录",
+   "bypass_technique": "无实质绕过，直接利用弱口令",
+   "defensive_insight": "强制强密码策略。"
+  },
+  {
+   "id": 81701,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "SQL注入",
+   "reasoning": "否。仅凭 500 错误猜测 SQL 注入，无实际利用，信息不足。",
+   "attack_chain": "未知",
+   "bypass_technique": "未知",
+   "defensive_insight": "需进一步验证。"
+  },
+  {
+   "id": 122254,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。CVE-2016-0990 是已知漏洞，报告为描述，无新意。",
+   "attack_chain": "单点：UAF → 内存破坏",
+   "bypass_technique": "无实质绕过，利用已知漏洞",
+   "defensive_insight": "升级 Flash Player。"
+  },
+  {
+   "id": 257194,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "业务逻辑",
+   "reasoning": "否。客户端校验可绕过，属于常见业务逻辑缺陷，无新意。",
+   "attack_chain": "单点：修改请求参数 → 绕过校验",
+   "bypass_technique": "无实质绕过，直接修改参数",
+   "defensive_insight": "服务端校验所有输入。"
+  },
+  {
+   "id": 246801,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。验证码未在服务端校验，是常见配置错误，无新意。",
+   "attack_chain": "单点：移除验证码参数 → 绕过",
+   "bypass_technique": "无实质绕过，直接删除参数",
+   "defensive_insight": "服务端验证验证码。"
+  },
+  {
+   "id": 1457413,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS，经典 payload，无绕过，无攻击链。",
+   "attack_chain": "单点：参数注入 → 执行脚本",
+   "bypass_technique": "无实质绕过，直接注入",
+   "defensive_insight": "输入过滤和输出编码。"
+  },
+  {
+   "id": 267177,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 业务逻辑",
+   "reasoning": "部分。存储型 XSS 常见，但通过邀请功能触发，且影响其他成员，属于业务逻辑组合，略有新意。",
+   "attack_chain": "构造恶意邮箱 → 发送邀请 → 触发 XSS",
+   "bypass_technique": "利用邮箱字段未过滤",
+   "defensive_insight": "对邮箱输入进行严格验证和输出编码。"
+  }
+ ]
+}

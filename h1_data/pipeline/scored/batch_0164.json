@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   300305,
+   966494,
+   1066007,
+   229417,
+   871142
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 192485,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。这是典型的解释器空指针解引用崩溃，属于已知的 DoS 类型，没有绕过或攻击链，且报告自述不可利用。",
+   "attack_chain": "单点：构造特定 Ruby 代码触发 mrb_vm_exec 空指针解引用导致崩溃。",
+   "bypass_technique": "无绕过，直接利用未检查的空指针。",
+   "defensive_insight": "在访问 irep->pool 前检查是否为 NULL，并加强输入验证。"
+  },
+  {
+   "id": 1549636,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "其他",
+   "reasoning": "部分。正则表达式编译中的 double free 是已知漏洞类型，但利用精心构造的字符串触发，且可能配合 marshal.load 实现 RCE，有一定启发性。",
+   "attack_chain": "构造恶意正则字符串→触发 double free→可能配合 marshal.load 实现 RCE。",
+   "bypass_technique": "利用正则编译器的内存管理缺陷。",
+   "defensive_insight": "修复正则编译器的内存释放逻辑，避免重复释放。"
+  },
+  {
+   "id": 88508,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。通过字幕文件注入 XSS，且需要用户交互（点击 CC 按钮），但绕过 HTML5 播放器强制使用 Flash 播放器，思路有借鉴意义。",
+   "attack_chain": "上传恶意字幕文件→强制使用 Flash 播放器→用户点击 CC 激活字幕→XSS 执行。",
+   "bypass_technique": "利用 Flash 播放器未转义字幕内容，且通过 Hubnut 组件强制使用 Flash。",
+   "defensive_insight": "对字幕内容进行转义，并考虑移除或更新 Flash 播放器。"
+  },
+  {
+   "id": 871142,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "信息泄露",
+   "reasoning": "是。通过公开报告的 JSON 属性推断程序是否为私有，利用了信息泄露的间接性，属于非预期解。",
+   "attack_chain": "创建报告→查看 JSON 中的 active_retest_subscription 属性→推断程序私有性。",
+   "bypass_technique": "利用公开接口泄露的元数据。",
+   "defensive_insight": "在公开报告中移除敏感属性，或对 API 响应进行过滤。"
+  },
+  {
+   "id": 291750,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过",
+   "reasoning": "部分。使用全角句号绕过链接过滤器，属于字符编码绕过，思路简单但有效，可复用。",
+   "attack_chain": "构造 URL 使用全角句号→绕过过滤器→重定向到恶意站点。",
+   "bypass_technique": "利用 Unicode 字符等价性绕过 URL 过滤。",
+   "defensive_insight": "对 URL 进行规范化处理，包括 Unicode 归一化。"
+  },
+  {
+   "id": 1031321,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。这是典型的链接失效导致账户劫持，属于配置错误，没有技术含量。",
+   "attack_chain": "发现失效链接→注册对应用户名→劫持流量。",
+   "bypass_technique": "无绕过，直接利用未维护的链接。",
+   "defensive_insight": "定期检查外部链接有效性，并考虑使用重定向服务。"
+  },
+  {
+   "id": 229417,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 状态混淆",
+   "reasoning": "是。通过组合两个已修复的漏洞（logout CSRF 和自动登录）形成攻击链，实现账户接管，展示了漏洞组合的威力。",
+   "attack_chain": "生成两个重置令牌→构造恶意页面→受害者点击→先登出再登录攻击者账户→受害者 unknowingly 操作攻击者账户。",
+   "bypass_technique": "利用密码重置流程中的状态混淆，组合多个漏洞。",
+   "defensive_insight": "修复密码重置流程中的 CSRF 和自动登录问题，并确保状态转换安全。"
+  },
+  {
+   "id": 753399,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "开放重定向",
+   "reasoning": "否。这是典型的基于 hash 的开放重定向，利用前端 JavaScript 处理 URL，属于常见套路。",
+   "attack_chain": "构造 URL 包含 #/path///google.com→前端 JS 重定向到外部。",
+   "bypass_technique": "利用前端路由逻辑缺陷。",
+   "defensive_insight": "对重定向目标进行白名单校验，避免使用用户可控的 URL。"
+  },
+  {
+   "id": 217558,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "IDOR",
+   "reasoning": "部分。典型的 IDOR 漏洞，通过修改 ID 查看和修改他人数据，但步骤清晰，可复现。",
+   "attack_chain": "修改 data-id→查看他人课程→保存后转移所有权。",
+   "bypass_technique": "直接利用不安全的对象引用。",
+   "defensive_insight": "在服务端校验对象所有权。"
+  },
+  {
+   "id": 429747,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "Web缓存投毒",
+   "reasoning": "部分。通过 X-Forwarded-Host 头进行缓存投毒，属于常见技术，但能导致存储型 XSS，有一定影响。",
+   "attack_chain": "发送带恶意 X-Forwarded-Host 的请求→缓存服务器存储恶意响应→其他用户访问时加载恶意内容。",
+   "bypass_technique": "利用缓存服务器对 X-Forwarded-Host 的处理不当。",
+   "defensive_insight": "对缓存键进行严格定义，忽略不可信头部。"
+  },
+  {
+   "id": 642643,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。CSRF token 可被删除，说明服务端未强制校验，属于配置错误，无技术含量。",
+   "attack_chain": "删除 _token 参数→请求成功。",
+   "bypass_technique": "无绕过，直接利用服务端未校验。",
+   "defensive_insight": "服务端必须强制校验 CSRF token。"
+  },
+  {
+   "id": 148890,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。CSRF 校验失败时泄露完整路径，属于常见的信息泄露，无绕过。",
+   "attack_chain": "发送无效 CSRF 请求→错误信息泄露路径。",
+   "bypass_technique": "无绕过，直接利用错误处理不当。",
+   "defensive_insight": "在错误信息中避免泄露敏感路径。"
+  },
+  {
+   "id": 1294242,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。这是算法偏见问题，不属于传统安全漏洞，且无攻击链。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "算法设计需考虑公平性。"
+  },
+  {
+   "id": 966494,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链",
+   "reasoning": "是。通过旧版本应用注入 dylib，利用 XPC 服务仅验证签名不验证版本，实现 LPE，展示了版本验证缺失的利用。",
+   "attack_chain": "获取旧版本应用→注入恶意 dylib→通过 XPC 服务执行命令→获得 root 权限。",
+   "bypass_technique": "利用 XPC 服务仅验证签名不验证版本，通过 DYLD_INSERT_LIBRARIES 注入。",
+   "defensive_insight": "XPC 服务应验证客户端版本，并考虑使用更严格的签名要求。"
+  },
+  {
+   "id": 300305,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "竞争条件 / 跨组件攻击链",
+   "reasoning": "是。通过竞争条件绕过邮箱验证，进而接管商店账户，展示了 TOCTOU 漏洞的利用，且攻击链完整。",
+   "attack_chain": "创建合作伙伴账户→获取验证链接→同时更改邮箱为受害者邮箱→利用竞争条件验证→接管商店。",
+   "bypass_technique": "利用邮箱验证和邮箱更改之间的竞争条件，绕过验证。",
+   "defensive_insight": "使用数据库事务确保邮箱更改和验证的原子性。"
+  },
+  {
+   "id": 258260,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "IDOR",
+   "reasoning": "部分。典型的 IDOR 漏洞，通过修改 MediaIDs 访问他人文件，但步骤清晰，可复现。",
+   "attack_chain": "拦截消息发送请求→修改 MediaIDs→获取他人文件 URL。",
+   "bypass_technique": "直接利用不安全的对象引用。",
+   "defensive_insight": "服务端校验文件所有权。"
+  },
+  {
+   "id": 47876,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。直接访问 URL 导致路径泄露，属于常见的信息泄露，无绕过。",
+   "attack_chain": "访问特定 URL→错误信息泄露路径。",
+   "bypass_technique": "无绕过，直接利用错误处理不当。",
+   "defensive_insight": "在错误信息中避免泄露敏感路径。"
+  },
+  {
+   "id": 238906,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。存储型 XSS，使用 javascript: 协议，属于常见套路。",
+   "attack_chain": "在社交徽章 URL 输入 javascript:alert(1)→触发 XSS。",
+   "bypass_technique": "无绕过，直接利用未过滤的 URL。",
+   "defensive_insight": "对 URL 进行协议白名单校验。"
+  },
+  {
+   "id": 175168,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "开放重定向",
+   "reasoning": "否。通过多个斜杠绕过重定向校验，属于常见套路。",
+   "attack_chain": "构造 return_to=/////example.com→重定向到外部。",
+   "bypass_technique": "利用 URL 解析差异。",
+   "defensive_insight": "对重定向 URL 进行严格校验。"
+  },
+  {
+   "id": 1066007,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链",
+   "reasoning": "是。CTF 挑战合集，包含多种漏洞利用，如 SQL 注入、路径遍历、DNS rebinding 等，展示了复杂攻击链的构建。",
+   "attack_chain": "多个挑战，每个挑战有独立的攻击链，最终组合成完整攻击。",
+   "bypass_technique": "多种技术，如 SQL 注入、路径遍历、DNS rebinding。",
+   "defensive_insight": "加强输入验证，修复已知漏洞，并考虑使用更安全的配置。"
+  }
+ ]
+}

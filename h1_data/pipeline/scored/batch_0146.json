@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   1238528,
+   921288,
+   906433,
+   902739,
+   209004
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 119454,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "认证绕过 / 信息泄露",
+   "reasoning": "否。通过登录响应状态码和长度差异枚举密码，属于典型的用户名/密码枚举攻击，无绕过技巧，攻击链简单。",
+   "attack_chain": "登录接口→密码字段枚举→根据响应差异判断正确密码。",
+   "bypass_technique": "无实质绕过，直接利用响应差异。",
+   "defensive_insight": "统一错误响应，增加验证码和速率限制。"
+  },
+  {
+   "id": 711662,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。使用默认凭据登录，属于配置错误，无技术含量。",
+   "attack_chain": "直接使用默认凭据登录。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁用默认凭据，强制修改。"
+  },
+  {
+   "id": 119033,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。SPF记录配置错误，属于常见配置问题，无攻击链。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "正确配置SPF记录，避免过多DNS查询。"
+  },
+  {
+   "id": 230234,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 框架行为利用",
+   "reasoning": "是。利用AngularJS模板注入实现反射型XSS，通过`{{constructor.constructor('alert(document.domain)')()}}`执行任意JS，展示了框架表达式求值的危险。",
+   "attack_chain": "搜索端点→注入AngularJS表达式→服务端渲染→执行JS。",
+   "bypass_technique": "利用AngularJS模板语法绕过常规XSS过滤。",
+   "defensive_insight": "对用户输入进行上下文感知编码，禁用模板引擎的表达式求值。"
+  },
+  {
+   "id": 11945,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "配置错误",
+   "reasoning": "否。仅报告HSTS未启用，无具体利用场景，信息不足。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "启用HSTS。"
+  },
+  {
+   "id": 8218,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "CSRF",
+   "reasoning": "部分。CSRF删除组，但CSRF token未验证，属于常见漏洞，但攻击链完整，可导致数据丢失。",
+   "attack_chain": "构造恶意表单→诱导用户提交→删除组。",
+   "bypass_technique": "利用CSRF token缺失。",
+   "defensive_insight": "服务端验证CSRF token。"
+  },
+  {
+   "id": 2079502,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 跨组件攻击链",
+   "reasoning": "是。通过伪造邮件发送到helpdesk系统，无需认证即可创建工单，利用邮件信任边界，跨组件攻击链。",
+   "attack_chain": "伪造邮件→helpdesk系统自动创建工单→未授权操作。",
+   "bypass_technique": "利用邮件伪造和系统对发件人的信任。",
+   "defensive_insight": "验证邮件来源，对工单创建进行认证。"
+  },
+  {
+   "id": 902739,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "命令注入 / 框架行为利用",
+   "reasoning": "是。bunyan日志工具在格式化命令时未过滤用户输入，导致RCE，利用`-p`参数注入shell命令，展示了命令行工具的安全隐患。",
+   "attack_chain": "构造恶意参数→命令拼接→执行任意命令。",
+   "bypass_technique": "利用shell元字符注入。",
+   "defensive_insight": "对命令参数进行白名单校验，避免拼接用户输入。"
+  },
+  {
+   "id": 59664,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "SQL注入",
+   "reasoning": "否。Concrete5 SQL注入，需要认证，属于常见漏洞类型，无特殊绕过。",
+   "attack_chain": "认证用户→构造恶意输入→SQL注入。",
+   "bypass_technique": "无。",
+   "defensive_insight": "使用参数化查询。"
+  },
+  {
+   "id": 2402193,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "ReDoS / 框架行为利用",
+   "reasoning": "是。Django Truncator.words()存在ReDoS，利用正则表达式回溯导致DoS，展示了框架内置函数的潜在风险。",
+   "attack_chain": "构造恶意字符串→触发正则回溯→CPU耗尽。",
+   "bypass_technique": "利用正则表达式回溯。",
+   "defensive_insight": "使用安全的正则表达式，限制输入长度。"
+  },
+  {
+   "id": 1238528,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用Safari对`javascript:` URL的解析差异，绕过host检查，实现UXSS，展示了浏览器行为差异的利用。",
+   "attack_chain": "恶意iframe→postMessage→Safari解析javascript:URL→执行JS。",
+   "bypass_technique": "利用Safari对javascript: URL的host属性解析差异。",
+   "defensive_insight": "严格校验postMessage的URL scheme，仅允许HTTP/HTTPS。"
+  },
+  {
+   "id": 774883,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "否。终端宽度为2时除零崩溃，属于边缘情况，无安全影响。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "处理除零错误。"
+  },
+  {
+   "id": 921288,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "反序列化 / 跨组件攻击链",
+   "reasoning": "是。通过PHAR反序列化实现任意文件删除，利用is_dir()对phar://协议的处理，展示了PHP文件系统函数的隐藏风险。",
+   "attack_chain": "上传PHAR文件→触发is_dir()→反序列化→删除文件。",
+   "bypass_technique": "利用phar://协议触发反序列化。",
+   "defensive_insight": "过滤用户输入中的phar://协议，使用白名单。"
+  },
+  {
+   "id": 17311,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。BREACH攻击是已知攻击类型，报告仅描述条件，无实际利用。",
+   "attack_chain": "无。",
+   "bypass_technique": "无。",
+   "defensive_insight": "禁用压缩或分离秘密。"
+  },
+  {
+   "id": 343752,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "开放重定向",
+   "reasoning": "否。开放重定向，常见漏洞，无特殊技巧。",
+   "attack_chain": "构造恶意链接→用户点击→重定向到恶意站点。",
+   "bypass_technique": "无。",
+   "defensive_insight": "校验重定向URL的合法性。"
+  },
+  {
+   "id": 1029027,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 类型混淆",
+   "reasoning": "是。通过添加空格绕过订阅检查，利用服务端未trim输入，实现免费获取付费头像，展示了输入验证的缺陷。",
+   "attack_chain": "构造带空格的avatar_id→服务端未trim→绕过订阅检查。",
+   "bypass_technique": "利用空格绕过字符串比较。",
+   "defensive_insight": "服务端对输入进行trim和严格校验。"
+  },
+  {
+   "id": 383117,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 业务逻辑",
+   "reasoning": "部分。通过显示名注入HTML，在自动补全中触发，展示了存储型XSS的变体，但仅HTML无脚本。",
+   "attack_chain": "设置恶意显示名→其他用户自动补全→点击→跳转。",
+   "bypass_technique": "利用HTML注入绕过脚本限制。",
+   "defensive_insight": "对显示名进行HTML编码。"
+  },
+  {
+   "id": 906433,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "XSS / 跨组件攻击链",
+   "reasoning": "是。利用Android WebView的CVE-2020-6506实现UXSS，展示了系统组件漏洞在应用中的利用。",
+   "attack_chain": "恶意iframe→window.open(javascript:URL)→UXSS。",
+   "bypass_technique": "利用WebView配置缺陷。",
+   "defensive_insight": "启用多窗口支持或限制WebView内容。"
+  },
+  {
+   "id": 209004,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "子域名接管 / 跨组件攻击链",
+   "reasoning": "是。通过Unbounce应用漏洞接管子域名，绕过之前的修复，展示了子域名接管的变体。",
+   "attack_chain": "创建页面→修改domain参数→接管子域名。",
+   "bypass_technique": "利用参数覆盖。",
+   "defensive_insight": "严格校验域名参数，防止任意域名绑定。"
+  },
+  {
+   "id": 1244798,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 业务逻辑",
+   "reasoning": "部分。客户端长度检查可绕过，导致存储超长字符串，影响页面性能，属于常见客户端校验缺失。",
+   "attack_chain": "构造超长字符串→绕过客户端校验→存储→页面崩溃。",
+   "bypass_technique": "直接发送请求绕过客户端限制。",
+   "defensive_insight": "服务端进行长度校验。"
+  }
+ ]
+}

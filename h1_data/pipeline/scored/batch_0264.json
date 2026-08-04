@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 10,
+  "dropped": 10,
+  "avg_score": 5.1,
+  "top_n": [
+   10554,
+   2279346,
+   1378175,
+   439120,
+   719426
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 251747,
+   "value_score": 0,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 0
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "其他",
+   "reasoning": "否。该报告是社区公告，非漏洞报告，无技术内容。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "无"
+  },
+  {
+   "id": 351275,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "XSS / 配置错误",
+   "reasoning": "部分。DOM XSS 通过 URL 参数控制外部脚本加载，属于常见但可复用的攻击模式，PoC 完整。",
+   "attack_chain": "构造恶意 URL → 触发 $.getScript 加载外部 JS → 执行任意脚本。",
+   "bypass_technique": "利用未过滤的 indicatorsFile 参数加载外部脚本。",
+   "defensive_insight": "对 URL 参数进行白名单校验，禁止加载外部脚本。"
+  },
+  {
+   "id": 271928,
+   "value_score": 1,
+   "score_breakdown": {
+    "unexpectedness": 0,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。仅指出外链未使用 HTTPS，属于低危配置问题，无攻击链。",
+   "attack_chain": "无",
+   "bypass_technique": "无",
+   "defensive_insight": "统一使用 HTTPS 外链。"
+  },
+  {
+   "id": 1477050,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "CSRF / 业务逻辑",
+   "reasoning": "部分。CSRF 通过 GET 请求创建资源，属于常见但可复用的攻击模式，PoC 完整。",
+   "attack_chain": "诱导受害者访问恶意链接 → 自动创建 curation。",
+   "bypass_technique": "利用 GET 请求无 CSRF 保护。",
+   "defensive_insight": "对状态变更请求使用 POST 并添加 CSRF token。"
+  },
+  {
+   "id": 302620,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "部分。通过浏览器缩略图泄露私有报告内容，思路新颖但影响有限，且依赖浏览器行为。",
+   "attack_chain": "访问私有报告页面 → 浏览器生成缩略图 → 泄露内容。",
+   "bypass_technique": "利用浏览器缩略图功能。",
+   "defensive_insight": "在 meta 标签中避免放置敏感内容。"
+  },
+  {
+   "id": 172595,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。反射型 XSS 通过两个参数组合触发，属于常见类型但 PoC 完整。",
+   "attack_chain": "构造恶意 POST 请求 → 触发 XSS。",
+   "bypass_technique": "利用错误消息参数未过滤。",
+   "defensive_insight": "对所有输入进行输出编码。"
+  },
+  {
+   "id": 699200,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 认证绕过",
+   "reasoning": "部分。未验证邮箱即可启用 2FA，导致账户锁定，属于业务逻辑缺陷，思路可借鉴。",
+   "attack_chain": "攻击者用受害者邮箱注册 → 启用 2FA → 受害者无法登录。",
+   "bypass_technique": "利用邮箱验证缺失。",
+   "defensive_insight": "启用 2FA 前必须验证邮箱所有权。"
+  },
+  {
+   "id": 22142,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "开放重定向",
+   "reasoning": "否。开放重定向是常见漏洞，无特殊绕过。",
+   "attack_chain": "构造恶意链接 → 重定向到钓鱼网站。",
+   "bypass_technique": "利用未过滤的 Base64 编码 URL。",
+   "defensive_insight": "对重定向 URL 进行白名单校验。"
+  },
+  {
+   "id": 1095765,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS，参数未转义，常见套路。",
+   "attack_chain": "构造恶意 URL → 触发 XSS。",
+   "bypass_technique": "利用 URL 编码绕过过滤。",
+   "defensive_insight": "对参数进行输出编码。"
+  },
+  {
+   "id": 324423,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。反射型 XSS 通过 javascript: 协议，常见但 PoC 完整。",
+   "attack_chain": "构造恶意链接 → 执行 JavaScript。",
+   "bypass_technique": "利用 javascript: 协议。",
+   "defensive_insight": "对重定向参数进行协议白名单。"
+  },
+  {
+   "id": 258573,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。未授权访问数据库接口，属于配置错误，无绕过。",
+   "attack_chain": "直接访问端点 → 获取数据库信息。",
+   "bypass_technique": "无",
+   "defensive_insight": "对敏感端点进行身份验证。"
+  },
+  {
+   "id": 439120,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "原型污染 / 框架行为利用",
+   "reasoning": "是。原型污染通过 __proto__ 注入，影响广泛，可导致 DoS 或 RCE，属于框架行为利用。",
+   "attack_chain": "构造恶意 JSON → 触发 merge → 污染 Object.prototype。",
+   "bypass_technique": "利用 __proto__ 属性。",
+   "defensive_insight": "在 merge 操作中禁止 __proto__ 键。"
+  },
+  {
+   "id": 10554,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "业务逻辑 / 认证绕过",
+   "reasoning": "是。通过修改内部转账的目标钱包 ID 绕过 2FA，属于业务逻辑缺陷，攻击链完整。",
+   "attack_chain": "发起内部转账 → 拦截请求 → 修改目标钱包 ID → 绕过 2FA。",
+   "bypass_technique": "利用内部转账功能未强制 2FA。",
+   "defensive_insight": "对所有转账操作强制 2FA，包括内部转账。"
+  },
+  {
+   "id": 148963,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。错误消息泄露路径，属于信息泄露，无绕过。",
+   "attack_chain": "发送恶意 X-Forwarded-For → 触发错误 → 泄露路径。",
+   "bypass_technique": "无",
+   "defensive_insight": "禁用错误消息显示。"
+  },
+  {
+   "id": 966527,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。反射型 XSS，常见套路。",
+   "attack_chain": "构造恶意 URL → 触发 XSS。",
+   "bypass_technique": "利用参数未过滤。",
+   "defensive_insight": "对参数进行输出编码。"
+  },
+  {
+   "id": 2279346,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "CSP绕过 / 框架行为利用",
+   "reasoning": "是。利用 Google 的 Angular 库绕过 CSP，并窃取 nonce 加载任意脚本，属于框架行为利用，攻击链完整。",
+   "attack_chain": "注入 Angular 模板 → 加载 Google 脚本 → 窃取 nonce → 加载恶意脚本。",
+   "bypass_technique": "利用 Angular 的 ng-on-error 和 nonce 窃取。",
+   "defensive_insight": "限制外部脚本来源，避免使用 Angular 的 CSP 绕过。"
+  },
+  {
+   "id": 159395,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过",
+   "reasoning": "部分。通过修改 Invoice ID 绕过权限检查，属于 IDOR，思路可借鉴。",
+   "attack_chain": "拦截请求 → 修改 Invoice ID → 执行未授权操作。",
+   "bypass_technique": "利用未校验的 Invoice ID。",
+   "defensive_insight": "对资源操作进行所有权验证。"
+  },
+  {
+   "id": 719426,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 跨组件攻击链",
+   "reasoning": "是。通过 gallery 应用绕过 file-drop 的权限限制，属于跨组件攻击链，思路新颖。",
+   "attack_chain": "上传文件到 file-drop → 通过 gallery 访问 → 查看和下载文件。",
+   "bypass_technique": "利用不同应用对共享链接的权限处理不一致。",
+   "defensive_insight": "统一共享链接的权限控制。"
+  },
+  {
+   "id": 1567257,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "信息泄露 / 资源消耗",
+   "reasoning": "部分。curl 内存泄漏导致敏感信息泄露和 DoS，属于库行为利用，但影响有限。",
+   "attack_chain": "设置大 token → 多次请求 → 内存泄漏 → DoS。",
+   "bypass_technique": "利用 curl 的 CURLOPT_XOAUTH2_BEARER 内存泄漏。",
+   "defensive_insight": "修复 curl 库，限制 token 大小。"
+  },
+  {
+   "id": 1378175,
+   "value_score": 9,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "跨组件攻击链 / 配置错误",
+   "reasoning": "是。通过 ingress-nginx 注解注入读取 service account token，跨组件攻击链，影响严重。",
+   "attack_chain": "创建恶意 ingress → 注入 nginx 指令 → 读取任意文件 → 获取 service account token。",
+   "bypass_technique": "利用未转义的注解注入。",
+   "defensive_insight": "对注解进行严格校验和转义。"
+  }
+ ]
+}

@@ -1,0 +1,337 @@
+{
+ "summary": {
+  "total": 20,
+  "kept": 12,
+  "dropped": 8,
+  "avg_score": 5.6,
+  "top_n": [
+   178152,
+   1521336,
+   1173153,
+   960330,
+   381194
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 800356,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "配置错误",
+   "reasoning": "否。CSRF 漏洞因缺少 token 导致，属于常见配置缺失，无绕过或创新。PoC 完整但套路成熟。",
+   "attack_chain": "单点：构造表单→管理员点击→创建折扣码。",
+   "bypass_technique": "无，直接利用缺少 CSRF token。",
+   "defensive_insight": "为所有状态变更请求添加 CSRF token 并验证。"
+  },
+  {
+   "id": 212770,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "其他",
+   "reasoning": "部分。利用 403 页面反射用户输入进行内容欺骗，属于常见反射型内容注入，无绕过，PoC 简单但启发性低。",
+   "attack_chain": "单点：构造 URL→403 页面反射内容→欺骗用户。",
+   "bypass_technique": "无，直接利用错误页面未过滤。",
+   "defensive_insight": "对错误页面输出进行编码，避免反射用户输入。"
+  },
+  {
+   "id": 1521336,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "授权绕过 / 跨组件攻击链",
+   "reasoning": "是。发现内部 GraphQL 端点绕过权限检查，允许低权限员工创建和激活工作流，且工作流不可见。技术点在于未文档化的内部端点缺乏权限校验，可抽象为通用判断条件。",
+   "attack_chain": "访问内部端点→安装模板→激活工作流→执行未授权操作。",
+   "bypass_technique": "利用未公开的 /admin/internal/web/graphql/flow 端点绕过权限。",
+   "defensive_insight": "对所有内部端点实施统一权限校验，并定期审计未文档化端点。"
+  },
+  {
+   "id": 329950,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。目录列表未转义文件名导致存储型 XSS，属于常见输出编码缺失，无绕过，PoC 完整但套路成熟。",
+   "attack_chain": "单点：创建恶意文件名→访问目录→XSS 执行。",
+   "bypass_technique": "无，直接利用未转义输出。",
+   "defensive_insight": "对文件名进行 HTML 编码，或使用安全模板。"
+  },
+  {
+   "id": 321699,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "子域名接管",
+   "reasoning": "部分。利用 GitHub Pages 接管未使用的域名，属于子域名接管常见套路，但利用 CNAME 指向不存在站点，思路清晰，可复用。",
+   "attack_chain": "注册 GitHub Pages→设置 CNAME→接管域名。",
+   "bypass_technique": "利用 DNS 指向不存在的 GitHub Pages 站点。",
+   "defensive_insight": "定期检查 DNS 记录，删除未使用的子域名或配置占位符。"
+  },
+  {
+   "id": 116798,
+   "value_score": 2,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 1
+   },
+   "verdict": "丢弃，信息不足",
+   "category": "信息泄露",
+   "reasoning": "否。通过端点响应判断私有项目有效性，属于信息泄露，但报告信息不足，缺少上下文和验证。",
+   "attack_chain": "单点：请求端点→判断项目有效性。",
+   "bypass_technique": "无，直接利用端点响应差异。",
+   "defensive_insight": "对私有项目信息进行统一响应，避免泄露存在性。"
+  },
+  {
+   "id": 85201,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "信息泄露",
+   "reasoning": "否。错误消息泄露服务器路径，属于常见信息泄露，无绕过，PoC 完整但套路成熟。",
+   "attack_chain": "单点：请求不存在文件→错误消息泄露路径。",
+   "bypass_technique": "无，直接利用错误处理不当。",
+   "defensive_insight": "在错误消息中避免输出内部路径。"
+  },
+  {
+   "id": 1596459,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "配置错误 / 跨组件攻击链",
+   "reasoning": "部分。Android 广播接收器未设置权限，允许恶意应用通信，属于配置错误，但涉及跨应用组件，思路可借鉴。",
+   "attack_chain": "恶意应用→发送广播→接收器处理→干扰通话。",
+   "bypass_technique": "利用未受保护的广播接收器。",
+   "defensive_insight": "注册广播接收器时指定 broadcastPermission。"
+  },
+  {
+   "id": 1392733,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。oem 参数未过滤导致反射型 XSS，属于常见输出编码缺失，无绕过，PoC 完整但套路成熟。",
+   "attack_chain": "单点：构造 URL→参数反射→XSS 执行。",
+   "bypass_technique": "无，直接利用未过滤参数。",
+   "defensive_insight": "对参数输出进行编码，或使用 CSP。"
+  },
+  {
+   "id": 178152,
+   "value_score": 10,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 3,
+    "chain": 2,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "框架行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用 JSON.parse 错误消息泄露文件内容，结合符号链接读取任意文件，最终导致 RCE。技术点在于 JSON.parse 错误消息包含完整输入，可抽象为通用判断条件。",
+   "attack_chain": "构造导出文件→符号链接指向敏感文件→导入触发错误→泄露文件内容→获取密钥→RCE。",
+   "bypass_technique": "利用 JSON.parse 错误消息泄露文件内容，结合符号链接。",
+   "defensive_insight": "避免在错误消息中泄露输入内容，对导入文件进行符号链接检查。"
+  },
+  {
+   "id": 50556,
+   "value_score": 3,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 0,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。搜索标题存储型 XSS，属于常见输出编码缺失，无绕过，PoC 简单但套路成熟。",
+   "attack_chain": "单点：提交恶意标题→存储→触发 XSS。",
+   "bypass_technique": "无，直接利用未转义输出。",
+   "defensive_insight": "对存储数据输出时进行编码。"
+  },
+  {
+   "id": 1628012,
+   "value_score": 6,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / IDOR",
+   "reasoning": "部分。成员角色可访问 API 密钥管理端点，属于 IDOR 授权绕过，思路清晰，但依赖特定角色配置。",
+   "attack_chain": "邀请成员→访问 API 密钥端点→查看/删除/创建密钥。",
+   "bypass_technique": "利用角色权限不足但端点未校验。",
+   "defensive_insight": "对敏感操作实施基于角色的访问控制。"
+  },
+  {
+   "id": 381194,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "原型污染 / 框架行为利用",
+   "reasoning": "是。merge.recursive 函数原型污染，利用 __proto__ 注入属性，影响所有对象。技术点在于递归合并未处理 __proto__，可抽象为通用判断条件。",
+   "attack_chain": "构造 payload→merge.recursive→污染原型→影响应用。",
+   "bypass_technique": "利用 __proto__ 键污染原型。",
+   "defensive_insight": "在合并操作中过滤 __proto__ 键，或使用安全合并函数。"
+  },
+  {
+   "id": 477222,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过 / 信息泄露",
+   "reasoning": "部分。CI 徽章端点未校验权限，泄露构建状态，属于授权绕过，思路清晰，但影响有限。",
+   "attack_chain": "单点：访问徽章 URL→获取构建状态。",
+   "bypass_technique": "利用未授权端点。",
+   "defensive_insight": "对徽章端点实施权限检查。"
+  },
+  {
+   "id": 29331,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "业务逻辑 / 认证绕过",
+   "reasoning": "部分。用户名更改未验证邮箱所有权，属于业务逻辑缺陷，思路可借鉴，但依赖人工流程。",
+   "attack_chain": "攻击者邮件→请求更改用户名→确认→更改成功。",
+   "bypass_technique": "利用邮箱验证缺失。",
+   "defensive_insight": "对敏感操作进行邮箱所有权验证。"
+  },
+  {
+   "id": 1173153,
+   "value_score": 7,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，高优先级",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "reasoning": "是。利用 Authorization 头导致 Azure 存储 403，被 Cloudflare 缓存，造成 DoS。技术点在于缓存键未包含 Authorization 头，可抽象为通用判断条件。",
+   "attack_chain": "构造请求→触发 403→缓存→影响其他用户。",
+   "bypass_technique": "利用缓存键忽略 Authorization 头。",
+   "defensive_insight": "缓存键应包含所有影响响应的头，或对错误响应不缓存。"
+  },
+  {
+   "id": 172733,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 1,
+    "reproducibility": 1
+   },
+   "verdict": "保留，普通",
+   "category": "授权绕过",
+   "reasoning": "部分。交易签名端点未校验权限，属于授权绕过，思路清晰，但影响有限。",
+   "attack_chain": "构造请求→添加签名→显示在订单页。",
+   "bypass_technique": "利用未校验权限的端点。",
+   "defensive_insight": "对敏感操作实施权限检查。"
+  },
+  {
+   "id": 223331,
+   "value_score": 4,
+   "score_breakdown": {
+    "unexpectedness": 1,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "丢弃，常见套路",
+   "category": "XSS",
+   "reasoning": "否。Editor Link 字段存储 javascript: URL，属于常见存储型 XSS，无绕过，PoC 完整但套路成熟。",
+   "attack_chain": "单点：存储 javascript: URL→点击触发。",
+   "bypass_technique": "无，直接利用未过滤 URL。",
+   "defensive_insight": "对 URL 协议进行白名单校验。"
+  },
+  {
+   "id": 960330,
+   "value_score": 8,
+   "score_breakdown": {
+    "unexpectedness": 3,
+    "elegance": 2,
+    "chain": 1,
+    "reproducibility": 2
+   },
+   "verdict": "保留，高优先级",
+   "category": "路径遍历 / 协议行为利用",
+   "reasoning": "是。利用 Cookie 中的路径遍历删除文件，属于协议行为利用，可抽象为通用判断条件。",
+   "attack_chain": "构造 Cookie→路径遍历→删除文件。",
+   "bypass_technique": "利用 Cookie 中的 ../ 序列。",
+   "defensive_insight": "对 Cookie 值进行路径规范化，拒绝包含 .. 的输入。"
+  },
+  {
+   "id": 351171,
+   "value_score": 5,
+   "score_breakdown": {
+    "unexpectedness": 2,
+    "elegance": 1,
+    "chain": 0,
+    "reproducibility": 2
+   },
+   "verdict": "保留，普通",
+   "category": "XSS",
+   "reasoning": "部分。Profile Name 字段未过滤导致存储型 XSS，属于常见输出编码缺失，但利用 onclick 属性逃逸，思路略有变形。",
+   "attack_chain": "单点：设置恶意名称→搜索→点击按钮→XSS。",
+   "bypass_technique": "利用 onclick 属性中的引号逃逸。",
+   "defensive_insight": "对输出到 HTML 属性的数据进行编码。"
+  }
+ ]
+}
