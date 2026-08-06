@@ -1,0 +1,460 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 8,
+  "not_worth": 7,
+  "top_ids": [
+   73244,
+   226200,
+   275269,
+   1130874,
+   684152,
+   730239,
+   26647,
+   541169
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 73244,
+   "knowledge_point": "PHP unserialize() 中 DateInterval 的 UAF 漏洞利用",
+   "is_ai_likely_known": false,
+   "reason": "该漏洞涉及 PHP 内部实现细节，训练数据中可能不常见，且需要深入理解 ZVAL 生命周期和引用计数。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他 PHP 反序列化漏洞的利用，但具体细节依赖特定版本）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 PHP 反序列化 UAF 的通用利用模式。",
+   "skill_framework": {
+    "name": "PHP 反序列化 UAF 利用",
+    "适用场景": [
+     "PHP 反序列化漏洞挖掘",
+     "CTF 挑战"
+    ],
+    "核心原理": [
+     "unserialize() 处理引用时可能释放 ZVAL 但保留引用，导致 UAF",
+     "利用 __wakeup() 或析构函数触发释放"
+    ],
+    "决策树": [
+     "IF 存在 unserialize() 且对象有 __wakeup() → 尝试构造引用导致 UAF"
+    ],
+    "示例": [
+     "构造序列化数据包含 R: 引用，触发释放后访问"
+    ],
+    "迁移场景": [
+     "PHP 内存破坏漏洞",
+     "其他语言反序列化"
+    ]
+   }
+  },
+  {
+   "id": 226200,
+   "knowledge_point": "mruby 编译器 OP_ASGN 中 OP_SCALL 导致任意内存写",
+   "is_ai_likely_known": false,
+   "reason": "该漏洞涉及 mruby 编译器代码生成细节，非常具体，AI 可能不了解。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他编译器代码生成漏洞的挖掘）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化编译器代码生成漏洞的挖掘方法。",
+   "skill_framework": {
+    "name": "编译器代码生成漏洞挖掘",
+    "适用场景": [
+     "mruby",
+     "其他动态语言编译器"
+    ],
+    "核心原理": [
+     "编译器错误处理可能导致寄存器管理不当",
+     "特定操作码组合可导致任意内存写"
+    ],
+    "决策树": [
+     "IF 目标使用 mruby → 测试 OP_ASGN 与 OP_SCALL 组合"
+    ],
+    "示例": [
+     "构造特定 Ruby 代码触发错误路径"
+    ],
+    "迁移场景": [
+     "JIT 编译器",
+     "解释器"
+    ]
+   }
+  },
+  {
+   "id": 275269,
+   "knowledge_point": "Gem 签名伪造：tar 重复条目处理不一致",
+   "is_ai_likely_known": false,
+   "reason": "该漏洞涉及 RubyGems 对 tar 格式的特定处理，AI 可能不了解。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何处理 tar 或类似格式的包管理器）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化包管理器签名验证绕过模式。",
+   "skill_framework": {
+    "name": "包管理器签名验证绕过（重复条目不一致）",
+    "适用场景": [
+     "RubyGems",
+     "npm",
+     "其他包管理器"
+    ],
+    "核心原理": [
+     "验证和安装时对重复条目使用不同顺序",
+     "攻击者利用此差异伪造签名"
+    ],
+    "决策树": [
+     "IF 包管理器解析 tar 且允许重复条目 → 测试验证与安装是否一致"
+    ],
+    "示例": [
+     "构造包含两个 data.tar.gz 的 gem"
+    ],
+    "迁移场景": [
+     "软件更新机制",
+     "文件归档处理"
+    ]
+   }
+  },
+  {
+   "id": 1130874,
+   "knowledge_point": "MongoDB $where 操作符盲注导致 RCE",
+   "is_ai_likely_known": true,
+   "reason": "MongoDB $where 注入是已知的通用知识，AI 可能了解。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到其他 NoSQL 注入场景）",
+   "source_quality": "中",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 NoSQL 注入利用和防御的决策树。",
+   "skill_framework": {
+    "name": "NoSQL 注入利用与防御",
+    "适用场景": [
+     "MongoDB",
+     "其他 NoSQL 数据库"
+    ],
+    "核心原理": [
+     "$where 操作符允许执行 JavaScript",
+     "盲注泄露敏感信息"
+    ],
+    "决策树": [
+     "IF API 接受 JSON 查询参数 → 测试 $where 注入"
+    ],
+    "示例": [
+     "注入 $where 条件进行盲注"
+    ],
+    "迁移场景": [
+     "API 安全测试",
+     "数据库安全"
+    ]
+   }
+  },
+  {
+   "id": 684152,
+   "knowledge_point": "智能合约拍卖逻辑漏洞：flap.kick 参数验证缺失",
+   "is_ai_likely_known": false,
+   "reason": "该漏洞涉及特定智能合约（MakerDAO）的业务逻辑，AI 可能不了解。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他智能合约拍卖逻辑）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化智能合约业务逻辑漏洞的审计模式。",
+   "skill_framework": {
+    "name": "智能合约业务逻辑漏洞审计",
+    "适用场景": [
+     "DeFi 协议",
+     "拍卖系统"
+    ],
+    "核心原理": [
+     "关键函数参数未验证",
+     "状态一致性破坏"
+    ],
+    "决策树": [
+     "IF 智能合约有拍卖功能 → 检查参数验证和状态转换"
+    ],
+    "示例": [
+     "构造虚假拍卖窃取资金"
+    ],
+    "迁移场景": [
+     "区块链安全",
+     "金融系统"
+    ]
+   }
+  },
+  {
+   "id": 893395,
+   "knowledge_point": "CTF 综合攻击链：源码泄露、2FA 绕过、CSS 注入等",
+   "is_ai_likely_known": true,
+   "reason": "CTF 中的常见技巧，AI 可能了解。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（具体攻击链依赖特定环境）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 730239,
+   "knowledge_point": "yarn install 任意文件写入：符号链接和 tar transform",
+   "is_ai_likely_known": false,
+   "reason": "该漏洞涉及 yarn 对 tar 包的处理细节，AI 可能不了解。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他包管理器或解压工具）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化包管理器解压路径穿越和符号链接攻击模式。",
+   "skill_framework": {
+    "name": "包管理器解压路径穿越与符号链接攻击",
+    "适用场景": [
+     "yarn",
+     "npm",
+     "其他包管理器"
+    ],
+    "核心原理": [
+     "tar 包内符号链接和 transform 可导致任意文件写入",
+     "绕过脚本执行限制"
+    ],
+    "决策树": [
+     "IF 包管理器解压 tar 且不验证符号链接 → 测试路径穿越"
+    ],
+    "示例": [
+     "构造恶意包包含符号链接和 transform"
+    ],
+    "迁移场景": [
+     "软件供应链安全",
+     "文件解压工具"
+    ]
+   }
+  },
+  {
+   "id": 26647,
+   "knowledge_point": "Django CSRF 保护绕过：通过 Google Analytics cookie 注入",
+   "is_ai_likely_known": false,
+   "reason": "该漏洞涉及 Django 和浏览器的 cookie 解析差异，AI 可能不了解。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他框架的 CSRF 防护）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 CSRF 绕过模式。",
+   "skill_framework": {
+    "name": "CSRF 保护绕过（cookie 解析差异）",
+    "适用场景": [
+     "Django",
+     "其他 Web 框架"
+    ],
+    "核心原理": [
+     "浏览器和服务器对 cookie 解析不一致",
+     "第三方 cookie 注入"
+    ],
+    "决策树": [
+     "IF 框架使用 cookie 进行 CSRF 防护 → 测试解析差异"
+    ],
+    "示例": [
+     "通过 Google Analytics 注入恶意 cookie"
+    ],
+    "迁移场景": [
+     "Web 安全",
+     "会话管理"
+    ]
+   }
+  },
+  {
+   "id": 195586,
+   "knowledge_point": "PHAR 解析器 off-by-one 导致内存破坏",
+   "is_ai_likely_known": false,
+   "reason": "该漏洞涉及 PHP PHAR 解析器的具体实现，AI 可能不了解。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他文件格式解析器）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化文件格式解析器内存破坏漏洞的挖掘模式。",
+   "skill_framework": {
+    "name": "文件格式解析器内存破坏漏洞挖掘",
+    "适用场景": [
+     "PHAR",
+     "其他二进制格式"
+    ],
+    "核心原理": [
+     "边界检查不严导致 off-by-one",
+     "覆盖内存管理元数据"
+    ],
+    "决策树": [
+     "IF 解析器处理用户输入文件 → 测试边界条件"
+    ],
+    "示例": [
+     "构造恶意 PHAR 文件触发 off-by-one"
+    ],
+    "迁移场景": [
+     "内存安全",
+     "漏洞挖掘"
+    ]
+   }
+  },
+  {
+   "id": 291539,
+   "knowledge_point": "Electron 应用 XSS 升级为 RCE",
+   "is_ai_likely_known": true,
+   "reason": "Electron 安全配置不当导致 RCE 是已知的通用知识。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有 Electron 应用）",
+   "source_quality": "中",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 Electron 安全配置审计和利用。",
+   "skill_framework": {
+    "name": "Electron 应用安全审计与利用",
+    "适用场景": [
+     "Electron 桌面应用"
+    ],
+    "核心原理": [
+     "nodeIntegration 启用时 XSS 可升级为 RCE",
+     "渲染进程沙箱隔离缺失"
+    ],
+    "决策树": [
+     "IF Electron 应用启用 nodeIntegration → 测试 XSS 升级"
+    ],
+    "示例": [
+     "通过 Markdown 预览 XSS 加载外部 JS"
+    ],
+    "迁移场景": [
+     "桌面应用安全",
+     "Web 安全"
+    ]
+   }
+  },
+  {
+   "id": 172562,
+   "knowledge_point": "LZMADecompressor.decompress Use After Free",
+   "is_ai_likely_known": false,
+   "reason": "该漏洞涉及 Python 标准库的特定实现，AI 可能不了解。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他解压库）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化解压库 UAF 漏洞的挖掘模式。",
+   "skill_framework": {
+    "name": "解压库 UAF 漏洞挖掘",
+    "适用场景": [
+     "Python LZMA",
+     "其他解压库"
+    ],
+    "核心原理": [
+     "错误路径未清理指针导致悬垂引用",
+     "恶意数据触发错误路径"
+    ],
+    "决策树": [
+     "IF 解压库处理用户输入 → 测试错误路径"
+    ],
+    "示例": [
+     "构造恶意 LZMA 流触发 UAF"
+    ],
+    "迁移场景": [
+     "内存安全",
+     "漏洞挖掘"
+    ]
+   }
+  },
+  {
+   "id": 135072,
+   "knowledge_point": "ImageMagick MVG delegate 命令注入",
+   "is_ai_likely_known": true,
+   "reason": "ImageMagick 命令注入是已知的通用知识。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到其他图像处理库）",
+   "source_quality": "中",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化图像处理库命令注入的利用和防御。",
+   "skill_framework": {
+    "name": "图像处理库命令注入利用与防御",
+    "适用场景": [
+     "ImageMagick",
+     "GraphicsMagick"
+    ],
+    "核心原理": [
+     "delegate 机制允许外部命令",
+     "恶意文件内容触发命令注入"
+    ],
+    "决策树": [
+     "IF 应用使用 ImageMagick 处理用户上传 → 测试 MVG 注入"
+    ],
+    "示例": [
+     "上传恶意 MVG 文件触发 delegate"
+    ],
+    "迁移场景": [
+     "文件上传安全",
+     "命令注入"
+    ]
+   }
+  },
+  {
+   "id": 541169,
+   "knowledge_point": "DNS rebinding 绕过 SSRF 防护",
+   "is_ai_likely_known": true,
+   "reason": "DNS rebinding 是已知的 SSRF 绕过技术。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有 SSRF 防护）",
+   "source_quality": "中",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 SSRF 防护绕过和防御的决策树。",
+   "skill_framework": {
+    "name": "SSRF 防护绕过与防御",
+    "适用场景": [
+     "Web 应用",
+     "API 网关"
+    ],
+    "核心原理": [
+     "验证和请求分离导致 ToCToU",
+     "DNS 轮换绕过 IP 黑名单"
+    ],
+    "决策树": [
+     "IF 应用有 URL 验证 → 测试 DNS rebinding"
+    ],
+    "示例": [
+     "配置 DNS 轮换，验证时合法，请求时内网"
+    ],
+    "迁移场景": [
+     "网络安全",
+     "云安全"
+    ]
+   }
+  },
+  {
+   "id": 895722,
+   "knowledge_point": "CTF 综合攻击链：2FA 绕过、SSRF、CSS 注入等",
+   "is_ai_likely_known": true,
+   "reason": "CTF 中的常见技巧，AI 可能了解。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（具体攻击链依赖特定环境）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 587854,
+   "knowledge_point": "git archive 参数注入导致 RCE",
+   "is_ai_likely_known": false,
+   "reason": "该漏洞涉及 git 命令参数注入的特定场景，AI 可能不了解。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他命令注入场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化命令参数注入的利用和防御。",
+   "skill_framework": {
+    "name": "命令参数注入利用与防御",
+    "适用场景": [
+     "git",
+     "其他命令行工具"
+    ],
+    "核心原理": [
+     "用户输入直接拼接到命令参数",
+     "以 -- 开头可注入额外参数"
+    ],
+    "决策树": [
+     "IF 应用调用外部命令且参数可控 → 测试参数注入"
+    ],
+    "示例": [
+     "通过 --output 覆盖文件"
+    ],
+    "迁移场景": [
+     "系统安全",
+     "Web 安全"
+    ]
+   }
+  }
+ ]
+}

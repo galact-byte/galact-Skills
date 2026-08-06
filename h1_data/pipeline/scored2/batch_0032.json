@@ -1,0 +1,352 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 8,
+  "not_worth": 7,
+  "top_ids": [
+   1501611,
+   858598,
+   1283871,
+   136169,
+   103989,
+   724153,
+   663729,
+   733072
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1501611,
+   "knowledge_point": "GraphQL IDOR：可预测对象ID与缺失对象级授权",
+   "is_ai_likely_known": false,
+   "reason": "GraphQL IDOR是常见漏洞，但具体到对象级授权缺失的检测和利用，AI可能只给出通用建议，缺乏系统化方法。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（适用于所有GraphQL API，可迁移到REST API的IDOR检测）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化GraphQL IDOR的检测与利用方法，包括ID枚举、权限测试、批量操作风险。",
+   "skill_framework": {
+    "name": "GraphQL IDOR检测与利用",
+    "适用场景": [
+     "GraphQL API安全测试",
+     "REST API IDOR检测"
+    ],
+    "核心原理": [
+     "对象ID可预测且服务端未实施对象级授权",
+     "批量操作（如归档）可能放大影响"
+    ],
+    "决策树": [
+     "IF GraphQL API暴露对象ID AND 未验证用户权限 → 尝试枚举ID并执行敏感操作"
+    ],
+    "示例": [
+     "通过GraphQL mutation归档其他用户的scope"
+    ],
+    "迁移场景": [
+     "API安全测试",
+     "授权绕过"
+    ]
+   }
+  },
+  {
+   "id": 858598,
+   "knowledge_point": "硬链接滥用导致特权文件写入",
+   "is_ai_likely_known": false,
+   "reason": "硬链接提权技术相对小众，AI可能不了解具体细节，如quarantine功能中的利用。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（适用于Windows和Linux特权服务，可迁移到其他文件操作场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化硬链接提权的原理、利用条件和防御措施。",
+   "skill_framework": {
+    "name": "硬链接提权",
+    "适用场景": [
+     "Windows特权服务",
+     "Linux特权服务"
+    ],
+    "核心原理": [
+     "特权服务对可预测路径进行写操作，攻击者通过硬链接将写入重定向到任意文件"
+    ],
+    "决策树": [
+     "IF 特权服务写入可预测路径 AND 允许创建硬链接 → 尝试硬链接到敏感文件"
+    ],
+    "示例": [
+     "创建硬链接到系统文件，触发quarantine覆盖"
+    ],
+    "迁移场景": [
+     "权限提升",
+     "任意文件写入"
+    ]
+   }
+  },
+  {
+   "id": 1283871,
+   "knowledge_point": "TIOCSTI注入绕过沙箱",
+   "is_ai_likely_known": false,
+   "reason": "TIOCSTI是较底层的ioctl，AI可能不熟悉其安全影响，且利用场景特殊。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他终端设备交互场景，但依赖具体环境）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化TIOCSTI注入的原理、利用条件和防御措施。",
+   "skill_framework": {
+    "name": "TIOCSTI终端注入",
+    "适用场景": [
+     "沙箱逃逸",
+     "终端交互安全"
+    ],
+    "核心原理": [
+     "沙箱允许写/dev/tty，攻击者通过TIOCSTI注入键盘输入，伪造用户操作"
+    ],
+    "决策树": [
+     "IF 沙箱允许写/dev/tty AND 用户终端交互 → 尝试TIOCSTI注入"
+    ],
+    "示例": [
+     "恶意程序注入命令到用户终端"
+    ],
+    "迁移场景": [
+     "沙箱逃逸",
+     "权限提升"
+    ]
+   }
+  },
+  {
+   "id": 136169,
+   "knowledge_point": "SAML签名验证绕过",
+   "is_ai_likely_known": false,
+   "reason": "SAML签名绕过是特定框架的漏洞，AI可能不了解具体实现细节，但原理是通用的。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（适用于所有SAML实现，可迁移到OAuth等签名验证场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化SAML签名验证的检测与利用方法。",
+   "skill_framework": {
+    "name": "SAML签名验证绕过",
+    "适用场景": [
+     "SAML SSO",
+     "OAuth签名验证"
+    ],
+    "核心原理": [
+     "服务端未正确验证SAML响应签名，攻击者移除签名或伪造响应"
+    ],
+    "决策树": [
+     "IF SAML响应未强制验证签名 → 尝试移除签名或构造恶意响应"
+    ],
+    "示例": [
+     "移除SAML响应中的签名标签，获得管理员权限"
+    ],
+    "迁移场景": [
+     "认证绕过",
+     "身份伪造"
+    ]
+   }
+  },
+  {
+   "id": 103989,
+   "knowledge_point": "异常对象属性导致XSS",
+   "is_ai_likely_known": false,
+   "reason": "利用异常对象属性执行XSS是较新颖的技巧，AI可能不了解具体框架的异常处理机制。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他语言或框架的异常处理场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化异常对象属性导致XSS的原理和利用方法。",
+   "skill_framework": {
+    "name": "异常对象属性XSS",
+    "适用场景": [
+     "Web应用安全",
+     "XSS防护"
+    ],
+    "核心原理": [
+     "框架将异常对象的属性直接渲染到页面，攻击者控制属性内容执行JS"
+    ],
+    "决策树": [
+     "IF 异常处理将对象属性渲染到页面 AND 属性可控 → 尝试注入恶意代码"
+    ],
+    "示例": [
+     "抛出异常对象，其html属性包含恶意脚本"
+    ],
+    "迁移场景": [
+     "XSS",
+     "沙箱逃逸"
+    ]
+   }
+  },
+  {
+   "id": 724153,
+   "knowledge_point": "事件处理器绕过script标签过滤实现存储XSS并读取本地文件",
+   "is_ai_likely_known": false,
+   "reason": "事件处理器绕过是常见XSS技巧，但结合桌面客户端file://协议读取本地文件是特定场景，AI可能不了解。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他XSS过滤绕过和桌面客户端安全）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化事件处理器绕过和桌面客户端file://协议限制的检测与利用。",
+   "skill_framework": {
+    "name": "事件处理器绕过与桌面客户端文件读取",
+    "适用场景": [
+     "XSS过滤绕过",
+     "桌面客户端安全"
+    ],
+    "核心原理": [
+     "过滤script标签但未过滤事件处理器，利用onerror等执行JS；桌面客户端允许iframe访问file://协议"
+    ],
+    "决策树": [
+     "IF 输入过滤未移除事件处理器 → 尝试onerror等；IF 桌面客户端允许file:// → 尝试读取本地文件"
+    ],
+    "示例": [
+     "管理员设置Home Body为恶意img，用户访问触发XSS，iframe读取本地文件"
+    ],
+    "迁移场景": [
+     "XSS",
+     "本地文件读取"
+    ]
+   }
+  },
+  {
+   "id": 663729,
+   "knowledge_point": "DNS rebinding绕过同源策略访问本地服务",
+   "is_ai_likely_known": false,
+   "reason": "DNS rebinding是已知技术，但针对浏览器扩展和本地服务Host头验证缺失是特定场景，AI可能不了解。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到所有本地服务安全）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化DNS rebinding攻击本地服务的原理和防御。",
+   "skill_framework": {
+    "name": "DNS rebinding攻击本地服务",
+    "适用场景": [
+     "本地服务安全",
+     "浏览器扩展安全"
+    ],
+    "核心原理": [
+     "本地服务未验证Host头，攻击者通过DNS rebinding绕过同源策略访问本地服务"
+    ],
+    "决策树": [
+     "IF 本地服务未验证Host头 → 尝试DNS rebinding访问"
+    ],
+    "示例": [
+     "恶意网站DNS rebinding访问本地WebTorrent服务器读取文件"
+    ],
+    "迁移场景": [
+     "SSRF",
+     "信息泄露"
+    ]
+   }
+  },
+  {
+   "id": 733072,
+   "knowledge_point": "路径遍历结合--path-as-is绕过实现RCE",
+   "is_ai_likely_known": false,
+   "reason": "路径遍历是常见漏洞，但利用--path-as-is绕过curl的路径规范化是特定技巧，AI可能不了解。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他API路径处理场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化路径遍历绕过和利用方法。",
+   "skill_framework": {
+    "name": "路径遍历绕过与利用",
+    "适用场景": [
+     "API安全测试",
+     "文件操作安全"
+    ],
+    "核心原理": [
+     "服务端未过滤路径参数，客户端工具如curl的--path-as-is保留原始路径，绕过规范化"
+    ],
+    "决策树": [
+     "IF API接受路径参数 AND 未过滤.. → 尝试..%2f等变体；IF 使用curl → 尝试--path-as-is"
+    ],
+    "示例": [
+     "写入authorized_keys实现SSH登录"
+    ],
+    "迁移场景": [
+     "RCE",
+     "任意文件写入"
+    ]
+   }
+  },
+  {
+   "id": 271330,
+   "knowledge_point": "格式字符串整数溢出导致缓冲区溢出",
+   "is_ai_likely_known": false,
+   "reason": "格式字符串漏洞在C语言中常见，但在Perl等高级语言中较少见，AI可能不了解具体实现。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（依赖特定语言和实现，迁移性差）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1354255,
+   "knowledge_point": "开放重定向绕过SSRF防护",
+   "is_ai_likely_known": true,
+   "reason": "开放重定向是常见漏洞，AI可能了解基本绕过技巧，但特定框架的细节可能不熟悉。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他框架的重定向处理）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：开放重定向检测与绕过。",
+   "skill_framework": null
+  },
+  {
+   "id": 310443,
+   "knowledge_point": "lodash原型污染",
+   "is_ai_likely_known": true,
+   "reason": "原型污染是已知漏洞，AI可能了解基本概念和利用方法。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（适用于所有JavaScript应用）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：原型污染检测与利用。",
+   "skill_framework": null
+  },
+  {
+   "id": 470003,
+   "knowledge_point": "macOS代码签名绕过（TOCTOU、PID重用、DYLD_INSERT_LIBRARIES）",
+   "is_ai_likely_known": false,
+   "reason": "macOS安全机制绕过是特定平台知识，AI可能不了解具体细节。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他macOS安全机制）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 110467,
+   "knowledge_point": "OAuth桥接origin验证绕过",
+   "is_ai_likely_known": false,
+   "reason": "OAuth桥接origin验证绕过是特定场景，AI可能不了解具体实现。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他OAuth实现）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：OAuth安全测试。",
+   "skill_framework": null
+  },
+  {
+   "id": 660565,
+   "knowledge_point": "SSRF结合内部服务未授权require实现RCE",
+   "is_ai_likely_known": false,
+   "reason": "SSRF是常见漏洞，但结合内部服务漏洞实现RCE是特定场景，AI可能不了解具体服务。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他SSRF利用场景）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：SSRF利用与内网渗透。",
+   "skill_framework": null
+  },
+  {
+   "id": 109175,
+   "knowledge_point": "PHP Collator::sortWithSortKeys UAF",
+   "is_ai_likely_known": false,
+   "reason": "PHP特定函数UAF是具体漏洞，AI可能不了解细节。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（依赖特定PHP版本和函数）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  }
+ ]
+}

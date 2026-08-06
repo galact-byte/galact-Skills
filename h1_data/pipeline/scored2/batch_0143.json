@@ -1,0 +1,329 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 6,
+  "not_worth": 9,
+  "top_ids": [
+   204513,
+   633245,
+   885539,
+   745953,
+   243842,
+   497771
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1076047,
+   "knowledge_point": "并发请求绕过速率限制",
+   "is_ai_likely_known": true,
+   "reason": "速率限制绕过是常见攻击技术，AI 已知多种绕过方法，且此案例未展示独特技巧。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他限速场景，但方法通用）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 896338,
+   "knowledge_point": "DLL 预加载攻击",
+   "is_ai_likely_known": true,
+   "reason": "DLL 搜索顺序劫持是已知攻击技术，AI 可提供防御措施。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到 Windows 应用安全）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 745953,
+   "knowledge_point": "CSS 转义序列绕过 URL 过滤",
+   "is_ai_likely_known": false,
+   "reason": "CSS 转义序列绕过过滤器是较少见的技术，AI 可能不熟悉具体语法。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到 XSS 过滤、WAF 绕过等场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 CSS 转义序列绕过原理和检测方法。",
+   "skill_framework": {
+    "name": "CSS 转义序列绕过过滤器",
+    "适用场景": [
+     "XSS 过滤",
+     "URL 过滤",
+     "WAF 绕过"
+    ],
+    "核心原理": [
+     "CSS 转义序列（如 \\72）可表示字符，但解析器可能不识别",
+     "利用转义序列混淆关键字绕过正则检测"
+    ],
+    "决策树": [
+     "IF 存在基于正则的 URL 或关键字过滤 AND 输入被解析为 CSS → 尝试 CSS 转义序列"
+    ],
+    "示例": [
+     "\\72 表示 'r'，可绕过 'http' 检测"
+    ],
+    "迁移场景": [
+     "XSS",
+     "SSRF",
+     "内容安全策略绕过"
+    ]
+   }
+  },
+  {
+   "id": 365504,
+   "knowledge_point": "跨功能模块 IDOR 绕过访问控制",
+   "is_ai_likely_known": true,
+   "reason": "IDOR 是常见漏洞，AI 已知多种利用方式，此案例是常见变形。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他 IDOR 场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 633245,
+   "knowledge_point": "重分享权限传播缺陷导致权限提升",
+   "is_ai_likely_known": false,
+   "reason": "权限传播裁剪缺陷是较深入的知识，AI 可能不熟悉具体模型。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何共享权限系统）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化权限传播裁剪原则和检测方法。",
+   "skill_framework": {
+    "name": "重分享权限传播缺陷检测",
+    "适用场景": [
+     "文件共享系统",
+     "协作平台",
+     "云存储"
+    ],
+    "核心原理": [
+     "重分享时权限应裁剪，不能原样传递",
+     "隐含权限（如解绑权限）不得外传"
+    ],
+    "决策树": [
+     "IF 存在重分享功能 AND 权限模型复杂 → 检查重分享时是否裁剪权限"
+    ],
+    "示例": [
+     "user1 收 read+reshare，重分享给 user2 时不应传递 delete 权限"
+    ],
+    "迁移场景": [
+     "权限提升",
+     "访问控制绕过"
+    ]
+   }
+  },
+  {
+   "id": 243842,
+   "knowledge_point": "密码重置 token 未及时失效",
+   "is_ai_likely_known": false,
+   "reason": "token 生命周期管理缺陷是具体实现问题，AI 可能不熟悉所有细节。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何 token 认证场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 token 生命周期管理最佳实践。",
+   "skill_framework": {
+    "name": "Token 生命周期管理缺陷检测",
+    "适用场景": [
+     "密码重置",
+     "会话管理",
+     "API 认证"
+    ],
+    "核心原理": [
+     "token 应一次性使用，设置过期时间，绑定用户和会话"
+    ],
+    "决策树": [
+     "IF 存在 token 认证 AND 未设置过期或一次性 → 尝试重复使用旧 token"
+    ],
+    "示例": [
+     "请求两次重置，使用旧链接仍有效"
+    ],
+    "迁移场景": [
+     "认证绕过",
+     "会话固定"
+    ]
+   }
+  },
+  {
+   "id": 93921,
+   "knowledge_point": "表单字段篡改导致 IDOR",
+   "is_ai_likely_known": true,
+   "reason": "IDOR 是常见漏洞，AI 已知多种利用方式，此案例是常见变形。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他 IDOR 场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 204513,
+   "knowledge_point": "SSRF 重定向绕过和认证头注入",
+   "is_ai_likely_known": false,
+   "reason": "重定向绕过和认证头注入的组合是较深入的技术，AI 可能不熟悉具体细节。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到 SSRF 防护、代理安全等场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 SSRF 重定向绕过和认证头注入的检测方法。",
+   "skill_framework": {
+    "name": "SSRF 重定向绕过与认证头注入",
+    "适用场景": [
+     "SSRF 防护",
+     "代理安全",
+     "内网扫描"
+    ],
+    "核心原理": [
+     "重定向防护只检查协议，不检查最终 IP/端口",
+     "URL 中的 user:pass@ 可注入 Authorization 头"
+    ],
+    "决策树": [
+     "IF 存在 SSRF 防护 AND 允许重定向 → 尝试重定向到内网地址",
+     "IF URL 支持 user:pass@ → 尝试注入认证头"
+    ],
+    "示例": [
+     "302 重定向到 http://127.0.0.1:8080",
+     "http://admin:admin@internal/"
+    ],
+    "迁移场景": [
+     "SSRF",
+     "内网渗透",
+     "云安全"
+    ]
+   }
+  },
+  {
+   "id": 23386,
+   "knowledge_point": "window.opener 反向钓鱼",
+   "is_ai_likely_known": true,
+   "reason": "window.opener 攻击是已知技术，AI 可提供防御措施。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（仅适用于浏览器环境）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 95555,
+   "knowledge_point": "路径扩展名绕过 CSRF 保护",
+   "is_ai_likely_known": false,
+   "reason": "路径扩展名绕过 CSRF 是较具体的技术，AI 可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他 CSRF 防护绕过）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：CSRF 防护绕过。",
+   "skill_framework": null
+  },
+  {
+   "id": 192578,
+   "knowledge_point": "递归类定义导致栈溢出",
+   "is_ai_likely_known": false,
+   "reason": "特定框架的递归处理缺陷是较深入的知识，AI 可能不熟悉。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（仅适用于特定框架）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 88881,
+   "knowledge_point": "textarea 闭合标签注入 XSS",
+   "is_ai_likely_known": true,
+   "reason": "textarea 注入是已知 XSS 技术，AI 可提供防御措施。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他 XSS 场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 317005,
+   "knowledge_point": "子域名接管",
+   "is_ai_likely_known": true,
+   "reason": "子域名接管是常见漏洞，AI 已知多种利用方式。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他云服务）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 497771,
+   "knowledge_point": "双重 URL 编码绕过路径遍历",
+   "is_ai_likely_known": false,
+   "reason": "双重编码绕过是较具体的技术，AI 可能不熟悉所有编码变体。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到路径遍历、WAF 绕过等场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化编码绕过路径遍历的检测方法。",
+   "skill_framework": {
+    "name": "编码绕过路径遍历",
+    "适用场景": [
+     "路径遍历防护",
+     "WAF 绕过",
+     "文件访问控制"
+    ],
+    "核心原理": [
+     "双重编码（如 %252f）可绕过一层解码",
+     "服务器可能解码多次，导致路径规范化失败"
+    ],
+    "决策树": [
+     "IF 存在路径过滤 AND 输入被解码多次 → 尝试双重编码"
+    ],
+    "示例": [
+     "%252e%252e%252f 表示 ../"
+    ],
+    "迁移场景": [
+     "LFI",
+     "文件读取",
+     "目录遍历"
+    ]
+   }
+  },
+  {
+   "id": 885539,
+   "knowledge_point": "GraphQL 对象级授权缺失和可预测 ID 枚举",
+   "is_ai_likely_known": false,
+   "reason": "GraphQL BOLA 和 snowflake 枚举是较深入的知识，AI 可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到 GraphQL API 安全、IDOR 检测等场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 GraphQL 对象级授权检测和可预测 ID 枚举方法。",
+   "skill_framework": {
+    "name": "GraphQL 对象级授权缺失检测",
+    "适用场景": [
+     "GraphQL API 安全",
+     "IDOR 检测",
+     "信息泄露"
+    ],
+    "核心原理": [
+     "GraphQL resolver 必须校验对象所有权",
+     "可预测 ID（如 snowflake）可被枚举"
+    ],
+    "决策树": [
+     "IF 存在 GraphQL 端点 AND 查询参数包含对象 ID → 尝试替换为其他用户 ID",
+     "IF ID 可预测 → 尝试枚举"
+    ],
+    "示例": [
+     "替换 listId 为其他用户的私有列表 ID"
+    ],
+    "迁移场景": [
+     "BOLA",
+     "IDOR",
+     "数据泄露"
+    ]
+   }
+  }
+ ]
+}

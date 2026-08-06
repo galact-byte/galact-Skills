@@ -1,0 +1,419 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 8,
+  "not_worth": 7,
+  "top_ids": [
+   1108874,
+   243943,
+   49935,
+   1043480,
+   1849626,
+   487008,
+   1668815,
+   808975
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1102591,
+   "knowledge_point": "布尔盲注测试步骤与绕过",
+   "is_ai_likely_known": true,
+   "reason": "SQL注入是通用知识，布尔盲注方法在大量公开资料中都有详细描述，AI模型已充分掌握。",
+   "scene_frequency": "高频",
+   "migration_potential": "低（仅适用于SQL注入场景，且方法通用）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1108874,
+   "knowledge_point": "Host头注入污染密码重置链接导致账户接管",
+   "is_ai_likely_known": false,
+   "reason": "虽然Host头注入是已知攻击，但具体到密码重置链接生成时未验证Host头，且结合邮件和日志泄露的完整攻击链，AI可能无法直接给出完整步骤。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何依赖Host头生成链接的功能，如密码重置、邮件验证、回调URL等）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'Host头注入导致链接劫持'的检测与利用方法。",
+   "skill_framework": {
+    "name": "Host头注入导致链接劫持",
+    "适用场景": [
+     "密码重置",
+     "邮件验证",
+     "回调URL生成"
+    ],
+    "核心原理": [
+     "应用使用HTTP_HOST生成绝对URL，未验证Host头合法性",
+     "攻击者控制Host头，使生成的链接指向恶意域名"
+    ],
+    "决策树": [
+     "IF 应用生成包含域名的链接 AND 使用HTTP_HOST AND 未验证Host头 → 尝试注入恶意Host头"
+    ],
+    "示例": [
+     "修改Host头为evil.com，触发密码重置，受害者点击链接，令牌发送到evil.com"
+    ],
+    "迁移场景": [
+     "账户接管",
+     "钓鱼攻击",
+     "OAuth回调劫持"
+    ]
+   }
+  },
+  {
+   "id": 243943,
+   "knowledge_point": "低权限用户通过IDOR获取商店敏感信息",
+   "is_ai_likely_known": false,
+   "reason": "该案例展示了权限模型缺陷导致的IDOR，低权限用户可访问高权限端点，AI可能无法直接识别这种权限检查缺失。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何多租户应用，通过枚举ID访问其他租户数据）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'权限模型缺陷导致的IDOR'检测方法。",
+   "skill_framework": {
+    "name": "权限模型缺陷导致的IDOR",
+    "适用场景": [
+     "多租户应用",
+     "API端点",
+     "对象级授权"
+    ],
+    "核心原理": [
+     "应用未在每个端点实施对象级权限检查",
+     "低权限用户可预测或枚举对象ID，直接访问"
+    ],
+    "决策树": [
+     "IF 存在对象ID参数 AND 未验证当前用户权限 → 尝试使用低权限账户访问其他对象"
+    ],
+    "示例": [
+     "创建低权限用户，直接访问/partner/shops/123，获取商店信息"
+    ],
+    "迁移场景": [
+     "IDOR",
+     "越权访问",
+     "数据泄露"
+    ]
+   }
+  },
+  {
+   "id": 1103258,
+   "knowledge_point": "Mermaid图表指令注入CSS导致存储型XSS",
+   "is_ai_likely_known": false,
+   "reason": "Mermaid指令的themeCSS属性注入是特定框架的行为，AI可能不了解该细节。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他图表库或模板引擎的指令注入）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'图表库指令注入'的检测与利用。",
+   "skill_framework": {
+    "name": "图表库指令注入",
+    "适用场景": [
+     "使用Mermaid、Chart.js等图表库的应用",
+     "富文本编辑器",
+     "Markdown渲染"
+    ],
+    "核心原理": [
+     "图表库允许用户控制指令，未过滤危险属性",
+     "注入CSS或脚本到style标签，绕过XSS过滤"
+    ],
+    "决策树": [
+     "IF 应用允许用户输入图表指令 AND 未过滤危险属性 → 尝试注入themeCSS等属性"
+    ],
+    "示例": [
+     "输入mermaid代码，设置themeCSS为恶意CSS，触发XSS"
+    ],
+    "迁移场景": [
+     "XSS",
+     "内容注入",
+     "客户端攻击"
+    ]
+   }
+  },
+  {
+   "id": 2207248,
+   "knowledge_point": "GraphQL查询IDOR",
+   "is_ai_likely_known": true,
+   "reason": "GraphQL IDOR是常见问题，AI可能已了解基本概念，但具体到BillingDocumentDownload和BillDetails的利用可能不具体。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何GraphQL API，通过修改ID参数越权访问）",
+   "source_quality": "中",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'GraphQL IDOR检测'方法。",
+   "skill_framework": {
+    "name": "GraphQL IDOR检测",
+    "适用场景": [
+     "GraphQL API",
+     "对象级授权"
+    ],
+    "核心原理": [
+     "GraphQL解析器未校验对象所有权",
+     "攻击者修改ID参数，获取其他用户数据"
+    ],
+    "决策树": [
+     "IF GraphQL查询包含ID参数 AND 未验证所有权 → 尝试修改ID访问其他对象"
+    ],
+    "示例": [
+     "查询BillingDocumentDownload，修改ID为其他商家，获取发票"
+    ],
+    "迁移场景": [
+     "IDOR",
+     "数据泄露",
+     "越权访问"
+    ]
+   }
+  },
+  {
+   "id": 49935,
+   "knowledge_point": "rails-ujs和jQuery的URL解析差异导致CSRF令牌泄露",
+   "is_ai_likely_known": false,
+   "reason": "该案例涉及特定框架的URL解析差异，AI可能不了解空格前缀等细节。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何依赖前端框架的CSRF防护，如Angular、React等）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'前端框架URL解析差异导致CSRF绕过'。",
+   "skill_framework": {
+    "name": "前端框架URL解析差异导致CSRF绕过",
+    "适用场景": [
+     "使用rails-ujs、jQuery等前端框架的应用",
+     "CSRF防护"
+    ],
+    "核心原理": [
+     "前端框架对URL的解析与浏览器不同，导致同源检查被绕过",
+     "攻击者构造特殊URL，使请求携带CSRF令牌发送到其他域"
+    ],
+    "决策树": [
+     "IF 应用依赖前端框架的CSRF防护 AND 框架存在URL解析差异 → 尝试构造特殊URL"
+    ],
+    "示例": [
+     "使用空格前缀的URL，如' http://evil.com'，使rails-ujs认为同源，发送CSRF令牌"
+    ],
+    "迁移场景": [
+     "CSRF",
+     "跨域请求",
+     "安全防护绕过"
+    ]
+   }
+  },
+  {
+   "id": 202425,
+   "knowledge_point": "2FA代码暴力破解",
+   "is_ai_likely_known": true,
+   "reason": "2FA暴力破解是通用知识，AI已了解速率限制和过期的重要性。",
+   "scene_frequency": "高频",
+   "migration_potential": "低（仅适用于2FA场景，且方法通用）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1043480,
+   "knowledge_point": "授权检查时间窗口绕过",
+   "is_ai_likely_known": false,
+   "reason": "该案例揭示了授权检查在点击后短暂开放的反直觉行为，AI可能无法直接想到。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何临时链接、一次性凭证等场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'授权检查时间窗口绕过'的检测与利用。",
+   "skill_framework": {
+    "name": "授权检查时间窗口绕过",
+    "适用场景": [
+     "临时下载链接",
+     "一次性凭证",
+     "授权码"
+    ],
+    "核心原理": [
+     "授权检查在特定事件后短暂开放，未在每次请求时强制执行",
+     "攻击者通过自动化脚本在时间窗口内利用"
+    ],
+    "决策树": [
+     "IF 存在临时链接或凭证 AND 授权检查可能有时序漏洞 → 尝试在事件后立即请求"
+    ],
+    "示例": [
+     "管理员点击下载链接后，攻击者立即请求，获取文件"
+    ],
+    "迁移场景": [
+     "未授权访问",
+     "数据泄露",
+     "竞争条件"
+    ]
+   }
+  },
+  {
+   "id": 1849626,
+   "knowledge_point": "业务逻辑幂等性缺失导致无限折扣",
+   "is_ai_likely_known": false,
+   "reason": "该案例展示了接口未实现幂等性导致业务逻辑漏洞，AI可能无法直接识别这种特定场景。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何涉及金额或权益的操作，如优惠券、积分、折扣等）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'业务逻辑幂等性缺失'的检测与利用。",
+   "skill_framework": {
+    "name": "业务逻辑幂等性缺失",
+    "适用场景": [
+     "优惠券兑换",
+     "积分操作",
+     "折扣应用",
+     "支付操作"
+    ],
+    "核心原理": [
+     "接口未验证操作是否已执行，导致重复调用可无限次应用",
+     "攻击者直接重复请求，利用缺少幂等性"
+    ],
+    "决策树": [
+     "IF 存在涉及金额或权益的操作 AND 未实现幂等性 → 尝试重复调用"
+    ],
+    "示例": [
+     "重复调用accept_fee_discount_offer，无限次应用折扣"
+    ],
+    "迁移场景": [
+     "业务逻辑漏洞",
+     "金融损失",
+     "资源滥用"
+    ]
+   }
+  },
+  {
+   "id": 487008,
+   "knowledge_point": "FFmpeg HLS解析器任意文件读取",
+   "is_ai_likely_known": false,
+   "reason": "该案例涉及FFmpeg对HLS协议的外部引用处理，AI可能不了解该细节。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何使用FFmpeg处理用户上传视频的应用，也可升级为SSRF）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'FFmpeg HLS外部引用'的检测与利用。",
+   "skill_framework": {
+    "name": "FFmpeg HLS外部引用",
+    "适用场景": [
+     "视频上传处理",
+     "媒体转换服务",
+     "任何使用FFmpeg的应用"
+    ],
+    "核心原理": [
+     "FFmpeg的HLS解析器支持外部文件引用，未限制访问范围",
+     "攻击者通过上传恶意HLS文件，读取服务器本地文件"
+    ],
+    "决策树": [
+     "IF 应用使用FFmpeg处理用户上传的视频 AND 未禁用HLS外部引用 → 尝试上传恶意HLS文件"
+    ],
+    "示例": [
+     "上传包含file:///etc/passwd引用的HLS文件，FFmpeg解析时读取并显示内容"
+    ],
+    "迁移场景": [
+     "任意文件读取",
+     "SSRF",
+     "信息泄露"
+    ]
+   }
+  },
+  {
+   "id": 1668815,
+   "knowledge_point": "利用window.caches绕过隐私保护",
+   "is_ai_likely_known": false,
+   "reason": "该案例利用浏览器新特性window.caches进行持久化追踪，AI可能不了解该API的隐私绕过能力。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何基于存储的追踪机制，如IndexedDB、Cache API等）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'浏览器存储API绕过隐私保护'。",
+   "skill_framework": {
+    "name": "浏览器存储API绕过隐私保护",
+    "适用场景": [
+     "隐私保护扩展",
+     "浏览器安全",
+     "用户追踪"
+    ],
+    "核心原理": [
+     "隐私保护脚本只禁用了部分存储API，未覆盖所有可能的存储机制",
+     "攻击者利用未覆盖的API如window.caches进行持久化存储"
+    ],
+    "决策树": [
+     "IF 存在隐私保护机制 AND 未覆盖所有存储API → 尝试使用未覆盖的API"
+    ],
+    "示例": [
+     "使用window.caches存储追踪ID，绕过Brave Shields"
+    ],
+    "迁移场景": [
+     "隐私侵犯",
+     "用户追踪",
+     "安全防护绕过"
+    ]
+   }
+  },
+  {
+   "id": 713321,
+   "knowledge_point": "网络和时序侧信道破坏Monero匿名性",
+   "is_ai_likely_known": false,
+   "reason": "该案例涉及加密货币协议的侧信道攻击，AI可能不了解具体细节。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（仅适用于加密货币协议，且需要特定环境）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 808975,
+   "knowledge_point": "浮点数舍入误差绕过佣金",
+   "is_ai_likely_known": false,
+   "reason": "该案例利用浮点数舍入误差，AI可能无法直接想到这种金融计算漏洞。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何涉及金额计算的应用，如佣金、折扣、税收等）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'浮点数舍入误差'的检测与利用。",
+   "skill_framework": {
+    "name": "浮点数舍入误差",
+    "适用场景": [
+     "金融计算",
+     "佣金计算",
+     "折扣计算",
+     "税收计算"
+    ],
+    "核心原理": [
+     "使用浮点数进行金额计算，导致舍入误差",
+     "攻击者通过小额多次操作，使误差累积，绕过费用"
+    ],
+    "决策树": [
+     "IF 应用使用浮点数进行金额计算 AND 存在舍入逻辑 → 尝试小额多次操作"
+    ],
+    "示例": [
+     "设置奖励金额为0.01，重复请求，使佣金舍入为0"
+    ],
+    "迁移场景": [
+     "业务逻辑漏洞",
+     "金融损失",
+     "费用绕过"
+    ]
+   }
+  },
+  {
+   "id": 641240,
+   "knowledge_point": "Basic认证头堆溢出",
+   "is_ai_likely_known": true,
+   "reason": "堆溢出是通用漏洞类型，AI已了解基本概念，但具体到Basic认证头可能不具体。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（仅适用于特定协议处理，且需要特定环境）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1223882,
+   "knowledge_point": "TELNET选项解析漏洞导致栈内存泄露",
+   "is_ai_likely_known": false,
+   "reason": "该案例涉及curl TELNET选项解析的特定漏洞，AI可能不了解细节。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（仅适用于TELNET协议，且需要特定环境）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  }
+ ]
+}

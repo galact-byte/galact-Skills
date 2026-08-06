@@ -1,0 +1,366 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 8,
+  "not_worth": 7,
+  "top_ids": [
+   531032,
+   867577,
+   522876,
+   390013,
+   824771,
+   1647287,
+   1348154,
+   1730660
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 531032,
+   "knowledge_point": "硬编码密钥在WebRTC/DTLS中的滥用导致SRTP流劫持",
+   "is_ai_likely_known": false,
+   "reason": "硬编码密钥的利用方式在AI训练数据中不常见，且涉及WebRTC特定协议细节，需要专门知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他使用DTLS的通信协议，如VoIP、IoT设备）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化硬编码密钥检测与利用的通用方法。",
+   "skill_framework": {
+    "name": "硬编码密钥检测与利用（WebRTC/DTLS）",
+    "适用场景": [
+     "WebRTC服务",
+     "VoIP系统",
+     "IoT设备通信"
+    ],
+    "核心原理": [
+     "默认证书和私钥公开，可被MITM利用",
+     "DTLS握手未验证证书身份"
+    ],
+    "决策树": [
+     "IF 目标使用WebRTC AND 存在默认证书 → 尝试MITM劫持DTLS"
+    ],
+    "示例": [
+     "使用公开私钥伪造DTLS证书，解密SRTP流"
+    ],
+    "迁移场景": [
+     "其他DTLS应用",
+     "TLS证书固定绕过"
+    ]
+   }
+  },
+  {
+   "id": 867577,
+   "knowledge_point": "双Transfer-Encoding头导致请求走私",
+   "is_ai_likely_known": true,
+   "reason": "请求走私是已知攻击，但双TE头的具体绕过技巧可能不是主流AI完全掌握。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何使用代理/负载均衡的Web应用）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，系统化请求走私检测与利用方法。",
+   "skill_framework": {
+    "name": "HTTP请求走私检测与利用",
+    "适用场景": [
+     "Web应用代理",
+     "负载均衡",
+     "CDN"
+    ],
+    "核心原理": [
+     "前后端解析不一致",
+     "CL/TE或TE/TE混淆"
+    ],
+    "决策树": [
+     "IF 存在代理 AND 后端解析器不同 → 尝试双TE头或CL.TE"
+    ],
+    "示例": [
+     "发送两个TE头，一个有效一个无效，导致走私"
+    ],
+    "迁移场景": [
+     "缓存投毒",
+     "会话固定",
+     "绕过WAF"
+    ]
+   }
+  },
+  {
+   "id": 522876,
+   "knowledge_point": "Docker环境配置读取失败导致安装程序暴露",
+   "is_ai_likely_known": false,
+   "reason": "特定于Docker环境与安装逻辑的组合，AI可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他容器化应用安装逻辑）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化容器环境配置错误检测。",
+   "skill_framework": {
+    "name": "容器化应用配置错误检测",
+    "适用场景": [
+     "Docker部署",
+     "Kubernetes",
+     "云原生应用"
+    ],
+    "核心原理": [
+     "配置文件读取失败导致应用进入安装模式",
+     "安装程序未检查数据库状态"
+    ],
+    "决策树": [
+     "IF 应用在容器中 AND 配置文件不可读 → 尝试访问安装端点"
+    ],
+    "示例": [
+     "访问/install.php创建管理员"
+    ],
+    "迁移场景": [
+     "云存储配置错误",
+     "环境变量缺失"
+    ]
+   }
+  },
+  {
+   "id": 390013,
+   "knowledge_point": "自定义协议处理器（brave://）导致本地文件读取",
+   "is_ai_likely_known": false,
+   "reason": "特定于Brave浏览器的自定义协议漏洞，AI可能不了解。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他自定义协议处理器）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化自定义协议安全审计方法。",
+   "skill_framework": {
+    "name": "自定义协议处理器安全审计",
+    "适用场景": [
+     "浏览器扩展",
+     "桌面应用",
+     "移动应用"
+    ],
+    "核心原理": [
+     "协议处理器未限制文件访问",
+     "可被网页触发"
+    ],
+    "决策树": [
+     "IF 应用注册自定义协议 → 测试能否读取本地文件"
+    ],
+    "示例": [
+     "通过brave://读取/etc/passwd"
+    ],
+    "迁移场景": [
+     "其他浏览器协议",
+     "应用内协议"
+    ]
+   }
+  },
+  {
+   "id": 824771,
+   "knowledge_point": "URN请求处理中的堆溢出",
+   "is_ai_likely_known": false,
+   "reason": "特定于URN解析的缓冲区溢出，AI可能不熟悉。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（特定于URN协议，迁移性差）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1647287,
+   "knowledge_point": "Electron框架安全边界绕过（context isolation禁用）",
+   "is_ai_likely_known": false,
+   "reason": "Electron内部API的利用方式AI可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他基于Chromium的框架）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化Electron安全配置审计。",
+   "skill_framework": {
+    "name": "Electron安全配置审计",
+    "适用场景": [
+     "Electron应用",
+     "其他桌面框架"
+    ],
+    "核心原理": [
+     "未授权frame可调用内部API",
+     "context isolation可被禁用"
+    ],
+    "决策树": [
+     "IF 应用使用Electron AND 未严格验证frame来源 → 尝试禁用安全设置"
+    ],
+    "示例": [
+     "通过未授权frame调用API禁用context isolation"
+    ],
+    "迁移场景": [
+     "Chromium扩展",
+     "WebView应用"
+    ]
+   }
+  },
+  {
+   "id": 1348154,
+   "knowledge_point": "命令注入通过反引号执行系统命令",
+   "is_ai_likely_known": true,
+   "reason": "命令注入是通用知识，但具体利用方式可能AI已掌握。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何命令执行场景）",
+   "source_quality": "通用",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，系统化命令注入检测与利用。",
+   "skill_framework": {
+    "name": "命令注入检测与利用",
+    "适用场景": [
+     "Web应用",
+     "API",
+     "系统工具"
+    ],
+    "核心原理": [
+     "用户输入未过滤拼入系统命令",
+     "反引号或分号执行"
+    ],
+    "决策树": [
+     "IF 参数用于系统命令 → 尝试注入反引号或分号"
+    ],
+    "示例": [
+     "date_start=;cat /etc/passwd"
+    ],
+    "迁移场景": [
+     "代码注入",
+     "SQL注入"
+    ]
+   }
+  },
+  {
+   "id": 1730660,
+   "knowledge_point": "IDN字符绕过HSTS",
+   "is_ai_likely_known": false,
+   "reason": "IDN转换规则与HSTS交互的细节AI可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他域名验证场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化IDN规范化绕过方法。",
+   "skill_framework": {
+    "name": "IDN规范化绕过",
+    "适用场景": [
+     "HSTS",
+     "域名验证",
+     "SSRF"
+    ],
+    "核心原理": [
+     "IDN字符转换后绕过检查",
+     "Nameprep转换差异"
+    ],
+    "决策树": [
+     "IF 域名验证存在 → 尝试IDN字符变体"
+    ],
+    "示例": [
+     "使用。代替.绕过HSTS"
+    ],
+    "迁移场景": [
+     "URL解析",
+     "证书验证"
+    ]
+   }
+  },
+  {
+   "id": 292797,
+   "knowledge_point": "Rails ActionController::Parameters的each方法返回不安全哈希",
+   "is_ai_likely_known": false,
+   "reason": "特定于Rails框架的API行为，AI可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他框架的参数处理）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化框架API安全使用模式。",
+   "skill_framework": {
+    "name": "框架参数处理安全",
+    "适用场景": [
+     "Rails",
+     "其他MVC框架"
+    ],
+    "核心原理": [
+     "each方法绕过permit过滤",
+     "返回未过滤哈希"
+    ],
+    "决策树": [
+     "IF 使用params.each → 检查是否绕过过滤"
+    ],
+    "示例": [
+     "params.each返回unsafe hash导致参数注入"
+    ],
+    "迁移场景": [
+     "Django",
+     "Spring"
+    ]
+   }
+  },
+  {
+   "id": 562335,
+   "knowledge_point": "反序列化结合路径遍历实现RCE",
+   "is_ai_likely_known": true,
+   "reason": "反序列化攻击是通用知识，但具体结合路径遍历可能AI已掌握。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他反序列化场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：反序列化攻击。",
+   "skill_framework": null
+  },
+  {
+   "id": 387250,
+   "knowledge_point": "OpenSSL::X509::Name比较缺陷导致证书验证绕过",
+   "is_ai_likely_known": false,
+   "reason": "特定于OpenSSL库的实现缺陷，AI可能不熟悉。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（特定于该库，迁移性差）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 260744,
+   "knowledge_point": "URL解析差异导致XSS和开放重定向",
+   "is_ai_likely_known": true,
+   "reason": "URL解析差异是通用知识，AI可能已掌握。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何URL处理场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：URL解析绕过。",
+   "skill_framework": null
+  },
+  {
+   "id": 415258,
+   "knowledge_point": "拖放快捷方式文件导航到特权URL导致RCE",
+   "is_ai_likely_known": false,
+   "reason": "特定于Brave浏览器的处理逻辑，AI可能不熟悉。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他浏览器或应用）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1392032,
+   "knowledge_point": "事件消息泄露订单号结合第三方应用绕过权限",
+   "is_ai_likely_known": true,
+   "reason": "权限绕过是通用知识，但具体结合事件消息可能AI已掌握。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他事件驱动架构）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：权限验证绕过。",
+   "skill_framework": null
+  },
+  {
+   "id": 36211,
+   "knowledge_point": "重复工单状态转换导致声誉无限增长",
+   "is_ai_likely_known": true,
+   "reason": "业务逻辑漏洞是通用知识，AI可能已掌握。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他积分系统）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：业务逻辑漏洞。",
+   "skill_framework": null
+  }
+ ]
+}

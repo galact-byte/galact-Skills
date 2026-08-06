@@ -1,0 +1,357 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 8,
+  "not_worth": 7,
+  "top_ids": [
+   1040786,
+   703058,
+   78158,
+   1531958,
+   300305,
+   966494,
+   379049,
+   1067530
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1067530,
+   "knowledge_point": "多漏洞链式利用（源码泄露、2FA绕过、URL注入、开放重定向、Android逆向、CSS注入）",
+   "is_ai_likely_known": true,
+   "reason": "每个单独漏洞都是常见知识，但组合方式具有挑战性，AI可能无法自动生成完整链。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到类似多组件渗透测试）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：多阶段攻击链构建",
+   "skill_framework": null
+  },
+  {
+   "id": 1531958,
+   "knowledge_point": "ReDoS via regex without anchor in net/http",
+   "is_ai_likely_known": false,
+   "reason": "具体到Ruby net/http的sub操作，AI可能不知道无锚点正则的二次复杂度。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何使用正则的输入处理）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'ReDoS 模式识别与防御'。",
+   "skill_framework": {
+    "name": "ReDoS 模式识别与防御",
+    "适用场景": [
+     "输入验证",
+     "日志处理",
+     "Web框架"
+    ],
+    "核心原理": [
+     "正则表达式无锚点导致回溯",
+     "二次复杂度"
+    ],
+    "决策树": [
+     "IF 使用正则处理用户输入 AND 正则无锚点 → 测试长输入"
+    ],
+    "示例": [
+     "sub(/pattern/, '') 可能触发ReDoS"
+    ],
+    "迁移场景": [
+     "任何语言的正则处理"
+    ]
+   }
+  },
+  {
+   "id": 228377,
+   "knowledge_point": "SSRF via URL redirect to non-HTTP protocols",
+   "is_ai_likely_known": true,
+   "reason": "常见SSRF绕过技术，AI已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有SSRF场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：SSRF 绕过与防御",
+   "skill_framework": null
+  },
+  {
+   "id": 889886,
+   "knowledge_point": "多漏洞链式利用（JWT篡改、路径遍历、SSRF、CSS注入）",
+   "is_ai_likely_known": true,
+   "reason": "每个漏洞常见，组合方式类似CTF。",
+   "scene_frequency": "中频",
+   "migration_potential": "中",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：多阶段攻击链构建",
+   "skill_framework": null
+  },
+  {
+   "id": 1066007,
+   "knowledge_point": "CTF挑战合集（SQL注入、路径遍历、DNS rebinding）",
+   "is_ai_likely_known": true,
+   "reason": "每个技术都是常见知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "中",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：多阶段攻击链构建",
+   "skill_framework": null
+  },
+  {
+   "id": 300305,
+   "knowledge_point": "TOCTOU race condition in email verification",
+   "is_ai_likely_known": false,
+   "reason": "具体到邮箱验证流程的竞争条件，AI可能不熟悉。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何验证流程）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'TOCTOU 竞争条件利用与防御'。",
+   "skill_framework": {
+    "name": "TOCTOU 竞争条件利用与防御",
+    "适用场景": [
+     "邮箱验证",
+     "支付流程",
+     "权限变更"
+    ],
+    "核心原理": [
+     "检查与使用之间存在时间窗口"
+    ],
+    "决策树": [
+     "IF 存在验证步骤 AND 验证后状态可被修改 → 尝试并发请求"
+    ],
+    "示例": [
+     "同时更改邮箱和验证"
+    ],
+    "迁移场景": [
+     "任何涉及状态变更的流程"
+    ]
+   }
+  },
+  {
+   "id": 966494,
+   "knowledge_point": "LPE via XPC service version validation bypass",
+   "is_ai_likely_known": false,
+   "reason": "具体到macOS XPC服务，AI可能不知道版本验证缺失。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何客户端-服务端验证）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'XPC 服务安全验证'。",
+   "skill_framework": {
+    "name": "XPC 服务安全验证",
+    "适用场景": [
+     "macOS 应用",
+     "进程间通信"
+    ],
+    "核心原理": [
+     "仅验证签名不验证版本",
+     "DYLD_INSERT_LIBRARIES 注入"
+    ],
+    "决策树": [
+     "IF XPC 服务接受客户端连接 AND 未验证版本 → 尝试旧版本注入"
+    ],
+    "示例": [
+     "注入恶意 dylib 获得 root"
+    ],
+    "迁移场景": [
+     "任何 IPC 机制"
+    ]
+   }
+  },
+  {
+   "id": 379049,
+   "knowledge_point": "Monero wallet double-spend via alternative tx_pub_keys",
+   "is_ai_likely_known": false,
+   "reason": "具体到Monero协议，AI可能不知道此漏洞。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他加密货币协议）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'加密货币交易验证逻辑'。",
+   "skill_framework": {
+    "name": "加密货币交易验证逻辑",
+    "适用场景": [
+     "加密货币钱包",
+     "交易所"
+    ],
+    "核心原理": [
+     "额外字段绕过重复检查",
+     "状态混淆"
+    ],
+    "决策树": [
+     "IF 交易包含额外字段 AND 未跟踪所有公钥 → 尝试重复扫描"
+    ],
+    "示例": [
+     "alternative tx_pub_keys 导致金额翻倍"
+    ],
+    "迁移场景": [
+     "任何区块链协议"
+    ]
+   }
+  },
+  {
+   "id": 1040786,
+   "knowledge_point": "Path traversal in Workhorse JWT exposure and Geo header spoofing",
+   "is_ai_likely_known": false,
+   "reason": "具体到GitLab Workhorse和Geo组件，AI可能不知道。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何前后端URL解析不一致和信任头）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'路径解析不一致与信任头滥用'。",
+   "skill_framework": {
+    "name": "路径解析不一致与信任头滥用",
+    "适用场景": [
+     "Web应用",
+     "API网关",
+     "微服务"
+    ],
+    "核心原理": [
+     "前后端URL解析差异",
+     "未验证来源的信任头"
+    ],
+    "决策树": [
+     "IF 存在代理 AND 后端解析不同 → 尝试路径穿越",
+     "IF 存在信任头 AND 未验证来源 → 伪造"
+    ],
+    "示例": [
+     "Workhorse JWT泄露",
+     "Geo-GL-Id头冒充"
+    ],
+    "迁移场景": [
+     "任何代理架构"
+    ]
+   }
+  },
+  {
+   "id": 2248328,
+   "knowledge_point": "PHP deserialization RCE via Monolog gadget chain",
+   "is_ai_likely_known": true,
+   "reason": "PHP反序列化是常见知识，Monolog链已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何PHP应用）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：反序列化漏洞利用与防御",
+   "skill_framework": null
+  },
+  {
+   "id": 703058,
+   "knowledge_point": "ASP.NET path parsing bypass of redirect rules",
+   "is_ai_likely_known": false,
+   "reason": "具体到ASP.NET的路径解析特性，AI可能不知道。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何框架的路径解析差异）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'路径规范化差异绕过'。",
+   "skill_framework": {
+    "name": "路径规范化差异绕过",
+    "适用场景": [
+     "Web应用",
+     "WAF",
+     "访问控制"
+    ],
+    "核心原理": [
+     "框架忽略扩展名后路径",
+     "路径规范化不一致"
+    ],
+    "决策树": [
+     "IF 存在路径过滤 AND 框架有特殊解析 → 尝试追加路径"
+    ],
+    "示例": [
+     "/my/money.aspx/membership/ 绕过重定向"
+    ],
+    "迁移场景": [
+     "任何框架的路径处理"
+    ]
+   }
+  },
+  {
+   "id": 889333,
+   "knowledge_point": "多漏洞链式利用（git泄露、2FA绕过、cookie路径穿越、SSRF、CSS注入）",
+   "is_ai_likely_known": true,
+   "reason": "每个漏洞常见，组合方式类似CTF。",
+   "scene_frequency": "中频",
+   "migration_potential": "中",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：多阶段攻击链构建",
+   "skill_framework": null
+  },
+  {
+   "id": 78158,
+   "knowledge_point": "Flash Content-Type injection bypass",
+   "is_ai_likely_known": false,
+   "reason": "具体到Flash Player的Content-Type解析，AI可能不知道。",
+   "scene_frequency": "低频",
+   "migration_potential": "高（可迁移到任何MIME类型解析）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'MIME类型解析绕过'。",
+   "skill_framework": {
+    "name": "MIME类型解析绕过",
+    "适用场景": [
+     "文件上传",
+     "内容类型校验"
+    ],
+    "核心原理": [
+     "宽松解析",
+     "字符串搜索"
+    ],
+    "决策树": [
+     "IF 校验Content-Type AND 解析器宽松 → 尝试注入"
+    ],
+    "示例": [
+     "注入'application/x-shockwave-flash'"
+    ],
+    "迁移场景": [
+     "任何MIME解析"
+    ]
+   }
+  },
+  {
+   "id": 2127968,
+   "knowledge_point": "Apache Airflow Spark Provider deserialization RCE",
+   "is_ai_likely_known": false,
+   "reason": "具体到Airflow和Spark的集成，AI可能不知道。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到类似集成场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'组件间反序列化攻击'。",
+   "skill_framework": {
+    "name": "组件间反序列化攻击",
+    "适用场景": [
+     "集成平台",
+     "消息队列",
+     "RPC"
+    ],
+    "核心原理": [
+     "信任内部组件",
+     "反序列化未过滤"
+    ],
+    "决策树": [
+     "IF 组件间通信使用反序列化 AND 未过滤 → 构造恶意payload"
+    ],
+    "示例": [
+     "恶意Spark服务器攻击Airflow"
+    ],
+    "迁移场景": [
+     "任何组件间通信"
+    ]
+   }
+  },
+  {
+   "id": 470553,
+   "knowledge_point": "postMessage origin validation bypass in browser extension",
+   "is_ai_likely_known": true,
+   "reason": "postMessage安全是常见知识。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何postMessage使用）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：浏览器扩展安全",
+   "skill_framework": null
+  }
+ ]
+}

@@ -1,0 +1,306 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 5,
+  "not_worth": 10,
+  "top_ids": [
+   246794,
+   1086259,
+   845832,
+   1167034,
+   1278254
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 965510,
+   "knowledge_point": "GraphQL 内部操作绕过 UI 限制修改密码保护状态",
+   "is_ai_likely_known": true,
+   "reason": "属于常见的业务逻辑漏洞，AI 已知通过直接调用 API 绕过 UI 限制的通用模式。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他使用 GraphQL 或 API 的业务逻辑绕过场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 845832,
+   "knowledge_point": "SVG 上传触发 XXE 进而 SSRF/LFI",
+   "is_ai_likely_known": false,
+   "reason": "SVG 作为 XML 载体触发 XXE 的细节（外部实体引用）在训练数据中不常见，且需要组合上传和解析行为。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何 XML 上传解析场景，如 DOCX、XLSX、SVG 等）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'XML 上传解析绕过'原理-机制-矛盾-锚点-迁移路径。",
+   "skill_framework": {
+    "name": "XML 上传解析绕过（XXE/SSRF/LFI）",
+    "适用场景": [
+     "文件上传功能",
+     "XML 解析服务",
+     "文档处理系统"
+    ],
+    "核心原理": [
+     "XML 解析器默认允许外部实体引用",
+     "SVG 等图片格式可嵌入 XML 实体"
+    ],
+    "决策树": [
+     "IF 存在文件上传 AND 接受 SVG/XML 格式 → 尝试注入外部实体引用"
+    ],
+    "示例": [
+     "上传含 <!DOCTYPE foo [<!ENTITY xxe SYSTEM 'file:///etc/passwd'>]> 的 SVG"
+    ],
+    "迁移场景": [
+     "XXE",
+     "SSRF",
+     "LFI"
+    ]
+   }
+  },
+  {
+   "id": 1086259,
+   "knowledge_point": "cURL 重定向时未剥离 Proxy-Authorization 头导致凭据泄露",
+   "is_ai_likely_known": false,
+   "reason": "cURL 对 Proxy-Authorization 头与 Authorization 头处理不一致的细节，训练数据稀少，需组合重定向行为。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何 HTTP 客户端重定向处理、代理配置、凭据管理场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'HTTP 客户端重定向敏感头处理'原理-机制-矛盾-锚点-迁移路径。",
+   "skill_framework": {
+    "name": "HTTP 客户端重定向敏感头处理（Proxy-Authorization 泄露）",
+    "适用场景": [
+     "HTTP 客户端库",
+     "代理配置",
+     "重定向处理"
+    ],
+    "核心原理": [
+     "不同客户端对敏感头的剥离策略不一致",
+     "Proxy-Authorization 头在重定向时可能被保留"
+    ],
+    "决策树": [
+     "IF 使用 cURL 或类似库 AND 存在重定向 → 检查敏感头是否被剥离"
+    ],
+    "示例": [
+     "curl -x proxy -H 'Proxy-Authorization: Basic ...' http://example.com → 重定向后头被发送到新主机"
+    ],
+    "迁移场景": [
+     "信息泄露",
+     "凭据管理",
+     "SSRF"
+    ]
+   }
+  },
+  {
+   "id": 1167034,
+   "knowledge_point": "八进制编码绕过大小写转换过滤实现 XSS",
+   "is_ai_likely_known": false,
+   "reason": "八进制编码绕过过滤器的具体技巧在训练数据中不常见，且需要结合具体过滤逻辑。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何基于字符转换的过滤绕过场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'编码绕过过滤器'原理-机制-矛盾-锚点-迁移路径。",
+   "skill_framework": {
+    "name": "编码绕过过滤器（八进制/十六进制/Unicode）",
+    "适用场景": [
+     "XSS 过滤",
+     "WAF 绕过",
+     "输入验证"
+    ],
+    "核心原理": [
+     "过滤器对字符进行转换，但编码形式可能被解析器识别",
+     "八进制编码可避免字母，绕过大小写转换"
+    ],
+    "决策树": [
+     "IF 存在字符转换过滤 AND 输入被解析 → 尝试八进制/十六进制编码"
+    ],
+    "示例": [
+     "\\150\\164\\164\\160\\072\\057\\057 表示 http://"
+    ],
+    "迁移场景": [
+     "XSS",
+     "SQL 注入",
+     "命令注入"
+    ]
+   }
+  },
+  {
+   "id": 737315,
+   "knowledge_point": "X-Forwarded-Host 头未过滤导致缓存投毒",
+   "is_ai_likely_known": true,
+   "reason": "X-Forwarded-Host 头信任问题属于常见 Web 漏洞，AI 已知通用模式。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他信任客户端头的场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 400982,
+   "knowledge_point": "prejoin_data 参数控制重定向目标导致开放重定向",
+   "is_ai_likely_known": true,
+   "reason": "开放重定向是常见漏洞，AI 已知通过参数控制 Location 头的通用模式。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他重定向参数处理场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1194254,
+   "knowledge_point": "Rails external_link 辅助方法未验证 URL 协议导致 javascript: XSS",
+   "is_ai_likely_known": false,
+   "reason": "Rails 特定辅助方法的安全缺陷在训练数据中不常见，且需结合 Safari 行为。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他框架的辅助方法信任问题）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：框架辅助方法安全使用。",
+   "skill_framework": null
+  },
+  {
+   "id": 1204695,
+   "knowledge_point": "Ruby CGI 库未过滤 CRLF 导致 HTTP 响应分割",
+   "is_ai_likely_known": false,
+   "reason": "Ruby CGI 库的特定缺陷在训练数据中不常见，且需结合语言特性。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他语言 CGI 处理）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：HTTP 响应分割防护。",
+   "skill_framework": null
+  },
+  {
+   "id": 1278254,
+   "knowledge_point": "Node.js TLS 模块将 undefined 视为 false 禁用证书验证",
+   "is_ai_likely_known": false,
+   "reason": "Node.js 特定行为在训练数据中不常见，且需结合类型转换细节。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他语言/框架的布尔值处理）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'布尔值意外转换导致安全配置失效'原理-机制-矛盾-锚点-迁移路径。",
+   "skill_framework": {
+    "name": "布尔值意外转换导致安全配置失效（undefined 视为 false）",
+    "适用场景": [
+     "TLS 配置",
+     "安全开关",
+     "配置解析"
+    ],
+    "核心原理": [
+     "语言类型转换将 undefined 视为 false",
+     "安全配置依赖严格布尔检查"
+    ],
+    "决策树": [
+     "IF 使用 Node.js TLS AND 配置项可能为 undefined → 检查是否意外禁用验证"
+    ],
+    "示例": [
+     "rejectUnauthorized: undefined 导致证书验证关闭"
+    ],
+    "迁移场景": [
+     "TLS",
+     "认证",
+     "授权"
+    ]
+   }
+  },
+  {
+   "id": 365093,
+   "knowledge_point": "信息泄露辅助存储型 XSS 攻击链",
+   "is_ai_likely_known": true,
+   "reason": "信息泄露与 XSS 组合属于常见攻击模式，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他信息泄露辅助攻击场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 141463,
+   "knowledge_point": "AngularJS 模板注入导致存储型 XSS",
+   "is_ai_likely_known": true,
+   "reason": "AngularJS 模板注入是已知漏洞模式，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他模板引擎注入）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：模板注入防护。",
+   "skill_framework": null
+  },
+  {
+   "id": 370094,
+   "knowledge_point": "Nginx 变量插值导致信息泄露",
+   "is_ai_likely_known": false,
+   "reason": "Nginx 变量插值行为在训练数据中不常见，且需结合具体配置。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他服务器变量处理）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：服务器配置安全。",
+   "skill_framework": null
+  },
+  {
+   "id": 397545,
+   "knowledge_point": "游戏引擎 BMP 解析缓冲区溢出导致 RCE",
+   "is_ai_likely_known": false,
+   "reason": "特定游戏引擎漏洞在训练数据中不常见，且需结合跨组件交互。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（高度依赖特定引擎和文件格式）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 337986,
+   "knowledge_point": "Perl 正则表达式堆溢出",
+   "is_ai_likely_known": false,
+   "reason": "Perl 特定漏洞在训练数据中不常见，但属于已知 CVE。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（高度依赖 Perl 版本和正则引擎）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 246794,
+   "knowledge_point": "安全处理的状态标记由输入数据控制导致转义禁用",
+   "is_ai_likely_known": false,
+   "reason": "转义函数将对象属性作为开关的缺陷在训练数据中不常见，且需结合具体框架。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何安全处理依赖输入数据属性的场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'安全处理状态标记不可由输入数据控制'原理-机制-矛盾-锚点-迁移路径。",
+   "skill_framework": {
+    "name": "安全处理状态标记不可由输入数据控制（转义禁用）",
+    "适用场景": [
+     "XSS 防护",
+     "模板渲染",
+     "数据清洗"
+    ],
+    "核心原理": [
+     "安全处理函数使用对象属性作为开关",
+     "攻击者可通过注入属性值禁用安全措施"
+    ],
+    "决策树": [
+     "IF 存在转义/过滤函数 AND 使用对象属性作为标记 → 尝试注入该属性"
+    ],
+    "示例": [
+     "在 JSON 中添加 stripping:false 禁用 HTML 转义"
+    ],
+    "迁移场景": [
+     "XSS",
+     "注入防护",
+     "数据验证"
+    ]
+   }
+  }
+ ]
+}

@@ -1,0 +1,298 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 5,
+  "not_worth": 10,
+  "top_ids": [
+   887462,
+   197694,
+   1954937,
+   406289,
+   694141
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 197694,
+   "knowledge_point": "Ruby method_missing 递归调用导致 extend 参数为空引发 use-after-free",
+   "is_ai_likely_known": false,
+   "reason": "该漏洞涉及 Ruby 运行时内部实现细节，非通用知识，AI 难以直接给出具体攻击链。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他语言运行时对元编程特性的边界处理）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'语言运行时元编程边界绕过'模式。",
+   "skill_framework": {
+    "name": "语言运行时元编程边界绕过",
+    "适用场景": [
+     "Ruby/Python/JS 等动态语言运行时安全测试",
+     "框架内部方法调用链分析"
+    ],
+    "核心原理": [
+     "元编程特性（如 method_missing）可改变方法调用参数，导致运行时内部函数收到意外参数",
+     "内部函数未对参数边界做充分检查时可能触发内存破坏"
+    ],
+    "决策树": [
+     "IF 目标使用动态语言 AND 存在元编程特性 AND 内部函数直接使用参数 → 尝试构造递归或隐式调用改变参数"
+    ],
+    "示例": [
+     "method_missing 中调用 extend(Test) 导致 argc=0 时访问 argv[0]"
+    ],
+    "迁移场景": [
+     "其他语言运行时",
+     "框架内部 API 测试"
+    ]
+   }
+  },
+  {
+   "id": 1272478,
+   "knowledge_point": "IDOR 导致账户接管",
+   "is_ai_likely_known": true,
+   "reason": "IDOR 是常见漏洞，AI 已知通用知识。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有对象引用场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 331940,
+   "knowledge_point": "竞争条件导致一次性操作被多次利用",
+   "is_ai_likely_known": true,
+   "reason": "竞态条件是通用知识，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有一次性操作）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：竞态条件检测与利用。",
+   "skill_framework": null
+  },
+  {
+   "id": 887462,
+   "knowledge_point": "curl -OJi 组合绕过文件名存在性检查导致任意文件覆盖",
+   "is_ai_likely_known": false,
+   "reason": "该漏洞涉及 curl 特定版本的行为，非通用知识，AI 难以直接给出。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他命令行工具的参数组合绕过）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'CLI 参数组合绕过'模式。",
+   "skill_framework": {
+    "name": "CLI 参数组合绕过",
+    "适用场景": [
+     "命令行工具安全测试",
+     "文件下载功能审计"
+    ],
+    "核心原理": [
+     "多个参数组合可能绕过单个参数的限制",
+     "工具内部对参数组合的检查不完整"
+    ],
+    "决策树": [
+     "IF 工具支持多个参数 AND 存在文件写入功能 → 尝试组合参数绕过存在性检查"
+    ],
+    "示例": [
+     "curl -OJi 覆盖 .bashrc"
+    ],
+    "迁移场景": [
+     "wget",
+     "scp",
+     "其他下载工具"
+    ]
+   }
+  },
+  {
+   "id": 272379,
+   "knowledge_point": "Referer 头泄露密码重置令牌",
+   "is_ai_likely_known": true,
+   "reason": "Referer 泄露是常见知识，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他敏感信息在 URL 中的场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 255651,
+   "knowledge_point": "未授权接口更新商户信息",
+   "is_ai_likely_known": true,
+   "reason": "未授权访问是通用知识。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有接口）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：API 授权绕过。",
+   "skill_framework": null
+  },
+  {
+   "id": 694141,
+   "knowledge_point": "FTP 路径遍历绕过 chroot",
+   "is_ai_likely_known": false,
+   "reason": "该漏洞涉及特定 FTP 服务器实现，非通用知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他 FTP 服务器或类似 chroot 环境）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'chroot 逃逸'模式。",
+   "skill_framework": {
+    "name": "chroot 逃逸",
+    "适用场景": [
+     "FTP 服务器",
+     "其他使用 chroot 的服务"
+    ],
+    "核心原理": [
+     "路径规范化不完整导致可逃逸 chroot",
+     "利用 MKD 等命令创建特殊路径"
+    ],
+    "决策树": [
+     "IF 服务使用 chroot AND 存在路径操作 → 尝试路径遍历绕过"
+    ],
+    "示例": [
+     "MKD 命令创建包含 ../ 的路径"
+    ],
+    "迁移场景": [
+     "SSH",
+     "Web 服务器"
+    ]
+   }
+  },
+  {
+   "id": 497255,
+   "knowledge_point": "本地化文件触发栈溢出",
+   "is_ai_likely_known": true,
+   "reason": "栈溢出是通用知识，但具体触发路径可能不常见。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（依赖具体应用）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 406289,
+   "knowledge_point": "WordPress 主题文件夹名称作为存储型 XSS 载体",
+   "is_ai_likely_known": false,
+   "reason": "该技巧涉及 WordPress 特定行为，非通用知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他 CMS 或文件上传场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'文件系统操作触发 XSS'模式。",
+   "skill_framework": {
+    "name": "文件系统操作触发 XSS",
+    "适用场景": [
+     "CMS 主题/插件管理",
+     "文件上传功能"
+    ],
+    "核心原理": [
+     "文件名或路径在错误消息中未过滤输出",
+     "通过文件系统操作（如重命名）将 payload 作为文件名"
+    ],
+    "决策树": [
+     "IF 存在文件上传/管理功能 AND 文件名在页面输出 → 尝试将 payload 作为文件名"
+    ],
+    "示例": [
+     "重命名主题文件夹为 <script>alert(1)</script>"
+    ],
+    "迁移场景": [
+     "其他 CMS",
+     "文件管理器"
+    ]
+   }
+  },
+  {
+   "id": 151459,
+   "knowledge_point": "修改 channel ID 越权发帖",
+   "is_ai_likely_known": true,
+   "reason": "IDOR 变体，通用知识。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有对象引用）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：API 授权绕过。",
+   "skill_framework": null
+  },
+  {
+   "id": 143240,
+   "knowledge_point": "开放重定向 + JSONP 回调导致 XSS",
+   "is_ai_likely_known": true,
+   "reason": "开放重定向和 JSONP 是通用知识，组合利用也常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到类似回调场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：开放重定向与 XSS 组合利用。",
+   "skill_framework": null
+  },
+  {
+   "id": 1954937,
+   "knowledge_point": "Rack multipart 解析器未限制 part 数量导致 DoS",
+   "is_ai_likely_known": false,
+   "reason": "该漏洞涉及 Rack 框架内部实现，非通用知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他 multipart 解析器）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'multipart 解析器资源耗尽'模式。",
+   "skill_framework": {
+    "name": "multipart 解析器资源耗尽",
+    "适用场景": [
+     "Web 框架 multipart 解析",
+     "文件上传功能"
+    ],
+    "核心原理": [
+     "解析器未限制 part 数量或大小",
+     "大量空 part 导致 CPU/内存耗尽"
+    ],
+    "决策树": [
+     "IF 目标使用 multipart 解析 AND 未限制 part 数量 → 发送大量 part 测试 DoS"
+    ],
+    "示例": [
+     "发送 10000 个空 part"
+    ],
+    "迁移场景": [
+     "Rails",
+     "Django",
+     "Express"
+    ]
+   }
+  },
+  {
+   "id": 191689,
+   "knowledge_point": "mruby 编译器对 NODE_NEGATE 未使用结果时错误生成代码",
+   "is_ai_likely_known": false,
+   "reason": "该漏洞涉及 mruby 编译器内部实现，非通用知识。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（依赖特定编译器）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 134305,
+   "knowledge_point": "GitLab API 泄露私有 snippet",
+   "is_ai_likely_known": true,
+   "reason": "API 授权检查缺失是通用知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他 API）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：API 授权绕过。",
+   "skill_framework": null
+  },
+  {
+   "id": 154827,
+   "knowledge_point": "URL 编码和 null 字节绕过路径遍历防护",
+   "is_ai_likely_known": true,
+   "reason": "编码绕过是通用知识，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有路径处理）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：路径遍历绕过。",
+   "skill_framework": null
+  }
+ ]
+}

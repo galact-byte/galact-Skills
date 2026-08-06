@@ -1,0 +1,329 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 6,
+  "not_worth": 9,
+  "top_ids": [
+   398641,
+   305978,
+   98259,
+   29360,
+   1161401,
+   225653
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 36986,
+   "knowledge_point": "通过API直接注入XSS绕过前端验证",
+   "is_ai_likely_known": true,
+   "reason": "这是常见的XSS绕过手法，AI普遍知晓，搜索即可获得大量资料。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到任何前后端分离的Web应用）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 64626,
+   "knowledge_point": "未完成账户接管",
+   "is_ai_likely_known": true,
+   "reason": "业务逻辑缺陷，AI已知常见模式，但具体场景依赖特定实现。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（依赖具体业务逻辑）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 398641,
+   "knowledge_point": "域名白名单字符串匹配绕过SSRF",
+   "is_ai_likely_known": false,
+   "reason": "白名单校验只看字符串出现位置而非解析后的host，反直觉且训练数据少。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（SSRF防护、WAF、URL校验均可迁移）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'域名白名单必须按解析后的host判断'的通用判据。",
+   "skill_framework": {
+    "name": "SSRF域名白名单绕过（字符串匹配缺陷）",
+    "适用场景": [
+     "SSRF防护",
+     "URL重定向校验",
+     "WAF规则"
+    ],
+    "核心原理": [
+     "校验层使用字符串包含匹配而非解析后的host",
+     "攻击者将白名单域名嵌入URL其他部分（如query）绕过"
+    ],
+    "决策树": [
+     "IF 存在域名白名单 AND 校验基于字符串匹配 → 尝试将白名单域名放入query、path等位置"
+    ],
+    "示例": [
+     "u=http://127.0.0.1:6868/status/?q=http://yimg.com"
+    ],
+    "迁移场景": [
+     "SSRF",
+     "开放重定向",
+     "回调地址校验"
+    ]
+   }
+  },
+  {
+   "id": 305978,
+   "knowledge_point": "urllib URL解析差异导致SSRF",
+   "is_ai_likely_known": false,
+   "reason": "Python标准库的特定解析差异，训练数据少，需深入理解。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（任何使用urllib的Python应用）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'解析器与连接器对URL理解不一致'的通用问题。",
+   "skill_framework": {
+    "name": "URL解析差异绕过（urllib等）",
+    "适用场景": [
+     "Python SSRF防护",
+     "URL验证",
+     "代理配置"
+    ],
+    "核心原理": [
+     "解析器与连接器对URL的解析结果不一致",
+     "利用用户信息、端口、IPv6等差异导致连接目标不同"
+    ],
+    "决策树": [
+     "IF 使用urllib AND 存在SSRF防护 → 测试特殊URL格式（如带用户信息、IPv6）"
+    ],
+    "示例": [
+     "http://example.com@127.0.0.1/"
+    ],
+    "迁移场景": [
+     "SSRF",
+     "DNS重绑定",
+     "URL规范化"
+    ]
+   }
+  },
+  {
+   "id": 2357113,
+   "knowledge_point": "IDOR通过内部ID访问未授权内容",
+   "is_ai_likely_known": true,
+   "reason": "IDOR是常见漏洞，AI已知，但此案例涉及离线内容，略有特殊性。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到任何资源ID直接暴露的场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1486310,
+   "knowledge_point": "直接调用API绕过前端权限控制",
+   "is_ai_likely_known": true,
+   "reason": "这是API安全的基础知识，AI普遍知晓。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到任何前后端分离应用）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 98259,
+   "knowledge_point": "Liquid模板引擎沙箱绕过",
+   "is_ai_likely_known": false,
+   "reason": "Liquid的Drop对象暴露内部方法，属于特定框架的反直觉行为，训练数据少。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他模板引擎如Jinja2、Twig）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'模板引擎沙箱绕过'的通用方法。",
+   "skill_framework": {
+    "name": "模板引擎沙箱绕过（Liquid等）",
+    "适用场景": [
+     "SSTI",
+     "模板注入",
+     "沙箱逃逸"
+    ],
+    "核心原理": [
+     "模板引擎允许访问对象内部属性或方法",
+     "利用Drop对象或类似机制泄露敏感信息"
+    ],
+    "决策树": [
+     "IF 存在模板注入 AND 使用Liquid → 尝试访问对象属性和方法（如to_yaml）"
+    ],
+    "示例": [
+     "{{ to_yaml }}"
+    ],
+    "迁移场景": [
+     "SSTI",
+     "信息泄露",
+     "RCE"
+    ]
+   }
+  },
+  {
+   "id": 2575,
+   "knowledge_point": "OAuth redirect_uri域名后缀绕过",
+   "is_ai_likely_known": true,
+   "reason": "OAuth redirect_uri校验绕过是常见问题，AI已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到OAuth实现）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1398572,
+   "knowledge_point": "文档外链接管",
+   "is_ai_likely_known": true,
+   "reason": "子域名接管和链接接管是常见配置错误，AI已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（依赖具体外链）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 111417,
+   "knowledge_point": "修改API参数绕过权限检查",
+   "is_ai_likely_known": true,
+   "reason": "参数篡改绕过权限是常见手法，AI已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到任何API）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 29360,
+   "knowledge_point": "RTMP元数据注入XSS",
+   "is_ai_likely_known": false,
+   "reason": "利用RTMP协议元数据作为XSS载体，非典型且训练数据少。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他协议元数据注入）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'协议元数据注入'的通用思路。",
+   "skill_framework": {
+    "name": "协议元数据注入（RTMP等）",
+    "适用场景": [
+     "XSS",
+     "内容注入",
+     "协议解析漏洞"
+    ],
+    "核心原理": [
+     "协议元数据（如RTMP的onMetaData）可被攻击者控制",
+     "若未严格转义，可注入脚本"
+    ],
+    "决策树": [
+     "IF 应用解析外部协议元数据 AND 未转义 → 尝试注入脚本"
+    ],
+    "示例": [
+     "构造恶意RTMP流，在元数据中嵌入JS"
+    ],
+    "迁移场景": [
+     "XSS",
+     "SSTI",
+     "协议解析"
+    ]
+   }
+  },
+  {
+   "id": 1161401,
+   "knowledge_point": "隐式PendingIntent权限继承",
+   "is_ai_likely_known": false,
+   "reason": "Android隐式PendingIntent的权限继承问题，属于特定平台的反直觉行为，训练数据少。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到Android应用开发）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'PendingIntent安全'的通用规则。",
+   "skill_framework": {
+    "name": "Android PendingIntent安全（隐式Intent权限继承）",
+    "适用场景": [
+     "Android应用安全",
+     "权限提升",
+     "跨应用攻击"
+    ],
+    "核心原理": [
+     "隐式PendingIntent可被恶意应用劫持",
+     "继承创建者权限导致信息泄露"
+    ],
+    "决策树": [
+     "IF 应用使用PendingIntent AND 未设置FLAG_IMMUTABLE → 存在风险"
+    ],
+    "示例": [
+     "恶意应用监听通知，获取隐式PendingIntent，设置包名和clipdata"
+    ],
+    "迁移场景": [
+     "Android安全",
+     "权限控制",
+     "组件间通信"
+    ]
+   }
+  },
+  {
+   "id": 225653,
+   "knowledge_point": "第三方认证CSRF导致账户接管",
+   "is_ai_likely_known": false,
+   "reason": "利用CSRF绑定攻击者账户到受害者，属于OAuth/OpenID流程的特定攻击，训练数据相对少。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何第三方认证流程）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'第三方认证CSRF防护'的通用要点。",
+   "skill_framework": {
+    "name": "第三方认证CSRF防护（OAuth/OpenID）",
+    "适用场景": [
+     "OAuth",
+     "OpenID Connect",
+     "SSO"
+    ],
+    "核心原理": [
+     "第三方认证回调缺少CSRF防护",
+     "攻击者可通过CSRF绑定自己的账户到受害者"
+    ],
+    "决策树": [
+     "IF 使用第三方认证 AND 回调未验证state → 存在CSRF风险"
+    ],
+    "示例": [
+     "构造CSRF表单，受害者提交后攻击者账户关联到受害者"
+    ],
+    "迁移场景": [
+     "CSRF",
+     "账户接管",
+     "认证流程"
+    ]
+   }
+  },
+  {
+   "id": 159391,
+   "knowledge_point": "水平越权通过修改资源ID",
+   "is_ai_likely_known": true,
+   "reason": "水平越权是常见漏洞，AI已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到任何资源ID）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 192734,
+   "knowledge_point": "mruby字符串自连接导致空指针",
+   "is_ai_likely_known": false,
+   "reason": "特定语言实现的边界条件错误，训练数据少，但影响仅为DoS，可迁移性低。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（依赖特定语言实现）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  }
+ ]
+}

@@ -1,0 +1,392 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 8,
+  "not_worth": 7,
+  "top_ids": [
+   423388,
+   152584,
+   758445,
+   788883,
+   331428,
+   241323,
+   245450,
+   229619
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 423388,
+   "knowledge_point": "GraphQL 查询层未实施模块权限边界导致跨模块信息泄露",
+   "is_ai_likely_known": false,
+   "reason": "GraphQL 权限模型与查询层解耦的反直觉行为，训练数据中不常见，需结合具体业务模块才能触发。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（GraphQL API 设计、权限模型、微服务架构均可迁移）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'GraphQL 权限边界缺失'的检测与防御。",
+   "skill_framework": {
+    "name": "GraphQL 权限边界缺失检测与防御",
+    "适用场景": [
+     "GraphQL API 安全测试",
+     "权限模型设计",
+     "微服务架构"
+    ],
+    "核心原理": [
+     "GraphQL 解析器默认不实施模块级权限，需显式按角色裁剪字段",
+     "低权限用户可查询未授权对象"
+    ],
+    "决策树": [
+     "IF 存在 GraphQL API AND 用户角色权限有限 → 枚举所有对象和字段，尝试跨模块查询"
+    ],
+    "示例": [
+     "使用 Apps 权限查询 locations/inventoryLevel 等敏感对象"
+    ],
+    "迁移场景": [
+     "GraphQL API",
+     "REST API 权限模型",
+     "微服务间调用"
+    ]
+   }
+  },
+  {
+   "id": 381129,
+   "knowledge_point": "利用重定向和 IPv6 地址绕过 SSRF 过滤",
+   "is_ai_likely_known": true,
+   "reason": "SSRF 绕过技术如重定向和 IPv6 变体在安全社区广泛讨论，AI 训练数据中常见。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（SSRF 防护、WAF 绕过、内网访问控制）",
+   "source_quality": "中",
+   "worth_skill": true,
+   "suggested_handling": "合并到上层 Skill：SSRF 绕过与防御。",
+   "skill_framework": {
+    "name": "SSRF 绕过与防御",
+    "适用场景": [
+     "SSRF 漏洞测试",
+     "WAF 规则绕过",
+     "内网访问控制"
+    ],
+    "核心原理": [
+     "校验层与请求层对 URL 解析不一致",
+     "重定向和 IPv6 表示法可绕过黑名单"
+    ],
+    "决策树": [
+     "IF 存在 SSRF 防护 AND 基于黑名单 → 尝试重定向、IPv6 变体、DNS 重绑定等"
+    ],
+    "示例": [
+     "重定向到 [::]:22 扫描内网端口"
+    ],
+    "迁移场景": [
+     "SSRF",
+     "WAF 绕过",
+     "开放重定向"
+    ]
+   }
+  },
+  {
+   "id": 1064869,
+   "knowledge_point": "GraphQL 对象级授权缺失导致 IDOR",
+   "is_ai_likely_known": true,
+   "reason": "IDOR 和 GraphQL 授权问题在安全测试中常见，AI 训练数据充足。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（GraphQL API、REST API、对象级授权）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层 Skill：GraphQL 权限边界缺失检测与防御。",
+   "skill_framework": null
+  },
+  {
+   "id": 1352429,
+   "knowledge_point": "SM2 解密缓冲区溢出（CVE-2021-3711）",
+   "is_ai_likely_known": false,
+   "reason": "特定密码学库的漏洞细节，训练数据稀少，需深入理解 ASN.1 解析差异。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（特定于 SM2 算法和 OpenSSL 实现）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 152584,
+   "knowledge_point": "签名代理无权限控制导致 S3 桶接管",
+   "is_ai_likely_known": false,
+   "reason": "签名代理信任模型缺陷的反直觉行为，训练数据中不常见，需结合具体代理实现。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（云存储安全、代理服务、签名机制）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'签名代理信任边界'的检测与防御。",
+   "skill_framework": {
+    "name": "签名代理信任边界检测与防御",
+    "适用场景": [
+     "云存储安全",
+     "代理服务",
+     "签名机制"
+    ],
+    "核心原理": [
+     "签名代理必须限定可签名的请求集合，否则可被滥用",
+     "代理替任意请求背书导致权限提升"
+    ],
+    "决策树": [
+     "IF 存在签名代理 AND 代理未限制请求路径/方法 → 尝试任意 PUT 和 ACL 修改"
+    ],
+    "示例": [
+     "通过代理 PUT 任意文件并修改 ACL 接管 S3 桶"
+    ],
+    "迁移场景": [
+     "S3",
+     "Azure Blob",
+     "GCS"
+    ]
+   }
+  },
+  {
+   "id": 758445,
+   "knowledge_point": "HTTP 走私：利用头名冒号前空白字符制造解析分歧",
+   "is_ai_likely_known": false,
+   "reason": "Squid 对畸形头的容忍是具体实现细节，训练数据中不常见，需深入理解 RFC 7230。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（HTTP 解析、反向代理、缓存投毒）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'HTTP 解析分歧'的检测与防御。",
+   "skill_framework": {
+    "name": "HTTP 解析分歧检测与防御",
+    "适用场景": [
+     "HTTP 走私测试",
+     "缓存投毒",
+     "WAF 绕过"
+    ],
+    "核心原理": [
+     "不同组件对畸形 HTTP 头的解析不一致",
+     "头名冒号前空白字符可导致分段错乱"
+    ],
+    "决策树": [
+     "IF 存在反代/缓存 AND 解析器容忍空白 → 尝试 Transfer-Encoding\\t: chunked 等变体"
+    ],
+    "示例": [
+     "构造 Transfer-Encoding\\t: chunked 实现请求走私"
+    ],
+    "迁移场景": [
+     "HTTP 走私",
+     "缓存投毒",
+     "请求过滤绕过"
+    ]
+   }
+  },
+  {
+   "id": 245450,
+   "knowledge_point": "密码重置链接未失效导致多次重置",
+   "is_ai_likely_known": true,
+   "reason": "密码重置逻辑漏洞在安全测试中常见，AI 训练数据充足。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（认证流程、令牌管理）",
+   "source_quality": "中",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'密码重置流程缺陷'的检测与防御。",
+   "skill_framework": {
+    "name": "密码重置流程缺陷检测与防御",
+    "适用场景": [
+     "认证流程测试",
+     "令牌管理"
+    ],
+    "核心原理": [
+     "重置链接应一次性使用，且重置页面需验证链接有效性",
+     "状态管理缺陷导致绕过"
+    ],
+    "决策树": [
+     "IF 存在密码重置功能 AND 链接可多次使用 → 尝试直接访问重置端点"
+    ],
+    "示例": [
+     "使用重置链接设置密码后，再次访问重置页面无需链接即可重置"
+    ],
+    "迁移场景": [
+     "密码重置",
+     "邮箱验证",
+     "邀请链接"
+    ]
+   }
+  },
+  {
+   "id": 1092574,
+   "knowledge_point": "模板引擎 eval 调用导致 PHP 代码注入",
+   "is_ai_likely_known": true,
+   "reason": "代码注入和 eval 滥用是常见漏洞，AI 训练数据充足。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（模板引擎、代码执行）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 229619,
+   "knowledge_point": "邮箱确认链接未验证所有权",
+   "is_ai_likely_known": true,
+   "reason": "邮箱验证绕过是常见业务逻辑漏洞，AI 训练数据充足。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（认证流程、令牌管理）",
+   "source_quality": "中",
+   "worth_skill": true,
+   "suggested_handling": "合并到上层 Skill：密码重置流程缺陷检测与防御。",
+   "skill_framework": {
+    "name": "密码重置流程缺陷检测与防御",
+    "适用场景": [
+     "认证流程测试",
+     "令牌管理"
+    ],
+    "核心原理": [
+     "确认链接应包含一次性令牌，且需验证邮箱所有权",
+     "未验证所有权导致任意邮箱验证"
+    ],
+    "决策树": [
+     "IF 存在邮箱验证功能 AND 链接未绑定所有权 → 尝试直接访问确认链接"
+    ],
+    "示例": [
+     "更改邮箱后直接访问确认链接验证成功"
+    ],
+    "迁移场景": [
+     "邮箱验证",
+     "密码重置",
+     "邀请链接"
+    ]
+   }
+  },
+  {
+   "id": 788883,
+   "knowledge_point": "nested-property 模块原型污染",
+   "is_ai_likely_known": false,
+   "reason": "特定 npm 模块的漏洞，训练数据中不常见，需了解原型链污染技术。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（JavaScript 原型链、npm 模块安全）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'原型污染检测与防御'。",
+   "skill_framework": {
+    "name": "原型污染检测与防御",
+    "适用场景": [
+     "JavaScript 安全测试",
+     "npm 模块审计"
+    ],
+    "核心原理": [
+     "禁止修改 __proto__、constructor 等危险键",
+     "使用 Map 或 Object.create(null) 防止污染"
+    ],
+    "决策树": [
+     "IF 存在属性设置操作 AND 未过滤危险键 → 尝试传入 __proto__ 路径"
+    ],
+    "示例": [
+     "调用 set 方法传入 __proto__ 修改 Object.prototype"
+    ],
+    "迁移场景": [
+     "原型污染",
+     "RCE",
+     "DoS"
+    ]
+   }
+  },
+  {
+   "id": 271355,
+   "knowledge_point": "ImageMagick 未初始化调色板导致内存泄露",
+   "is_ai_likely_known": false,
+   "reason": "特定图像处理库的漏洞，训练数据中不常见，需深入理解图像格式。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（特定于 ImageMagick）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 331428,
+   "knowledge_point": "SharedWorker 绕过第三方 cookie 限制实现跨域跟踪",
+   "is_ai_likely_known": false,
+   "reason": "浏览器存储隔离漏洞，训练数据中不常见，需了解 SharedWorker 特性。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（浏览器隐私、跨域跟踪）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'浏览器存储隔离绕过'的检测与防御。",
+   "skill_framework": {
+    "name": "浏览器存储隔离绕过检测与防御",
+    "适用场景": [
+     "隐私保护测试",
+     "跨域跟踪"
+    ],
+    "核心原理": [
+     "SharedWorker 不受第三方 cookie 限制，可跨域共享状态",
+     "浏览器应限制或隔离第三方 SharedWorker"
+    ],
+    "决策树": [
+     "IF 存在第三方脚本 AND 用户禁用 cookie → 尝试创建 SharedWorker 跨域跟踪"
+    ],
+    "示例": [
+     "通过 SharedWorker 跨域共享状态跟踪用户行为"
+    ],
+    "迁移场景": [
+     "浏览器隐私",
+     "跨域跟踪",
+     "存储隔离"
+    ]
+   }
+  },
+  {
+   "id": 241323,
+   "knowledge_point": "URL 特殊字符绕过缓存排除逻辑",
+   "is_ai_likely_known": false,
+   "reason": "特定于 WordPress 和 WooCommerce 的缓存逻辑，训练数据中不常见，需了解 URL 规范化差异。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（缓存投毒、URL 规范化）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'缓存投毒与 URL 规范化'的检测与防御。",
+   "skill_framework": {
+    "name": "缓存投毒与 URL 规范化检测与防御",
+    "适用场景": [
+     "缓存投毒测试",
+     "URL 规范化"
+    ],
+    "核心原理": [
+     "不同组件对 URL 的规范化不一致",
+     "特殊字符如 +、-、. 可绕过基于 REQUEST_URI 的缓存排除"
+    ],
+    "决策树": [
+     "IF 存在缓存机制 AND 基于 REQUEST_URI 判断 → 尝试添加特殊字符绕过"
+    ],
+    "示例": [
+     "构造包含 +、-、. 的 URL 绕过 prevent_caching()"
+    ],
+    "迁移场景": [
+     "缓存投毒",
+     "WAF 绕过",
+     "URL 解析"
+    ]
+   }
+  },
+  {
+   "id": 3596,
+   "knowledge_point": "OAuth 开放重定向窃取 access_token",
+   "is_ai_likely_known": true,
+   "reason": "OAuth 重定向攻击是经典漏洞，AI 训练数据充足。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（OAuth 安全、开放重定向）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 221163,
+   "knowledge_point": "libsass 解析器堆缓冲区溢出",
+   "is_ai_likely_known": false,
+   "reason": "特定解析器漏洞，训练数据中不常见，但属于常见内存破坏类型。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（特定于 libsass）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  }
+ ]
+}

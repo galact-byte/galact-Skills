@@ -1,0 +1,354 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 8,
+  "not_worth": 7,
+  "top_ids": [
+   922597,
+   2256167,
+   1679624,
+   304378,
+   329957,
+   878779,
+   470520,
+   223936
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 223936,
+   "knowledge_point": "客户端加密不可信，ARP欺骗替换公钥实现中间人攻击",
+   "is_ai_likely_known": true,
+   "reason": "客户端加密不可信是通用安全知识，AI已知，无需专门Skill。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（仅适用于未使用HTTPS的客户端加密场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，无需固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 402410,
+   "knowledge_point": "修改参数导致加密ID泄露为明文",
+   "is_ai_likely_known": true,
+   "reason": "参数篡改导致信息泄露是通用业务逻辑漏洞，AI已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（依赖具体API设计）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 294147,
+   "knowledge_point": "利用git子仓库hook机制实现命令注入",
+   "is_ai_likely_known": true,
+   "reason": "git hook机制是通用知识，AI已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（依赖特定版本控制工具）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 174983,
+   "knowledge_point": "CNAME继承MX记录导致域名接管",
+   "is_ai_likely_known": true,
+   "reason": "CNAME继承MX记录是DNS通用知识，AI已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（依赖DNS配置）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1257767,
+   "knowledge_point": "HTML注入结合浏览器自动填充窃取凭据",
+   "is_ai_likely_known": true,
+   "reason": "浏览器自动填充攻击是通用知识，AI已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（依赖浏览器行为）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 86504,
+   "knowledge_point": "认证逻辑缺陷导致仅凭邮箱登录任意账户",
+   "is_ai_likely_known": true,
+   "reason": "认证绕过是通用漏洞类型，AI已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（依赖具体认证实现）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 922597,
+   "knowledge_point": "HTTP请求走私：CR到连字符转换导致解析差异",
+   "is_ai_likely_known": false,
+   "reason": "Node.js将CR转换为连字符是特定框架行为，训练数据稀少，需组合畸形头部才能触发。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（HTTP请求走私、代理解析差异、WAF绕过均可迁移）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'HTTP解析差异绕过'原理-机制-矛盾-锚点-迁移路径。",
+   "skill_framework": {
+    "name": "HTTP解析差异绕过（CR转换/头部规范化）",
+    "适用场景": [
+     "HTTP请求走私",
+     "代理与后端解析不一致",
+     "WAF绕过"
+    ],
+    "核心原理": [
+     "不同组件对HTTP头部的解析规则不同",
+     "CR到连字符的转换导致前后端对头部理解不一致"
+    ],
+    "决策树": [
+     "IF 存在代理和后端 AND 后端对畸形头部有特殊处理 → 尝试CR转换变体"
+    ],
+    "示例": [
+     "Content[CR]Length: 0 → Node.js转换为Content-Length"
+    ],
+    "迁移场景": [
+     "HTTP请求走私",
+     "WAF绕过",
+     "缓存投毒"
+    ]
+   }
+  },
+  {
+   "id": 2256167,
+   "knowledge_point": "Node.js权限模型绕过：Uint8Array类型路径",
+   "is_ai_likely_known": false,
+   "reason": "Node.js权限模型只检查字符串和Buffer，Uint8Array可绕过，这是特定框架行为，AI可能不知。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（类型混淆、权限绕过、路径遍历防护均可迁移）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'类型混淆绕过权限检查'原理-机制-矛盾-锚点-迁移路径。",
+   "skill_framework": {
+    "name": "类型混淆绕过权限检查（Uint8Array路径）",
+    "适用场景": [
+     "Node.js权限模型",
+     "路径遍历防护",
+     "文件系统访问控制"
+    ],
+    "核心原理": [
+     "安全机制只检查特定类型，忽略其他类型",
+     "Uint8Array与Buffer类型差异导致绕过"
+    ],
+    "决策树": [
+     "IF 存在基于类型的路径检查 AND 输入类型可控 → 尝试Uint8Array"
+    ],
+    "示例": [
+     "TextEncoder生成Uint8Array路径绕过fs权限检查"
+    ],
+    "迁移场景": [
+     "Node.js安全",
+     "类型混淆",
+     "权限绕过"
+    ]
+   }
+  },
+  {
+   "id": 1679624,
+   "knowledge_point": "Ruby对象方法覆盖结合Redis协议注入实现RCE",
+   "is_ai_likely_known": false,
+   "reason": "覆盖to_s和bytesize方法注入Redis命令是特定框架行为，训练数据稀少，需组合反序列化gadget。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（反序列化、Redis协议注入、方法覆盖均可迁移）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'对象方法覆盖与协议注入'原理-机制-矛盾-锚点-迁移路径。",
+   "skill_framework": {
+    "name": "对象方法覆盖与协议注入（Ruby/Redis）",
+    "适用场景": [
+     "反序列化漏洞利用",
+     "Redis命令注入",
+     "Ruby对象操作"
+    ],
+    "核心原理": [
+     "覆盖对象方法改变序列化行为",
+     "利用Redis协议注入命令"
+    ],
+    "决策树": [
+     "IF 存在反序列化点 AND 可控制对象方法 → 尝试覆盖to_s/bytesize"
+    ],
+    "示例": [
+     "Sawyer::Resource覆盖方法注入Redis命令"
+    ],
+    "迁移场景": [
+     "反序列化",
+     "Redis安全",
+     "Ruby安全"
+    ]
+   }
+  },
+  {
+   "id": 304378,
+   "knowledge_point": "ACME TLS-SNI挑战在共享主机环境中的缺陷",
+   "is_ai_likely_known": false,
+   "reason": "TLS-SNI挑战在共享主机中的缺陷是特定协议设计问题，AI可能不知。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（证书验证、共享主机安全、ACME协议均可迁移）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'ACME挑战绕过'原理-机制-矛盾-锚点-迁移路径。",
+   "skill_framework": {
+    "name": "ACME挑战绕过（TLS-SNI共享主机）",
+    "适用场景": [
+     "证书颁发验证",
+     "共享主机安全",
+     "域名所有权验证"
+    ],
+    "核心原理": [
+     "TLS-SNI挑战依赖IP路由，共享主机上多个域名共享IP",
+     "攻击者控制一个虚拟主机即可响应挑战"
+    ],
+    "决策树": [
+     "IF 目标使用TLS-SNI挑战 AND 存在共享主机 → 尝试控制同一IP上的其他虚拟主机"
+    ],
+    "示例": [
+     "共享主机上获取任意域名证书"
+    ],
+    "迁移场景": [
+     "ACME协议",
+     "证书安全",
+     "共享主机"
+    ]
+   }
+  },
+  {
+   "id": 329957,
+   "knowledge_point": "利用图片加载和cookie认证实现跨站追踪",
+   "is_ai_likely_known": false,
+   "reason": "图片加载不受同源策略限制，结合cookie认证的URL实现追踪，是特定组合，AI可能不知。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（隐私追踪、CSRF、资源认证均可迁移）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'资源认证与追踪像素'原理-机制-矛盾-锚点-迁移路径。",
+   "skill_framework": {
+    "name": "资源认证与追踪像素（图片加载）",
+    "适用场景": [
+     "隐私追踪",
+     "CSRF防护",
+     "资源访问控制"
+    ],
+    "核心原理": [
+     "图片加载不受同源策略限制",
+     "cookie认证的URL可被跨站利用"
+    ],
+    "决策树": [
+     "IF 存在cookie认证的资源URL AND 可被跨站引用 → 尝试嵌入图片追踪"
+    ],
+    "示例": [
+     "Twitter图片URL嵌入第三方网站追踪用户"
+    ],
+    "迁移场景": [
+     "隐私保护",
+     "CSRF",
+     "认证机制"
+    ]
+   }
+  },
+  {
+   "id": 735638,
+   "knowledge_point": "Markdown解析器组合绕过实现XSS",
+   "is_ai_likely_known": true,
+   "reason": "Markdown XSS是通用知识，AI已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他富文本解析器）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：Markdown安全解析。",
+   "skill_framework": null
+  },
+  {
+   "id": 387544,
+   "knowledge_point": "postMessage origin验证不完整导致XSS",
+   "is_ai_likely_known": true,
+   "reason": "postMessage origin验证是通用知识，AI已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他消息通信）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：postMessage安全。",
+   "skill_framework": null
+  },
+  {
+   "id": 878779,
+   "knowledge_point": "SSRF绕过：URL解码和开放重定向链",
+   "is_ai_likely_known": false,
+   "reason": "URL解码和开放重定向链绕过SSRF是特定组合，AI可能不知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（SSRF防护、URL解析、重定向链均可迁移）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'SSRF绕过链'原理-机制-矛盾-锚点-迁移路径。",
+   "skill_framework": {
+    "name": "SSRF绕过链（URL解码与开放重定向）",
+    "适用场景": [
+     "SSRF防护",
+     "URL解析",
+     "开放重定向"
+    ],
+    "核心原理": [
+     "URL解码差异导致校验绕过",
+     "开放重定向链绕过目标限制"
+    ],
+    "决策树": [
+     "IF 存在SSRF防护 AND 有URL解码或重定向 → 尝试组合绕过"
+    ],
+    "示例": [
+     "Grafana avatar端点结合gravatar和i0.wp.com重定向"
+    ],
+    "迁移场景": [
+     "SSRF",
+     "WAF绕过",
+     "开放重定向"
+    ]
+   }
+  },
+  {
+   "id": 470520,
+   "knowledge_point": "Steam协议缓冲区溢出：unicode转换和ROP链绕过ASLR",
+   "is_ai_likely_known": false,
+   "reason": "Steam协议特定解析和unicode ROP链是特定框架行为，AI可能不知。",
+   "scene_frequency": "低频",
+   "migration_potential": "高（协议解析、缓冲区溢出、ROP链均可迁移）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'协议解析缓冲区溢出'原理-机制-矛盾-锚点-迁移路径。",
+   "skill_framework": {
+    "name": "协议解析缓冲区溢出（unicode ROP链）",
+    "适用场景": [
+     "协议解析",
+     "缓冲区溢出利用",
+     "ROP链构造"
+    ],
+    "核心原理": [
+     "协议解析未做边界检查",
+     "unicode转换改变数据长度",
+     "ROP链绕过ASLR"
+    ],
+    "决策树": [
+     "IF 存在协议解析 AND 输入长度可控 → 尝试超长输入触发溢出"
+    ],
+    "示例": [
+     "Steam A2S_PLAYER响应超长玩家名触发栈溢出"
+    ],
+    "迁移场景": [
+     "协议安全",
+     "二进制漏洞",
+     "ROP"
+    ]
+   }
+  }
+ ]
+}

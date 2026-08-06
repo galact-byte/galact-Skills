@@ -1,0 +1,284 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 5,
+  "not_worth": 10,
+  "top_ids": [
+   688270,
+   118965,
+   212629,
+   1570651,
+   1398706
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 688270,
+   "knowledge_point": "命令注入中利用 ${IFS} 绕过空格过滤",
+   "is_ai_likely_known": true,
+   "reason": "${IFS} 绕过空格过滤是命令注入的常见技巧，AI 训练数据中广泛存在，直接提问即可获得。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有命令注入场景，包括 Web 应用、API、CI/CD 等）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1026265,
+   "knowledge_point": "Cisco ASA WebVPN cookie 路径遍历导致任意文件删除",
+   "is_ai_likely_known": true,
+   "reason": "CVE-2020-3187 是已知漏洞，利用细节在公开漏洞库中可查，AI 可能知道。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（特定产品漏洞，不可迁移）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 118965,
+   "knowledge_point": "利用 HTTP 状态码差异作为侧信道进行信息枚举",
+   "is_ai_likely_known": false,
+   "reason": "利用状态码组合推断业务逻辑属于非典型侧信道，AI 训练数据中较少见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何基于 HTTP 状态码的业务逻辑判断场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'状态码差异侧信道'的原理、探测方法和迁移路径。",
+   "skill_framework": {
+    "name": "HTTP 状态码差异侧信道探测",
+    "适用场景": [
+     "业务逻辑枚举",
+     "用户枚举",
+     "权限边界探测"
+    ],
+    "核心原理": [
+     "不同业务状态返回不同 HTTP 状态码",
+     "通过状态码组合推断内部逻辑"
+    ],
+    "决策树": [
+     "IF 存在多个相似端点 AND 返回状态码有差异 → 构造请求矩阵分析状态码组合"
+    ],
+    "示例": [
+     "请求不同年份的端点，观察 500 vs 401 差异"
+    ],
+    "迁移场景": [
+     "用户枚举",
+     "订阅状态探测",
+     "功能开关探测"
+    ]
+   }
+  },
+  {
+   "id": 882412,
+   "knowledge_point": "GraphQL 字段级授权缺失导致信息泄露",
+   "is_ai_likely_known": true,
+   "reason": "GraphQL 字段级授权缺失是常见问题，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有 GraphQL API 安全测试）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：GraphQL API 安全测试。",
+   "skill_framework": null
+  },
+  {
+   "id": 592803,
+   "knowledge_point": "订单状态与支付方式不一致导致积分发放绕过",
+   "is_ai_likely_known": true,
+   "reason": "业务逻辑漏洞中状态不一致是常见模式，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到电商积分、优惠券等业务逻辑）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：业务逻辑漏洞模式。",
+   "skill_framework": null
+  },
+  {
+   "id": 212629,
+   "knowledge_point": "URL 解析差异（@符号）绕过链接过滤实现反向 tabnabbing",
+   "is_ai_likely_known": false,
+   "reason": "URL 解析差异属于浏览器与服务器解析不一致的细节，AI 训练数据中较少。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到 SSRF、URL 验证、开放重定向等场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'URL 解析差异'的原理、变体和迁移路径。",
+   "skill_framework": {
+    "name": "URL 解析差异绕过",
+    "适用场景": [
+     "链接过滤",
+     "SSRF 防护",
+     "开放重定向"
+    ],
+    "核心原理": [
+     "不同解析器对 URL 的解析结果不一致",
+     "利用 @ 符号使浏览器解析为不同主机"
+    ],
+    "决策树": [
+     "IF 存在 URL 过滤 AND 过滤基于字符串匹配 → 尝试 @ 符号、编码、大小写等变体"
+    ],
+    "示例": [
+     "https://gitlab.com@example.com 被浏览器解析为 example.com"
+    ],
+    "迁移场景": [
+     "SSRF",
+     "开放重定向",
+     "钓鱼链接检测"
+    ]
+   }
+  },
+  {
+   "id": 762271,
+   "knowledge_point": "GraphQL API 与 UI 权限不一致导致授权绕过",
+   "is_ai_likely_known": true,
+   "reason": "API 与 UI 权限不一致是常见问题，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有 API 安全测试）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：GraphQL API 安全测试。",
+   "skill_framework": null
+  },
+  {
+   "id": 1072893,
+   "knowledge_point": "共享访问角色通过 API 端点获取父用户信息",
+   "is_ai_likely_known": true,
+   "reason": "API 端点未实施细粒度访问控制是常见问题，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到多租户应用、共享访问场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：API 授权测试。",
+   "skill_framework": null
+  },
+  {
+   "id": 1029027,
+   "knowledge_point": "输入未 trim 导致字符串比较绕过",
+   "is_ai_likely_known": true,
+   "reason": "输入验证缺陷是常见问题，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有输入验证场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 1398706,
+   "knowledge_point": "云存储桶接管导致 XSS",
+   "is_ai_likely_known": false,
+   "reason": "云存储桶接管属于较新的攻击面，AI 训练数据中可能不全面。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到 AWS S3、Azure Blob、GCP 等云存储）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'云存储桶接管'的检测、利用和防御。",
+   "skill_framework": {
+    "name": "云存储桶接管检测与利用",
+    "适用场景": [
+     "子域名接管",
+     "供应链攻击",
+     "XSS"
+    ],
+    "核心原理": [
+     "未注册的存储桶可被攻击者注册",
+     "加载的 JS 文件被恶意替换"
+    ],
+    "决策树": [
+     "IF 页面加载外部 JS AND 域名未注册 → 尝试注册该域名"
+    ],
+    "示例": [
+     "发现 storage.googleapis.com/bucket 未注册，注册后托管恶意 JS"
+    ],
+    "迁移场景": [
+     "AWS S3",
+     "Azure Blob",
+     "GCP Storage"
+    ]
+   }
+  },
+  {
+   "id": 869450,
+   "knowledge_point": "工单系统授权缺失导致 PII 泄露和钓鱼",
+   "is_ai_likely_known": true,
+   "reason": "工单系统授权缺失是常见业务逻辑漏洞，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到客服系统、工单系统）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：业务逻辑漏洞模式。",
+   "skill_framework": null
+  },
+  {
+   "id": 96890,
+   "knowledge_point": "列表端点绕过单个端点权限检查",
+   "is_ai_likely_known": true,
+   "reason": "API 端点权限不一致是常见问题，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有 API 安全测试）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：API 授权测试。",
+   "skill_framework": null
+  },
+  {
+   "id": 1570651,
+   "knowledge_point": "HTTP 压缩编码重复声明导致资源耗尽",
+   "is_ai_likely_known": false,
+   "reason": "利用 HTTP 协议允许重复头字段的特性进行 DoS 属于协议行为利用，AI 训练数据中较少。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到 HTTP 解析器、代理、WAF 等）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'HTTP 协议行为利用'的原理和防御。",
+   "skill_framework": {
+    "name": "HTTP 协议行为利用（重复头字段）",
+    "适用场景": [
+     "拒绝服务",
+     "请求走私",
+     "缓存投毒"
+    ],
+    "核心原理": [
+     "HTTP 协议允许重复头字段",
+     "解析器未限制数量导致资源耗尽"
+    ],
+    "决策树": [
+     "IF 目标使用 HTTP 解析 AND 未限制头数量 → 发送大量重复头字段"
+    ],
+    "示例": [
+     "发送多个 Transfer-Encoding 头导致内存耗尽"
+    ],
+    "迁移场景": [
+     "HTTP 请求走私",
+     "缓存投毒",
+     "WAF 绕过"
+    ]
+   }
+  },
+  {
+   "id": 50776,
+   "knowledge_point": "重放旧请求绕过前端限制",
+   "is_ai_likely_known": true,
+   "reason": "重放攻击是常见漏洞模式，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有状态变更操作）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 430831,
+   "knowledge_point": "原型污染攻击（node.extend）",
+   "is_ai_likely_known": true,
+   "reason": "原型污染是常见漏洞类型，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到所有 JavaScript 合并操作）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：JavaScript 原型污染测试。",
+   "skill_framework": null
+  }
+ ]
+}

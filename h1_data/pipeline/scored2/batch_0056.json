@@ -1,0 +1,429 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 10,
+  "not_worth": 5,
+  "top_ids": [
+   374737,
+   1034346,
+   321511,
+   358570,
+   260005,
+   1082847,
+   943737,
+   1274695,
+   1912777,
+   966347
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 374737,
+   "knowledge_point": "Sentry source code scraping 配置缺陷导致盲SSRF",
+   "is_ai_likely_known": false,
+   "reason": "Sentry 的 source code scraping 功能及其安全影响属于特定第三方组件的配置缺陷，训练数据中不常见，需结合具体配置才能触发。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他第三方组件配置缺陷导致的SSRF，如监控、日志系统）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'第三方组件配置缺陷导致SSRF'的检测与利用方法。",
+   "skill_framework": {
+    "name": "第三方组件配置缺陷导致SSRF",
+    "适用场景": [
+     "Sentry",
+     "监控系统",
+     "日志系统"
+    ],
+    "核心原理": [
+     "组件默认配置不安全",
+     "攻击者可控参数触发请求"
+    ],
+    "决策树": [
+     "IF 使用Sentry AND 开启source code scraping → 尝试构造filename参数触发SSRF"
+    ],
+    "示例": [
+     "构造恶意错误报告，filename参数指向内网地址"
+    ],
+    "迁移场景": [
+     "SSRF",
+     "内网探测"
+    ]
+   }
+  },
+  {
+   "id": 1034346,
+   "knowledge_point": "对象关联劫持：孤儿附件与多态关联绕过授权",
+   "is_ai_likely_known": false,
+   "reason": "利用 ActiveRecord 多态关联的孤儿对象进行授权绕过，属于框架特定行为，训练数据中不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何使用ORM多态关联的应用，如Rails、Django）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'对象关联劫持'模式，包括检测和防御。",
+   "skill_framework": {
+    "name": "对象关联劫持（ORM多态关联）",
+    "适用场景": [
+     "Rails应用",
+     "Django应用",
+     "任何使用ORM多态关联的系统"
+    ],
+    "核心原理": [
+     "孤儿对象可被任意关联",
+     "缺少授权检查"
+    ],
+    "决策树": [
+     "IF 存在多态关联 AND 对象可被删除后残留 → 尝试关联到其他对象"
+    ],
+    "示例": [
+     "删除附件后，通过draft_sync关联到攻击者草稿"
+    ],
+    "迁移场景": [
+     "IDOR",
+     "越权访问"
+    ]
+   }
+  },
+  {
+   "id": 158148,
+   "knowledge_point": "子域名重定向到第三方应用 + 图片上传注入Webshell",
+   "is_ai_likely_known": true,
+   "reason": "子域名重定向和图片上传注入是常见攻击手法，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（依赖具体应用和图片处理逻辑）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 321511,
+   "knowledge_point": "交易原子性导致订单簿状态不一致（crossing offers）",
+   "is_ai_likely_known": false,
+   "reason": "利用交易原子性制造状态不一致，属于分布式系统逻辑漏洞，训练数据中不常见。",
+   "scene_frequency": "低频",
+   "migration_potential": "高（可迁移到任何依赖多步操作原子性的系统，如金融、分布式账本）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'状态一致性校验缺失'的检测与利用。",
+   "skill_framework": {
+    "name": "状态一致性校验缺失（原子操作组合）",
+    "适用场景": [
+     "订单系统",
+     "分布式账本",
+     "任何多步操作"
+    ],
+    "核心原理": [
+     "多步操作在同一事务中执行",
+     "执行后未验证状态一致性"
+    ],
+    "决策树": [
+     "IF 存在多步操作 AND 操作后未验证状态 → 尝试组合操作制造非法状态"
+    ],
+    "示例": [
+     "提交包含卖出订单和提升信任线的交易，制造crossing offers"
+    ],
+    "迁移场景": [
+     "业务逻辑漏洞",
+     "状态混淆"
+    ]
+   }
+  },
+  {
+   "id": 358570,
+   "knowledge_point": "PHP数组参数类型混淆导致SQL注入",
+   "is_ai_likely_known": false,
+   "reason": "利用PHP数组作为参数绕过类型检查，属于特定语言行为，训练数据中不常见。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到其他语言或框架的数组参数处理）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'类型混淆绕过参数校验'的通用模式。",
+   "skill_framework": {
+    "name": "类型混淆绕过参数校验",
+    "适用场景": [
+     "PHP应用",
+     "Node.js应用",
+     "任何接受数组参数的后端"
+    ],
+    "核心原理": [
+     "参数类型未严格校验",
+     "数组键值被直接拼入SQL"
+    ],
+    "决策树": [
+     "IF 参数接受数组 AND 未校验类型 → 尝试构造数组键值注入"
+    ],
+    "示例": [
+     "构造数组参数传入where，键值拼入SQL"
+    ],
+    "迁移场景": [
+     "SQL注入",
+     "NoSQL注入"
+    ]
+   }
+  },
+  {
+   "id": 260005,
+   "knowledge_point": "ssh:// URI 解析差异导致RCE",
+   "is_ai_likely_known": false,
+   "reason": "多个VCS工具对ssh:// URI处理不当，属于协议行为利用，训练数据中不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何处理URI的组件，如下载器、版本控制工具）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'URI协议解析差异'的检测与利用。",
+   "skill_framework": {
+    "name": "URI协议解析差异利用",
+    "适用场景": [
+     "VCS工具",
+     "下载器",
+     "任何处理URI的应用"
+    ],
+    "核心原理": [
+     "不同组件对URI解析不一致",
+     "攻击者可控URI触发命令执行"
+    ],
+    "决策树": [
+     "IF 应用处理用户提供的URI → 尝试ssh://等协议变体"
+    ],
+    "示例": [
+     "构造ssh:// URI触发命令执行"
+    ],
+    "迁移场景": [
+     "RCE",
+     "SSRF"
+    ]
+   }
+  },
+  {
+   "id": 1082847,
+   "knowledge_point": "Partial schema 宽松性导致配置注入",
+   "is_ai_likely_known": false,
+   "reason": "利用Partial schema允许额外属性，覆盖运行时配置，属于框架行为利用，训练数据中不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何使用schema验证的框架，如TypeScript、JSON Schema）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'配置注入'模式，包括检测和防御。",
+   "skill_framework": {
+    "name": "配置注入（Partial schema宽松性）",
+    "适用场景": [
+     "TypeScript应用",
+     "JSON Schema验证",
+     "任何配置覆盖场景"
+    ],
+    "核心原理": [
+     "schema允许额外属性",
+     "未验证的属性被实际使用"
+    ],
+    "决策树": [
+     "IF 存在config参数 AND schema宽松 → 尝试注入未定义属性"
+    ],
+    "示例": [
+     "注入api.redirect属性触发XSS"
+    ],
+    "迁移场景": [
+     "XSS",
+     "业务逻辑篡改"
+    ]
+   }
+  },
+  {
+   "id": 943737,
+   "knowledge_point": "Electron WebView 权限配置不当导致任意文件读取",
+   "is_ai_likely_known": false,
+   "reason": "Electron WebView 的 popups 和 eval 未禁用，属于特定框架配置缺陷，训练数据中不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何Electron应用或类似WebView环境）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'Electron WebView 安全配置'的检测与利用。",
+   "skill_framework": {
+    "name": "Electron WebView 安全配置缺陷",
+    "适用场景": [
+     "Electron应用",
+     "WebView环境"
+    ],
+    "核心原理": [
+     "WebView未禁用popups和eval",
+     "file://协议可访问本地文件"
+    ],
+    "决策树": [
+     "IF 应用使用WebView AND 未禁用popups/eval → 尝试注入脚本读取本地文件"
+    ],
+    "示例": [
+     "window.open('file:///etc/passwd')"
+    ],
+    "迁移场景": [
+     "任意文件读取",
+     "RCE"
+    ]
+   }
+  },
+  {
+   "id": 46072,
+   "knowledge_point": "Markdown 链接转义绕过导致XSS",
+   "is_ai_likely_known": true,
+   "reason": "Markdown 解析器转义绕过是常见问题，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他Markdown解析器）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1274695,
+   "knowledge_point": "Chrome 远程调试端口滥用导致RCE",
+   "is_ai_likely_known": false,
+   "reason": "利用Chrome远程调试端口绕过同源策略，属于特定调试功能的安全问题，训练数据中不常见。",
+   "scene_frequency": "低频",
+   "migration_potential": "高（可迁移到任何使用Chrome远程调试的应用）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'调试端口滥用'的检测与利用。",
+   "skill_framework": {
+    "name": "调试端口滥用（Chrome远程调试）",
+    "适用场景": [
+     "Burp Suite",
+     "Electron应用",
+     "任何使用Chrome调试端口的应用"
+    ],
+    "核心原理": [
+     "调试端口未限制访问",
+     "WebSocket可绕过同源策略"
+    ],
+    "决策树": [
+     "IF 应用使用Chrome远程调试 AND 端口可访问 → 尝试连接并执行命令"
+    ],
+    "示例": [
+     "通过调试API下载恶意配置文件并重启应用"
+    ],
+    "迁移场景": [
+     "RCE",
+     "点击劫持"
+    ]
+   }
+  },
+  {
+   "id": 1912777,
+   "knowledge_point": "SFTP 路径 ~ 解析差异导致路径遍历",
+   "is_ai_likely_known": false,
+   "reason": "curl 对 ~ 前缀的错误处理，属于特定协议实现差异，训练数据中不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他协议或工具中的路径解析差异）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'路径解析差异'的检测与利用。",
+   "skill_framework": {
+    "name": "路径解析差异利用（~符号）",
+    "适用场景": [
+     "SFTP",
+     "curl",
+     "任何处理路径的组件"
+    ],
+    "核心原理": [
+     "不同组件对~解析不一致",
+     "攻击者可控路径绕过过滤"
+    ],
+    "决策树": [
+     "IF 应用处理用户提供的路径 → 尝试~变体"
+    ],
+    "示例": [
+     "构造/~2/foo访问/home/dan2/foo"
+    ],
+    "迁移场景": [
+     "路径遍历",
+     "任意文件读取"
+    ]
+   }
+  },
+  {
+   "id": 966347,
+   "knowledge_point": "负 consume() 导致未初始化内存泄露",
+   "is_ai_likely_known": false,
+   "reason": "Node.js Buffer 库对负参数校验缺失，属于特定库的反直觉行为，训练数据中不常见。",
+   "scene_frequency": "低频",
+   "migration_potential": "高（可迁移到任何对长度参数缺乏非负校验的库）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'长度参数校验缺失'的检测与利用。",
+   "skill_framework": {
+    "name": "长度参数校验缺失（负值利用）",
+    "适用场景": [
+     "Node.js库",
+     "任何处理长度参数的系统"
+    ],
+    "核心原理": [
+     "参数未校验非负",
+     "负值导致内部状态损坏"
+    ],
+    "决策树": [
+     "IF 函数接受长度参数 AND 未校验非负 → 尝试负值"
+    ],
+    "示例": [
+     "consume(-1)导致slice()越界读取"
+    ],
+    "迁移场景": [
+     "内存泄露",
+     "缓冲区溢出"
+    ]
+   }
+  },
+  {
+   "id": 1377748,
+   "knowledge_point": "content-disposition 文件名路径遍历导致RCE",
+   "is_ai_likely_known": true,
+   "reason": "文件名路径遍历是常见攻击，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他下载功能）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 396954,
+   "knowledge_point": "RLP 解析器未检查数据末尾导致数据注入",
+   "is_ai_likely_known": false,
+   "reason": "RLP 编码的宽松解析，属于特定协议实现缺陷，训练数据中不常见。",
+   "scene_frequency": "低频",
+   "migration_potential": "高（可迁移到任何解析器未检查数据末尾的场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'解析器未检查数据末尾'的检测与利用。",
+   "skill_framework": {
+    "name": "解析器未检查数据末尾（RLP）",
+    "适用场景": [
+     "区块链",
+     "任何使用RLP编码的系统"
+    ],
+    "核心原理": [
+     "解析器未检查数据末尾",
+     "附加数据不影响签名验证"
+    ],
+    "决策树": [
+     "IF 使用RLP解析 AND 未检查数据末尾 → 尝试附加数据"
+    ],
+    "示例": [
+     "在交易末尾附加恶意数据"
+    ],
+    "迁移场景": [
+     "数据注入",
+     "签名绕过"
+    ]
+   }
+  },
+  {
+   "id": 2281075,
+   "knowledge_point": "Access List Owner 权限过大导致权限提升",
+   "is_ai_likely_known": true,
+   "reason": "权限过大导致越权是常见问题，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "低（依赖具体业务逻辑）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  }
+ ]
+}

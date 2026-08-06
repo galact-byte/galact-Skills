@@ -1,0 +1,307 @@
+{
+ "summary": {
+  "total": 14,
+  "worth_skill": 5,
+  "not_worth": 9,
+  "top_ids": [
+   358359,
+   334837,
+   2032778,
+   1041173,
+   1113289
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 358359,
+   "knowledge_point": "npm onload-script 配置导致 sudo 提权",
+   "is_ai_likely_known": false,
+   "reason": "npm 的 onload-script 配置项在特权模式下的风险属于特定工具链的隐蔽行为，训练数据中不常见，需结合 sudo 场景才能触发。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他包管理器如 pip、gem 的类似配置项，以及 CI/CD 环境中的特权执行）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'包管理器配置项滥用'的原理、检测方法和防御措施。",
+   "skill_framework": {
+    "name": "包管理器配置项滥用导致提权",
+    "适用场景": [
+     "sudo 环境下的包管理器执行",
+     "CI/CD 管道中的特权操作",
+     "多用户系统"
+    ],
+    "核心原理": [
+     "包管理器支持执行任意脚本的配置项（如 npm onload-script）",
+     "当以特权用户运行时，攻击者可通过控制配置文件执行任意代码"
+    ],
+    "决策树": [
+     "IF 存在包管理器配置文件（如 .npmrc）可被攻击者控制 AND 包管理器以特权运行 → 检查是否可注入脚本执行"
+    ],
+    "示例": [
+     "攻击者写入 .npmrc 包含 onload-script=malicious.js，受害者运行 sudo npm install 时执行恶意脚本"
+    ],
+    "迁移场景": [
+     "npm",
+     "pip",
+     "gem",
+     "其他支持脚本钩子的包管理器"
+    ]
+   }
+  },
+  {
+   "id": 1546268,
+   "knowledge_point": "curl 忽略 IPv6 zone index 导致连接复用错误",
+   "is_ai_likely_known": false,
+   "reason": "curl 对 IPv6 zone index 的处理细节属于特定实现缺陷，训练数据中不常见，需结合连接复用场景。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（主要影响 curl 及类似 HTTP 客户端，迁移性有限）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。该知识点高度依赖 curl 具体版本，且场景低频。",
+   "skill_framework": null
+  },
+  {
+   "id": 848625,
+   "knowledge_point": "后端未验证 API 权限导致信息泄露",
+   "is_ai_likely_known": true,
+   "reason": "后端必须验证权限是通用安全知识，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "低（通用原则，无特定技术细节）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 334837,
+   "knowledge_point": "正则替换缺陷导致路径遍历（..././ 绕过）",
+   "is_ai_likely_known": false,
+   "reason": "利用正则替换的缺陷（如只匹配 ../ 但替换后留下 ../）属于特定绕过技巧，训练数据中不常见。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何基于正则的路径过滤，如 WAF、URL 重写）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'正则过滤绕过'的通用模式。",
+   "skill_framework": {
+    "name": "正则过滤绕过（路径遍历）",
+    "适用场景": [
+     "路径过滤",
+     "URL 重写",
+     "WAF 规则"
+    ],
+    "核心原理": [
+     "正则替换可能产生新的危险序列",
+     "如 ..././ 中的 ../ 被替换后留下 ../"
+    ],
+    "决策树": [
+     "IF 存在基于正则的路径过滤 → 尝试 ..././ 等变体，观察是否绕过"
+    ],
+    "示例": [
+     "..././etc/passwd → 替换 ../ 后变为 ../etc/passwd"
+    ],
+    "迁移场景": [
+     "路径遍历",
+     "文件读取",
+     "SSRF"
+    ]
+   }
+  },
+  {
+   "id": 1418891,
+   "knowledge_point": "Apache Flink API 未限制类加载导致 RCE",
+   "is_ai_likely_known": false,
+   "reason": "Flink 特定 API 的类加载漏洞属于特定框架的隐蔽行为，训练数据中不常见。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（主要影响 Flink，迁移性有限）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。该漏洞高度依赖 Flink 具体实现。",
+   "skill_framework": null
+  },
+  {
+   "id": 2032778,
+   "knowledge_point": "路径遍历加载恶意模型导致 RCE",
+   "is_ai_likely_known": false,
+   "reason": "路径遍历结合模型加载实现 RCE 属于特定场景，但路径遍历本身是通用知识，此案例展示了跨组件利用。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何模型加载、插件加载、模板加载场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'路径遍历到代码执行'的通用模式。",
+   "skill_framework": {
+    "name": "路径遍历到代码执行（模型/插件加载）",
+    "适用场景": [
+     "机器学习平台",
+     "插件系统",
+     "模板引擎"
+    ],
+    "核心原理": [
+     "路径参数未规范化，可跳出目录",
+     "加载恶意文件（如模型）导致代码执行"
+    ],
+    "决策树": [
+     "IF 存在路径参数用于加载文件 AND 未限制目录 → 尝试 ../ 序列加载任意文件"
+    ],
+    "示例": [
+     "version=../../../../tmp/malicious_model"
+    ],
+    "迁移场景": [
+     "路径遍历",
+     "RCE",
+     "文件上传"
+    ]
+   }
+  },
+  {
+   "id": 1041173,
+   "knowledge_point": "邮箱未验证导致永久 DoS",
+   "is_ai_likely_known": false,
+   "reason": "利用邮箱未验证占用他人邮箱导致业务功能永久 DoS 属于特定业务逻辑漏洞，训练数据中不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何需要邮箱验证的业务功能，如邀请、注册）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'邮箱验证缺失'的检测和利用模式。",
+   "skill_framework": {
+    "name": "邮箱验证缺失导致业务逻辑漏洞",
+    "适用场景": [
+     "用户注册",
+     "邀请系统",
+     "密码重置"
+    ],
+    "核心原理": [
+     "邮箱未验证即可修改，导致占用他人邮箱",
+     "业务功能（如邀请）依赖邮箱有效性，导致永久失败"
+    ],
+    "决策树": [
+     "IF 邮箱修改无需验证 AND 业务功能依赖邮箱 → 尝试占用他人邮箱导致 DoS"
+    ],
+    "示例": [
+     "注册账户后修改邮箱为受害者邮箱，管理员邀请该邮箱时失败"
+    ],
+    "迁移场景": [
+     "业务逻辑漏洞",
+     "DoS",
+     "账户接管"
+    ]
+   }
+  },
+  {
+   "id": 1113289,
+   "knowledge_point": "参数篡改绕过角色权限（issue_type 篡改）",
+   "is_ai_likely_known": false,
+   "reason": "通过篡改隐藏字段绕过角色权限属于常见但具体的绕过技巧，AI 可能知道一般原则，但此案例展示了具体参数篡改。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何基于客户端参数决定权限的场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'参数篡改绕过权限'的通用模式。",
+   "skill_framework": {
+    "name": "参数篡改绕过权限控制",
+    "适用场景": [
+     "角色权限控制",
+     "API 设计",
+     "业务逻辑"
+    ],
+    "核心原理": [
+     "服务端依赖客户端参数（如隐藏字段）决定权限",
+     "攻击者篡改参数绕过校验"
+    ],
+    "决策树": [
+     "IF 存在基于客户端参数的角色校验 → 尝试篡改关键字段（如 issue_type）"
+    ],
+    "示例": [
+     "将 issue_type 从 issue 改为 test_case，绕过角色限制"
+    ],
+    "迁移场景": [
+     "授权绕过",
+     "业务逻辑漏洞",
+     "API 安全"
+    ]
+   }
+  },
+  {
+   "id": 1083734,
+   "knowledge_point": "跨组件存储 XSS（恶意博客 URL）",
+   "is_ai_likely_known": true,
+   "reason": "存储 XSS 是通用知识，此案例展示了跨组件数据流，但核心是 XSS 过滤不足。",
+   "scene_frequency": "高频",
+   "migration_potential": "低（通用 XSS 防护，无特定技术细节）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 134061,
+   "knowledge_point": "反射 XSS 通过外部 JSON 加载",
+   "is_ai_likely_known": true,
+   "reason": "反射 XSS 是通用知识，此案例展示了参数控制外部资源加载，但核心是 XSS 过滤不足。",
+   "scene_frequency": "高频",
+   "migration_potential": "低（通用 XSS 防护，无特定技术细节）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 1096123,
+   "knowledge_point": "CSRF 到 XSS 攻击链",
+   "is_ai_likely_known": true,
+   "reason": "CSRF 和 XSS 是通用知识，组合攻击链也是常见模式。",
+   "scene_frequency": "高频",
+   "migration_potential": "低（通用攻击链，无特定技术细节）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 1218680,
+   "knowledge_point": "API 端点未授权访问",
+   "is_ai_likely_known": true,
+   "reason": "API 授权缺失是通用知识，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "低（通用原则，无特定技术细节）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 159498,
+   "knowledge_point": "MIME 嗅探绕过文件类型限制",
+   "is_ai_likely_known": false,
+   "reason": "利用 IE 的 MIME 嗅探将文本文件解析为 SVG 属于特定浏览器行为，训练数据中不常见。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（主要影响 IE，现代浏览器已禁用 MIME 嗅探）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。该知识点依赖特定浏览器行为，且场景低频。",
+   "skill_framework": null
+  },
+  {
+   "id": 2149124,
+   "knowledge_point": "HTTP 方法篡改绕过权限（PATCH 未覆盖）",
+   "is_ai_likely_known": true,
+   "reason": "HTTP 方法差异导致权限绕过是通用知识，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "低（通用原则，无特定技术细节）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 480778,
+   "knowledge_point": "Perl 正则触发堆缓冲区溢出",
+   "is_ai_likely_known": false,
+   "reason": "Perl 解释器内部函数的内存安全问题属于特定实现缺陷，训练数据中不常见。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（主要影响 Perl，迁移性有限）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。该漏洞高度依赖 Perl 具体版本。",
+   "skill_framework": null
+  }
+ ]
+}

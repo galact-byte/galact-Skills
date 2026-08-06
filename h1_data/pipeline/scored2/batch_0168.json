@@ -1,0 +1,306 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 5,
+  "not_worth": 10,
+  "top_ids": [
+   645299,
+   1402249,
+   883867,
+   213418,
+   928255
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 816143,
+   "knowledge_point": "低权限用户利用报告功能封禁管理员",
+   "is_ai_likely_known": true,
+   "reason": "权限检查缺失是通用知识，AI 已知，无特殊技巧。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（依赖具体业务逻辑）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1402249,
+   "knowledge_point": "控制字符过滤与 trim() 差异导致 CRLF 注入",
+   "is_ai_likely_known": false,
+   "reason": "涉及 trim() 与过滤逻辑的交互，非主流 AI 常见知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到文件名、URL、Header 等输入处理场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'输入规范化差异'的绕过模式。",
+   "skill_framework": {
+    "name": "输入规范化差异绕过（trim/过滤顺序）",
+    "适用场景": [
+     "文件名过滤",
+     "URL 参数处理",
+     "HTTP Header 注入"
+    ],
+    "核心原理": [
+     "过滤逻辑与后续处理对空白字符处理不一致",
+     "trim() 去除首尾空白但过滤可能遗漏"
+    ],
+    "决策树": [
+     "IF 存在输入过滤 AND 过滤前未 trim → 尝试在首尾插入控制字符"
+    ],
+    "示例": [
+     "文件名 'file%0d%0a.txt' 绕过过滤"
+    ],
+    "迁移场景": [
+     "CRLF 注入",
+     "日志注入",
+     "协议走私"
+    ]
+   }
+  },
+  {
+   "id": 437863,
+   "knowledge_point": "SVG 文件上传绕过白名单实现存储型 XSS",
+   "is_ai_likely_known": true,
+   "reason": "SVG XSS 是常见知识，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他允许嵌入脚本的文件类型）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：文件上传安全。",
+   "skill_framework": null
+  },
+  {
+   "id": 631589,
+   "knowledge_point": "Web 缓存欺骗导致用户信息泄露",
+   "is_ai_likely_known": true,
+   "reason": "缓存欺骗是常见攻击，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到缓存配置审计）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：Web 缓存安全。",
+   "skill_framework": null
+  },
+  {
+   "id": 1707977,
+   "knowledge_point": "桌面客户端渲染用户输入导致 XSS",
+   "is_ai_likely_known": true,
+   "reason": "客户端 XSS 是通用知识，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（依赖具体客户端技术）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 432600,
+   "knowledge_point": "路径遍历读取任意文件",
+   "is_ai_likely_known": true,
+   "reason": "路径遍历是常见漏洞，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到路径规范化）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：路径遍历与规范化。",
+   "skill_framework": null
+  },
+  {
+   "id": 645299,
+   "knowledge_point": "GraphQL 复合操作符绕过字段级授权",
+   "is_ai_likely_known": false,
+   "reason": "涉及 GraphQL 安全 schema 转换器对 _or 数组只处理首条件的缺陷，非主流 AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到 GraphQL 授权、查询重写、复合条件处理）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'安全层重写必须递归覆盖复合操作符'的通用判据。",
+   "skill_framework": {
+    "name": "GraphQL 复合操作符授权绕过",
+    "适用场景": [
+     "GraphQL API 安全",
+     "字段级授权",
+     "查询重写"
+    ],
+    "核心原理": [
+     "安全层重写 where 条件时未递归处理 _or/_and 等复合操作符",
+     "未处理的分支走未保护 schema"
+    ],
+    "决策树": [
+     "IF GraphQL 使用安全 schema 转换器 AND 支持 _or/_and → 构造重复条件测试所有分支"
+    ],
+    "示例": [
+     "_or:[{state:{_eq:soft_launched}},{state:{_eq:soft_launched}}]"
+    ],
+    "迁移场景": [
+     "GraphQL 授权绕过",
+     "查询过滤绕过",
+     "数据泄露"
+    ]
+   }
+  },
+  {
+   "id": 1110229,
+   "knowledge_point": "搜索引擎渲染第三方内容导致存储型 XSS",
+   "is_ai_likely_known": true,
+   "reason": "第三方内容注入是常见知识，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（依赖搜索引擎特定行为）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1400238,
+   "knowledge_point": "Apache 路径遍历编码绕过（CVE-2021-42013）",
+   "is_ai_likely_known": true,
+   "reason": "CVE 是公开漏洞，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他编码绕过）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：路径遍历与规范化。",
+   "skill_framework": null
+  },
+  {
+   "id": 213418,
+   "knowledge_point": "自声明权限未验证导致越权访问",
+   "is_ai_likely_known": false,
+   "reason": "业务逻辑信任用户自声明权限，非主流 AI 常见知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到注册、授权、多租户场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'自声明权限验证缺失'的通用模式。",
+   "skill_framework": {
+    "name": "自声明权限验证缺失",
+    "适用场景": [
+     "用户注册",
+     "授权流程",
+     "多租户访问控制"
+    ],
+    "核心原理": [
+     "系统信任用户自声明权限而不验证实际关联",
+     "导致越权访问"
+    ],
+    "决策树": [
+     "IF 注册或授权流程依赖用户声明 AND 无第三方验证 → 尝试声明高权限"
+    ],
+    "示例": [
+     "勾选'我有权签订协议'即可访问任意公司数据"
+    ],
+    "迁移场景": [
+     "IDOR",
+     "越权",
+     "业务逻辑漏洞"
+    ]
+   }
+  },
+  {
+   "id": 54641,
+   "knowledge_point": "CAPTCHA 绕过与邮件钓鱼",
+   "is_ai_likely_known": true,
+   "reason": "CAPTCHA 绕过是常见知识，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（依赖具体 API）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 928255,
+   "knowledge_point": "邮件伪造触发 GDPR 删除流程",
+   "is_ai_likely_known": false,
+   "reason": "利用邮件伪造和流程设计缺陷，非主流 AI 常见知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到邮件验证、流程安全）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'流程中邮件验证缺失'的通用模式。",
+   "skill_framework": {
+    "name": "邮件验证缺失导致流程滥用",
+    "适用场景": [
+     "账户删除",
+     "密码重置",
+     "敏感操作"
+    ],
+    "核心原理": [
+     "流程依赖邮件作为唯一验证，但未验证发件人真实性",
+     "攻击者伪造邮件触发操作"
+    ],
+    "决策树": [
+     "IF 操作仅通过邮件触发 AND 无二次验证 → 尝试伪造邮件"
+    ],
+    "示例": [
+     "伪造 GDPR 请求删除账户"
+    ],
+    "迁移场景": [
+     "账户接管",
+     "钓鱼",
+     "业务逻辑漏洞"
+    ]
+   }
+  },
+  {
+   "id": 883867,
+   "knowledge_point": "postMessage 传递恶意 pathname 触发 DOM XSS",
+   "is_ai_likely_known": false,
+   "reason": "涉及 postMessage 与 API 交互的绕过，非主流 AI 常见知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到 postMessage 安全、DOM XSS）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'postMessage 跨窗口注入'的通用模式。",
+   "skill_framework": {
+    "name": "postMessage 跨窗口注入",
+    "适用场景": [
+     "DOM XSS",
+     "跨窗口通信",
+     "前端 API 安全"
+    ],
+    "核心原理": [
+     "postMessage 未校验 origin 或数据，导致恶意数据被 API 使用",
+     "API 参数未严格过滤"
+    ],
+    "决策树": [
+     "IF 页面使用 postMessage 接收数据 AND 未校验 origin → 尝试注入恶意 pathname"
+    ],
+    "示例": [
+     "通过 postMessage 发送恶意 pathname 触发 replaceState"
+    ],
+    "迁移场景": [
+     "DOM XSS",
+     "前端漏洞",
+     "跨窗口攻击"
+    ]
+   }
+  },
+  {
+   "id": 310514,
+   "knowledge_point": "原型污染攻击",
+   "is_ai_likely_known": true,
+   "reason": "原型污染是常见知识，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到 JSON 解析安全）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：原型污染防护。",
+   "skill_framework": null
+  },
+  {
+   "id": 74004,
+   "knowledge_point": "strcpy 缓冲区溢出",
+   "is_ai_likely_known": true,
+   "reason": "缓冲区溢出是经典知识，AI 已知。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（依赖具体 C 代码）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，不单独固化。",
+   "skill_framework": null
+  }
+ ]
+}

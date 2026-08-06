@@ -1,0 +1,352 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 8,
+  "not_worth": 7,
+  "top_ids": [
+   1350444,
+   790634,
+   295339,
+   742588,
+   1334763,
+   106548,
+   192362,
+   182484
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1350444,
+   "knowledge_point": "利用执行超时和可预测临时目录名绕过清理实现RCE",
+   "is_ai_likely_known": false,
+   "reason": "涉及具体CMS（concrete5）的远程文件下载功能、超时错误处理、uniqid()可预测性，组合复杂，AI难以直接给出完整攻击链。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他具有临时文件下载功能且使用可预测随机数的系统）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'临时文件持久化与可预测目录名'攻击模式。",
+   "skill_framework": {
+    "name": "临时文件持久化与可预测目录名攻击",
+    "适用场景": [
+     "远程文件下载功能",
+     "临时目录清理机制",
+     "可预测随机数生成"
+    ],
+    "核心原理": [
+     "利用执行超时阻止清理逻辑",
+     "利用uniqid()时间戳可预测性暴力破解目录名"
+    ],
+    "决策树": [
+     "IF 存在远程文件下载 AND 临时目录名可预测 → 尝试触发超时并暴力破解"
+    ],
+    "示例": [
+     "concrete5案例：延迟请求触发超时，暴力破解uniqid目录名"
+    ],
+    "迁移场景": [
+     "CMS",
+     "文件管理器",
+     "任何下载远程文件的Web应用"
+    ]
+   }
+  },
+  {
+   "id": 790634,
+   "knowledge_point": "Git分支名与哈希解析优先级差异导致供应链投毒",
+   "is_ai_likely_known": false,
+   "reason": "Git解析规则细节（分支名优先于哈希）非主流AI已知，且GitLab未阻止40位十六进制分支名是具体行为差异。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何引用哈希的依赖管理场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'Git引用解析歧义'攻击模式。",
+   "skill_framework": {
+    "name": "Git引用解析歧义攻击",
+    "适用场景": [
+     "Git服务端",
+     "依赖管理",
+     "供应链安全"
+    ],
+    "核心原理": [
+     "Git解析分支名优先于哈希",
+     "创建与哈希同名的分支可劫持引用"
+    ],
+    "决策树": [
+     "IF Git服务允许创建40位十六进制分支名 → 尝试创建与目标哈希同名的分支"
+    ],
+    "示例": [
+     "GitLab案例：创建与提交哈希同名的分支，依赖者检出恶意内容"
+    ],
+    "迁移场景": [
+     "Git托管平台",
+     "CI/CD系统",
+     "包管理器"
+    ]
+   }
+  },
+  {
+   "id": 139626,
+   "knowledge_point": "API与UI状态不一致绕过凭据锁定",
+   "is_ai_likely_known": true,
+   "reason": "状态不一致是常见漏洞模式，AI可轻易理解。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何有状态检查的API）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：'状态不一致绕过'。",
+   "skill_framework": null
+  },
+  {
+   "id": 192362,
+   "knowledge_point": "整数溢出绕过容量检查导致堆溢出",
+   "is_ai_likely_known": true,
+   "reason": "整数溢出是通用漏洞类型，AI已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何内存分配场景）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：'整数溢出与内存破坏'。",
+   "skill_framework": null
+  },
+  {
+   "id": 361269,
+   "knowledge_point": "代理工具将远程地址映射为本地地址绕过信任检查",
+   "is_ai_likely_known": false,
+   "reason": "torsocks将.onion解析为回环地址的副作用是具体工具行为，AI可能不知。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他代理工具或地址解析场景）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 295339,
+   "knowledge_point": "邮件客户端RFC2047编码解析差异绕过DMARC",
+   "is_ai_likely_known": false,
+   "reason": "Mailsploit是具体漏洞，涉及多个客户端，AI可能不知细节。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何邮件客户端和MTA）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'邮件头编码解析差异'攻击模式。",
+   "skill_framework": {
+    "name": "邮件头编码解析差异攻击",
+    "适用场景": [
+     "邮件客户端",
+     "MTA",
+     "DMARC防护"
+    ],
+    "核心原理": [
+     "RFC2047编码解析不一致",
+     "显示地址与真实地址不同"
+    ],
+    "决策树": [
+     "IF 邮件客户端解析RFC2047不严格 → 尝试构造非标准编码绕过DMARC"
+    ],
+    "示例": [
+     "Mailsploit：利用编码差异伪造发件人"
+    ],
+    "迁移场景": [
+     "邮件安全",
+     "钓鱼防护"
+    ]
+   }
+  },
+  {
+   "id": 1208453,
+   "knowledge_point": "多阶段CSRF组合实现账户接管",
+   "is_ai_likely_known": true,
+   "reason": "多阶段CSRF是常见攻击模式，AI已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何多步骤敏感操作）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：'CSRF攻击与防御'。",
+   "skill_framework": null
+  },
+  {
+   "id": 50829,
+   "knowledge_point": "重放旧请求绕过权限检查",
+   "is_ai_likely_known": true,
+   "reason": "重放攻击是通用漏洞模式，AI已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何状态变化场景）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：'状态混淆与重放攻击'。",
+   "skill_framework": null
+  },
+  {
+   "id": 182484,
+   "knowledge_point": "编译器边界条件缺陷导致空指针解引用",
+   "is_ai_likely_known": false,
+   "reason": "mruby编译器在参数数量恰好为127时的逻辑缺陷是具体实现细节，AI难以直接知道。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他编译器或解释器）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'编译器边界条件缺陷'攻击模式。",
+   "skill_framework": {
+    "name": "编译器边界条件缺陷利用",
+    "适用场景": [
+     "编译器",
+     "解释器",
+     "参数处理"
+    ],
+    "核心原理": [
+     "边界值触发循环提前退出",
+     "特殊处理未执行导致类型混淆"
+    ],
+    "决策树": [
+     "IF 存在参数数量限制 → 尝试边界值（如127）触发逻辑缺陷"
+    ],
+    "示例": [
+     "mruby案例：127个参数导致空指针解引用"
+    ],
+    "迁移场景": [
+     "编程语言实现",
+     "虚拟机"
+    ]
+   }
+  },
+  {
+   "id": 742588,
+   "knowledge_point": "加密模式降级与密钥流重用破坏完整性",
+   "is_ai_likely_known": false,
+   "reason": "CFB/CTR模式密钥流重用和降级攻击是密码学高级主题，AI可能不知具体细节。",
+   "scene_frequency": "低频",
+   "migration_potential": "高（可迁移到任何使用CFB/CTR模式的加密系统）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'加密模式降级与密钥流重用'攻击模式。",
+   "skill_framework": {
+    "name": "加密模式降级与密钥流重用攻击",
+    "适用场景": [
+     "加密文件格式",
+     "协议设计",
+     "完整性保护"
+    ],
+    "核心原理": [
+     "CFB/CTR模式生成相同密钥流",
+     "降级攻击结合已知明文攻击"
+    ],
+    "决策树": [
+     "IF 加密模式支持降级 AND 使用CFB/CTR → 尝试降级并利用密钥流重用"
+    ],
+    "示例": [
+     "案例：降级为CFB后已知明文攻击注入内容"
+    ],
+    "迁移场景": [
+     "文件加密",
+     "通信协议"
+    ]
+   }
+  },
+  {
+   "id": 1334763,
+   "knowledge_point": "STARTTLS协议注入绕过加密",
+   "is_ai_likely_known": false,
+   "reason": "STARTTLS协议注入是具体协议漏洞，AI可能不知细节。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何使用STARTTLS的协议）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'STARTTLS协议注入'攻击模式。",
+   "skill_framework": {
+    "name": "STARTTLS协议注入攻击",
+    "适用场景": [
+     "SMTP",
+     "IMAP",
+     "POP3",
+     "FTP"
+    ],
+    "核心原理": [
+     "明文与加密切换点可被MITM利用",
+     "注入明文命令伪造响应"
+    ],
+    "决策树": [
+     "IF 协议使用STARTTLS → 尝试MITM注入明文命令"
+    ],
+    "示例": [
+     "CVE-2021-22947：注入IMAP FETCH命令"
+    ],
+    "迁移场景": [
+     "邮件协议",
+     "FTP",
+     "任何STARTTLS协议"
+    ]
+   }
+  },
+  {
+   "id": 106548,
+   "knowledge_point": "PHP错误处理中格式字符串漏洞",
+   "is_ai_likely_known": false,
+   "reason": "PHP核心错误处理函数未使用%s是具体实现缺陷，AI可能不知。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他语言或框架的错误处理）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'错误处理中的格式字符串漏洞'攻击模式。",
+   "skill_framework": {
+    "name": "错误处理中的格式字符串漏洞",
+    "适用场景": [
+     "编程语言实现",
+     "框架错误处理",
+     "日志系统"
+    ],
+    "核心原理": [
+     "用户输入直接作为格式字符串",
+     "利用%n实现任意内存写"
+    ],
+    "决策树": [
+     "IF 错误处理函数未使用%s → 尝试构造恶意输入触发格式字符串漏洞"
+    ],
+    "示例": [
+     "PHP案例：类名作为格式字符串导致代码执行"
+    ],
+    "迁移场景": [
+     "C/C++",
+     "PHP",
+     "Python",
+     "任何使用格式化字符串的语言"
+    ]
+   }
+  },
+  {
+   "id": 473811,
+   "knowledge_point": "符号链接绕过路径检查实现任意文件写入",
+   "is_ai_likely_known": true,
+   "reason": "符号链接攻击是通用漏洞模式，AI已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何解压或文件处理场景）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：'路径遍历与符号链接攻击'。",
+   "skill_framework": null
+  },
+  {
+   "id": 1861974,
+   "knowledge_point": "OAuth redirect_uri路径遍历绕过白名单",
+   "is_ai_likely_known": true,
+   "reason": "OAuth redirect_uri校验绕过是常见漏洞，AI已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何OAuth实现）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：'OAuth安全'。",
+   "skill_framework": null
+  },
+  {
+   "id": 168165,
+   "knowledge_point": "第三方插件加载外部内容导致DOM XSS",
+   "is_ai_likely_known": true,
+   "reason": "第三方插件滥用是常见XSS模式，AI已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他插件或组件）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：'XSS攻击与防御'。",
+   "skill_framework": null
+  }
+ ]
+}

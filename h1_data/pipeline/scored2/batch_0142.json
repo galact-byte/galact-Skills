@@ -1,0 +1,339 @@
+{
+ "summary": {
+  "total": 14,
+  "worth_skill": 8,
+  "not_worth": 6,
+  "top_ids": [
+   1145044,
+   8082,
+   2228,
+   505173,
+   1624172,
+   1644436,
+   351361,
+   226191,
+   2293731,
+   2012122,
+   163459
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1145044,
+   "knowledge_point": "Kubernetes EndpointSlice 与 Endpoints 验证差异导致宿主机网络劫持",
+   "is_ai_likely_known": false,
+   "reason": "该知识点涉及 Kubernetes 特定版本（1.19+）的 API 资源验证差异，属于较新且具体的框架行为，AI 训练数据可能不充分。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他云原生平台或 API 资源验证一致性检查）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'等价 API 资源验证一致性'的检查方法。",
+   "skill_framework": {
+    "name": "Kubernetes API 资源验证一致性检查",
+    "适用场景": [
+     "Kubernetes 安全审计",
+     "云原生渗透测试",
+     "权限提升检测"
+    ],
+    "核心原理": [
+     "不同 API 资源对同一类数据（如 IP 地址）的验证标准不一致",
+     "低权限用户可利用宽松验证的资源实现越权访问"
+    ],
+    "决策树": [
+     "IF 用户具有创建 Service 和 EndpointSlice 权限 → 尝试创建指向回环地址的 EndpointSlice → 探测宿主机服务"
+    ],
+    "示例": [
+     "创建 Service+EndpointSlice 指向 127.0.0.1:port，通过 pod 访问宿主机服务"
+    ],
+    "迁移场景": [
+     "其他云平台 API 资源验证",
+     "微服务网格配置"
+    ]
+   }
+  },
+  {
+   "id": 759247,
+   "knowledge_point": "礼品卡兑换的竞争条件漏洞",
+   "is_ai_likely_known": true,
+   "reason": "竞争条件导致重复兑换是常见漏洞类型，AI 普遍了解。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他业务逻辑中的一次性操作）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 192235,
+   "knowledge_point": "整数溢出导致内存破坏（mrb_ary_set）",
+   "is_ai_likely_known": true,
+   "reason": "整数溢出是经典漏洞类型，AI 普遍掌握。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他语言或框架的数组操作）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1010466,
+   "knowledge_point": "CSRF 触发存储型 XSS（文件名注入）",
+   "is_ai_likely_known": true,
+   "reason": "CSRF 和 XSS 组合攻击是常见技术，AI 普遍了解。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他上传场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 8082,
+   "knowledge_point": "密码重置令牌在邮箱变更后未失效导致账户接管",
+   "is_ai_likely_known": false,
+   "reason": "该漏洞涉及密码重置流程的状态管理缺陷，具体细节（邮箱变更后令牌仍有效）可能不是 AI 普遍掌握。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他状态变更场景，如手机号变更、密码变更）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'状态变更后令牌失效'的检查逻辑。",
+   "skill_framework": {
+    "name": "密码重置令牌失效检查",
+    "适用场景": [
+     "Web 应用密码重置功能",
+     "账户安全审计"
+    ],
+    "核心原理": [
+     "密码重置令牌应在关键状态变更（如邮箱、密码）后立即失效",
+     "状态混淆导致旧令牌仍可用"
+    ],
+    "决策树": [
+     "IF 存在密码重置功能 → 检查令牌是否在邮箱/密码变更后失效 → 若未失效则存在漏洞"
+    ],
+    "示例": [
+     "用户更改邮箱后，旧重置链接仍可重置密码"
+    ],
+    "迁移场景": [
+     "其他令牌失效场景",
+     "会话管理"
+    ]
+   }
+  },
+  {
+   "id": 2228,
+   "knowledge_point": "OAuth 登录 CSRF（无 state 参数）",
+   "is_ai_likely_known": true,
+   "reason": "OAuth CSRF 是常见漏洞，AI 普遍了解。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有 OAuth 流程）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 505173,
+   "knowledge_point": "游戏地图文件解析栈溢出导致 RCE",
+   "is_ai_likely_known": false,
+   "reason": "特定游戏引擎（GoldSrc）的文件解析漏洞，属于小众领域，AI 可能不了解。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（特定游戏引擎，迁移性差）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1624172,
+   "knowledge_point": "利用已知 CVE 实现未授权 RCE（Ivanti CSA）",
+   "is_ai_likely_known": true,
+   "reason": "CVE-2021-44529 是公开漏洞，AI 可能知道。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（特定产品漏洞，迁移性差）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1644436,
+   "knowledge_point": "IDOR 漏洞（修改对象 ID 查看他人信息）",
+   "is_ai_likely_known": true,
+   "reason": "IDOR 是常见漏洞类型，AI 普遍了解。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有对象引用场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 351361,
+   "knowledge_point": "通过不同 URL 路径绕过 MFA 检查",
+   "is_ai_likely_known": false,
+   "reason": "该漏洞涉及业务逻辑中的路径不一致，具体绕过方式可能不是 AI 普遍掌握。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他安全控制的一致性检查）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'安全控制一致性检查'的方法。",
+   "skill_framework": {
+    "name": "安全控制一致性检查",
+    "适用场景": [
+     "Web 应用安全审计",
+     "MFA 绕过检测"
+    ],
+    "核心原理": [
+     "不同入口可能应用不同的安全控制",
+     "攻击者可通过寻找未受保护的入口绕过安全措施"
+    ],
+    "决策树": [
+     "IF 存在多个功能入口 → 检查每个入口是否都实施了相同的安全控制（如 MFA） → 若不一致则存在绕过"
+    ],
+    "示例": [
+     "直接访问 /people/new/standard/ 绕过 MFA 创建用户"
+    ],
+    "迁移场景": [
+     "其他安全控制（如验证码、权限检查）"
+    ]
+   }
+  },
+  {
+   "id": 226191,
+   "knowledge_point": "Android 软链接和竞争条件导致任意文件泄露",
+   "is_ai_likely_known": false,
+   "reason": "该漏洞涉及 Android 文件系统操作和组件交互，具体利用方式可能不是 AI 普遍掌握。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他文件操作场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'文件路径竞争条件'的检测方法。",
+   "skill_framework": {
+    "name": "文件路径竞争条件检测",
+    "适用场景": [
+     "Android 应用安全测试",
+     "文件系统安全审计"
+    ],
+    "核心原理": [
+     "应用在文件操作过程中可能被替换路径（如软链接）",
+     "竞争窗口内可导致任意文件访问"
+    ],
+    "决策树": [
+     "IF 应用处理文件路径 → 检查是否使用软链接 → 尝试在操作过程中替换路径 → 观察是否泄露敏感文件"
+    ],
+    "示例": [
+     "发送邮件时替换附件路径为敏感文件"
+    ],
+    "迁移场景": [
+     "桌面应用",
+     "服务端文件处理"
+    ]
+   }
+  },
+  {
+   "id": 2293731,
+   "knowledge_point": "SSH ProxyCommand 命令注入",
+   "is_ai_likely_known": false,
+   "reason": "该漏洞涉及 SSH 配置的 ProxyCommand 特性，具体利用方式可能不是 AI 普遍掌握。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他命令拼接场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'命令注入检测'的通用方法。",
+   "skill_framework": {
+    "name": "命令注入检测",
+    "适用场景": [
+     "Web 应用安全测试",
+     "系统配置审计"
+    ],
+    "核心原理": [
+     "外部输入直接拼接到命令中",
+     "利用特殊字符注入额外命令"
+    ],
+    "决策树": [
+     "IF 存在外部输入 → 检查是否用于命令拼接 → 尝试注入特殊字符 → 观察是否执行"
+    ],
+    "示例": [
+     "恶意主机名注入到 ProxyCommand"
+    ],
+    "迁移场景": [
+     "所有命令执行场景"
+    ]
+   }
+  },
+  {
+   "id": 2012122,
+   "knowledge_point": "Rack Content-Disposition 解析 ReDoS 导致 DoS",
+   "is_ai_likely_known": false,
+   "reason": "该漏洞涉及特定框架（Rack）的正则表达式行为，具体细节可能不是 AI 普遍掌握。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他框架的正则表达式使用）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'正则表达式安全'的检查方法。",
+   "skill_framework": {
+    "name": "正则表达式安全检测",
+    "适用场景": [
+     "Web 应用安全测试",
+     "框架安全审计"
+    ],
+    "核心原理": [
+     "不安全的正则表达式可能导致灾难性回溯",
+     "攻击者可通过构造输入触发 ReDoS"
+    ],
+    "决策树": [
+     "IF 应用使用正则表达式解析用户输入 → 检查正则是否安全 → 尝试构造恶意输入 → 观察是否导致 CPU 耗尽"
+    ],
+    "示例": [
+     "构造恶意 Content-Disposition 头触发 Rack 解析 ReDoS"
+    ],
+    "迁移场景": [
+     "其他语言和框架的正则表达式使用"
+    ]
+   }
+  },
+  {
+   "id": 163459,
+   "knowledge_point": "整数溢出导致 realloc(0) 内存覆盖",
+   "is_ai_likely_known": false,
+   "reason": "该漏洞涉及特定函数（preferred_chunk_size）的整数溢出行为，具体细节可能不是 AI 普遍掌握。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他内存分配场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'整数溢出导致内存破坏'的检测方法。",
+   "skill_framework": {
+    "name": "整数溢出内存破坏检测",
+    "适用场景": [
+     "C/C++ 代码审计",
+     "内存安全测试"
+    ],
+    "核心原理": [
+     "整数溢出可能导致函数返回异常值",
+     "异常值可能被用于内存分配，导致内存破坏"
+    ],
+    "决策树": [
+     "IF 存在整数运算 → 检查是否可能溢出 → 尝试构造超大输入 → 观察是否导致异常行为"
+    ],
+    "示例": [
+     "构造超大 target 使 preferred_chunk_size 返回 0，导致 realloc(0)"
+    ],
+    "迁移场景": [
+     "其他语言的内存管理"
+    ]
+   }
+  },
+  {
+   "id": 1067276,
+   "knowledge_point": "公开 API 端点未验证参数导致任意邮件发送",
+   "is_ai_likely_known": true,
+   "reason": "API 未验证参数是常见漏洞，AI 普遍了解。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他 API 端点）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  }
+ ]
+}

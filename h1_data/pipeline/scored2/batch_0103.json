@@ -1,0 +1,365 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 8,
+  "not_worth": 7,
+  "top_ids": [
+   868834,
+   2168002,
+   809248,
+   1280002,
+   1976449,
+   2038484,
+   903521,
+   2410774
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 868834,
+   "knowledge_point": "Node.js 默认超时配置导致缓慢请求 DoS",
+   "is_ai_likely_known": true,
+   "reason": "Node.js 默认超时设置为 0 是已知行为，AI 可能知道，但具体利用方式（缓慢发送请求体）需要系统化测试。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有基于 Node.js 的 Web 服务，以及类似超时配置的框架）",
+   "source_quality": "中",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'未设置请求超时'的检测与利用方法。",
+   "skill_framework": {
+    "name": "Node.js 请求超时缺失检测与利用",
+    "适用场景": [
+     "Node.js Web 服务",
+     "任何依赖默认超时配置的框架"
+    ],
+    "核心原理": [
+     "Node.js 默认超时设置为 0（无限）",
+     "缓慢发送请求体可绕过超时检测"
+    ],
+    "决策树": [
+     "IF 目标为 Node.js 服务 AND 未显式设置超时 → 尝试缓慢发送请求体"
+    ],
+    "示例": [
+     "使用 slowloris 工具发送缓慢请求"
+    ],
+    "迁移场景": [
+     "DoS 测试",
+     "资源耗尽漏洞检测"
+    ]
+   }
+  },
+  {
+   "id": 299424,
+   "knowledge_point": "XML 实体绕过 SVG 白名单实现存储 XSS",
+   "is_ai_likely_known": true,
+   "reason": "XML 实体绕过是常见知识，AI 可能知道，但具体到 SVG 白名单场景需要针对性测试。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他 XML 解析场景，如文件上传、配置解析）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1280002,
+   "knowledge_point": "Mermaid 原型污染导致存储 XSS",
+   "is_ai_likely_known": false,
+   "reason": "Mermaid 配置合并中的原型污染是特定框架行为，AI 可能不知道具体细节。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何使用不安全合并的 JavaScript 库）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'原型污染导致 XSS'的检测与利用方法。",
+   "skill_framework": {
+    "name": "原型污染导致 XSS 的检测与利用",
+    "适用场景": [
+     "使用不安全合并的 JavaScript 应用",
+     "Mermaid 图表渲染",
+     "任何用户可控配置合并"
+    ],
+    "核心原理": [
+     "__proto__ 属性污染 Object 原型",
+     "污染后影响所有对象，可注入恶意 HTML"
+    ],
+    "决策树": [
+     "IF 应用使用递归合并函数 AND 未过滤 __proto__ → 尝试构造恶意 JSON"
+    ],
+    "示例": [
+     "在 Mermaid 配置中注入 __proto__ 属性"
+    ],
+    "迁移场景": [
+     "XSS 攻击",
+     "DoS 攻击",
+     "RCE 攻击"
+    ]
+   }
+  },
+  {
+   "id": 2168002,
+   "knowledge_point": "导入流程中 /proc/self/fd 竞速导致 XSS 和 DoS",
+   "is_ai_likely_known": false,
+   "reason": "利用 /proc/self/fd 引用上传临时文件是高级技巧，AI 可能不知道具体细节。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何导入文件路径与上传临时文件交互的场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'导入路径与上传临时文件竞速'的检测与利用方法。",
+   "skill_framework": {
+    "name": "导入路径与上传临时文件竞速利用",
+    "适用场景": [
+     "文件导入功能",
+     "任何使用 /proc/self/fd 的场景"
+    ],
+    "核心原理": [
+     "上传临时文件在删除前可通过 /proc/self/fd/N 访问",
+     "导入流程可能未检查路径，导致读取临时文件"
+    ],
+    "决策树": [
+     "IF 存在文件导入功能 AND 导入路径可控制 → 尝试使用 /proc/self/fd/N 引用上传文件"
+    ],
+    "示例": [
+     "上传恶意 emoji 文件，然后通过 pak=/proc/self/fd/N 导入"
+    ],
+    "迁移场景": [
+     "XSS 攻击",
+     "DoS 攻击",
+     "文件读取"
+    ]
+   }
+  },
+  {
+   "id": 1976449,
+   "knowledge_point": "X-Forwarded-Host 缓存投毒导致 DoS",
+   "is_ai_likely_known": true,
+   "reason": "缓存投毒是常见知识，AI 可能知道，但具体到 X-Forwarded-Host 头需要针对性测试。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有使用缓存服务器的场景）",
+   "source_quality": "中",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'缓存投毒'的检测与利用方法。",
+   "skill_framework": {
+    "name": "缓存投毒检测与利用",
+    "适用场景": [
+     "使用缓存服务器的 Web 应用",
+     "CDN 配置",
+     "反向代理"
+    ],
+    "核心原理": [
+     "缓存键未包含某些请求头（如 X-Forwarded-Host）",
+     "后端错误响应被缓存，导致持久化 DoS"
+    ],
+    "决策树": [
+     "IF 存在缓存服务器 AND 缓存键未包含 X-Forwarded-Host → 尝试发送恶意 X-Forwarded-Host 请求"
+    ],
+    "示例": [
+     "发送带恶意 X-Forwarded-Host 的请求，使后端返回 404，缓存该响应"
+    ],
+    "迁移场景": [
+     "DoS 攻击",
+     "XSS 攻击",
+     "信息泄露"
+    ]
+   }
+  },
+  {
+   "id": 141629,
+   "knowledge_point": "API 绕过 UI 限制移除管理员",
+   "is_ai_likely_known": true,
+   "reason": "API 与 UI 不一致是常见问题，AI 可能知道，但具体到权限校验需要针对性测试。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到所有依赖 UI 隐藏而非后端校验的场景）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 921717,
+   "knowledge_point": "可预测 token 和缺失访问控制导致 IDOR",
+   "is_ai_likely_known": true,
+   "reason": "IDOR 和可预测 token 是常见知识，AI 可能知道，但具体到 token 生成逻辑需要针对性测试。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到所有使用可预测标识符的场景）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 2038484,
+   "knowledge_point": "OpenSSL 惰性生成导致 DiffieHellman 密钥重用",
+   "is_ai_likely_known": false,
+   "reason": "OpenSSL 的惰性生成行为是特定实现细节，AI 可能不知道。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到所有使用 OpenSSL 的密码学操作）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'密码学库惰性生成'的检测与利用方法。",
+   "skill_framework": {
+    "name": "密码学库惰性生成检测与利用",
+    "适用场景": [
+     "使用 OpenSSL 的 Node.js 应用",
+     "任何依赖密码学库的密钥生成"
+    ],
+    "核心原理": [
+     "设置私钥后调用 generateKeys() 不会重新生成密钥",
+     "导致密钥重用，破坏前向保密"
+    ],
+    "决策树": [
+     "IF 使用 DiffieHellman 且设置私钥后调用 generateKeys() → 检查密钥是否变化"
+    ],
+    "示例": [
+     "在 Node.js 中设置私钥后调用 generateKeys()，发现私钥不变"
+    ],
+    "迁移场景": [
+     "密码学攻击",
+     "前向保密失效"
+    ]
+   }
+  },
+  {
+   "id": 228825,
+   "knowledge_point": "联邦共享绕过 .htaccess 黑名单实现 RCE",
+   "is_ai_likely_known": false,
+   "reason": "利用联邦共享移动 .htaccess 文件是特定场景，AI 可能不知道。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他文件复制场景）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：文件上传与执行链。",
+   "skill_framework": null
+  },
+  {
+   "id": 56626,
+   "knowledge_point": "UI 隐藏但后端未授权导致权限提升",
+   "is_ai_likely_known": true,
+   "reason": "前端隐藏不等于后端授权是常见误区，AI 可能知道。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到所有依赖 UI 隐藏的场景）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 903521,
+   "knowledge_point": "Fastify 默认 allErrors:true 导致 DoS",
+   "is_ai_likely_known": false,
+   "reason": "Fastify 默认配置的具体行为是特定框架细节，AI 可能不知道。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到所有使用 AJV 校验的框架）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'框架默认配置导致 DoS'的检测与利用方法。",
+   "skill_framework": {
+    "name": "框架默认配置导致 DoS 检测与利用",
+    "适用场景": [
+     "使用 Fastify 的 Node.js 应用",
+     "任何使用 AJV 校验的框架"
+    ],
+    "核心原理": [
+     "allErrors:true 使校验继续执行，即使有 maxItems 限制",
+     "超大数组触发 uniqueItems 检查，CPU 耗尽"
+    ],
+    "决策树": [
+     "IF 使用 Fastify 且未显式设置 allErrors:false → 尝试发送超大数组"
+    ],
+    "示例": [
+     "发送包含大量重复元素的数组，触发 uniqueItems 检查"
+    ],
+    "迁移场景": [
+     "DoS 攻击",
+     "资源耗尽漏洞检测"
+    ]
+   }
+  },
+  {
+   "id": 809248,
+   "knowledge_point": "信任边界内组件不可信导致 SSRF",
+   "is_ai_likely_known": false,
+   "reason": "Runner 对 executor 的信任模型缺陷是特定场景，AI 可能不知道。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何信任边界内的组件交互）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'信任边界内组件不可信'的检测与利用方法。",
+   "skill_framework": {
+    "name": "信任边界内组件不可信检测与利用",
+    "适用场景": [
+     "CI/CD 系统",
+     "任何有信任边界的分布式系统"
+    ],
+    "核心原理": [
+     "信任边界内的组件可能被攻击者控制",
+     "下游组件必须限制其行为，如禁止重定向"
+    ],
+    "决策树": [
+     "IF 存在信任边界内的组件 AND 下游组件未限制重定向 → 尝试替换组件并重定向请求"
+    ],
+    "示例": [
+     "在 GitLab Runner 中替换 dockerd 为恶意服务器，重定向请求到内网"
+    ],
+    "迁移场景": [
+     "SSRF 攻击",
+     "内网渗透",
+     "权限提升"
+    ]
+   }
+  },
+  {
+   "id": 311333,
+   "knowledge_point": "deep-extend 原型污染",
+   "is_ai_likely_known": true,
+   "reason": "原型污染是常见知识，AI 可能知道，但具体到 deep-extend 库需要针对性测试。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到所有使用不安全合并的 JavaScript 库）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：原型污染检测与利用。",
+   "skill_framework": null
+  },
+  {
+   "id": 2410774,
+   "knowledge_point": "QUIC 证书验证绕过",
+   "is_ai_likely_known": false,
+   "reason": "QUIC 证书验证绕过是特定协议实现细节，AI 可能不知道。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到所有使用 QUIC 的客户端）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'协议实现错误处理绕过'的检测与利用方法。",
+   "skill_framework": {
+    "name": "协议实现错误处理绕过检测与利用",
+    "适用场景": [
+     "使用 QUIC 的客户端",
+     "任何依赖错误处理逻辑的协议实现"
+    ],
+    "核心原理": [
+     "错误处理逻辑缺陷导致证书验证被跳过",
+     "可导致 MITM 攻击"
+    ],
+    "决策树": [
+     "IF 使用 QUIC 且存在错误处理逻辑 → 尝试构造恶意参数触发错误"
+    ],
+    "示例": [
+     "构造恶意参数使 QUIC 证书验证被跳过"
+    ],
+    "迁移场景": [
+     "MITM 攻击",
+     "认证绕过"
+    ]
+   }
+  },
+  {
+   "id": 369185,
+   "knowledge_point": "浏览器协议处理器宽松处理导致无确认启动",
+   "is_ai_likely_known": false,
+   "reason": "Brave 对协议处理器的宽松处理是特定浏览器行为，AI 可能不知道。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他浏览器或协议处理器）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：浏览器协议处理器安全。",
+   "skill_framework": null
+  }
+ ]
+}

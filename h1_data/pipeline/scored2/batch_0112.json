@@ -1,0 +1,301 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 5,
+  "not_worth": 10,
+  "top_ids": [
+   1238099,
+   463828,
+   1539426,
+   717729,
+   18992
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 463828,
+   "knowledge_point": "嵌入式表单权限继承缺陷导致用户离开项目后仍可访问",
+   "is_ai_likely_known": false,
+   "reason": "嵌入式表单的权限继承问题属于特定业务逻辑缺陷，AI训练数据中不常见，需要结合具体场景才能发现。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他嵌入式组件或第三方集成场景）",
+   "source_quality": "中",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'权限状态未同步更新'的检测与修复模式。",
+   "skill_framework": {
+    "name": "嵌入式组件权限继承缺陷检测",
+    "适用场景": [
+     "第三方嵌入式表单",
+     "OAuth授权",
+     "跨域iframe集成"
+    ],
+    "核心原理": [
+     "权限变更后未同步撤销已分发的访问令牌或会话",
+     "嵌入式组件可能绕过主应用的权限检查"
+    ],
+    "决策树": [
+     "IF 存在嵌入式组件 AND 用户权限变更后仍可访问 → 检查令牌生命周期和权限同步机制"
+    ],
+    "示例": [
+     "用户离开项目后仍可通过嵌入式表单访问项目信息"
+    ],
+    "迁移场景": [
+     "SaaS集成",
+     "API授权",
+     "单点登录"
+    ]
+   }
+  },
+  {
+   "id": 1539426,
+   "knowledge_point": "篡改响应中的布尔值绕过密码重置验证",
+   "is_ai_likely_known": true,
+   "reason": "这是常见的客户端信任问题，AI通常知道服务端应独立验证状态。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（适用于任何客户端可篡改的响应字段）",
+   "source_quality": "通用",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，但重点在于系统化检测客户端信任服务端响应的模式。",
+   "skill_framework": {
+    "name": "客户端响应篡改检测",
+    "适用场景": [
+     "密码重置",
+     "支付流程",
+     "权限验证"
+    ],
+    "核心原理": [
+     "客户端可篡改响应中的状态字段",
+     "服务端未独立验证关键状态"
+    ],
+    "决策树": [
+     "IF 响应包含布尔状态字段 AND 服务端未验证 → 尝试篡改该字段"
+    ],
+    "示例": [
+     "修改status为true绕过密码重置验证"
+    ],
+    "迁移场景": [
+     "任何前后端交互",
+     "API设计"
+    ]
+   }
+  },
+  {
+   "id": 136986,
+   "knowledge_point": "Padding oracle攻击利用AES-NI CBC MAC检查",
+   "is_ai_likely_known": true,
+   "reason": "Padding oracle是已知攻击类型，且此漏洞已有公开writeup。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（特定于OpenSSL版本和AES-NI）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 405694,
+   "knowledge_point": "npm模块未过滤参数导致命令注入",
+   "is_ai_likely_known": true,
+   "reason": "命令注入是常见漏洞，AI通常知道避免使用execSync。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他供应链场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：供应链安全检测。",
+   "skill_framework": null
+  },
+  {
+   "id": 867164,
+   "knowledge_point": "外部存储应用未按用户选项保存密码导致数据过度收集",
+   "is_ai_likely_known": false,
+   "reason": "功能开关与数据持久化逻辑脱节属于特定业务逻辑缺陷，AI训练数据中不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他数据收集场景）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 390847,
+   "knowledge_point": "原型污染漏洞利用__proto__",
+   "is_ai_likely_known": true,
+   "reason": "原型污染是已知漏洞类型，AI通常知道使用Object.create(null)。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他JavaScript应用）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：JavaScript原型污染防护。",
+   "skill_framework": null
+  },
+  {
+   "id": 415622,
+   "knowledge_point": "访问控制缺失导致PII泄露",
+   "is_ai_likely_known": true,
+   "reason": "访问控制缺失是常见问题，AI通常知道实施严格访问控制。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（适用于任何敏感数据端点）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：访问控制审计。",
+   "skill_framework": null
+  },
+  {
+   "id": 165862,
+   "knowledge_point": "IDOR通过未校验的retainer_id跨账户添加发票",
+   "is_ai_likely_known": true,
+   "reason": "IDOR是常见漏洞，AI通常知道校验资源所有权。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（适用于任何资源ID）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：IDOR检测与防护。",
+   "skill_framework": null
+  },
+  {
+   "id": 1238099,
+   "knowledge_point": "HTTP请求走私利用chunk extension解析分歧",
+   "is_ai_likely_known": false,
+   "reason": "chunk extension的解析分歧属于特定协议行为，AI训练数据中不常见，需要深入理解llhttp和ATS的差异。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何双解析器场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'解析分歧导致请求走私'的检测与利用框架。",
+   "skill_framework": {
+    "name": "HTTP请求走私检测与利用",
+    "适用场景": [
+     "代理服务器",
+     "负载均衡",
+     "CDN"
+    ],
+    "核心原理": [
+     "不同组件对HTTP请求的解析差异",
+     "利用差异构造走私请求"
+    ],
+    "决策树": [
+     "IF 存在前端代理和后端服务器 → 测试chunk extension等解析差异"
+    ],
+    "示例": [
+     "在chunk extension中注入LF导致llhttp和ATS解析分歧"
+    ],
+    "迁移场景": [
+     "任何双解析器架构",
+     "WAF绕过"
+    ]
+   }
+  },
+  {
+   "id": 351376,
+   "knowledge_point": "XSS利用class属性模仿登录框进行钓鱼",
+   "is_ai_likely_known": true,
+   "reason": "XSS本身常见，但利用class属性模仿功能属于创造性利用，AI可能不完全掌握。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他社会工程学攻击）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：XSS防护与利用。",
+   "skill_framework": null
+  },
+  {
+   "id": 209736,
+   "knowledge_point": "DOM XSS通过URL参数直接拼接脚本源",
+   "is_ai_likely_known": true,
+   "reason": "DOM XSS是常见漏洞，AI通常知道对URL参数进行编码。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（适用于任何DOM操作）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：XSS防护与利用。",
+   "skill_framework": null
+  },
+  {
+   "id": 717729,
+   "knowledge_point": "GraphQL mutation参数分离导致越权",
+   "is_ai_likely_known": false,
+   "reason": "GraphQL参数分离绕过授权检查属于特定业务逻辑缺陷，AI训练数据中不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何GraphQL API）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'GraphQL授权检查缺陷'的检测与利用框架。",
+   "skill_framework": {
+    "name": "GraphQL授权检查缺陷检测",
+    "适用场景": [
+     "GraphQL API",
+     "微服务架构"
+    ],
+    "核心原理": [
+     "授权检查基于关联对象而非对象本身",
+     "参数分离导致越权"
+    ],
+    "决策树": [
+     "IF 存在GraphQL mutation AND 授权检查不完整 → 尝试分离参数"
+    ],
+    "示例": [
+     "修改swag_id绕过program_id验证"
+    ],
+    "迁移场景": [
+     "任何API设计",
+     "权限管理"
+    ]
+   }
+  },
+  {
+   "id": 18992,
+   "knowledge_point": "客户端可控步骤参数跳过注册验证",
+   "is_ai_likely_known": true,
+   "reason": "状态混淆是常见漏洞，AI通常知道服务端维护状态。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（适用于任何多步骤流程）",
+   "source_quality": "通用",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，但重点在于系统化检测客户端可控状态参数。",
+   "skill_framework": {
+    "name": "客户端状态参数篡改检测",
+    "适用场景": [
+     "注册流程",
+     "支付流程",
+     "多步骤表单"
+    ],
+    "核心原理": [
+     "客户端可篡改步骤参数",
+     "服务端未验证步骤顺序"
+    ],
+    "决策树": [
+     "IF 存在多步骤流程 AND 步骤参数由客户端传递 → 尝试篡改步骤参数"
+    ],
+    "示例": [
+     "修改RegStep跳过验证步骤"
+    ],
+    "迁移场景": [
+     "任何状态机",
+     "业务流程"
+    ]
+   }
+  },
+  {
+   "id": 244721,
+   "knowledge_point": "Open Redirect利用反斜杠绕过域名白名单",
+   "is_ai_likely_known": true,
+   "reason": "URL解析差异是常见绕过技术，AI通常知道使用白名单列表。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（适用于任何URL校验）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：URL校验与重定向防护。",
+   "skill_framework": null
+  },
+  {
+   "id": 114879,
+   "knowledge_point": "注册与编辑资料过滤不一致导致存储型XSS",
+   "is_ai_likely_known": true,
+   "reason": "输入过滤不一致是常见问题，AI通常知道统一过滤逻辑。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（适用于任何输入点）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：XSS防护与利用。",
+   "skill_framework": null
+  }
+ ]
+}

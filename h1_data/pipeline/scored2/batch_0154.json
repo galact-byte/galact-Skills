@@ -1,0 +1,306 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 5,
+  "not_worth": 10,
+  "top_ids": [
+   202177,
+   2230915,
+   921704,
+   1074047,
+   380878
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 202177,
+   "knowledge_point": "OAuth/OpenID Connect id_token 受众验证缺失导致跨应用认证",
+   "is_ai_likely_known": false,
+   "reason": "虽然 OAuth 基础概念常见，但具体到 id_token 的 audience 验证缺失导致跨应用接管的案例在训练数据中不常见，且需要结合具体实现细节。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有 OAuth/OIDC 集成场景，包括第三方登录、API 授权）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 OAuth/OIDC 认证验证的检查清单和绕过方法。",
+   "skill_framework": {
+    "name": "OAuth/OIDC 认证验证缺陷检测与利用",
+    "适用场景": [
+     "第三方登录集成",
+     "API 授权",
+     "跨应用认证"
+    ],
+    "核心原理": [
+     "id_token 必须验证 audience 和 issuer",
+     "未验证 audience 可导致其他应用的 token 被接受"
+    ],
+    "决策树": [
+     "IF 应用接受外部 id_token AND 未验证 audience → 尝试使用其他应用的 token"
+    ],
+    "示例": [
+     "获取其他应用的 Google id_token 提交给目标 API"
+    ],
+    "迁移场景": [
+     "OAuth",
+     "OIDC",
+     "JWT 验证"
+    ]
+   }
+  },
+  {
+   "id": 1626210,
+   "knowledge_point": "路径遍历绕过简单字符串包含检查",
+   "is_ai_likely_known": true,
+   "reason": "路径遍历绕过技术（如 ../）是通用知识，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到文件读取、下载功能）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 2230915,
+   "knowledge_point": "X-Forwarded-For 头伪造绕过 IP 限速",
+   "is_ai_likely_known": false,
+   "reason": "虽然 X-Forwarded-For 绕过是已知技术，但结合 trusted_proxy 配置错误的具体场景，AI 可能不会主动想到，且需要系统化检测。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有基于 IP 的访问控制、限速、WAF 规则）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化代理信任配置检测和绕过方法。",
+   "skill_framework": {
+    "name": "代理信任配置缺陷检测与绕过",
+    "适用场景": [
+     "IP 限速",
+     "访问控制",
+     "WAF 绕过"
+    ],
+    "核心原理": [
+     "应用信任 X-Forwarded-For 头但未验证代理",
+     "攻击者可伪造 IP 绕过限制"
+    ],
+    "决策树": [
+     "IF 应用使用 IP 限速 AND 配置了 trusted_proxy → 尝试发送 X-Forwarded-For 头"
+    ],
+    "示例": [
+     "发送 X-Forwarded-For: 1.2.3.4 绕过限速"
+    ],
+    "迁移场景": [
+     "暴力破解防护",
+     "基于 IP 的访问控制",
+     "日志伪造"
+    ]
+   }
+  },
+  {
+   "id": 141212,
+   "knowledge_point": "整数下溢导致任意空字节写入",
+   "is_ai_likely_known": true,
+   "reason": "整数溢出/下溢是通用漏洞类型，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他 C 库函数）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 426147,
+   "knowledge_point": "CORS 配置错误导致账户接管",
+   "is_ai_likely_known": true,
+   "reason": "CORS 配置错误是常见漏洞，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到 CORS 配置检查）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 382666,
+   "knowledge_point": "盲 XSS 通过邮件模板注入并在客户端 WebView 执行",
+   "is_ai_likely_known": true,
+   "reason": "XSS 注入邮件模板是已知技术，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到邮件服务、WebView 渲染）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 921704,
+   "knowledge_point": "缓存投毒利用 CORS 配置错误导致 DoS",
+   "is_ai_likely_known": false,
+   "reason": "缓存投毒与 CORS 交互的特定攻击链在训练数据中不常见，需要系统化理解缓存键控和 Origin 回显。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到所有缓存与 CORS 交互的场景，如 CDN、反向代理）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化缓存投毒与 CORS 交互的检测和利用方法。",
+   "skill_framework": {
+    "name": "缓存投毒与 CORS 交互攻击",
+    "适用场景": [
+     "CDN 缓存",
+     "反向代理",
+     "API 网关"
+    ],
+    "核心原理": [
+     "缓存键未包含 Origin 头",
+     "服务端回显任意 Origin 导致缓存投毒"
+    ],
+    "决策树": [
+     "IF 缓存响应包含 Access-Control-Allow-Origin AND 缓存键未包含 Origin → 尝试投毒"
+    ],
+    "示例": [
+     "发送恶意 Origin 请求，缓存后其他用户被拒绝"
+    ],
+    "迁移场景": [
+     "DoS",
+     "数据泄露",
+     "缓存投毒"
+    ]
+   }
+  },
+  {
+   "id": 1182864,
+   "knowledge_point": "子域名接管通过云 IP 释放",
+   "is_ai_likely_known": true,
+   "reason": "子域名接管是常见漏洞，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到云资源管理）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 296907,
+   "knowledge_point": "GitLab Pages 自定义域名验证缺失",
+   "is_ai_likely_known": true,
+   "reason": "子域名接管和域名验证缺失是已知问题，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他自定义域名服务）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 47227,
+   "knowledge_point": "竞争条件导致 double free",
+   "is_ai_likely_known": true,
+   "reason": "竞争条件和 double free 是通用漏洞类型，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（依赖具体环境）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1074047,
+   "knowledge_point": "OAuth 登录未校验邮箱导致预账户接管",
+   "is_ai_likely_known": false,
+   "reason": "预账户接管是特定业务逻辑漏洞，AI 可能不熟悉，需要系统化检测。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到所有 OAuth 登录流程）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化预账户接管检测和利用方法。",
+   "skill_framework": {
+    "name": "预账户接管检测与利用",
+    "适用场景": [
+     "OAuth 登录",
+     "邮箱注册",
+     "账户绑定"
+    ],
+    "核心原理": [
+     "OAuth 登录未校验邮箱是否已存在",
+     "攻击者可预注册邮箱接管账户"
+    ],
+    "决策树": [
+     "IF OAuth 登录允许新邮箱注册 AND 未检查邮箱存在性 → 尝试预注册"
+    ],
+    "示例": [
+     "用受害者邮箱注册，受害者 OAuth 登录后攻击者用密码登录"
+    ],
+    "迁移场景": [
+     "账户接管",
+     "身份验证",
+     "业务逻辑漏洞"
+    ]
+   }
+  },
+  {
+   "id": 492512,
+   "knowledge_point": "解压时符号链接攻击导致任意文件写入",
+   "is_ai_likely_known": true,
+   "reason": "符号链接攻击是已知技术，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到文件上传、解压功能）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 629150,
+   "knowledge_point": "GraphQL 输入验证缺陷导致业务功能禁用",
+   "is_ai_likely_known": true,
+   "reason": "GraphQL 输入验证是通用知识，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到 GraphQL API）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 380878,
+   "knowledge_point": "原型污染通过 constructor.prototype 绕过过滤",
+   "is_ai_likely_known": false,
+   "reason": "原型污染是已知漏洞，但通过 constructor.prototype 绕过过滤的具体技术需要系统化理解，且 AI 可能不熟悉 defaults-deep 库的特定行为。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到所有 JavaScript 对象合并场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化原型污染检测和利用方法。",
+   "skill_framework": {
+    "name": "原型污染检测与利用",
+    "适用场景": [
+     "JavaScript 对象合并",
+     "配置处理",
+     "JSON 解析"
+    ],
+    "核心原理": [
+     "递归合并未过滤 constructor.prototype",
+     "污染 Object.prototype 影响所有对象"
+    ],
+    "决策树": [
+     "IF 存在递归合并 AND 未过滤 __proto__/constructor → 尝试污染"
+    ],
+    "示例": [
+     "构造 {constructor: {prototype: {polluted: true}}}"
+    ],
+    "迁移场景": [
+     "RCE",
+     "DoS",
+     "逻辑漏洞"
+    ]
+   }
+  },
+  {
+   "id": 490379,
+   "knowledge_point": "路径遍历访问点文件内部内容绕过配置",
+   "is_ai_likely_known": true,
+   "reason": "路径遍历和点文件访问是通用知识，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到文件访问控制）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，无需单独固化。",
+   "skill_framework": null
+  }
+ ]
+}

@@ -1,0 +1,372 @@
+{
+ "summary": {
+  "total": 14,
+  "worth_skill": 8,
+  "not_worth": 6,
+  "top_ids": [
+   213437,
+   39658,
+   425007,
+   474262,
+   1544133,
+   941178,
+   783360,
+   633231
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 425007,
+   "knowledge_point": "Open Graph 标签注入导致持久性 XSS",
+   "is_ai_likely_known": false,
+   "reason": "Open Graph 标签的信任模型和绕过白名单的具体方法不是通用知识，需要结合具体平台行为。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何支持 oEmbed/Open Graph 的内容平台）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'内容嵌入信任模型绕过'的原理和检测方法。",
+   "skill_framework": {
+    "name": "内容嵌入信任模型绕过（Open Graph/oEmbed）",
+    "适用场景": [
+     "内容平台",
+     "社交网络",
+     "任何支持嵌入外部内容的系统"
+    ],
+    "核心原理": [
+     "平台信任嵌入标签但未验证内容",
+     "利用标签属性注入恶意内容"
+    ],
+    "决策树": [
+     "IF 平台支持嵌入外部内容 AND 未严格验证标签 → 尝试注入恶意 HTML/JS"
+    ],
+    "示例": [
+     "设置 og:video 为恶意 HTML 文件"
+    ],
+    "迁移场景": [
+     "XSS",
+     "钓鱼",
+     "内容欺骗"
+    ]
+   }
+  },
+  {
+   "id": 474262,
+   "knowledge_point": "模板字符串未转义导致 XSS",
+   "is_ai_likely_known": false,
+   "reason": "特定框架（Rails）的 JavaScriptHelper 未转义模板字符串，属于框架特定行为，AI 可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他模板引擎或框架的类似转义缺陷）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'模板字符串转义缺陷'的检测和利用方法。",
+   "skill_framework": {
+    "name": "模板字符串转义缺陷检测",
+    "适用场景": [
+     "Web 应用",
+     "模板引擎",
+     "任何使用模板字符串拼接输出的场景"
+    ],
+    "核心原理": [
+     "框架未对模板字符串中的特殊字符进行转义",
+     "攻击者注入 ${} 或反引号执行代码"
+    ],
+    "决策树": [
+     "IF 使用模板字符串 AND 未转义 → 尝试注入 ${} 或反引号"
+    ],
+    "示例": [
+     "注入 ${alert(1)}"
+    ],
+    "迁移场景": [
+     "XSS",
+     "代码注入"
+    ]
+   }
+  },
+  {
+   "id": 39658,
+   "knowledge_point": "反射文件下载（Reflected File Download）",
+   "is_ai_likely_known": false,
+   "reason": "该技术相对小众，AI 可能不熟悉，需要专门知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何反射型漏洞场景，将反射内容伪装成可执行文件）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'反射文件下载'的攻击链和防御要点。",
+   "skill_framework": {
+    "name": "反射文件下载（Reflected File Download）",
+    "适用场景": [
+     "Web 应用",
+     "任何反射型漏洞",
+     "文件下载功能"
+    ],
+    "核心原理": [
+     "服务器对 URL 扩展名解析宽容",
+     "浏览器根据 Content-Disposition 下载并执行"
+    ],
+    "决策树": [
+     "IF 存在反射型漏洞 AND 服务器对扩展名宽容 → 构造 .bat 等可执行文件下载"
+    ],
+    "示例": [
+     "构造 URL 使响应为 .bat 文件"
+    ],
+    "迁移场景": [
+     "XSS",
+     "代码执行",
+     "钓鱼"
+    ]
+   }
+  },
+  {
+   "id": 31408,
+   "knowledge_point": "正则表达式编译栈溢出导致内存破坏",
+   "is_ai_likely_known": false,
+   "reason": "特定于 Flash Player 的底层实现，AI 可能不熟悉，且技术复杂。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（特定于 Flash，不可迁移）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 941178,
+   "knowledge_point": "Kubernetes admission webhook SSRF",
+   "is_ai_likely_known": false,
+   "reason": "Kubernetes 特定组件和配置，AI 可能不熟悉，需要专门知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他云原生组件或类似 webhook 机制）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'云原生组件 SSRF'的检测和利用方法。",
+   "skill_framework": {
+    "name": "云原生组件 SSRF 利用",
+    "适用场景": [
+     "Kubernetes",
+     "云环境",
+     "任何使用 webhook 或类似机制的系统"
+    ],
+    "核心原理": [
+     "组件信任外部 URL 配置",
+     "通过重定向访问内部服务"
+    ],
+    "决策树": [
+     "IF 存在 webhook 配置 AND 未限制 URL → 尝试重定向到元数据服务"
+    ],
+    "示例": [
+     "webhook URL 重定向到 169.254.169.254"
+    ],
+    "迁移场景": [
+     "SSRF",
+     "凭据泄露",
+     "内网探测"
+    ]
+   }
+  },
+  {
+   "id": 2188569,
+   "knowledge_point": "API 端点未授权导致权限提升",
+   "is_ai_likely_known": true,
+   "reason": "这是常见的 API 安全漏洞，AI 普遍知道。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何 API 权限校验场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 1156748,
+   "knowledge_point": "XXE 通过恶意 sitemap",
+   "is_ai_likely_known": true,
+   "reason": "XXE 是常见漏洞，AI 普遍知道。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他 XML 解析场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 1544133,
+   "knowledge_point": "Kubernetes 聚合 API 重定向导致凭据泄露",
+   "is_ai_likely_known": false,
+   "reason": "特定于 Kubernetes 组件信任关系，AI 可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他信任组件间的重定向攻击）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'组件信任重定向攻击'的检测和利用方法。",
+   "skill_framework": {
+    "name": "组件信任重定向攻击",
+    "适用场景": [
+     "Kubernetes",
+     "微服务",
+     "任何组件间信任关系"
+    ],
+    "核心原理": [
+     "组件信任其他组件返回的重定向",
+     "重定向到攻击者控制的端点泄露敏感信息"
+    ],
+    "决策树": [
+     "IF 存在组件间信任 AND 未验证重定向 → 尝试劫持组件返回 30X"
+    ],
+    "示例": [
+     "劫持 metrics-server 返回 302 到攻击者服务器"
+    ],
+    "迁移场景": [
+     "凭据泄露",
+     "SSRF",
+     "中间人攻击"
+    ]
+   }
+  },
+  {
+   "id": 271176,
+   "knowledge_point": "Cookie 注入绕过一次性路由限制",
+   "is_ai_likely_known": true,
+   "reason": "业务逻辑漏洞，AI 普遍知道。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他会话管理场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 146360,
+   "knowledge_point": "PHP mcrypt 整数溢出导致堆溢出",
+   "is_ai_likely_known": false,
+   "reason": "特定于 PHP 扩展，AI 可能不熟悉。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（特定于 PHP，不可迁移）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 180572,
+   "knowledge_point": "PHP number_format 内存破坏",
+   "is_ai_likely_known": false,
+   "reason": "特定于 PHP 函数，AI 可能不熟悉。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（特定于 PHP，不可迁移）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 783360,
+   "knowledge_point": "Spring Boot Actuator heapdump 泄露",
+   "is_ai_likely_known": false,
+   "reason": "特定于 Spring Boot 框架，AI 可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他框架的类似端点）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'框架敏感端点泄露'的检测和利用方法。",
+   "skill_framework": {
+    "name": "框架敏感端点泄露检测",
+    "适用场景": [
+     "Spring Boot",
+     "其他框架",
+     "任何暴露敏感端点的应用"
+    ],
+    "核心原理": [
+     "框架提供调试端点但未做访问控制",
+     "端点泄露运行时敏感数据"
+    ],
+    "决策树": [
+     "IF 使用 Spring Boot AND 暴露 actuator 端点 → 尝试访问 heapdump"
+    ],
+    "示例": [
+     "访问 /actuator/heapdump 下载内存转储"
+    ],
+    "迁移场景": [
+     "信息泄露",
+     "凭据窃取",
+     "账户接管"
+    ]
+   }
+  },
+  {
+   "id": 213437,
+   "knowledge_point": "JWE Invalid Curve 攻击",
+   "is_ai_likely_known": false,
+   "reason": "协议层面的反直觉行为，AI 可能不熟悉，且影响多个库。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何使用 ECC 的加密协议）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'无效曲线攻击'的原理和检测方法。",
+   "skill_framework": {
+    "name": "无效曲线攻击检测",
+    "适用场景": [
+     "JWE",
+     "JWT",
+     "任何使用 ECC 的加密系统"
+    ],
+    "核心原理": [
+     "未验证曲线参数",
+     "攻击者构造恶意曲线点恢复私钥"
+    ],
+    "决策树": [
+     "IF 使用 ECC AND 未验证曲线参数 → 尝试无效曲线攻击"
+    ],
+    "示例": [
+     "构造恶意 JWE 令牌"
+    ],
+    "迁移场景": [
+     "密钥恢复",
+     "加密绕过"
+    ]
+   }
+  },
+  {
+   "id": 159948,
+   "knowledge_point": "PHP unserialize UAF",
+   "is_ai_likely_known": false,
+   "reason": "特定于 PHP 反序列化机制，AI 可能不熟悉。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（特定于 PHP，不可迁移）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 633231,
+   "knowledge_point": "WordPress shortcode 函数副作用导致 XSS",
+   "is_ai_likely_known": false,
+   "reason": "特定于 WordPress 框架，AI 可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他框架的类似函数副作用）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'框架函数副作用绕过'的检测和利用方法。",
+   "skill_framework": {
+    "name": "框架函数副作用绕过",
+    "适用场景": [
+     "WordPress",
+     "其他框架",
+     "任何使用函数处理用户输入的场景"
+    ],
+    "核心原理": [
+     "框架函数对输入进行额外处理",
+     "处理过程引入安全漏洞"
+    ],
+    "决策树": [
+     "IF 使用框架函数处理用户输入 AND 存在过滤 → 尝试利用函数副作用绕过"
+    ],
+    "示例": [
+     "利用 stripcslashes 将 \\x3a 转为冒号"
+    ],
+    "迁移场景": [
+     "XSS",
+     "注入"
+    ]
+   }
+  }
+ ]
+}

@@ -1,0 +1,367 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 8,
+  "not_worth": 7,
+  "top_ids": [
+   1751258,
+   1223565,
+   919175,
+   1705717,
+   449356,
+   1391549,
+   193143,
+   429617
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1751258,
+   "knowledge_point": "通过篡改 noteable_type 参数绕过项目权限检查，访问私有 personal_snippet",
+   "is_ai_likely_known": false,
+   "reason": "该案例涉及 Rails 框架中 finder 对特定类型未做项目过滤的默认行为，属于框架内部细节，AI 训练数据中不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何使用多态关联且参数可控的场景，如评论、附件、标签等）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'多态关联参数篡改'的检测与利用方法。",
+   "skill_framework": {
+    "name": "多态关联参数篡改导致越权访问",
+    "适用场景": [
+     "Web 应用中的评论、附件、标签等多态关联功能",
+     "IDOR 测试"
+    ],
+    "核心原理": [
+     "多态关联类型参数（如 noteable_type）由客户端控制",
+     "框架 finder 未对特定类型进行权限过滤"
+    ],
+    "决策树": [
+     "IF 存在多态关联 AND 类型参数可控 → 尝试篡改为其他类型（如 personal_snippet）并指定目标 ID"
+    ],
+    "示例": [
+     "修改 noteable_type 为 personal_snippet，评论私有 snippet"
+    ],
+    "迁移场景": [
+     "IDOR",
+     "越权访问",
+     "数据泄露"
+    ]
+   }
+  },
+  {
+   "id": 906959,
+   "knowledge_point": "LDAP 过滤器注入导致 DoS",
+   "is_ai_likely_known": true,
+   "reason": "LDAP 注入是常见漏洞，AI 已知基本概念，但此案例具体利用过滤器膨胀实现 DoS 的细节可能不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他 LDAP 查询场景，但具体 DoS 手法依赖过滤器构造）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1223565,
+   "knowledge_point": "libcurl 连接复用检查缺陷导致 TLS 中间人攻击",
+   "is_ai_likely_known": false,
+   "reason": "该案例涉及 libcurl 内部实现细节，AI 训练数据中不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何使用 libcurl 的客户端，如各种编程语言的 HTTP 库）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'连接复用检查绕过'的原理与检测方法。",
+   "skill_framework": {
+    "name": "libcurl 连接复用检查绕过",
+    "适用场景": [
+     "使用 libcurl 的客户端应用",
+     "TLS 中间人攻击测试"
+    ],
+    "核心原理": [
+     "连接复用检查未比较所有 SSL 选项",
+     "路径大小写不敏感导致误判"
+    ],
+    "决策树": [
+     "IF 应用使用 libcurl AND 存在连接复用 → 检查 SSL 选项比较是否完整"
+    ],
+    "示例": [
+     "利用路径大小写差异复用不安全连接"
+    ],
+    "迁移场景": [
+     "TLS 攻击",
+     "中间人攻击",
+     "客户端安全"
+    ]
+   }
+  },
+  {
+   "id": 919175,
+   "knowledge_point": "HTTP 请求走私配合 X-Forwarded-Host 实现缓存投毒",
+   "is_ai_likely_known": false,
+   "reason": "该案例结合了请求走私和缓存投毒，且利用 X-Forwarded-Host 影响缓存键，属于高级技巧，AI 可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何使用缓存和代理的场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'请求走私与缓存投毒结合'的攻击链。",
+   "skill_framework": {
+    "name": "HTTP 请求走私与缓存投毒",
+    "适用场景": [
+     "Web 应用使用反向代理和缓存",
+     "缓存投毒攻击"
+    ],
+    "核心原理": [
+     "前后端解析差异导致请求走私",
+     "X-Forwarded-Host 影响缓存键"
+    ],
+    "决策树": [
+     "IF 存在代理和缓存 AND 前后端解析不一致 → 尝试走私请求并注入 X-Forwarded-Host"
+    ],
+    "示例": [
+     "走私请求污染缓存，影响后续用户"
+    ],
+    "迁移场景": [
+     "缓存投毒",
+     "请求走私",
+     "会话固定"
+    ]
+   }
+  },
+  {
+   "id": 1705717,
+   "knowledge_point": "未文档化参数和授权检查顺序错误导致 RCE",
+   "is_ai_likely_known": false,
+   "reason": "该案例涉及特定应用的未文档化参数和授权检查顺序，属于具体实现细节，AI 不常见。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他类似命令注入场景，但依赖具体应用）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'授权检查顺序与命令注入'的检测方法。",
+   "skill_framework": {
+    "name": "授权检查顺序绕过与命令注入",
+    "适用场景": [
+     "管理接口",
+     "命令执行功能"
+    ],
+    "核心原理": [
+     "授权检查在命令执行之后",
+     "未文档化参数可被利用"
+    ],
+    "决策树": [
+     "IF 存在命令执行功能 AND 授权检查顺序可疑 → 尝试未认证访问并注入命令"
+    ],
+    "示例": [
+     "POOL_UPGRADE 请求注入 dpkg 命令"
+    ],
+    "迁移场景": [
+     "RCE",
+     "授权绕过",
+     "命令注入"
+    ]
+   }
+  },
+  {
+   "id": 449356,
+   "knowledge_point": "类型混淆导致 SQL 查询变为 IN 子句，提高暴力破解效率",
+   "is_ai_likely_known": false,
+   "reason": "该案例利用类型混淆改变 SQL 语义，属于高级技巧，AI 可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何使用参数化查询但未严格校验类型的场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'类型混淆导致 SQL 语义变化'的利用方法。",
+   "skill_framework": {
+    "name": "类型混淆导致 SQL 语义变化",
+    "适用场景": [
+     "API 参数处理",
+     "SQL 注入测试"
+    ],
+    "核心原理": [
+     "参数类型未严格校验",
+     "数组参数导致查询变为 IN 子句"
+    ],
+    "决策树": [
+     "IF 参数用于 SQL 查询 AND 类型未校验 → 尝试传递数组"
+    ],
+    "示例": [
+     "api_key[]=a&api_key[]=b 导致 IN 子句"
+    ],
+    "迁移场景": [
+     "SQL 注入",
+     "暴力破解",
+     "认证绕过"
+    ]
+   }
+  },
+  {
+   "id": 1391549,
+   "knowledge_point": "HTTP/2 伪头注入导致请求行注入",
+   "is_ai_likely_known": false,
+   "reason": "该案例涉及 HTTP/2 与 HTTP/1.1 降级时的解析差异，属于协议细节，AI 不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何使用 HTTP/2 和代理的场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'HTTP/2 降级请求行注入'的检测方法。",
+   "skill_framework": {
+    "name": "HTTP/2 降级请求行注入",
+    "适用场景": [
+     "使用 HTTP/2 和反向代理的 Web 应用",
+     "请求走私"
+    ],
+    "核心原理": [
+     "HTTP/2 伪头允许空格",
+     "降级到 HTTP/1.1 时产生请求行注入"
+    ],
+    "决策树": [
+     "IF 支持 HTTP/2 AND 存在代理降级 → 尝试在 :method 中注入空格"
+    ],
+    "示例": [
+     ":method 包含空格导致请求行注入"
+    ],
+    "迁移场景": [
+     "请求走私",
+     "缓存投毒",
+     "WAF 绕过"
+    ]
+   }
+  },
+  {
+   "id": 193143,
+   "knowledge_point": "String#replace 自替换导致 use-after-free",
+   "is_ai_likely_known": false,
+   "reason": "该案例涉及 mruby 运行时内部行为，AI 训练数据中不常见。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他语言运行时，但依赖具体实现）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'自赋值 UAF'的检测方法。",
+   "skill_framework": {
+    "name": "自赋值 UAF 检测",
+    "适用场景": [
+     "语言运行时安全",
+     "内存破坏漏洞测试"
+    ],
+    "核心原理": [
+     "原地替换时释放原缓冲区",
+     "未处理自引用导致 UAF"
+    ],
+    "决策树": [
+     "IF 存在字符串替换操作 AND 支持自引用 → 测试自替换"
+    ],
+    "示例": [
+     "str.replace(str) 导致 UAF"
+    ],
+    "迁移场景": [
+     "内存破坏",
+     "RCE",
+     "语言运行时安全"
+    ]
+   }
+  },
+  {
+   "id": 1158824,
+   "knowledge_point": "Ruby 的 wait_writable 命令注入",
+   "is_ai_likely_known": true,
+   "reason": "命令注入是常见漏洞，AI 已知基本概念，但此案例具体利用文件名注入可能不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他类似命令执行场景）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1656627,
+   "knowledge_point": "Rails sanitizer 在允许特定标签组合时绕过导致 XSS",
+   "is_ai_likely_known": false,
+   "reason": "该案例涉及 Rails 特定版本 sanitizer 的缺陷，AI 可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他 HTML 清理器，但依赖具体实现）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：HTML 清理器绕过。",
+   "skill_framework": null
+  },
+  {
+   "id": 429617,
+   "knowledge_point": "反向代理 Host 头信任导致敏感头泄露",
+   "is_ai_likely_known": false,
+   "reason": "该案例利用反向代理对 Host 头的信任，将请求转发到外部服务器，属于代理配置缺陷，AI 可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何使用反向代理的场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'反向代理 Host 头信任'的检测方法。",
+   "skill_framework": {
+    "name": "反向代理 Host 头信任绕过",
+    "适用场景": [
+     "使用反向代理的 Web 应用",
+     "SSRF 测试"
+    ],
+    "核心原理": [
+     "代理未校验 Host 头",
+     "转发时未剥离敏感头"
+    ],
+    "决策树": [
+     "IF 存在反向代理 AND Host 头可控 → 尝试将请求转发到外部服务器"
+    ],
+    "示例": [
+     "Host: attacker.com 导致请求转发并泄露 X-Shopify-Access-Token"
+    ],
+    "迁移场景": [
+     "SSRF",
+     "凭证泄露",
+     "代理配置安全"
+    ]
+   }
+  },
+  {
+   "id": 191884,
+   "knowledge_point": "路径遍历和扩展名控制导致任意文件创建/覆盖",
+   "is_ai_likely_known": true,
+   "reason": "文件上传漏洞是常见漏洞，AI 已知基本概念，但此案例具体利用路径遍历和扩展名控制可能不常见。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他文件上传场景）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 812969,
+   "knowledge_point": "curl FILE URL 在 Windows 上的 SMB 访问绕过",
+   "is_ai_likely_known": false,
+   "reason": "该案例涉及 Windows 路径解析差异和 curl 的 FILE URL 处理，AI 可能不熟悉。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他 URL 解析场景）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：curl 协议行为利用。",
+   "skill_framework": null
+  },
+  {
+   "id": 394253,
+   "knowledge_point": "PostgreSQL null 字符截断导致 SQL 验证绕过",
+   "is_ai_likely_known": false,
+   "reason": "该案例涉及数据库与框架行为差异，AI 可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他数据库和框架组合）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：数据库行为差异绕过。",
+   "skill_framework": null
+  },
+  {
+   "id": 231053,
+   "knowledge_point": "HTML5 结构化克隆算法和 File 对象属性绕过 XSS 过滤",
+   "is_ai_likely_known": false,
+   "reason": "该案例利用 HTML5 结构化克隆算法和 File 对象的只读属性，属于高级技巧，AI 可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何使用 postMessage 和结构化克隆的场景）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：postMessage 安全。",
+   "skill_framework": null
+  }
+ ]
+}

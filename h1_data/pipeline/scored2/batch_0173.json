@@ -1,0 +1,218 @@
+{
+ "summary": {
+  "total": 10,
+  "worth_skill": 4,
+  "not_worth": 6,
+  "top_ids": [
+   311336,
+   813300,
+   51817,
+   170161
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 170161,
+   "knowledge_point": "密码重置令牌生命周期管理缺陷",
+   "is_ai_likely_known": true,
+   "reason": "密码重置令牌应失效是通用安全知识，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他令牌场景，如会话令牌）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 51817,
+   "knowledge_point": "重放旧请求绕过权限检查",
+   "is_ai_likely_known": false,
+   "reason": "重放攻击虽常见，但针对权限变更后的重放利用，AI 可能不直接给出。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何权限变更场景，如角色变更、成员移除）",
+   "source_quality": "中",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'权限变更后重放旧请求'的检测与利用方法。",
+   "skill_framework": {
+    "name": "权限变更后重放旧请求绕过",
+    "适用场景": [
+     "成员移除后操作",
+     "角色降级后操作",
+     "账户禁用后操作"
+    ],
+    "核心原理": [
+     "服务端未在每次请求时验证当前权限",
+     "旧请求仍有效"
+    ],
+    "决策树": [
+     "IF 用户权限被变更 AND 存在旧请求 → 尝试重放旧请求"
+    ],
+    "示例": [
+     "被移出群组后重放评论请求"
+    ],
+    "迁移场景": [
+     "API 权限控制",
+     "业务逻辑漏洞"
+    ]
+   }
+  },
+  {
+   "id": 311336,
+   "knowledge_point": "JavaScript 原型污染（merge-options）",
+   "is_ai_likely_known": false,
+   "reason": "原型污染虽已知，但针对特定库的利用细节和防御，AI 可能不全面。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何使用 merge 函数的 JavaScript 应用）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'原型污染'的原理、检测、利用和防御。",
+   "skill_framework": {
+    "name": "JavaScript 原型污染检测与利用",
+    "适用场景": [
+     "Node.js 应用",
+     "前端库使用 merge 操作"
+    ],
+    "核心原理": [
+     "通过 __proto__ 或 constructor.prototype 污染 Object.prototype",
+     "影响所有对象"
+    ],
+    "决策树": [
+     "IF 存在 merge 操作 AND 用户可控键名 → 尝试 __proto__ 污染"
+    ],
+    "示例": [
+     "{\"__proto__\": {\"isAdmin\": true}}"
+    ],
+    "迁移场景": [
+     "RCE",
+     "DoS",
+     "逻辑绕过"
+    ]
+   }
+  },
+  {
+   "id": 64184,
+   "knowledge_point": "CSRF 防护缺失",
+   "is_ai_likely_known": true,
+   "reason": "CSRF 是通用知识，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "低（CSRF 防护是标准实践）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 915585,
+   "knowledge_point": "TLS 证书验证缺失",
+   "is_ai_likely_known": true,
+   "reason": "TLS 证书验证是通用知识，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（配置错误，不可迁移）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 813300,
+   "knowledge_point": "GraphQL 状态转换授权缺失",
+   "is_ai_likely_known": false,
+   "reason": "GraphQL 状态转换授权检查是较新且具体的知识点，AI 可能不直接给出。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何状态机模型）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'状态转换授权检查'的检测与利用。",
+   "skill_framework": {
+    "name": "状态转换授权检查绕过",
+    "适用场景": [
+     "GraphQL API",
+     "工作流系统",
+     "订单状态"
+    ],
+    "核心原理": [
+     "后端未验证状态转换的合法性",
+     "允许跳过前置状态"
+    ],
+    "决策树": [
+     "IF 存在状态字段 AND 有 mutation 直接修改 → 尝试非法状态转换"
+    ],
+    "示例": [
+     "修改已提交的 CVE 请求"
+    ],
+    "迁移场景": [
+     "业务逻辑漏洞",
+     "API 安全"
+    ]
+   }
+  },
+  {
+   "id": 284963,
+   "knowledge_point": "子域名配置不一致导致 API 密钥绕过",
+   "is_ai_likely_known": false,
+   "reason": "子域名配置不一致是具体场景，AI 可能不直接给出。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到多环境配置）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：子域名枚举与配置审计。",
+   "skill_framework": null
+  },
+  {
+   "id": 214681,
+   "knowledge_point": "Ruby 解析器空指针解引用",
+   "is_ai_likely_known": false,
+   "reason": "特定语言解析器漏洞，AI 可能不直接知道。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（特定语言内部）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 173681,
+   "knowledge_point": "子域名接管",
+   "is_ai_likely_known": true,
+   "reason": "子域名接管是通用知识，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他 DNS 记录）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：子域名枚举与配置审计。",
+   "skill_framework": null
+  },
+  {
+   "id": 152586,
+   "knowledge_point": "OAuth state 固定攻击",
+   "is_ai_likely_known": false,
+   "reason": "OAuth state 固定是较具体的攻击，AI 可能不直接给出。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到 OAuth 流程）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'OAuth state 固定'的检测与利用。",
+   "skill_framework": {
+    "name": "OAuth state 固定攻击",
+    "适用场景": [
+     "OAuth 2.0 认证",
+     "第三方登录"
+    ],
+    "核心原理": [
+     "state 参数固定，攻击者预知",
+     "诱导受害者使用攻击者的授权码"
+    ],
+    "决策树": [
+     "IF OAuth 流程使用固定 state → 尝试 state 固定攻击"
+    ],
+    "示例": [
+     "固定 state，重放授权码"
+    ],
+    "迁移场景": [
+     "CSRF",
+     "账户接管"
+    ]
+   }
+  }
+ ]
+}

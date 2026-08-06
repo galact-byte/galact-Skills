@@ -1,0 +1,347 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 8,
+  "not_worth": 7,
+  "top_ids": [
+   797159,
+   1086108,
+   1552110,
+   403417,
+   578119,
+   894518,
+   52042,
+   191380
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 797159,
+   "knowledge_point": "Windows 路径解析歧义导致路径校验绕过",
+   "is_ai_likely_known": false,
+   "reason": "PHP 在 Windows 上对 'C:path' 的解析行为属于特定框架与平台组合的细节，训练数据中不常见，需实际测试才能发现。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到所有基于字符串前缀校验路径的 Web 应用，尤其是 Windows 服务器）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 Windows 路径解析差异的绕过原理与检测方法。",
+   "skill_framework": {
+    "name": "Windows 路径解析差异绕过",
+    "适用场景": [
+     "路径遍历防护",
+     "文件上传校验",
+     "任意文件读写"
+    ],
+    "核心原理": [
+     "Windows 将 'C:path' 解析为当前驱动器上的绝对路径",
+     "字符串前缀校验无法覆盖此类变体"
+    ],
+    "决策树": [
+     "IF 应用运行在 Windows AND 使用字符串前缀校验路径 → 尝试 'C:...' 变体"
+    ],
+    "示例": [
+     "提交 'C:secret.txt' 绕过 'C:/Web/uploads' 前缀校验"
+    ],
+    "迁移场景": [
+     "PHP",
+     "ASP.NET",
+     "Node.js 等跨平台框架"
+    ]
+   }
+  },
+  {
+   "id": 2031855,
+   "knowledge_point": "jQuery replaceWith 接受原始 HTML 导致存储型 XSS",
+   "is_ai_likely_known": true,
+   "reason": "jQuery 的 replaceWith 行为是通用知识，AI 已知，且此类 XSS 属于常见漏洞模式。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他使用 jQuery 动态插入内容的场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 175316,
+   "knowledge_point": "整数溢出绕过容量检查导致缓冲区溢出",
+   "is_ai_likely_known": true,
+   "reason": "整数溢出导致缓冲区溢出是通用安全知识，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他涉及长度计算的场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 205884,
+   "knowledge_point": "整数溢出导致边界检查失效（beg+len 溢出）",
+   "is_ai_likely_known": true,
+   "reason": "整数溢出绕过长度检查是通用漏洞模式，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他字符串处理函数）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1086108,
+   "knowledge_point": "DNS 尾随点绕过域名所有权验证",
+   "is_ai_likely_known": false,
+   "reason": "尾随点在 DNS 解析中的等价性属于协议细节，AI 可能不熟悉，且该绕过方式在域名验证场景中不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到所有域名验证、SSRF 防护、URL 解析等场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 DNS 语义差异绕过域名验证的原理与检测方法。",
+   "skill_framework": {
+    "name": "DNS 尾随点绕过域名验证",
+    "适用场景": [
+     "域名所有权验证",
+     "SSRF 防护",
+     "URL 解析"
+    ],
+    "核心原理": [
+     "DNS 解析中尾随点表示绝对域名，与无尾随点等价",
+     "验证逻辑可能未规范化域名"
+    ],
+    "决策树": [
+     "IF 存在域名验证 AND 验证逻辑未处理尾随点 → 尝试添加尾随点"
+    ],
+    "示例": [
+     "添加 'example.com.' 绕过所有权检查"
+    ],
+    "迁移场景": [
+     "子域名接管",
+     "OAuth 回调验证",
+     "邮件验证"
+    ]
+   }
+  },
+  {
+   "id": 151058,
+   "knowledge_point": "OAuth redirect_uri 白名单过宽导致 token 泄露",
+   "is_ai_likely_known": true,
+   "reason": "OAuth redirect_uri 校验是通用知识，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他 OAuth 实现）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1552110,
+   "knowledge_point": "连接复用未验证认证凭据导致认证绕过",
+   "is_ai_likely_known": false,
+   "reason": "连接复用与认证状态关联的缺陷属于协议实现细节，AI 可能不熟悉，且该问题影响多个协议。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到 HTTP、FTP、SMTP 等所有支持连接复用的协议）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化连接复用认证绕过原理与检测方法。",
+   "skill_framework": {
+    "name": "连接复用认证绕过",
+    "适用场景": [
+     "HTTP 持久连接",
+     "FTP 控制连接",
+     "SMTP 会话"
+    ],
+    "核心原理": [
+     "连接复用机制可能未重新验证认证凭据",
+     "攻击者复用已认证连接发送未授权请求"
+    ],
+    "决策树": [
+     "IF 协议支持连接复用 AND 认证状态未绑定连接 → 尝试复用连接"
+    ],
+    "示例": [
+     "使用有效 bearer 建立连接，然后发送无效 bearer 请求"
+    ],
+    "迁移场景": [
+     "OAuth2",
+     "JWT",
+     "API 密钥"
+    ]
+   }
+  },
+  {
+   "id": 403417,
+   "knowledge_point": "ImageMagick 未禁用 Postscript 导致 RCE",
+   "is_ai_likely_known": true,
+   "reason": "ImageMagick 的 Ghostscript 漏洞是已知的通用知识，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他图像处理库）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 145128,
+   "knowledge_point": "URL 编码 CRLF 注入绕过过滤",
+   "is_ai_likely_known": true,
+   "reason": "CRLF 注入是通用知识，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他响应头注入场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 73258,
+   "knowledge_point": "整数除法余数忽略导致安全检查失效",
+   "is_ai_likely_known": true,
+   "reason": "整数运算边界条件导致的安全问题属于通用知识，AI 已知。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（特定于 Python imageop 模块，已废弃）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 747726,
+   "knowledge_point": "Android Activity 启动模式绕过锁屏",
+   "is_ai_likely_known": false,
+   "reason": "Android 特定 Activity 启动模式绕过锁屏属于框架行为细节，AI 可能不熟悉，且可迁移到其他 Android 应用。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到所有 Android 应用锁屏绕过）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 Android 锁屏绕过原理与检测方法。",
+   "skill_framework": {
+    "name": "Android 锁屏绕过",
+    "适用场景": [
+     "Android 应用锁",
+     "设备锁屏"
+    ],
+    "核心原理": [
+     "特定 Activity 可被外部启动绕过锁屏",
+     "系统时间可篡改绕过超时检查"
+    ],
+    "决策树": [
+     "IF 应用使用锁屏 AND 未限制 Activity 导出 → 尝试启动特定 Activity"
+    ],
+    "示例": [
+     "通过 ADB 启动设置 Activity 绕过锁屏"
+    ],
+    "迁移场景": [
+     "Android 应用安全测试",
+     "移动设备管理"
+    ]
+   }
+  },
+  {
+   "id": 191380,
+   "knowledge_point": "CRLF 注入与 XSS 结合实现跨用户攻击",
+   "is_ai_likely_known": true,
+   "reason": "CRLF 注入和 XSS 结合是通用攻击模式，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他 cookie 注入场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 52042,
+   "knowledge_point": "UTF-8 编码绕过 CRLF 过滤",
+   "is_ai_likely_known": false,
+   "reason": "利用 UTF-8 多字节字符解码后提取控制字符属于编码处理细节，AI 可能不熟悉，且可迁移到其他编码绕过场景。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到所有输入过滤绕过，尤其是编码处理）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化编码绕过 CRLF 过滤的原理与检测方法。",
+   "skill_framework": {
+    "name": "编码绕过输入过滤",
+    "适用场景": [
+     "CRLF 注入",
+     "SQL 注入",
+     "XSS 过滤"
+    ],
+    "核心原理": [
+     "多字节字符解码后可能产生控制字符",
+     "过滤逻辑未处理编码变体"
+    ],
+    "决策树": [
+     "IF 存在输入过滤 AND 未规范化编码 → 尝试 UTF-8 等编码变体"
+    ],
+    "示例": [
+     "使用 '%E5%98%8A' 解码后得到 0x0A"
+    ],
+    "迁移场景": [
+     "Web 应用防火墙绕过",
+     "输入验证"
+    ]
+   }
+  },
+  {
+   "id": 578119,
+   "knowledge_point": "logrotate 竞争条件导致权限提升",
+   "is_ai_likely_known": false,
+   "reason": "logrotate 的符号链接竞争条件属于系统工具行为细节，AI 可能不熟悉，且该攻击链完整，可迁移到其他日志轮转工具。",
+   "scene_frequency": "低频",
+   "migration_potential": "高（可迁移到其他日志轮转工具，如 logrotate 的替代品）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 logrotate 竞争条件利用原理与防御方法。",
+   "skill_framework": {
+    "name": "logrotate 竞争条件权限提升",
+    "适用场景": [
+     "Linux 权限提升",
+     "日志文件处理"
+    ],
+    "核心原理": [
+     "logrotate 轮转时未正确处理符号链接",
+     "攻击者可通过符号链接替换目录导致任意文件写入"
+    ],
+    "决策树": [
+     "IF 存在 logrotate 配置 AND 日志目录可被非 root 用户控制 → 尝试符号链接攻击"
+    ],
+    "示例": [
+     "使用 logrotten 工具等待轮转，替换目录为符号链接"
+    ],
+    "迁移场景": [
+     "系统日志管理",
+     "容器环境"
+    ]
+   }
+  },
+  {
+   "id": 894518,
+   "knowledge_point": "postMessage 未校验 origin 导致 DOM XSS",
+   "is_ai_likely_known": false,
+   "reason": "postMessage 的 origin 校验缺失是常见问题，但结合 React 的 JSX 注入属于特定框架行为，AI 可能不熟悉，且可迁移到其他前端框架。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有使用 postMessage 的 Web 应用）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 postMessage 安全检测与防御方法。",
+   "skill_framework": {
+    "name": "postMessage 安全检测",
+    "适用场景": [
+     "DOM XSS",
+     "跨窗口通信"
+    ],
+    "核心原理": [
+     "postMessage 未校验 origin 导致任意来源消息可被处理",
+     "React 等框架可能将消息内容直接渲染"
+    ],
+    "决策树": [
+     "IF 应用使用 postMessage AND 未校验 event.origin → 尝试注入恶意消息"
+    ],
+    "示例": [
+     "通过 iframe 发送恶意 postMessage 触发 XSS"
+    ],
+    "迁移场景": [
+     "React",
+     "Vue",
+     "Angular"
+    ]
+   }
+  }
+ ]
+}

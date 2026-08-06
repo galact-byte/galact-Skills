@@ -34,3 +34,21 @@ h1_data/pipeline/scored_all.parquet
 h1_data/pipeline/scored_all.jsonl
 h1_data/pipeline/skill_material.jsonl
 h1_data/pipeline/skill_source.md
+
+# ===== 第二轮（run_round2.py）：策略同第一轮 =====
+# LLM 输入批次（run_round2.py 可再生成）
+h1_data/pipeline/batches2/
+# 瞬时/失败产物
+h1_data/pipeline/failed2/
+# 由 scored2/ 派生（--aggregate 可再生成）；scored2/ 本体保留提交
+h1_data/pipeline/round2_all.parquet
+h1_data/pipeline/round2_all.jsonl
+h1_data/pipeline/skill_candidates.md
+
+# ===== hunt-* 渗透 skill 运行时产物（Prompt3.md 纪律：证据不入库） =====
+skills/*/evidence/*
+!skills/*/evidence/.gitkeep
+skills/*/recon/
+skills/*/report/
+skills/*/candidates.json
+skills/*/tools/__pycache__/

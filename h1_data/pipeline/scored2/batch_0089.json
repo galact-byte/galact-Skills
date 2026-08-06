@@ -1,0 +1,364 @@
+{
+ "summary": {
+  "total": 14,
+  "worth_skill": 8,
+  "not_worth": 6,
+  "top_ids": [
+   1069189,
+   671749,
+   297968,
+   546753,
+   440749,
+   219215,
+   1675674,
+   292783
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1069189,
+   "knowledge_point": "DNS rebinding 绕过 SSRF 防护",
+   "is_ai_likely_known": false,
+   "reason": "DNS rebinding 绕过 SSRF 防护属于高级技巧，AI 可能知道概念但缺乏系统化绕过方法。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（SSRF 防护、WAF、内网访问控制）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 DNS rebinding 绕过 SSRF 的完整攻击链和防御要点。",
+   "skill_framework": {
+    "name": "DNS Rebinding 绕过 SSRF 防护",
+    "适用场景": [
+     "SSRF 防护绕过",
+     "内网访问控制",
+     "WAF 绕过"
+    ],
+    "核心原理": [
+     "DNS 解析结果在两次请求间变化，导致校验与请求不一致",
+     "利用 TTL 和域名解析策略"
+    ],
+    "决策树": [
+     "IF 存在 SSRF 防护 AND 防护基于 DNS 解析结果 → 尝试 DNS rebinding"
+    ],
+    "示例": [
+     "使用短 TTL 域名，第一次解析为公网 IP，第二次解析为内网 IP"
+    ],
+    "迁移场景": [
+     "SSRF",
+     "WAF 绕过",
+     "内网渗透"
+    ]
+   }
+  },
+  {
+   "id": 671749,
+   "knowledge_point": "路径遍历读取敏感文件导致 RCE",
+   "is_ai_likely_known": true,
+   "reason": "路径遍历是常见漏洞，AI 已知，但具体到 Pulse Secure 的 CVE 可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（路径遍历漏洞利用）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化路径遍历到 RCE 的攻击链，特别是针对特定产品的利用。",
+   "skill_framework": {
+    "name": "路径遍历到 RCE 攻击链",
+    "适用场景": [
+     "文件读取漏洞利用",
+     "敏感信息获取",
+     "RCE 链构建"
+    ],
+    "核心原理": [
+     "路径遍历读取敏感文件（如数据库、配置文件）",
+     "利用获取的凭据进一步攻击"
+    ],
+    "决策树": [
+     "IF 存在路径遍历漏洞 → 尝试读取敏感文件 → 获取凭据 → 尝试登录或 RCE"
+    ],
+    "示例": [
+     "读取 data.mdb 获取密码，登录后台执行命令"
+    ],
+    "迁移场景": [
+     "Web 应用",
+     "网络设备",
+     "云服务"
+    ]
+   }
+  },
+  {
+   "id": 297968,
+   "knowledge_point": "localStorage 持久化 XSS",
+   "is_ai_likely_known": true,
+   "reason": "localStorage XSS 是常见知识，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（存储型 XSS 触发时机）",
+   "source_quality": "中",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 localStorage 数据未编码导致 XSS 的检测和防御。",
+   "skill_framework": {
+    "name": "localStorage 持久化 XSS 检测与防御",
+    "适用场景": [
+     "前端安全测试",
+     "XSS 漏洞挖掘"
+    ],
+    "核心原理": [
+     "localStorage 数据未编码直接插入 DOM",
+     "利用 URL 参数写入 localStorage 触发 XSS"
+    ],
+    "决策树": [
+     "IF 页面使用 localStorage 数据插入 DOM → 检查是否编码 → 尝试注入"
+    ],
+    "示例": [
+     "构造恶意 URL 写入 localStorage，页面加载时执行"
+    ],
+    "迁移场景": [
+     "Web 应用",
+     "浏览器扩展"
+    ]
+   }
+  },
+  {
+   "id": 546753,
+   "knowledge_point": "文件名注入命令导致 RCE",
+   "is_ai_likely_known": true,
+   "reason": "命令注入是常见漏洞，AI 已知，但通过文件名注入可能不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（命令注入场景）",
+   "source_quality": "中",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化文件名注入命令的检测和防御。",
+   "skill_framework": {
+    "name": "文件名注入命令检测与防御",
+    "适用场景": [
+     "文件上传功能",
+     "命令执行漏洞挖掘"
+    ],
+    "核心原理": [
+     "文件名未转义直接拼接到 shell 命令",
+     "利用管道符等特殊字符注入命令"
+    ],
+    "决策树": [
+     "IF 文件上传后文件名用于 shell 命令 → 检查是否转义 → 尝试注入"
+    ],
+    "示例": [
+     "上传文件名包含 |id 的文件，执行命令"
+    ],
+    "迁移场景": [
+     "Web 应用",
+     "文件处理服务"
+    ]
+   }
+  },
+  {
+   "id": 440749,
+   "knowledge_point": "Android 权限名称拼写错误导致权限绕过",
+   "is_ai_likely_known": false,
+   "reason": "权限名称拼写错误导致权限绕过是特定于 Android 的罕见问题，AI 可能不知道。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（Android 权限配置）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 Android 权限配置错误的检测和防御。",
+   "skill_framework": {
+    "name": "Android 权限配置错误检测与防御",
+    "适用场景": [
+     "Android 应用安全测试",
+     "权限绕过漏洞挖掘"
+    ],
+    "核心原理": [
+     "权限名称拼写错误导致未声明权限被自动授予",
+     "恶意应用利用此漏洞获取敏感权限"
+    ],
+    "决策树": [
+     "IF 应用声明权限名称有误 → 检查是否被自动授予 → 尝试利用"
+    ],
+    "示例": [
+     "声明 'android.permission.WRITE_CONTACTS' 拼错为 'WRITE_CONTACTS'，导致任意应用可写联系人"
+    ],
+    "迁移场景": [
+     "Android 应用",
+     "移动安全"
+    ]
+   }
+  },
+  {
+   "id": 219215,
+   "knowledge_point": "支付接收方参数可篡改导致支付不一致",
+   "is_ai_likely_known": false,
+   "reason": "支付参数篡改是业务逻辑漏洞，AI 可能知道但缺乏系统化检测方法。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（支付流程、业务逻辑）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化支付流程中参数信任缺失的检测和防御。",
+   "skill_framework": {
+    "name": "支付流程参数信任缺失检测与防御",
+    "适用场景": [
+     "支付系统安全测试",
+     "业务逻辑漏洞挖掘"
+    ],
+    "核心原理": [
+     "支付请求中的接收方参数可篡改",
+     "服务端未验证支付回调与发票归属一致"
+    ],
+    "决策树": [
+     "IF 支付请求包含接收方参数 → 尝试篡改 → 检查服务端是否验证"
+    ],
+    "示例": [
+     "修改 PayPal 支付请求中的 business 参数为攻击者邮箱，但服务端仍标记发票已支付"
+    ],
+    "迁移场景": [
+     "支付系统",
+     "电商平台",
+     "订阅服务"
+    ]
+   }
+  },
+  {
+   "id": 1675674,
+   "knowledge_point": "IDOR 变体：通过修改 ID 绕过状态检查",
+   "is_ai_likely_known": true,
+   "reason": "IDOR 是常见漏洞，AI 已知，但此案例结合了状态检查缺失。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（IDOR 检测）",
+   "source_quality": "中",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 IDOR 变体的检测和防御，特别是状态检查缺失。",
+   "skill_framework": {
+    "name": "IDOR 变体检测与防御",
+    "适用场景": [
+     "Web 应用安全测试",
+     "授权绕过漏洞挖掘"
+    ],
+    "核心原理": [
+     "ID 可预测且服务端未校验状态和权限",
+     "通过修改 ID 访问未授权资源"
+    ],
+    "决策树": [
+     "IF 存在 ID 参数 → 尝试修改 ID → 检查是否返回未授权数据"
+    ],
+    "示例": [
+     "修改报告 ID 查看草稿职位"
+    ],
+    "迁移场景": [
+     "Web 应用",
+     "API 安全"
+    ]
+   }
+  },
+  {
+   "id": 292783,
+   "knowledge_point": "OAuth redirect_uri 过宽导致授权码泄露",
+   "is_ai_likely_known": false,
+   "reason": "OAuth redirect_uri 过宽结合 Referer 泄露是高级技巧，AI 可能不知道。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（OAuth 流程）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 OAuth redirect_uri 校验和 Referer 泄露的检测。",
+   "skill_framework": {
+    "name": "OAuth redirect_uri 过宽与 Referer 泄露检测",
+    "适用场景": [
+     "OAuth 安全测试",
+     "授权码泄露漏洞挖掘"
+    ],
+    "核心原理": [
+     "redirect_uri 白名单过宽，允许非预期路径",
+     "授权码通过 Referer 泄露到外部站点"
+    ],
+    "决策树": [
+     "IF OAuth redirect_uri 白名单过宽 → 尝试构造恶意链接 → 检查授权码是否泄露"
+    ],
+    "示例": [
+     "构造 redirect_uri 为合法域名下的路径，但该路径会泄露 Referer"
+    ],
+    "迁移场景": [
+     "OAuth 服务",
+     "单点登录"
+    ]
+   }
+  },
+  {
+   "id": 258460,
+   "knowledge_point": "Android 导出组件滥用导致文件泄露",
+   "is_ai_likely_known": true,
+   "reason": "Android 导出组件是常见问题，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（Android 组件安全）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 891270,
+   "knowledge_point": "重定向绕过 SSRF 黑名单",
+   "is_ai_likely_known": true,
+   "reason": "重定向绕过 SSRF 是常见技巧，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（SSRF 绕过）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：SSRF 绕过与防御。",
+   "skill_framework": null
+  },
+  {
+   "id": 1215263,
+   "knowledge_point": "Content-Disposition 头注入改变文件扩展名",
+   "is_ai_likely_known": false,
+   "reason": "Content-Disposition 头注入是特定于 HTTP 头解析的罕见技巧，AI 可能不知道。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（HTTP 头注入）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 439120,
+   "knowledge_point": "原型污染攻击",
+   "is_ai_likely_known": true,
+   "reason": "原型污染是常见漏洞，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（JavaScript 框架）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：JavaScript 原型污染检测与防御。",
+   "skill_framework": null
+  },
+  {
+   "id": 1795197,
+   "knowledge_point": "X-Forwarded-Host 缓存投毒",
+   "is_ai_likely_known": false,
+   "reason": "X-Forwarded-Host 缓存投毒是高级技巧，AI 可能不知道。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（CDN 缓存投毒）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：缓存投毒攻击与防御。",
+   "skill_framework": null
+  },
+  {
+   "id": 1196958,
+   "knowledge_point": "剪贴板 DOM XSS",
+   "is_ai_likely_known": false,
+   "reason": "剪贴板 DOM XSS 是特定于浏览器 API 的罕见技巧，AI 可能不知道。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（DOM XSS）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 950190,
+   "knowledge_point": "iframe srcdoc 绕过 CSP 实现存储型 XSS",
+   "is_ai_likely_known": false,
+   "reason": "iframe srcdoc 绕过 CSP 是高级技巧，AI 可能不知道。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（CSP 绕过）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：CSP 绕过与 XSS 防御。",
+   "skill_framework": null
+  }
+ ]
+}

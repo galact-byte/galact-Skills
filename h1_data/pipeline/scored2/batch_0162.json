@@ -1,0 +1,302 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 5,
+  "not_worth": 10,
+  "top_ids": [
+   2416725,
+   515484,
+   1050656,
+   192210,
+   2047168
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 515484,
+   "knowledge_point": "框架对URL路径的宽松解析导致反射型XSS",
+   "is_ai_likely_known": false,
+   "reason": "特定框架（NextCloud）对/index.php/后路径的解析行为属于具体实现细节，AI训练数据中不常见，需结合具体框架版本才能触发。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到其他框架的URL路由解析、WAF绕过、路径规范化场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'框架URL路径解析差异导致XSS'的原理、检测方法和修复建议。",
+   "skill_framework": {
+    "name": "框架URL路径解析差异导致反射型XSS",
+    "适用场景": [
+     "Web应用反射型XSS检测",
+     "WAF绕过",
+     "URL路由安全审计"
+    ],
+    "核心原理": [
+     "框架对URL路径的解析与开发者预期不一致",
+     "宽松解析允许在路径中注入HTML标签"
+    ],
+    "决策树": [
+     "IF 目标使用特定框架 AND 存在URL路径参数 → 尝试在路径中注入HTML标签"
+    ],
+    "示例": [
+     "/index.php/<script>alert(1)</script>"
+    ],
+    "迁移场景": [
+     "其他框架的路径解析",
+     "WAF规则绕过"
+    ]
+   }
+  },
+  {
+   "id": 1050656,
+   "knowledge_point": "使用反斜杠变体绕过URL黑名单",
+   "is_ai_likely_known": false,
+   "reason": "利用`\\/\\`绕过黑名单属于浏览器URL解析的细节，AI可能不熟悉具体变体，但原理是通用的。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有URL过滤场景，如SSRF、图片源、重定向）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'URL解析差异绕过'的变体列表和检测方法。",
+   "skill_framework": {
+    "name": "URL解析差异绕过（反斜杠、斜杠变体）",
+    "适用场景": [
+     "URL黑名单绕过",
+     "SSRF防护",
+     "内容安全策略（CSP）绕过"
+    ],
+    "核心原理": [
+     "浏览器对URL的解析比黑名单更宽容",
+     "反斜杠和斜杠在特定位置可互换"
+    ],
+    "决策树": [
+     "IF 存在URL黑名单 AND 黑名单基于字符串匹配 → 尝试反斜杠变体"
+    ],
+    "示例": [
+     "<img src='\\\\/\\\\/evil.com'>"
+    ],
+    "迁移场景": [
+     "SSRF",
+     "重定向",
+     "CSP绕过"
+    ]
+   }
+  },
+  {
+   "id": 143234,
+   "knowledge_point": "GD2图像处理中的整数溢出导致堆溢出",
+   "is_ai_likely_known": true,
+   "reason": "整数溢出导致内存破坏是通用知识，AI训练数据中常见，且该漏洞已被广泛知晓。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（特定于GD2库，迁移性差）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1084865,
+   "knowledge_point": "低权限用户可取消订阅（授权绕过）",
+   "is_ai_likely_known": true,
+   "reason": "授权绕过是通用知识，AI训练数据中常见，且该案例是简单的权限校验缺失。",
+   "scene_frequency": "高频",
+   "migration_potential": "低（特定于业务逻辑，迁移性差）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 2416725,
+   "knowledge_point": "mbedTLS证书校验与SNI耦合导致绕过",
+   "is_ai_likely_known": false,
+   "reason": "mbedTLS API语义混淆（一个函数同时负责SNI和证书校验）是特定库的细节，AI训练数据中不常见，且是CVE-2024-2466，属于新漏洞。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他TLS库、API设计缺陷、安全校验与可选功能耦合的场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'安全校验与可选功能耦合'的检测方法和修复建议。",
+   "skill_framework": {
+    "name": "TLS证书校验与SNI耦合绕过",
+    "适用场景": [
+     "TLS库安全审计",
+     "MITM防护",
+     "API设计审查"
+    ],
+    "核心原理": [
+     "安全校验函数与可选功能（如SNI）耦合",
+     "当可选功能未启用时，安全校验被跳过"
+    ],
+    "决策树": [
+     "IF 使用mbedTLS AND 以IP连接 → 检查证书校验是否被跳过"
+    ],
+    "示例": [
+     "curl --resolve example.com:443:1.2.3.4 https://1.2.3.4/"
+    ],
+    "迁移场景": [
+     "其他TLS库",
+     "API设计缺陷"
+    ]
+   }
+  },
+  {
+   "id": 853284,
+   "knowledge_point": "NTLM认证泄露内部信息并可能结合EternalBlue",
+   "is_ai_likely_known": true,
+   "reason": "NTLM泄露和EternalBlue是通用知识，AI训练数据中常见。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（特定于Windows环境，迁移性差）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 181871,
+   "knowledge_point": "Ruby单例方法覆盖导致类型混淆",
+   "is_ai_likely_known": false,
+   "reason": "利用单例方法覆盖破坏异常处理机制是特定于Ruby内部对象模型的技巧，AI训练数据中不常见。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他语言的对象模型利用）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'语言对象模型滥用'的检测方法。",
+   "skill_framework": {
+    "name": "语言对象模型滥用（单例方法覆盖）",
+    "适用场景": [
+     "Ruby安全审计",
+     "沙箱逃逸",
+     "异常处理机制攻击"
+    ],
+    "核心原理": [
+     "单例方法覆盖可改变对象行为",
+     "异常处理机制依赖对象类型，覆盖后导致类型混淆"
+    ],
+    "决策树": [
+     "IF 目标使用Ruby AND 允许单例方法覆盖 → 尝试覆盖异常类的new方法"
+    ],
+    "示例": [
+     "class NoMethodError; def self.new; ...; end; end"
+    ],
+    "迁移场景": [
+     "其他语言的对象模型",
+     "沙箱逃逸"
+    ]
+   }
+  },
+  {
+   "id": 170138,
+   "knowledge_point": "超长locale导致libicu栈溢出",
+   "is_ai_likely_known": true,
+   "reason": "栈溢出是通用知识，且该漏洞是已知的CVE，AI训练数据中常见。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（特定于libicu，迁移性差）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 361951,
+   "knowledge_point": "JSONP回调绕过隐私设置",
+   "is_ai_likely_known": true,
+   "reason": "JSONP绕过是通用知识，AI训练数据中常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（特定于JSONP，迁移性差）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 182027,
+   "knowledge_point": "数组自引用导致段错误",
+   "is_ai_likely_known": true,
+   "reason": "自引用导致内存错误是通用知识，AI训练数据中常见。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（特定于mruby，迁移性差）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 192210,
+   "knowledge_point": "API与前端过滤不一致导致存储型XSS",
+   "is_ai_likely_known": false,
+   "reason": "API与前端过滤不一致是常见问题，但具体绕过方式（通过API直接提交body_html）需要结合具体业务，AI可能不熟悉。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有前后端分离的应用）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'前后端过滤不一致'的检测方法。",
+   "skill_framework": {
+    "name": "前后端过滤不一致导致存储型XSS",
+    "适用场景": [
+     "Web应用安全测试",
+     "API安全审计",
+     "XSS防护"
+    ],
+    "核心原理": [
+     "前端过滤可被绕过",
+     "后端未对API输入进行同等过滤"
+    ],
+    "决策树": [
+     "IF 存在前端过滤 AND 存在API接口 → 尝试直接调用API提交恶意内容"
+    ],
+    "示例": [
+     "POST /api/comments {body_html: '<script>...'}"
+    ],
+    "迁移场景": [
+     "其他前后端分离应用",
+     "API安全"
+    ]
+   }
+  },
+  {
+   "id": 38232,
+   "knowledge_point": "参数类型混淆导致前端崩溃",
+   "is_ai_likely_known": true,
+   "reason": "类型混淆导致崩溃是通用知识，AI训练数据中常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（特定于业务逻辑，迁移性差）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1913733,
+   "knowledge_point": "SSH指纹检查中的UAF",
+   "is_ai_likely_known": true,
+   "reason": "UAF是通用知识，且该漏洞是已知CVE，AI训练数据中常见。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（特定于curl，迁移性差）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 2047168,
+   "knowledge_point": "API未校验所有权导致任意删除",
+   "is_ai_likely_known": true,
+   "reason": "授权绕过是通用知识，AI训练数据中常见。",
+   "scene_frequency": "高频",
+   "migration_potential": "低（特定于业务逻辑，迁移性差）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 622864,
+   "knowledge_point": "Cisco ASA路径遍历认证绕过",
+   "is_ai_likely_known": true,
+   "reason": "CVE-2018-0296是已知漏洞，AI训练数据中常见。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（特定于Cisco ASA，迁移性差）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，不单独固化。",
+   "skill_framework": null
+  }
+ ]
+}

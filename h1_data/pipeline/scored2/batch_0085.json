@@ -1,0 +1,402 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 8,
+  "not_worth": 7,
+  "top_ids": [
+   713285,
+   274990,
+   536954,
+   187520,
+   532667,
+   1529790,
+   113424,
+   688048
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 713285,
+   "knowledge_point": "HTTP请求走私（CL.TE/TE.CL）利用前后端解析差异实现请求投毒与账户接管",
+   "is_ai_likely_known": true,
+   "reason": "HTTP请求走私是广泛已知的漏洞类型，主流AI能详细解释CL.TE/TE.CL原理和利用方法。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何使用代理/负载均衡的Web应用，如CDN、API网关）",
+   "source_quality": "通用",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，系统化请求走私的检测与利用决策树，包括变体（CL.TE, TE.CL, TE.TE）和防御绕过。",
+   "skill_framework": {
+    "name": "HTTP请求走私检测与利用",
+    "适用场景": [
+     "Web应用使用代理/负载均衡",
+     "前后端服务器解析不一致"
+    ],
+    "核心原理": [
+     "前端使用Content-Length，后端使用Transfer-Encoding（或反之）",
+     "利用解析差异构造歧义请求"
+    ],
+    "决策树": [
+     "IF 存在代理且后端支持TE → 尝试CL.TE",
+     "IF 存在代理且前端支持TE → 尝试TE.CL",
+     "IF 存在代理且两者都支持TE → 尝试TE.TE混淆"
+    ],
+    "示例": [
+     "CL.TE: 发送CL: 4, TE: chunked, 构造走私请求"
+    ],
+    "迁移场景": [
+     "请求投毒",
+     "缓存投毒",
+     "绕过前端安全控制"
+    ]
+   }
+  },
+  {
+   "id": 274990,
+   "knowledge_point": "绕过Psych.safe_load通过YAML到Marshal转换实现RCE",
+   "is_ai_likely_known": false,
+   "reason": "该技术涉及RubyGems特定解析流程和YAML/Marshal转换链，训练数据中不常见，需要深入理解。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他使用YAML反序列化的语言和框架，如Python的PyYAML、Java的SnakeYAML）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化绕过安全反序列化的通用模式：寻找安全加载器未覆盖的解析路径，并利用类型转换链。",
+   "skill_framework": {
+    "name": "绕过安全反序列化（YAML/Marshal）",
+    "适用场景": [
+     "使用YAML解析用户输入",
+     "存在safe_load但未覆盖所有路径"
+    ],
+    "核心原理": [
+     "安全加载器可能只保护部分解析入口",
+     "通过间接路径（如checksum文件）调用不安全的加载器",
+     "利用类型转换（YAML到Marshal）绕过限制"
+    ],
+    "决策树": [
+     "IF 存在safe_load但其他解析函数未保护 → 寻找间接调用",
+     "IF 存在类型转换 → 构造恶意对象链"
+    ],
+    "示例": [
+     "RubyGems: 通过checksum文件触发YAML.load，进而Marshal.load"
+    ],
+    "迁移场景": [
+     "Python pickle",
+     "Java ObjectInputStream",
+     "PHP unserialize"
+    ]
+   }
+  },
+  {
+   "id": 536954,
+   "knowledge_point": "解析器与消费者对字符串视图不一致（c_str vs getStringView）导致绕过",
+   "is_ai_likely_known": false,
+   "reason": "该技术涉及http-parser和Envoy的具体实现细节，训练数据稀少，需要组合NULL字节和视图差异。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何使用C++字符串视图的解析器，如Nginx、Apache）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'解析器与消费者视图不一致'的通用漏洞模式，包括NULL字节注入和长度/内容差异。",
+   "skill_framework": {
+    "name": "解析器与消费者视图不一致漏洞",
+    "适用场景": [
+     "使用C/C++解析HTTP头",
+     "存在c_str()和getStringView()等不同视图"
+    ],
+    "核心原理": [
+     "解析器可能只校验部分内容（如首字符）",
+     "消费者使用不同视图导致长度/内容差异",
+     "利用NULL字节截断或保留"
+    ],
+    "决策树": [
+     "IF 解析器接受NULL字节 → 尝试注入",
+     "IF 存在多种字符串视图 → 比较差异"
+    ],
+    "示例": [
+     "Envoy: header值含NULL，c_str截断而getStringView保留"
+    ],
+    "迁移场景": [
+     "URL解析",
+     "JSON解析",
+     "XML解析"
+    ]
+   }
+  },
+  {
+   "id": 981472,
+   "knowledge_point": "利用未文档化的GraphQL API进行跨商店文件复制绕过权限",
+   "is_ai_likely_known": true,
+   "reason": "未文档化API利用是常见攻击手法，AI能理解其原理，但具体API需要人工发现。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他多租户应用，但依赖具体API）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "Prompt引导即可，不单独固化。建议合并到上层Skill：GraphQL API安全测试。",
+   "skill_framework": null
+  },
+  {
+   "id": 102194,
+   "knowledge_point": "CSRF结合文件上传ID实现账户接管",
+   "is_ai_likely_known": true,
+   "reason": "CSRF和文件上传是常见漏洞，AI能理解组合攻击，但具体利用需要上下文。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他CSRF+文件上传场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "Prompt引导即可，不单独固化。建议合并到上层Skill：CSRF攻击与防御。",
+   "skill_framework": null
+  },
+  {
+   "id": 789579,
+   "knowledge_point": "AWS SDK预签名URL未签名content-length导致上传大小限制绕过",
+   "is_ai_likely_known": false,
+   "reason": "该技术涉及AWS SDK的header黑名单行为，训练数据不常见，需要具体SDK知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他云服务SDK，如Azure、GCP）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化云存储预签名URL的安全配置检查，包括header签名列表和大小限制。",
+   "skill_framework": {
+    "name": "云存储预签名URL安全配置",
+    "适用场景": [
+     "使用AWS S3、Azure Blob等云存储",
+     "生成预签名URL用于上传"
+    ],
+    "核心原理": [
+     "SDK默认可能不签名某些header（如content-length）",
+     "导致服务端无法验证大小限制"
+    ],
+    "决策树": [
+     "IF 使用预签名URL → 检查签名header列表",
+     "IF content-length未签名 → 可绕过大小限制"
+    ],
+    "示例": [
+     "ActiveStorage: content-length未签名，可上传任意大小文件"
+    ],
+    "迁移场景": [
+     "AWS S3",
+     "Azure Blob",
+     "GCP Storage"
+    ]
+   }
+  },
+  {
+   "id": 870615,
+   "knowledge_point": "通过DLL注入和API钩子禁用杀毒软件",
+   "is_ai_likely_known": true,
+   "reason": "DLL注入和API钩子是常见技术，AI能理解，但具体绕过杀软需要特定知识。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（高度依赖Windows和特定杀软）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "Prompt引导即可，不单独固化。建议合并到上层Skill：Windows安全机制绕过。",
+   "skill_framework": null
+  },
+  {
+   "id": 187520,
+   "knowledge_point": "利用重定向绕过SSRF的IP/端口过滤并支持basic-auth",
+   "is_ai_likely_known": false,
+   "reason": "该技术利用重定向行为绕过过滤，且结合basic-auth，训练数据不常见，需要组合技巧。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何SSRF防护，如WAF、代理）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化SSRF重定向绕过技术，包括302跳转和认证信息嵌入。",
+   "skill_framework": {
+    "name": "SSRF重定向绕过技术",
+    "适用场景": [
+     "SSRF防护基于IP/端口过滤",
+     "服务器跟随重定向"
+    ],
+    "核心原理": [
+     "过滤只检查初始URL，不检查重定向目标",
+     "利用302跳转到内网地址",
+     "在重定向URL中嵌入basic-auth"
+    ],
+    "决策树": [
+     "IF 存在SSRF且过滤IP → 尝试重定向",
+     "IF 重定向目标可控制 → 跳转到内网",
+     "IF 需要认证 → 在URL中嵌入user:pass@"
+    ],
+    "示例": [
+     "WordPress press-this: 302重定向到内网IP"
+    ],
+    "迁移场景": [
+     "Web应用SSRF",
+     "API代理",
+     "图片加载功能"
+    ]
+   }
+  },
+  {
+   "id": 532667,
+   "knowledge_point": "通过控制schema属性名注入JavaScript代码实现RCE",
+   "is_ai_likely_known": false,
+   "reason": "该技术涉及fast-json-stringify的代码生成机制，训练数据稀少，需要深入理解框架。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他代码生成库，如Handlebars、EJS）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化代码注入漏洞模式，特别是通过属性名或模板注入。",
+   "skill_framework": {
+    "name": "代码注入通过属性名/模板",
+    "适用场景": [
+     "使用代码生成库（如fast-json-stringify）",
+     "用户控制属性名或模板"
+    ],
+    "核心原理": [
+     "库将属性名直接拼接进生成的代码",
+     "特殊字符（如引号）可打破上下文"
+    ],
+    "决策树": [
+     "IF 用户控制属性名 → 尝试注入引号、分号等",
+     "IF 存在代码生成 → 测试注入"
+    ],
+    "示例": [
+     "fast-json-stringify: 属性名含引号导致RCE"
+    ],
+    "迁移场景": [
+     "模板引擎",
+     "ORM查询构造",
+     "动态SQL"
+    ]
+   }
+  },
+  {
+   "id": 904064,
+   "knowledge_point": "通过共享功能注入HTML到邮件导致钓鱼",
+   "is_ai_likely_known": true,
+   "reason": "HTML注入和邮件钓鱼是常见漏洞，AI能理解，但具体业务逻辑需要上下文。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他共享/通知功能）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "Prompt引导即可，不单独固化。建议合并到上层Skill：输入验证与输出编码。",
+   "skill_framework": null
+  },
+  {
+   "id": 1529790,
+   "knowledge_point": "通过Kafka Connect的JAAS配置触发JNDI注入实现RCE",
+   "is_ai_likely_known": false,
+   "reason": "该技术涉及Kafka Connect特定配置和JNDI注入，训练数据不常见，需要组合知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他使用JNDI的中间件，如Tomcat、Spring）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化JNDI注入的检测与利用，特别是通过配置属性触发。",
+   "skill_framework": {
+    "name": "JNDI注入检测与利用",
+    "适用场景": [
+     "使用Java中间件（如Kafka、Tomcat）",
+     "用户可配置JNDI相关属性"
+    ],
+    "核心原理": [
+     "JNDI查询可被恶意LDAP/RMI服务器利用",
+     "配置属性如user.provider.url可触发"
+    ],
+    "决策树": [
+     "IF 存在JNDI查询 → 尝试控制URL",
+     "IF 配置可修改 → 注入恶意LDAP地址"
+    ],
+    "示例": [
+     "Kafka Connect: 配置JAAS的user.provider.url为恶意LDAP"
+    ],
+    "迁移场景": [
+     "Log4j",
+     "Spring",
+     "Tomcat"
+    ]
+   }
+  },
+  {
+   "id": 113424,
+   "knowledge_point": "利用libevent bufferevents模式下的解析缺陷导致无限循环DoS",
+   "is_ai_likely_known": false,
+   "reason": "该技术涉及libevent特定模式和代码路径不一致，训练数据稀少，需要深入理解。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他使用libevent的应用）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化解析器状态不一致导致的DoS模式，包括无限循环和资源耗尽。",
+   "skill_framework": {
+    "name": "解析器状态不一致导致的DoS",
+    "适用场景": [
+     "使用libevent或类似事件库",
+     "存在多种解析模式（如bufferevents）"
+    ],
+    "核心原理": [
+     "不同代码路径对状态变量（如data_len）处理不一致",
+     "导致循环条件永不满足"
+    ],
+    "决策树": [
+     "IF 存在多种解析模式 → 比较状态更新",
+     "IF 输入可控制长度 → 尝试超长数据"
+    ],
+    "示例": [
+     "Tor: bufferevents模式下data_len未更新导致无限循环"
+    ],
+    "迁移场景": [
+     "网络协议解析",
+     "文件解析",
+     "消息处理"
+    ]
+   }
+  },
+  {
+   "id": 544334,
+   "knowledge_point": "密码重置令牌可置空导致任意账户接管",
+   "is_ai_likely_known": true,
+   "reason": "密码重置漏洞是常见类型，AI能理解，但具体实现细节需要上下文。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他密码重置实现）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "Prompt引导即可，不单独固化。建议合并到上层Skill：认证与密码重置安全。",
+   "skill_framework": null
+  },
+  {
+   "id": 995969,
+   "knowledge_point": "通过重用旧date参数绕过编辑时间限制修改不可编辑消息",
+   "is_ai_likely_known": true,
+   "reason": "业务逻辑漏洞是常见类型，AI能理解，但具体参数绑定需要上下文。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他编辑功能）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "Prompt引导即可，不单独固化。建议合并到上层Skill：业务逻辑安全测试。",
+   "skill_framework": null
+  },
+  {
+   "id": 688048,
+   "knowledge_point": "curl IPv6字面量解析缺陷导致连接意外主机",
+   "is_ai_likely_known": false,
+   "reason": "该技术涉及curl对IPv6 zone id的解析缺陷，训练数据稀少，需要具体版本知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他URL解析库，如Python的urllib、Java的URI）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化URL解析差异导致的连接错误，包括IPv6特殊语法。",
+   "skill_framework": {
+    "name": "URL解析差异导致连接错误",
+    "适用场景": [
+     "使用curl或类似库解析URL",
+     "存在IPv6字面量"
+    ],
+    "核心原理": [
+     "解析器对IPv6 zone id处理不完整",
+     "导致主机名验证绕过"
+    ],
+    "决策树": [
+     "IF 支持IPv6 → 尝试zone id语法",
+     "IF 解析器有缺陷 → 构造特殊URL"
+    ],
+    "示例": [
+     "curl: [ab.be%google.com]实际连接ab.be"
+    ],
+    "迁移场景": [
+     "SSRF",
+     "主机名验证",
+     "代理配置"
+    ]
+   }
+  }
+ ]
+}

@@ -1,0 +1,463 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 10,
+  "not_worth": 5,
+  "top_ids": [
+   1238709,
+   341876,
+   153776,
+   899069,
+   499030,
+   1566462,
+   819717,
+   842625,
+   674195,
+   43443
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 173043,
+   "knowledge_point": "重放请求绕过每日下载限制和邮箱验证",
+   "is_ai_likely_known": true,
+   "reason": "重放攻击绕过速率限制是通用知识，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "低（仅适用于特定业务逻辑）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 842625,
+   "knowledge_point": "IDOR 获取敏感信息结合密码重置实现账户接管",
+   "is_ai_likely_known": false,
+   "reason": "IDOR 与密码重置流程的组合利用，需要具体 API 知识，AI 可能不熟悉。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何有 IDOR 和密码重置功能的系统）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'IDOR 到账户接管'的攻击链。",
+   "skill_framework": {
+    "name": "IDOR 到账户接管攻击链",
+    "适用场景": [
+     "Web 应用 API 授权测试",
+     "账户安全评估"
+    ],
+    "核心原理": [
+     "IDOR 泄露敏感信息（如重置哈希）",
+     "结合密码重置流程实现接管"
+    ],
+    "决策树": [
+     "IF 存在 IDOR 且可获取用户敏感信息 → 尝试密码重置流程"
+    ],
+    "示例": [
+     "枚举 userId → 获取重置哈希 → 重置密码"
+    ],
+    "迁移场景": [
+     "API 安全测试",
+     "渗透测试"
+    ]
+   }
+  },
+  {
+   "id": 1238709,
+   "knowledge_point": "HTTP 请求走私：冒号前空格导致解析差异",
+   "is_ai_likely_known": false,
+   "reason": "特定解析器（Node.js llhttp）对畸形头的接受行为，AI 可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何前后端解析器不一致的场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'HTTP 解析差异'的检测和利用方法。",
+   "skill_framework": {
+    "name": "HTTP 请求走私：解析差异利用",
+    "适用场景": [
+     "Web 应用安全测试",
+     "代理与后端解析器不一致"
+    ],
+    "核心原理": [
+     "不同组件对 HTTP 头解析差异",
+     "利用畸形头走私请求"
+    ],
+    "决策树": [
+     "IF 存在代理和后端 → 测试解析差异（如空格、大小写）"
+    ],
+    "示例": [
+     "Content-Length : 100"
+    ],
+    "迁移场景": [
+     "请求走私",
+     "缓存投毒"
+    ]
+   }
+  },
+  {
+   "id": 899069,
+   "knowledge_point": "Rails ActionableExceptions 在生产环境误用导致任意迁移执行",
+   "is_ai_likely_known": false,
+   "reason": "Rails 特定中间件在生产环境默认启用，AI 可能不知道。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他框架的调试功能误用）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'框架调试功能在生产环境的误用'。",
+   "skill_framework": {
+    "name": "框架调试功能误用检测",
+    "适用场景": [
+     "Rails 应用安全测试",
+     "生产环境配置审计"
+    ],
+    "核心原理": [
+     "调试功能（如 ActionableExceptions）在生产环境启用",
+     "允许执行敏感操作"
+    ],
+    "决策树": [
+     "IF 使用 Rails 且生产环境 → 检查 show_detailed_exceptions 和 ActionableExceptions"
+    ],
+    "示例": [
+     "触发异常 → 执行迁移"
+    ],
+    "迁移场景": [
+     "其他框架（如 Django 调试模式）"
+    ]
+   }
+  },
+  {
+   "id": 153776,
+   "knowledge_point": "GD 库透明色索引负值导致内存破坏",
+   "is_ai_likely_known": false,
+   "reason": "GD 库内部实现细节，AI 可能不熟悉。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他图像处理库的边界检查）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'图像处理库边界检查'的测试方法。",
+   "skill_framework": {
+    "name": "图像处理库内存破坏测试",
+    "适用场景": [
+     "图像上传功能安全测试",
+     "第三方库安全评估"
+    ],
+    "核心原理": [
+     "库对输入边界检查不严",
+     "恶意图片触发越界读写"
+    ],
+    "决策树": [
+     "IF 使用图像处理库 → 测试特殊颜色值、索引"
+    ],
+    "示例": [
+     "构造透明色负值图片"
+    ],
+    "迁移场景": [
+     "其他图像库（如 ImageMagick）"
+    ]
+   }
+  },
+  {
+   "id": 674195,
+   "knowledge_point": "账户关联未验证所有权导致数据泄露",
+   "is_ai_likely_known": false,
+   "reason": "账户关联逻辑漏洞，AI 可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何账户关联功能）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'账户关联所有权验证'的测试方法。",
+   "skill_framework": {
+    "name": "账户关联所有权验证测试",
+    "适用场景": [
+     "账户系统安全测试",
+     "OAuth 集成测试"
+    ],
+    "核心原理": [
+     "关联操作未验证所有权",
+     "攻击者可通过修改 ID 关联他人账户"
+    ],
+    "决策树": [
+     "IF 存在账户关联功能 → 尝试修改关联 ID"
+    ],
+    "示例": [
+     "修改 uid 字段关联受害者"
+    ],
+    "迁移场景": [
+     "OAuth 回调",
+     "第三方登录"
+    ]
+   }
+  },
+  {
+   "id": 1566462,
+   "knowledge_point": "curl globbing 功能绕过 URL 过滤",
+   "is_ai_likely_known": false,
+   "reason": "curl 的 globbing 功能不常见，AI 可能不知道。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何使用 curl 的代理或工具）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'curl 扩展功能滥用'的检测方法。",
+   "skill_framework": {
+    "name": "curl 扩展功能滥用检测",
+    "适用场景": [
+     "代理安全测试",
+     "URL 过滤绕过"
+    ],
+    "核心原理": [
+     "curl 支持 globbing 生成多个 URL",
+     "可绕过黑名单或扫描端口"
+    ],
+    "决策树": [
+     "IF 使用 curl 处理 URL → 测试 globbing 语法"
+    ],
+    "示例": [
+     "http://example.com/{1,2,3}"
+    ],
+    "迁移场景": [
+     "SSRF 防护",
+     "WAF 绕过"
+    ]
+   }
+  },
+  {
+   "id": 43443,
+   "knowledge_point": "PyUnicode_FromFormatV 格式字符串缓冲区溢出",
+   "is_ai_likely_known": false,
+   "reason": "Python 底层库的特定缺陷，AI 可能不熟悉。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他格式化函数）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'格式化函数缓冲区安全'的测试方法。",
+   "skill_framework": {
+    "name": "格式化函数缓冲区安全测试",
+    "适用场景": [
+     "编程语言库安全测试",
+     "输入验证"
+    ],
+    "核心原理": [
+     "格式化函数对宽度和精度参数处理不当",
+     "导致缓冲区分配不足"
+    ],
+    "决策树": [
+     "IF 使用格式化函数 → 测试特殊宽度和精度参数"
+    ],
+    "示例": [
+     "%100000000s"
+    ],
+    "迁移场景": [
+     "C 语言 printf",
+     "其他语言格式化"
+    ]
+   }
+  },
+  {
+   "id": 499030,
+   "knowledge_point": "postMessage origin 检查使用前缀匹配导致 XSS",
+   "is_ai_likely_known": false,
+   "reason": "origin 检查的常见错误，AI 可能知道但具体绕过方法需要技巧。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何 postMessage 通信）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'postMessage origin 验证'的测试方法。",
+   "skill_framework": {
+    "name": "postMessage origin 验证测试",
+    "适用场景": [
+     "Web 前端安全测试",
+     "跨域通信"
+    ],
+    "核心原理": [
+     "origin 检查使用 indexOf 而非精确匹配",
+     "可被相似域名绕过"
+    ],
+    "决策树": [
+     "IF 使用 postMessage → 检查 origin 验证方式"
+    ],
+    "示例": [
+     "注册相似域名发送消息"
+    ],
+    "迁移场景": [
+     "iframe 通信",
+     "OAuth 回调"
+    ]
+   }
+  },
+  {
+   "id": 1066914,
+   "knowledge_point": "多种绕过技术组合（intval 科学计数法、str_replace 递归、DNS rebinding、二次注入）",
+   "is_ai_likely_known": false,
+   "reason": "这些技术组合在 CTF 中常见，但 AI 可能不熟悉具体绕过细节。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到各种输入验证场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'输入验证绕过技术'的决策树。",
+   "skill_framework": {
+    "name": "输入验证绕过技术",
+    "适用场景": [
+     "Web 应用安全测试",
+     "WAF 绕过"
+    ],
+    "核心原理": [
+     "利用语言特性（如科学计数法）",
+     "递归替换绕过",
+     "DNS rebinding 绕过 IP 限制"
+    ],
+    "决策树": [
+     "IF 存在输入验证 → 尝试各种绕过技术"
+    ],
+    "示例": [
+     "intval('1e3')",
+     "str_replace 递归"
+    ],
+    "迁移场景": [
+     "SQL 注入",
+     "命令注入"
+    ]
+   }
+  },
+  {
+   "id": 341876,
+   "knowledge_point": "SSRF 到 Kubernetes RCE 的完整攻击链",
+   "is_ai_likely_known": false,
+   "reason": "利用 Google Cloud Metadata v1beta1 端点绕过头限制，AI 可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到云环境 SSRF 利用）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'云环境 SSRF 到 RCE'的攻击链。",
+   "skill_framework": {
+    "name": "云环境 SSRF 到 RCE 攻击链",
+    "适用场景": [
+     "云环境渗透测试",
+     "SSRF 深度利用"
+    ],
+    "核心原理": [
+     "利用云 metadata 服务",
+     "获取凭证和证书",
+     "访问 Kubernetes API"
+    ],
+    "决策树": [
+     "IF 存在 SSRF → 尝试访问 metadata 服务",
+     "IF 获取凭证 → 尝试访问 Kubernetes API"
+    ],
+    "示例": [
+     "访问 metadata 获取 token",
+     "使用 kubelet 证书"
+    ],
+    "迁移场景": [
+     "AWS metadata",
+     "Azure metadata"
+    ]
+   }
+  },
+  {
+   "id": 1069080,
+   "knowledge_point": "CTF 多漏洞组合利用",
+   "is_ai_likely_known": true,
+   "reason": "CTF 常见套路，AI 已知。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（具体漏洞组合不可迁移）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 115978,
+   "knowledge_point": "ffmpeg 解析 m3u8 导致 SSRF",
+   "is_ai_likely_known": false,
+   "reason": "ffmpeg 对播放列表的处理，AI 可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他媒体处理库）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'媒体处理库 SSRF'的测试方法。",
+   "skill_framework": {
+    "name": "媒体处理库 SSRF 测试",
+    "适用场景": [
+     "文件上传功能安全测试",
+     "媒体处理服务"
+    ],
+    "核心原理": [
+     "媒体库支持播放列表（如 m3u8）",
+     "可发起内部请求"
+    ],
+    "决策树": [
+     "IF 使用 ffmpeg 处理上传文件 → 测试 m3u8 播放列表"
+    ],
+    "示例": [
+     "上传包含内网 URL 的 m3u8"
+    ],
+    "迁移场景": [
+     "其他媒体库（如 ImageMagick）"
+    ]
+   }
+  },
+  {
+   "id": 819717,
+   "knowledge_point": "IPv6 路由通告劫持实现 MitM",
+   "is_ai_likely_known": false,
+   "reason": "IPv6 RA 攻击在容器环境中的利用，AI 可能不熟悉。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到网络层攻击）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'IPv6 路由通告攻击'的检测方法。",
+   "skill_framework": {
+    "name": "IPv6 路由通告攻击检测",
+    "适用场景": [
+     "容器安全测试",
+     "网络层渗透测试"
+    ],
+    "核心原理": [
+     "容器内发送伪造 RA",
+     "主机接受导致流量重定向"
+    ],
+    "决策树": [
+     "IF 容器有 CAP_NET_RAW → 尝试发送 RA"
+    ],
+    "示例": [
+     "发送恶意 RA 重定向流量"
+    ],
+    "迁移场景": [
+     "IPv6 网络攻击"
+    ]
+   }
+  },
+  {
+   "id": 1380121,
+   "knowledge_point": "弱密钥伪造会话结合密码重置接管管理员",
+   "is_ai_likely_known": false,
+   "reason": "弱密钥和会话伪造的组合，AI 可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何使用会话签名的应用）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'弱密钥会话伪造'的测试方法。",
+   "skill_framework": {
+    "name": "弱密钥会话伪造测试",
+    "适用场景": [
+     "Web 应用认证测试",
+     "会话安全评估"
+    ],
+    "核心原理": [
+     "弱密钥可被猜测或破解",
+     "伪造会话令牌"
+    ],
+    "决策树": [
+     "IF 使用 Flask 等框架 → 尝试弱密钥",
+     "IF 可伪造会话 → 尝试密码重置"
+    ],
+    "示例": [
+     "使用常见密钥解密会话"
+    ],
+    "迁移场景": [
+     "JWT 弱密钥",
+     "其他框架会话"
+    ]
+   }
+  }
+ ]
+}

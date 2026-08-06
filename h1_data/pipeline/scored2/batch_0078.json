@@ -1,0 +1,398 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 8,
+  "not_worth": 7,
+  "top_ids": [
+   307675,
+   925527,
+   315760,
+   1446090,
+   1665156,
+   423437,
+   2248781,
+   146255
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 307675,
+   "knowledge_point": "平台间信任链验证缺陷：fork 的 gist 被误认为所有权证明",
+   "is_ai_likely_known": false,
+   "reason": "该漏洞涉及 Keybase 与 GitHub 的集成逻辑，属于特定平台间的信任链缺陷，训练数据中不常见，需结合具体平台行为才能理解。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何依赖第三方平台所有权验证的场景，如 OAuth 回调、社交账号绑定）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'平台间信任链验证'的检查点，包括验证来源、fork 状态、用户行为等。",
+   "skill_framework": {
+    "name": "平台间信任链验证缺陷检测",
+    "适用场景": [
+     "第三方平台所有权验证",
+     "OAuth 回调",
+     "社交账号绑定"
+    ],
+    "核心原理": [
+     "验证方未检查数据来源的完整性（如 fork）",
+     "信任链断裂导致身份冒充"
+    ],
+    "决策树": [
+     "IF 验证第三方数据 AND 数据可被用户修改或复制 → 检查是否验证了原始创建者"
+    ],
+    "示例": [
+     "Keybase 验证 GitHub 句柄时未检查 gist 是否为 fork"
+    ],
+    "迁移场景": [
+     "身份验证",
+     "账号绑定",
+     "权限提升"
+    ]
+   }
+  },
+  {
+   "id": 972561,
+   "knowledge_point": "日志记录敏感凭据与删除失败处理不当",
+   "is_ai_likely_known": true,
+   "reason": "日志泄露凭据是常见问题，AI 已知，但具体到 kubeadm 的 token 删除失败场景较具体。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到任何日志记录敏感信息的场景）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，强调日志脱敏和失败处理。",
+   "skill_framework": null
+  },
+  {
+   "id": 126906,
+   "knowledge_point": "Python 包元数据注入 javascript: 协议导致存储型 XSS",
+   "is_ai_likely_known": true,
+   "reason": "XSS 和 URL 协议绕过是常见知识，但针对 PyPI 包元数据的特定场景较具体。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（主要针对 PyPI 镜像站，迁移性有限）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 895798,
+   "knowledge_point": "多阶段攻击链组合（子域名枚举、.git 泄露、SSRF、路径遍历、逆向）",
+   "is_ai_likely_known": true,
+   "reason": "攻击链中的每个技术点都是已知的，但组合方式具有启发性，不过整体属于通用渗透测试流程。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到类似的多阶段攻击场景）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：多阶段攻击链构建。",
+   "skill_framework": null
+  },
+  {
+   "id": 925527,
+   "knowledge_point": "SSRF 绕过：DNS rebinding 和未检查 IP 范围（0.0.0.0, 169.254.0.0/16）",
+   "is_ai_likely_known": false,
+   "reason": "DNS rebinding 和特定 IP 范围绕过是较高级的 SSRF 绕过技术，AI 可能不完全掌握，且该案例展示了绕过现代防御的优雅方法。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何 SSRF 防护场景，包括 WAF、内网访问控制）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 SSRF 绕过技术，包括 IP 黑名单绕过、DNS rebinding、重定向等。",
+   "skill_framework": {
+    "name": "SSRF 绕过技术（DNS rebinding、IP 黑名单绕过）",
+    "适用场景": [
+     "SSRF 防护绕过",
+     "WAF 绕过",
+     "内网访问控制"
+    ],
+    "核心原理": [
+     "校验层与请求层对 IP 解析不一致",
+     "利用未检查的 IP 范围（如 0.0.0.0）",
+     "DNS rebinding 绕过 IP 锁定"
+    ],
+    "决策树": [
+     "IF 存在 SSRF 防护 AND 使用 IP 黑名单 → 尝试 DNS rebinding 和未检查 IP 范围"
+    ],
+    "示例": [
+     "重定向到 0.0.0.0 或 169.254.0.0/16"
+    ],
+    "迁移场景": [
+     "SSRF",
+     "WAF 绕过",
+     "内网探测"
+    ]
+   }
+  },
+  {
+   "id": 315760,
+   "knowledge_point": "Windows 路径特性（盘符和相对路径组合）绕过路径验证",
+   "is_ai_likely_known": false,
+   "reason": "Windows 路径的特定行为（如 C:../../）是平台特有知识，AI 可能不完全掌握，且影响广泛（Koa 等）。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何路径验证场景，尤其是跨平台应用）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化路径规范化绕过技术，包括 Windows 盘符、相对路径组合等。",
+   "skill_framework": {
+    "name": "路径遍历绕过（Windows 盘符与相对路径组合）",
+    "适用场景": [
+     "路径验证绕过",
+     "文件访问控制",
+     "Web 框架路径处理"
+    ],
+    "核心原理": [
+     "平台路径解析差异",
+     "盘符和相对路径组合导致规范化不一致"
+    ],
+    "决策树": [
+     "IF 存在路径验证 AND 运行在 Windows → 尝试 C:../../ 等变体"
+    ],
+    "示例": [
+     "C:../../etc/passwd"
+    ],
+    "迁移场景": [
+     "路径遍历",
+     "文件读取",
+     "框架行为利用"
+    ]
+   }
+  },
+  {
+   "id": 100509,
+   "knowledge_point": "预生成 2FA 密钥导致绕过",
+   "is_ai_likely_known": true,
+   "reason": "预生成密钥的风险是通用知识，AI 已知，但具体到 2FA 场景较具体。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到任何预生成凭据的场景）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，强调按需生成。",
+   "skill_framework": null
+  },
+  {
+   "id": 951230,
+   "knowledge_point": "礼品功能未验证支付状态导致免费订阅",
+   "is_ai_likely_known": true,
+   "reason": "支付状态验证缺失是常见业务逻辑漏洞，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到任何支付相关业务逻辑）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，强调支付状态验证。",
+   "skill_framework": null
+  },
+  {
+   "id": 1599573,
+   "knowledge_point": "Rails sanitizer 解析器差异绕过",
+   "is_ai_likely_known": false,
+   "reason": "Nokogiri 解析差异导致 sanitizer 绕过是特定框架行为，AI 可能不完全掌握，但需要特定环境（允许 style 标签）。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他使用解析器的场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，但建议合并到上层系统 Skill：HTML 净化绕过。",
+   "skill_framework": {
+    "name": "HTML 净化绕过（解析器差异）",
+    "适用场景": [
+     "XSS 防护绕过",
+     "HTML 净化器",
+     "富文本处理"
+    ],
+    "核心原理": [
+     "不同解析器对同一 HTML 的解析结果不一致",
+     "利用差异绕过过滤规则"
+    ],
+    "决策树": [
+     "IF 使用 HTML 净化器 AND 允许 style 标签 → 尝试解析器差异绕过"
+    ],
+    "示例": [
+     "构造特定 HTML 使净化器与浏览器解析不一致"
+    ],
+    "迁移场景": [
+     "XSS",
+     "WAF 绕过",
+     "内容安全"
+    ]
+   }
+  },
+  {
+   "id": 1446090,
+   "knowledge_point": "服务端对同一数值使用不同取整函数（ceil/floor）导致业务逻辑漏洞",
+   "is_ai_likely_known": false,
+   "reason": "利用取整不一致进行计费绕过是较隐蔽的业务逻辑漏洞，AI 可能不完全掌握，且具有通用性。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何涉及数值计算和计费的场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'数值处理不一致'的检测模式。",
+   "skill_framework": {
+    "name": "数值处理不一致漏洞（取整函数差异）",
+    "适用场景": [
+     "计费系统",
+     "库存管理",
+     "配额控制"
+    ],
+    "核心原理": [
+     "同一输入在不同处理逻辑中使用不同取整函数",
+     "导致数量与费用计算不一致"
+    ],
+    "决策树": [
+     "IF 存在数值输入 AND 服务端使用不同取整函数 → 尝试小数输入观察差异"
+    ],
+    "示例": [
+     "座位数 1.9 时，ceil 得 2，floor 得 1，导致多拿少付"
+    ],
+    "迁移场景": [
+     "业务逻辑漏洞",
+     "支付绕过",
+     "资源滥用"
+    ]
+   }
+  },
+  {
+   "id": 1023899,
+   "knowledge_point": "正则表达式回溯导致 ReDoS",
+   "is_ai_likely_known": true,
+   "reason": "ReDoS 是常见知识，AI 已知，但具体到 ActiveRecord 的 Money 类型较具体。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到任何正则表达式处理场景）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，强调正则安全。",
+   "skill_framework": null
+  },
+  {
+   "id": 1665156,
+   "knowledge_point": "HTTP 请求走私：多行 Transfer-Encoding 头解析分歧",
+   "is_ai_likely_known": false,
+   "reason": "多行 TE 头导致解析分歧是较高级的请求走私技术，AI 可能不完全掌握，且绕过修复。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何 HTTP 解析场景，尤其是前后端分离架构）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 HTTP 请求走私的检测和利用方法。",
+   "skill_framework": {
+    "name": "HTTP 请求走私（多行 Transfer-Encoding 解析分歧）",
+    "适用场景": [
+     "HTTP 请求走私",
+     "前后端解析差异",
+     "WAF 绕过"
+    ],
+    "核心原理": [
+     "前端和后端对 TE 头的解析不一致",
+     "利用多行 TE 头（逗号后空格）造成分歧"
+    ],
+    "决策树": [
+     "IF 存在代理或负载均衡 AND 使用 HTTP/1.1 → 尝试多行 TE 头"
+    ],
+    "示例": [
+     "Transfer-Encoding: chunked, \\r\\n chunked"
+    ],
+    "迁移场景": [
+     "请求走私",
+     "缓存投毒",
+     "会话劫持"
+    ]
+   }
+  },
+  {
+   "id": 423437,
+   "knowledge_point": "URL 解析二次解析差异导致 SSRF 和密钥泄露",
+   "is_ai_likely_known": false,
+   "reason": "URL 解析的二次解析差异（如 @ 符号注入）是较高级的 SSRF 技术，AI 可能不完全掌握，且影响 SDK。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何 URL 解析场景，尤其是 SDK 和框架）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 URL 解析差异绕过技术。",
+   "skill_framework": {
+    "name": "URL 解析差异绕过（二次解析、@ 符号注入）",
+    "适用场景": [
+     "SSRF",
+     "URL 验证绕过",
+     "SDK 安全"
+    ],
+    "核心原理": [
+     "不同解析器对 URL 的解析结果不一致",
+     "利用 @ 符号或端口注入绕过验证"
+    ],
+    "决策树": [
+     "IF 存在 URL 参数验证 AND 使用 SDK → 尝试注入 @ 符号或特殊端口"
+    ],
+    "示例": [
+     "http://example.com@attacker.com"
+    ],
+    "迁移场景": [
+     "SSRF",
+     "开放重定向",
+     "密钥泄露"
+    ]
+   }
+  },
+  {
+   "id": 2248781,
+   "knowledge_point": "ColdFusion WDDX 反序列化导致未认证任意文件读取",
+   "is_ai_likely_known": false,
+   "reason": "WDDX 反序列化漏洞是特定技术栈的漏洞，AI 可能不完全掌握，且无需认证，影响广泛。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他反序列化场景，但特定于 ColdFusion）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，但建议合并到上层系统 Skill：反序列化漏洞利用。",
+   "skill_framework": {
+    "name": "反序列化漏洞利用（WDDX 任意文件读取）",
+    "适用场景": [
+     "反序列化攻击",
+     "未认证文件读取",
+     "ColdFusion 安全"
+    ],
+    "核心原理": [
+     "反序列化过程中未校验 classname 参数",
+     "结合路径遍历读取任意文件"
+    ],
+    "决策树": [
+     "IF 目标使用 ColdFusion AND 存在 WDDX 接口 → 尝试构造恶意 WDDX 请求"
+    ],
+    "示例": [
+     "构造 WDDX 请求读取 /etc/passwd"
+    ],
+    "迁移场景": [
+     "反序列化",
+     "文件读取",
+     "认证绕过"
+    ]
+   }
+  },
+  {
+   "id": 146255,
+   "knowledge_point": "wddx 反序列化 double free 导致内存破坏",
+   "is_ai_likely_known": false,
+   "reason": "wddx 解析器对 boolean 值的错误处理导致 double free，是特定扩展的漏洞，AI 可能不完全掌握，且可导致 RCE。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他反序列化器，但特定于 wddx）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，但建议合并到上层系统 Skill：反序列化漏洞利用。",
+   "skill_framework": {
+    "name": "反序列化内存破坏（double free）",
+    "适用场景": [
+     "反序列化攻击",
+     "内存破坏",
+     "PHP 扩展安全"
+    ],
+    "核心原理": [
+     "解析器对非预期输入处理不当",
+     "释放后未置空指针导致 double free"
+    ],
+    "决策树": [
+     "IF 目标使用 PHP wddx 扩展 AND 接受 XML 输入 → 尝试非标准 boolean 值"
+    ],
+    "示例": [
+     "<boolean value=\"none\">AAAAA</boolean>"
+    ],
+    "迁移场景": [
+     "反序列化",
+     "RCE",
+     "堆破坏"
+    ]
+   }
+  }
+ ]
+}

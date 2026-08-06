@@ -1,0 +1,442 @@
+{
+ "summary": {
+  "total": 14,
+  "worth_skill": 10,
+  "not_worth": 4,
+  "top_ids": [
+   171593,
+   843256,
+   2326194,
+   869574,
+   861744,
+   31756,
+   236552,
+   390929,
+   765291,
+   1330529
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 171593,
+   "knowledge_point": "MySQL LOAD DATA LOCAL INFILE 服务器诱导客户端读取任意文件",
+   "is_ai_likely_known": false,
+   "reason": "该协议行为属于特定协议设计缺陷，训练数据中较少见，且需要组合攻击场景才能触发。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他数据库协议如 PostgreSQL COPY、ODBC 等）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'服务器诱导客户端'模式，涵盖协议原理、攻击链、防御措施。",
+   "skill_framework": {
+    "name": "数据库协议服务器诱导客户端文件读取",
+    "适用场景": [
+     "数据库客户端连接不可信服务器",
+     "安全审计数据库客户端配置"
+    ],
+    "核心原理": [
+     "协议允许服务器请求客户端发送本地文件",
+     "客户端默认配置可能开启 LOCAL INFILE"
+    ],
+    "决策树": [
+     "IF 客户端连接外部数据库 AND 未禁用 LOCAL INFILE → 尝试恶意服务器诱导读取文件"
+    ],
+    "示例": [
+     "恶意 MySQL 服务器发送 LOCAL_INFILE 请求读取 /etc/passwd"
+    ],
+    "迁移场景": [
+     "MySQL",
+     "PostgreSQL",
+     "ODBC"
+    ]
+   }
+  },
+  {
+   "id": 1069335,
+   "knowledge_point": "多步骤组合攻击链（信息泄露到RCE）",
+   "is_ai_likely_known": true,
+   "reason": "该案例是多个已知漏洞的组合，每一步都是常见技术，AI 已广泛掌握。",
+   "scene_frequency": "高频",
+   "migration_potential": "低（具体步骤依赖特定应用，难以抽象为通用模式）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 869574,
+   "knowledge_point": "原型污染导致 SQL 注入或 DoS（TypeORM mergeDeep）",
+   "is_ai_likely_known": false,
+   "reason": "该案例涉及特定库（TypeORM）的深拷贝函数未过滤 __proto__，属于框架行为利用，AI 可能不了解具体库的漏洞。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他深拷贝库如 lodash.merge、jQuery.extend 等）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'深拷贝原型污染'模式，涵盖原理、检测、防御。",
+   "skill_framework": {
+    "name": "深拷贝原型污染检测与利用",
+    "适用场景": [
+     "Node.js 应用",
+     "前端库使用深拷贝",
+     "安全代码审计"
+    ],
+    "核心原理": [
+     "深拷贝函数未过滤 __proto__ 键",
+     "污染 Object.prototype 影响全局对象"
+    ],
+    "决策树": [
+     "IF 使用深拷贝函数 AND 用户可控输入 → 尝试 __proto__ 污染"
+    ],
+    "示例": [
+     "mergeDeep({}, JSON.parse(userInput)) 导致原型污染"
+    ],
+    "迁移场景": [
+     "TypeORM",
+     "lodash",
+     "jQuery"
+    ]
+   }
+  },
+  {
+   "id": 1342009,
+   "knowledge_point": "存储型 XSS 通过 iframe srcdoc 绕过 CSP",
+   "is_ai_likely_known": true,
+   "reason": "iframe srcdoc 绕过 CSP 是已知技术，AI 已掌握。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他富文本场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：XSS 绕过与防御。",
+   "skill_framework": null
+  },
+  {
+   "id": 843256,
+   "knowledge_point": "TURN 协议 peer 访问控制缺失导致 SSRF",
+   "is_ai_likely_known": false,
+   "reason": "TURN 协议的具体实现细节和攻击面在训练数据中较少，属于协议行为利用。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他中继协议如 STUN、ICE）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'TURN 中继滥用'模式，涵盖协议原理、攻击链、防御。",
+   "skill_framework": {
+    "name": "TURN 中继滥用与 SSRF",
+    "适用场景": [
+     "WebRTC 应用",
+     "TURN 服务器安全配置",
+     "内网渗透"
+    ],
+    "核心原理": [
+     "TURN 协议允许客户端指定 peer 地址",
+     "缺乏访问控制导致任意目标访问"
+    ],
+    "决策树": [
+     "IF 存在 TURN 服务 AND 未限制 peer 地址 → 尝试中继访问内网"
+    ],
+    "示例": [
+     "使用 stunner 建立代理访问 169.254.169.254"
+    ],
+    "迁移场景": [
+     "TURN",
+     "STUN",
+     "ICE"
+    ]
+   }
+  },
+  {
+   "id": 172843,
+   "knowledge_point": "JSONP 回调注入导致 DOM XSS",
+   "is_ai_likely_known": true,
+   "reason": "JSONP 回调注入是已知技术，AI 已掌握。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他 JSONP 端点）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：XSS 绕过与防御。",
+   "skill_framework": null
+  },
+  {
+   "id": 152266,
+   "knowledge_point": "PHP 反序列化触发 GC 导致 UAF",
+   "is_ai_likely_known": false,
+   "reason": "该案例涉及 PHP 内核的 GC 机制与对象生命周期管理缺陷，属于框架行为利用，AI 可能不了解具体细节。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他语言的反序列化机制）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'反序列化触发 GC 导致 UAF'模式，涵盖原理、利用条件、防御。",
+   "skill_framework": {
+    "name": "反序列化触发 GC 导致 UAF",
+    "适用场景": [
+     "PHP 应用",
+     "反序列化安全测试",
+     "内存破坏漏洞研究"
+    ],
+    "核心原理": [
+     "反序列化过程中对象生命周期管理缺陷",
+     "GC 自动触发导致 UAF"
+    ],
+    "决策树": [
+     "IF 存在反序列化入口 AND 对象有析构函数 → 尝试构造循环引用触发 GC"
+    ],
+    "示例": [
+     "构造恶意序列化数据触发 GC 导致 UAF"
+    ],
+    "迁移场景": [
+     "PHP",
+     "Java",
+     "Python"
+    ]
+   }
+  },
+  {
+   "id": 765291,
+   "knowledge_point": "Zip 解压路径遍历导致 RCE",
+   "is_ai_likely_known": true,
+   "reason": "Zip 解压路径遍历是已知漏洞，AI 已掌握。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他压缩包处理）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：文件上传与解压安全。",
+   "skill_framework": null
+  },
+  {
+   "id": 1330529,
+   "knowledge_point": "OTP 验证流程参数篡改导致未授权认领",
+   "is_ai_likely_known": false,
+   "reason": "该案例涉及业务逻辑中的 OTP 验证流程缺陷，属于特定业务场景，AI 可能不了解具体实现。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他 OTP 验证场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'OTP 验证流程参数篡改'模式，涵盖原理、攻击链、防御。",
+   "skill_framework": {
+    "name": "OTP 验证流程参数篡改",
+    "适用场景": [
+     "业务逻辑安全测试",
+     "OTP 验证流程审计"
+    ],
+    "核心原理": [
+     "OTP 发送和验证接口未绑定业务对象",
+     "参数可篡改导致未授权操作"
+    ],
+    "决策树": [
+     "IF OTP 验证请求包含业务对象 ID AND 未绑定手机号 → 尝试替换 ID"
+    ],
+    "示例": [
+     "替换 resId 为受害者餐厅 ID 完成认领"
+    ],
+    "迁移场景": [
+     "OTP 验证",
+     "多因素认证",
+     "业务授权"
+    ]
+   }
+  },
+  {
+   "id": 861744,
+   "knowledge_point": "原型污染结合 sourceURL 导致 RCE（Kibana）",
+   "is_ai_likely_known": false,
+   "reason": "该案例涉及 Kibana 特定功能中的原型污染点，结合 Node.js 的 sourceURL 特性，属于框架行为利用，AI 可能不了解。",
+   "scene_frequency": "低频",
+   "migration_potential": "高（可迁移到其他 Node.js 应用）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'原型污染结合 sourceURL 导致 RCE'模式，涵盖原理、利用条件、防御。",
+   "skill_framework": {
+    "name": "原型污染结合 sourceURL 导致 RCE",
+    "适用场景": [
+     "Node.js 应用",
+     "原型污染漏洞利用",
+     "RCE 漏洞研究"
+    ],
+    "核心原理": [
+     "原型污染可设置任意属性",
+     "sourceURL 属性影响代码执行"
+    ],
+    "决策树": [
+     "IF 存在原型污染 AND 使用 Node.js → 尝试设置 sourceURL 执行代码"
+    ],
+    "示例": [
+     "污染 sourceURL 为恶意代码"
+    ],
+    "迁移场景": [
+     "Node.js",
+     "Kibana",
+     "其他 JS 框架"
+    ]
+   }
+  },
+  {
+   "id": 31756,
+   "knowledge_point": "Drupal 数组键 SQL 注入导致 RCE",
+   "is_ai_likely_known": false,
+   "reason": "该案例涉及 Drupal 框架的 expandArguments 函数对数组键处理不当，属于框架行为利用，AI 可能不了解。",
+   "scene_frequency": "低频",
+   "migration_potential": "高（可迁移到其他框架的类似函数）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'数组键 SQL 注入'模式，涵盖原理、利用条件、防御。",
+   "skill_framework": {
+    "name": "数组键 SQL 注入",
+    "适用场景": [
+     "PHP 应用",
+     "SQL 注入测试",
+     "框架安全审计"
+    ],
+    "核心原理": [
+     "数组键被直接拼接到 SQL 语句",
+     "用户可控键名导致注入"
+    ],
+    "决策树": [
+     "IF 使用数组键作为 SQL 参数 AND 用户可控 → 尝试注入"
+    ],
+    "示例": [
+     "构造恶意数组键触发 SQL 注入"
+    ],
+    "迁移场景": [
+     "Drupal",
+     "其他 PHP 框架"
+    ]
+   }
+  },
+  {
+   "id": 236552,
+   "knowledge_point": "openssl_verify 返回值弱类型比较绕过",
+   "is_ai_likely_known": false,
+   "reason": "该案例涉及 PHP 弱类型比较和函数返回值误用，属于特定语言特性，AI 可能不了解。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他弱类型语言）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'弱类型比较绕过'模式，涵盖原理、利用条件、防御。",
+   "skill_framework": {
+    "name": "弱类型比较绕过",
+    "适用场景": [
+     "PHP 应用",
+     "签名验证绕过",
+     "安全代码审计"
+    ],
+    "核心原理": [
+     "函数返回 -1 时 if(-1) 为真",
+     "弱类型比较导致逻辑错误"
+    ],
+    "决策树": [
+     "IF 使用 if(function()) 判断返回值 AND 函数可能返回 -1 → 尝试绕过"
+    ],
+    "示例": [
+     "openssl_verify 返回 -1 绕过签名检查"
+    ],
+    "迁移场景": [
+     "PHP",
+     "JavaScript",
+     "其他弱类型语言"
+    ]
+   }
+  },
+  {
+   "id": 1842829,
+   "knowledge_point": "kOps 配置错误导致集群接管",
+   "is_ai_likely_known": false,
+   "reason": "该案例涉及 kOps 在 GCP 上的特定配置错误，属于云环境与 Kubernetes 结合的攻击，AI 可能不了解。",
+   "scene_frequency": "低频",
+   "migration_potential": "高（可迁移到其他云平台和集群管理工具）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'云元数据服务与集群管理工具结合'模式，涵盖原理、攻击链、防御。",
+   "skill_framework": {
+    "name": "云元数据服务与集群管理工具结合攻击",
+    "适用场景": [
+     "Kubernetes 集群安全",
+     "云环境渗透测试",
+     "配置错误审计"
+    ],
+    "核心原理": [
+     "云元数据服务暴露服务账号令牌",
+     "集群管理工具状态存储包含敏感信息"
+    ],
+    "决策树": [
+     "IF 存在云元数据服务 AND 集群管理工具状态存储可访问 → 尝试获取令牌和密钥"
+    ],
+    "示例": [
+     "获取 GCP 服务账号令牌读取 kOps 状态存储"
+    ],
+    "迁移场景": [
+     "GCP",
+     "AWS",
+     "Azure",
+     "kOps",
+     "EKS"
+    ]
+   }
+  },
+  {
+   "id": 390929,
+   "knowledge_point": "原型污染控制模板引擎配置导致 RCE",
+   "is_ai_likely_known": false,
+   "reason": "该案例涉及原型污染与模板引擎（doT）的结合，属于特定库的行为利用，AI 可能不了解。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他模板引擎如 EJS、Pug）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'原型污染控制模板引擎配置'模式，涵盖原理、利用条件、防御。",
+   "skill_framework": {
+    "name": "原型污染控制模板引擎配置导致 RCE",
+    "适用场景": [
+     "Node.js 应用",
+     "模板引擎安全",
+     "原型污染利用"
+    ],
+    "核心原理": [
+     "原型污染可设置模板引擎配置",
+     "配置影响模板编译执行"
+    ],
+    "决策树": [
+     "IF 存在原型污染 AND 使用模板引擎 → 尝试设置 templateSettings"
+    ],
+    "示例": [
+     "设置 templateSettings 为恶意代码"
+    ],
+    "迁移场景": [
+     "doT",
+     "EJS",
+     "Pug"
+    ]
+   }
+  },
+  {
+   "id": 2326194,
+   "knowledge_point": "SameSite=Lax 子域隔离盲区 + 服务端不校验 Content-Type 导致 CSRF 集群接管",
+   "is_ai_likely_known": false,
+   "reason": "该案例涉及现代浏览器防御失效条件的系统性论证，AI 可能不了解 SameSite=Lax 在子域场景下的盲区。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何同父域子域场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'现代浏览器 CSRF 防御失效条件'模式，涵盖原理、攻击链、防御。",
+   "skill_framework": {
+    "name": "现代浏览器 CSRF 防御失效条件",
+    "适用场景": [
+     "CSRF 测试",
+     "子域隔离安全",
+     "高敏系统 CSRF 防护"
+    ],
+    "核心原理": [
+     "SameSite=Lax 对同父域不同子域失效",
+     "服务端不校验 Content-Type 导致跨域 POST 免 preflight"
+    ],
+    "决策树": [
+     "IF 存在同父域子域 AND 服务端不校验 Content-Type → 尝试跨域 CSRF"
+    ],
+    "示例": [
+     "marketing.victim.com 打 argocd.internal.victim.com"
+    ],
+    "迁移场景": [
+     "CSRF",
+     "子域隔离",
+     "API 安全"
+    ]
+   }
+  }
+ ]
+}

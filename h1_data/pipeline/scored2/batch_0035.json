@@ -1,0 +1,489 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 12,
+  "not_worth": 3,
+  "top_ids": [
+   922456,
+   287245,
+   446585,
+   259100,
+   854726,
+   1212067,
+   1087061,
+   2188126,
+   530974,
+   16910,
+   207042,
+   2371019
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 922456,
+   "knowledge_point": "OAuth授权流程中邮箱验证缺失导致账户接管",
+   "is_ai_likely_known": false,
+   "reason": "OAuth流程中邮箱验证缺失的具体利用方式，需要结合具体实现，AI可能不熟悉。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有OAuth实现，检查邮箱验证）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化OAuth邮箱验证缺失的检测与利用方法。",
+   "skill_framework": {
+    "name": "OAuth邮箱验证缺失检测与利用",
+    "适用场景": [
+     "OAuth授权流程",
+     "第三方登录",
+     "账户接管测试"
+    ],
+    "核心原理": [
+     "OAuth授权时未强制验证邮箱，导致未验证邮箱账户可获取授权码"
+    ],
+    "决策树": [
+     "IF OAuth授权流程存在 AND 邮箱验证非强制 → 尝试创建未验证邮箱账户并请求授权"
+    ],
+    "示例": [
+     "创建未验证邮箱账户→请求OAuth授权→获取code→登录第三方"
+    ],
+    "迁移场景": [
+     "OAuth",
+     "SSO",
+     "联合身份"
+    ]
+   }
+  },
+  {
+   "id": 287245,
+   "knowledge_point": "Ruby Resolv解析畸形IP返回空导致SSRF绕过",
+   "is_ai_likely_known": false,
+   "reason": "Ruby标准库Resolv对畸形IP的解析行为，AI可能不熟悉。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到其他语言或库的IP解析差异）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化IP解析差异绕过SSRF的方法。",
+   "skill_framework": {
+    "name": "IP解析差异绕过SSRF",
+    "适用场景": [
+     "SSRF防护",
+     "IP黑名单绕过"
+    ],
+    "核心原理": [
+     "不同解析器对畸形IP处理不同，导致校验与请求不一致"
+    ],
+    "决策树": [
+     "IF SSRF过滤器使用特定解析器 AND 存在畸形IP变体 → 尝试绕过"
+    ],
+    "示例": [
+     "0177.1 → 127.0.0.1"
+    ],
+    "迁移场景": [
+     "SSRF",
+     "WAF",
+     "IP过滤"
+    ]
+   }
+  },
+  {
+   "id": 446585,
+   "knowledge_point": "导入数据字段级权限校验缺失导致模板投毒",
+   "is_ai_likely_known": false,
+   "reason": "导入功能中管理员级字段被普通用户注入，属于具体业务逻辑漏洞，AI可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到所有导入功能，检查字段权限）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化导入数据字段级权限校验的检测与利用。",
+   "skill_framework": {
+    "name": "导入数据字段级权限校验绕过",
+    "适用场景": [
+     "数据导入功能",
+     "模板注入",
+     "权限提升"
+    ],
+    "核心原理": [
+     "导入数据未按创建者权限校验字段，导致管理员级字段被注入"
+    ],
+    "决策树": [
+     "IF 存在导入功能 AND 字段权限未校验 → 尝试注入管理员级字段"
+    ],
+    "示例": [
+     "导入project.json注入template:true服务"
+    ],
+    "迁移场景": [
+     "导入导出",
+     "模板系统",
+     "权限控制"
+    ]
+   }
+  },
+  {
+   "id": 259100,
+   "knowledge_point": "JSONP/频道消息通道投递未转义反射导致XSS",
+   "is_ai_likely_known": false,
+   "reason": "利用频道消息机制投递XSS，属于具体实现漏洞，AI可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到消息通道、WebSocket等）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化消息通道投递XSS的检测与利用。",
+   "skill_framework": {
+    "name": "消息通道投递XSS",
+    "适用场景": [
+     "实时通信",
+     "长轮询",
+     "WebSocket"
+    ],
+    "核心原理": [
+     "未转义反射通过消息通道投递到受害者，绕过会话限制"
+    ],
+    "决策树": [
+     "IF 存在消息通道 AND 反射未转义 → 尝试投递恶意消息"
+    ],
+    "示例": [
+     "构造__e2e_action_id→推送到受害者频道→触发XSS"
+    ],
+    "迁移场景": [
+     "XSS",
+     "消息系统",
+     "实时应用"
+    ]
+   }
+  },
+  {
+   "id": 1365738,
+   "knowledge_point": "遗留服务器未清理权限导致数据泄露",
+   "is_ai_likely_known": true,
+   "reason": "遗留服务器权限清理是通用安全知识，AI已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（依赖具体遗留服务器）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 854726,
+   "knowledge_point": "共识规则依赖本地时钟导致时间侧信道",
+   "is_ai_likely_known": false,
+   "reason": "区块链共识规则依赖本地时钟的缺陷，AI可能不熟悉。",
+   "scene_frequency": "低频",
+   "migration_potential": "高（可迁移到其他区块链或分布式系统）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化共识规则时间依赖的检测与利用。",
+   "skill_framework": {
+    "name": "共识规则时间依赖漏洞",
+    "适用场景": [
+     "区块链",
+     "分布式系统",
+     "时间同步"
+    ],
+    "核心原理": [
+     "共识规则使用本地时钟导致裁决分歧，可被利用"
+    ],
+    "决策树": [
+     "IF 共识规则依赖本地时钟 → 尝试时间侧信道攻击"
+    ],
+    "示例": [
+     "构造unlock_time→探测节点本地时间"
+    ],
+    "迁移场景": [
+     "区块链",
+     "分布式共识",
+     "时间同步"
+    ]
+   }
+  },
+  {
+   "id": 1212067,
+   "knowledge_point": "上传文件名引号逃逸+JSONP绕过CSP导致存储XSS",
+   "is_ai_likely_known": false,
+   "reason": "多层组合绕过，AI可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到文件上传、渲染管线）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化上传文件名逃逸和CSP绕过链。",
+   "skill_framework": {
+    "name": "上传文件名逃逸与CSP绕过",
+    "适用场景": [
+     "文件上传",
+     "Markdown渲染",
+     "CSP绕过"
+    ],
+    "核心原理": [
+     "文件名引号逃逸+属性注入+JSONP绕过CSP"
+    ],
+    "决策树": [
+     "IF 上传文件名未严格白名单 AND 渲染拼接 → 尝试引号逃逸"
+    ],
+    "示例": [
+     "上传带引号文件名→data-original注入→JSONP加载"
+    ],
+    "迁移场景": [
+     "XSS",
+     "文件上传",
+     "CSP"
+    ]
+   }
+  },
+  {
+   "id": 1087061,
+   "knowledge_point": "git配置email注入HTML属性导致存储XSS",
+   "is_ai_likely_known": false,
+   "reason": "利用git email和html_safe标记，AI可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他用户可控字段）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化用户可控字段注入HTML属性的检测。",
+   "skill_framework": {
+    "name": "用户可控字段注入HTML属性",
+    "适用场景": [
+     "用户输入处理",
+     "HTML渲染"
+    ],
+    "核心原理": [
+     "用户可控字段未转义，利用html_safe标记绕过"
+    ],
+    "决策树": [
+     "IF 用户可控字段用于HTML属性 AND 未转义 → 尝试注入事件属性"
+    ],
+    "示例": [
+     "git email注入onerror属性"
+    ],
+    "迁移场景": [
+     "XSS",
+     "输入验证",
+     "输出编码"
+    ]
+   }
+  },
+  {
+   "id": 2188126,
+   "knowledge_point": "Node.js内部API绕过权限策略",
+   "is_ai_likely_known": false,
+   "reason": "Node.js内部API绕过策略，AI可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他语言或框架的权限策略）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化内部API绕过权限策略的检测。",
+   "skill_framework": {
+    "name": "内部API绕过权限策略",
+    "适用场景": [
+     "Node.js",
+     "权限策略",
+     "沙箱绕过"
+    ],
+    "核心原理": [
+     "内部API如Module._load可绕过策略限制"
+    ],
+    "决策树": [
+     "IF 存在权限策略 AND 使用Node.js → 尝试内部API绕过"
+    ],
+    "示例": [
+     "Module._load加载未授权模块"
+    ],
+    "迁移场景": [
+     "Node.js",
+     "权限控制",
+     "沙箱"
+    ]
+   }
+  },
+  {
+   "id": 530974,
+   "knowledge_point": "DNS重绑定绕过SSRF访问云元数据",
+   "is_ai_likely_known": true,
+   "reason": "DNS重绑定是通用SSRF绕过技术，AI已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有SSRF防护）",
+   "source_quality": "通用",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，但作为SSRF绕过的一个子技巧，可合并到上层SSRF Skill。",
+   "skill_framework": {
+    "name": "DNS重绑定绕过SSRF",
+    "适用场景": [
+     "SSRF防护",
+     "云元数据访问"
+    ],
+    "核心原理": [
+     "DNS重绑定使校验IP与请求IP不一致"
+    ],
+    "决策树": [
+     "IF SSRF防护基于IP校验 → 尝试DNS重绑定"
+    ],
+    "示例": [
+     "解析到公网IP→重绑定到169.254.169.254"
+    ],
+    "迁移场景": [
+     "SSRF",
+     "云安全"
+    ]
+   }
+  },
+  {
+   "id": 16910,
+   "knowledge_point": "CSP report-uri作为跨源信息泄露信道",
+   "is_ai_likely_known": false,
+   "reason": "利用CSP报告机制进行信息断言，AI可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他浏览器安全机制）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化CSP报告机制的信息泄露利用。",
+   "skill_framework": {
+    "name": "CSP报告机制信息泄露",
+    "适用场景": [
+     "CSP配置",
+     "信息泄露",
+     "跨源探测"
+    ],
+    "核心原理": [
+     "CSP report-uri可被用于跨源布尔断言"
+    ],
+    "决策树": [
+     "IF 站点使用CSP report-uri → 尝试探测登录状态"
+    ],
+    "示例": [
+     "嵌入img+自定义CSP→观察违规报告"
+    ],
+    "迁移场景": [
+     "CSP",
+     "信息泄露",
+     "跨源"
+    ]
+   }
+  },
+  {
+   "id": 207042,
+   "knowledge_point": "postMessage无origin校验+JSONP导致XSS",
+   "is_ai_likely_known": false,
+   "reason": "第三方表单iframe的postMessage漏洞，AI可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到所有postMessage使用）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化postMessage安全检测。",
+   "skill_framework": {
+    "name": "postMessage安全检测与利用",
+    "适用场景": [
+     "iframe通信",
+     "第三方组件",
+     "XSS"
+    ],
+    "核心原理": [
+     "postMessage未校验origin，可被跨域利用"
+    ],
+    "决策树": [
+     "IF 存在postMessage监听 AND 未校验origin → 尝试跨域投递"
+    ],
+    "示例": [
+     "iframe Marketo→postMessage触发JSONP XSS"
+    ],
+    "迁移场景": [
+     "postMessage",
+     "XSS",
+     "第三方集成"
+    ]
+   }
+  },
+  {
+   "id": 2371019,
+   "knowledge_point": "postMessage监听器未编码avatar_url导致DOM XSS",
+   "is_ai_likely_known": false,
+   "reason": "具体监听器未编码，AI可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到所有postMessage数据处理）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，但可合并到postMessage安全Skill。",
+   "skill_framework": {
+    "name": "postMessage数据处理XSS",
+    "适用场景": [
+     "postMessage",
+     "DOM XSS"
+    ],
+    "核心原理": [
+     "postMessage数据未编码直接插入DOM"
+    ],
+    "决策树": [
+     "IF postMessage数据用于innerHTML → 尝试注入"
+    ],
+    "示例": [
+     "avatar_url未编码→DOM XSS"
+    ],
+    "迁移场景": [
+     "postMessage",
+     "XSS"
+    ]
+   }
+  },
+  {
+   "id": 308158,
+   "knowledge_point": "DOM clobbering绕过HTML净化",
+   "is_ai_likely_known": true,
+   "reason": "DOM clobbering是通用XSS绕过技术，AI已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到所有净化库）",
+   "source_quality": "通用",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，但作为XSS绕过子技巧，可合并到上层XSS Skill。",
+   "skill_framework": {
+    "name": "DOM clobbering绕过净化",
+    "适用场景": [
+     "HTML净化",
+     "XSS"
+    ],
+    "核心原理": [
+     "利用name属性覆盖净化标记"
+    ],
+    "决策树": [
+     "IF 净化库依赖属性标记 → 尝试DOM clobbering"
+    ],
+    "示例": [
+     "name覆盖_sanitized属性"
+    ],
+    "迁移场景": [
+     "XSS",
+     "净化库"
+    ]
+   }
+  },
+  {
+   "id": 1245165,
+   "knowledge_point": "CSS加载跟随重定向导致数据窃取",
+   "is_ai_likely_known": false,
+   "reason": "CSS加载跟随重定向的利用，AI可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他资源加载）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化CSS加载重定向的利用。",
+   "skill_framework": {
+    "name": "CSS加载重定向数据窃取",
+    "适用场景": [
+     "CSS注入",
+     "开放重定向",
+     "数据窃取"
+    ],
+    "核心原理": [
+     "CSS加载跟随重定向，可加载恶意CSS"
+    ],
+    "决策树": [
+     "IF CSS路径可控制 AND 存在开放重定向 → 尝试重定向到恶意CSS"
+    ],
+    "示例": [
+     "color_scheme参数→路径遍历→重定向→恶意CSS"
+    ],
+    "迁移场景": [
+     "CSS注入",
+     "重定向",
+     "数据窃取"
+    ]
+   }
+  }
+ ]
+}

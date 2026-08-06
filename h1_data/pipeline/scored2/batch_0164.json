@@ -1,0 +1,307 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 5,
+  "not_worth": 10,
+  "top_ids": [
+   107960,
+   258410,
+   592090,
+   1132171,
+   1560717
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1181253,
+   "knowledge_point": "通过修改响应状态绕过邮箱验证",
+   "is_ai_likely_known": true,
+   "reason": "客户端信任问题，修改响应状态绕过验证是常见思路，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（仅适用于客户端验证场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 107960,
+   "knowledge_point": "JSONP 回调参数反射导致 Reflected File Download (RFD)",
+   "is_ai_likely_known": false,
+   "reason": "RFD 攻击相对小众，且利用 JSONP 回调参数反射特殊字符的细节需要专门知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何使用 JSONP 回调参数且未严格过滤的场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 RFD 攻击的原理、触发条件、利用方法和防御措施。",
+   "skill_framework": {
+    "name": "Reflected File Download (RFD) 攻击",
+    "适用场景": [
+     "JSONP 接口",
+     "下载功能",
+     "任何反射用户输入到响应头的场景"
+    ],
+    "核心原理": [
+     "用户输入反射到响应头，且响应头包含 Content-Disposition: attachment",
+     "诱导用户点击，下载恶意文件并执行"
+    ],
+    "决策树": [
+     "IF 存在 JSONP 回调参数 AND 未严格过滤特殊字符 AND 响应头包含 Content-Disposition: attachment → 尝试 RFD"
+    ],
+    "示例": [
+     "构造 URL 使回调参数包含恶意命令，下载 .cmd 文件"
+    ],
+    "迁移场景": [
+     "JSONP",
+     "下载功能",
+     "反射型 XSS 变体"
+    ]
+   }
+  },
+  {
+   "id": 1091380,
+   "knowledge_point": "GraphQL 接口未实施权限检查导致越权访问",
+   "is_ai_likely_known": true,
+   "reason": "GraphQL 权限缺失是常见问题，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他 GraphQL 接口）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：GraphQL 安全测试。",
+   "skill_framework": null
+  },
+  {
+   "id": 1119228,
+   "knowledge_point": "利用 CVE-2021-26855 实现 SSRF",
+   "is_ai_likely_known": true,
+   "reason": "CVE-2021-26855 是已知漏洞，利用方法公开，AI 已知。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（仅适用于特定 Exchange 版本）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 95552,
+   "knowledge_point": "IDOR 导致 API token 泄露",
+   "is_ai_likely_known": true,
+   "reason": "IDOR 是常见漏洞，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他对象级授权场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：IDOR 测试。",
+   "skill_framework": null
+  },
+  {
+   "id": 427835,
+   "knowledge_point": "日历订阅功能 SSRF",
+   "is_ai_likely_known": true,
+   "reason": "SSRF 是常见漏洞，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他订阅功能）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：SSRF 测试。",
+   "skill_framework": null
+  },
+  {
+   "id": 723307,
+   "knowledge_point": "利用 Git 分支名存储 XSS",
+   "is_ai_likely_known": true,
+   "reason": "存储 XSS 是常见漏洞，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（依赖特定业务逻辑）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 258410,
+   "knowledge_point": "利用 BlueCoat 网关唯一 ID 进行跨域追踪",
+   "is_ai_likely_known": false,
+   "reason": "BlueCoat 网关插入唯一 ID 的行为是特定设备特性，AI 可能不熟悉。",
+   "scene_frequency": "低频",
+   "migration_potential": "高（可迁移到其他网关设备或类似标识符）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化网关标识符泄露的检测和利用方法。",
+   "skill_framework": {
+    "name": "网关标识符泄露检测与利用",
+    "适用场景": [
+     "网络拓扑侦察",
+     "用户追踪",
+     "隐私泄露测试"
+    ],
+    "核心原理": [
+     "网关设备在 HTTP 头中插入唯一标识符",
+     "外部服务器可收集这些标识符并关联用户行为"
+    ],
+    "决策树": [
+     "IF 目标使用 BlueCoat 或其他网关 AND 响应头包含唯一 ID → 尝试收集并分析"
+    ],
+    "示例": [
+     "收集 BlueCoat 头中的 ID，关联 IP 和用户行为"
+    ],
+    "迁移场景": [
+     "网络设备",
+     "代理服务器",
+     "CDN"
+    ]
+   }
+  },
+  {
+   "id": 592090,
+   "knowledge_point": "通过修改 email 参数绕过域名验证并注入钓鱼链接",
+   "is_ai_likely_known": false,
+   "reason": "该案例结合了参数篡改和字段注入，且针对特定业务逻辑，AI 可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他验证流程和输入字段）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化业务逻辑验证绕过和字段注入的组合利用。",
+   "skill_framework": {
+    "name": "业务逻辑验证绕过与字段注入",
+    "适用场景": [
+     "邮箱验证",
+     "域名所有权验证",
+     "支持表单提交"
+    ],
+    "核心原理": [
+     "验证流程未对关键参数进行所有权检查",
+     "用户可控字段可注入恶意内容"
+    ],
+    "决策树": [
+     "IF 存在验证流程 AND 参数可修改 AND 存在可注入字段 → 尝试绕过并注入"
+    ],
+    "示例": [
+     "修改 email 参数绕过域名验证，在 phoneNumber 字段注入链接"
+    ],
+    "迁移场景": [
+     "注册流程",
+     "密码重置",
+     "表单提交"
+    ]
+   }
+  },
+  {
+   "id": 1560717,
+   "knowledge_point": "通过提交消息引用受限文件绕过权限检查",
+   "is_ai_likely_known": false,
+   "reason": "跨组件逻辑漏洞，利用提交消息解析绕过权限，AI 可能不熟悉。",
+   "scene_frequency": "低频",
+   "migration_potential": "高（可迁移到其他引用场景，如评论、描述等）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化跨组件引用绕过权限的检测和利用。",
+   "skill_framework": {
+    "name": "跨组件引用绕过权限检查",
+    "适用场景": [
+     "代码托管平台",
+     "文件共享",
+     "内容管理系统"
+    ],
+    "核心原理": [
+     "用户可控的引用（如提交消息）未经过权限检查",
+     "渲染时直接引用受限资源"
+    ],
+    "决策树": [
+     "IF 存在用户可控的引用 AND 引用未经过权限检查 → 尝试引用受限资源"
+    ],
+    "示例": [
+     "在提交消息中嵌入文件引用，使文件公开"
+    ],
+    "迁移场景": [
+     "评论",
+     "描述",
+     "标签"
+    ]
+   }
+  },
+  {
+   "id": 260632,
+   "knowledge_point": "通过修改 API 参数绕过审核和伪造投票",
+   "is_ai_likely_known": true,
+   "reason": "参数篡改是常见漏洞，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他 API 参数）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：API 参数篡改测试。",
+   "skill_framework": null
+  },
+  {
+   "id": 265749,
+   "knowledge_point": "通过密码重置绕过邮箱验证",
+   "is_ai_likely_known": true,
+   "reason": "密码重置绕过验证是常见业务逻辑漏洞，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（依赖具体流程）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 1237428,
+   "knowledge_point": "超长参数导致跨组件 DoS",
+   "is_ai_likely_known": true,
+   "reason": "输入长度限制缺失是常见问题，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他参数和组件）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：输入验证与 DoS 防护。",
+   "skill_framework": null
+  },
+  {
+   "id": 1132171,
+   "knowledge_point": "利用竞争条件绕过单次反馈限制",
+   "is_ai_likely_known": false,
+   "reason": "竞争条件在业务逻辑层面的利用需要专门知识，AI 可能不熟悉具体方法。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何有单次限制的业务逻辑）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化竞争条件检测和利用方法。",
+   "skill_framework": {
+    "name": "竞争条件检测与利用",
+    "适用场景": [
+     "投票",
+     "反馈",
+     "优惠券领取",
+     "任何有单次限制的业务"
+    ],
+    "核心原理": [
+     "校验与写入之间存在时间窗口",
+     "并发请求可同时通过校验"
+    ],
+    "决策树": [
+     "IF 存在单次限制 AND 校验与写入非原子 → 尝试并发请求"
+    ],
+    "示例": [
+     "使用 Turbo Intruder 并发提交反馈，绕过单次限制"
+    ],
+    "迁移场景": [
+     "投票",
+     "点赞",
+     "领取优惠券"
+    ]
+   }
+  },
+  {
+   "id": 321687,
+   "knowledge_point": "Node.js base64url 模块类型混淆导致未初始化内存泄露",
+   "is_ai_likely_known": false,
+   "reason": "特定模块的特定行为，AI 可能不熟悉。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（仅适用于特定模块）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  }
+ ]
+}

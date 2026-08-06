@@ -1,0 +1,531 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 10,
+  "not_worth": 5,
+  "top_ids": [
+   391611,
+   97292,
+   1438028,
+   497724,
+   1039821,
+   251572,
+   482998,
+   1040471,
+   470398,
+   139398
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 391611,
+   "knowledge_point": "利用随机数三角分布特性构造无限循环DoS",
+   "is_ai_likely_known": false,
+   "reason": "针对特定算法（三角分布）的DoS利用，非通用知识，需深入理解算法行为。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他使用随机数选择且存在边界条件的场景，如抽奖、随机分配等）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'算法边界条件利用'模式，提供检测和防御指南。",
+   "skill_framework": {
+    "name": "算法边界条件利用导致资源耗尽",
+    "适用场景": [
+     "随机数生成算法",
+     "循环选择逻辑",
+     "资源分配系统"
+    ],
+    "核心原理": [
+     "当输入接近算法边界时，循环可能无法终止",
+     "利用概率分布的低概率区间延长执行时间"
+    ],
+    "决策树": [
+     "IF 系统使用随机选择且输入可控制 → 检查是否存在边界条件导致循环无法终止"
+    ],
+    "示例": [
+     "outs_count接近总输出数时，随机选择可能无限循环"
+    ],
+    "迁移场景": [
+     "DoS防护",
+     "算法审计",
+     "性能测试"
+    ]
+   }
+  },
+  {
+   "id": 97292,
+   "knowledge_point": "HTTP头注入绕过域限制设置cookie",
+   "is_ai_likely_known": false,
+   "reason": "涉及协议解析差异和域限制绕过，非通用知识，需结合具体实现。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他协议头注入场景，如邮件头、HTTP响应头）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'协议头注入与域限制绕过'模式。",
+   "skill_framework": {
+    "name": "协议头注入与域限制绕过",
+    "适用场景": [
+     "HTTP响应头",
+     "Cookie设置",
+     "域验证"
+    ],
+    "核心原理": [
+     "利用空格等字符绕过域限制",
+     "注入Set-Cookie影响父域"
+    ],
+    "决策树": [
+     "IF 存在头注入点 AND 有域限制 → 尝试注入特殊字符绕过"
+    ],
+    "示例": [
+     "注入Set-Cookie: session=...; Domain=.hackerone.com"
+    ],
+    "迁移场景": [
+     "Web安全",
+     "会话固定",
+     "CSRF"
+    ]
+   }
+  },
+  {
+   "id": 1438028,
+   "knowledge_point": "通过阅读模式泄露密钥并利用URL验证缺失实现XSS",
+   "is_ai_likely_known": false,
+   "reason": "涉及iOS特定组件和版本差异，非通用知识，攻击链复杂。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他浏览器或应用内组件交互场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'跨组件信息泄露与URL验证缺失'模式。",
+   "skill_framework": {
+    "name": "跨组件信息泄露与URL验证缺失",
+    "适用场景": [
+     "浏览器扩展",
+     "移动应用",
+     "内部域安全"
+    ],
+    "核心原理": [
+     "组件间传递敏感信息",
+     "URL验证不严导致javascript:执行"
+    ],
+    "决策树": [
+     "IF 存在信息泄露点 AND URL验证缺失 → 尝试构造恶意URL"
+    ],
+    "示例": [
+     "ReaderViewLoading.html泄露uuidKey，SessionRestoreHandler执行javascript:URL"
+    ],
+    "迁移场景": [
+     "XSS",
+     "权限提升",
+     "信息泄露"
+    ]
+   }
+  },
+  {
+   "id": 497724,
+   "knowledge_point": "利用URL编码绕过消毒函数实现存储XSS",
+   "is_ai_likely_known": false,
+   "reason": "针对WordPress特定消毒顺序缺陷，非通用知识，需了解框架内部机制。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到其他框架的消毒顺序问题）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'消毒顺序绕过'模式，提供检测和修复建议。",
+   "skill_framework": {
+    "name": "消毒顺序绕过",
+    "适用场景": [
+     "输入验证",
+     "XSS防护",
+     "内容安全"
+    ],
+    "核心原理": [
+     "消毒前未规范化，导致编码字符在消毒后转换",
+     "利用preg_replace_callback等函数特性"
+    ],
+    "决策树": [
+     "IF 存在消毒函数 AND 输入可包含编码字符 → 尝试编码绕过"
+    ],
+    "示例": [
+     "javascript%u003A在消毒后转换为javascript:"
+    ],
+    "迁移场景": [
+     "XSS",
+     "SQL注入",
+     "命令注入"
+    ]
+   }
+  },
+  {
+   "id": 1039821,
+   "knowledge_point": "二阶SOQL注入通过异步查询执行",
+   "is_ai_likely_known": false,
+   "reason": "SOQL注入本身较特殊，且二阶注入和异步执行增加复杂性，非通用知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他ORM或查询语言）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'二阶注入与异步执行'模式。",
+   "skill_framework": {
+    "name": "二阶注入与异步执行",
+    "适用场景": [
+     "数据库查询",
+     "异步任务",
+     "ORM"
+    ],
+    "核心原理": [
+     "用户输入存储后，在异步查询中拼接",
+     "缺乏参数化查询"
+    ],
+    "决策树": [
+     "IF 存在存储用户输入 AND 异步查询使用拼接 → 尝试二阶注入"
+    ],
+    "示例": [
+     "campaign_name参数注入SOQL"
+    ],
+    "迁移场景": [
+     "SQL注入",
+     "NoSQL注入",
+     "命令注入"
+    ]
+   }
+  },
+  {
+   "id": 251572,
+   "knowledge_point": "哈希长度扩展攻击绕过签名",
+   "is_ai_likely_known": true,
+   "reason": "哈希长度扩展是已知攻击技术，AI可能了解，但具体应用场景和防御细节需系统化。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何使用哈希拼接签名的场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'哈希长度扩展攻击'的检测和防御。",
+   "skill_framework": {
+    "name": "哈希长度扩展攻击",
+    "适用场景": [
+     "签名验证",
+     "消息认证",
+     "Web安全"
+    ],
+    "核心原理": [
+     "MD5/SHA1等哈希存在长度扩展漏洞",
+     "攻击者可伪造有效签名"
+    ],
+    "决策树": [
+     "IF 使用哈希拼接密钥和数据 → 尝试长度扩展攻击"
+    ],
+    "示例": [
+     "构造恶意URL绕过签名验证"
+    ],
+    "迁移场景": [
+     "API安全",
+     "JWT",
+     "加密协议"
+    ]
+   }
+  },
+  {
+   "id": 482998,
+   "knowledge_point": "Android导出组件Intent处理逻辑滥用",
+   "is_ai_likely_known": false,
+   "reason": "涉及Android组件间通信的特定漏洞模式，非通用知识，需深入理解Intent机制。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到其他移动平台或组件间通信）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'Android组件间通信滥用'模式。",
+   "skill_framework": {
+    "name": "Android组件间通信滥用",
+    "适用场景": [
+     "Android应用安全",
+     "Intent处理",
+     "权限控制"
+    ],
+    "核心原理": [
+     "导出组件未限制调用者",
+     "Intent处理逻辑不严谨"
+    ],
+    "决策树": [
+     "IF 存在导出组件 AND 处理Intent → 尝试构造恶意Intent"
+    ],
+    "示例": [
+     "Main Activity的onResume处理gcm_intent启动任意组件"
+    ],
+    "迁移场景": [
+     "移动安全",
+     "权限提升",
+     "数据泄露"
+    ]
+   }
+  },
+  {
+   "id": 1040471,
+   "knowledge_point": "利用换行符绕过速率限制",
+   "is_ai_likely_known": false,
+   "reason": "针对输入规范化缺陷的绕过技术，非通用知识，需结合具体实现。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到其他输入验证场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'输入规范化绕过'模式。",
+   "skill_framework": {
+    "name": "输入规范化绕过",
+    "适用场景": [
+     "速率限制",
+     "输入验证",
+     "WAF绕过"
+    ],
+    "核心原理": [
+     "服务端未对输入进行规范化",
+     "特殊字符如换行符导致限制失效"
+    ],
+    "决策树": [
+     "IF 存在输入验证 AND 未规范化 → 尝试添加特殊字符"
+    ],
+    "示例": [
+     "添加\\n绕过速率限制"
+    ],
+    "迁移场景": [
+     "暴力破解",
+     "注入攻击",
+     "访问控制"
+    ]
+   }
+  },
+  {
+   "id": 470398,
+   "knowledge_point": "利用FUSE文件系统实现TOCTOU攻击",
+   "is_ai_likely_known": false,
+   "reason": "涉及FUSE和符号链接的竞态利用，非通用知识，需深入理解文件系统行为。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他文件系统或竞态场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'TOCTOU攻击与文件系统竞态'模式。",
+   "skill_framework": {
+    "name": "TOCTOU攻击与文件系统竞态",
+    "适用场景": [
+     "文件验证",
+     "权限提升",
+     "安全启动"
+    ],
+    "核心原理": [
+     "验证与使用之间存在时间窗口",
+     "利用FUSE等动态文件系统改变内容"
+    ],
+    "决策树": [
+     "IF 存在验证后使用文件的场景 → 尝试竞态攻击"
+    ],
+    "示例": [
+     "符号链接在验证后切换指向恶意脚本"
+    ],
+    "迁移场景": [
+     "本地提权",
+     "沙箱逃逸",
+     "安全更新"
+    ]
+   }
+  },
+  {
+   "id": 139398,
+   "knowledge_point": "正则未锚定导致命令注入",
+   "is_ai_likely_known": true,
+   "reason": "正则锚定是通用知识，但具体绕过场景和利用方式需系统化。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何使用正则验证输入的场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'正则边界校验绕过'模式。",
+   "skill_framework": {
+    "name": "正则边界校验绕过",
+    "适用场景": [
+     "输入验证",
+     "命令注入",
+     "URL过滤"
+    ],
+    "核心原理": [
+     "正则未使用^和$锚定",
+     "允许额外字符注入"
+    ],
+    "决策树": [
+     "IF 使用正则验证输入 AND 未锚定 → 尝试注入额外字符"
+    ],
+    "示例": [
+     "Location头注入反引号命令"
+    ],
+    "迁移场景": [
+     "命令注入",
+     "SQL注入",
+     "XSS"
+    ]
+   }
+  },
+  {
+   "id": 885975,
+   "knowledge_point": "利用PDF生成器读取本地文件实现SSRF",
+   "is_ai_likely_known": false,
+   "reason": "针对WeasyPrint特定标签的利用，非通用知识，需了解第三方库行为。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他PDF生成器或HTML渲染引擎）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'第三方库资源加载绕过'模式。",
+   "skill_framework": {
+    "name": "第三方库资源加载绕过",
+    "适用场景": [
+     "PDF生成",
+     "HTML渲染",
+     "SSRF防护"
+    ],
+    "核心原理": [
+     "第三方库允许加载外部资源",
+     "输入过滤不严导致SSRF"
+    ],
+    "决策树": [
+     "IF 使用第三方库处理用户输入 → 检查是否允许加载外部资源"
+    ],
+    "示例": [
+     "WeasyPrint的<link>标签读取本地文件"
+    ],
+    "迁移场景": [
+     "SSRF",
+     "文件读取",
+     "XSS"
+    ]
+   }
+  },
+  {
+   "id": 388254,
+   "knowledge_point": "利用点击劫持和CSRF绕过实现账户接管",
+   "is_ai_likely_known": true,
+   "reason": "点击劫持和CSRF是通用知识，但组合利用和nonce绕过需系统化。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到其他权限组合和CSRF防护场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'点击劫持与CSRF组合攻击'模式。",
+   "skill_framework": {
+    "name": "点击劫持与CSRF组合攻击",
+    "适用场景": [
+     "账户安全",
+     "CSRF防护",
+     "权限管理"
+    ],
+    "核心原理": [
+     "利用iframe加载敏感页面",
+     "自动提交表单绕过CSRF"
+    ],
+    "决策树": [
+     "IF 存在可注入iframe的权限 AND 目标页面无X-Frame-Options → 尝试点击劫持"
+    ],
+    "示例": [
+     "编辑器注入iframe，受害者点击后自动提交表单"
+    ],
+    "迁移场景": [
+     "账户接管",
+     "权限提升",
+     "数据篡改"
+    ]
+   }
+  },
+  {
+   "id": 1665658,
+   "knowledge_point": "通过标签颜色注入XSS并绕过CSP",
+   "is_ai_likely_known": false,
+   "reason": "针对特定字段（颜色）的注入和CSP绕过，非通用知识，需结合具体实现。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他字段注入和CSP绕过场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'字段注入与CSP绕过'模式。",
+   "skill_framework": {
+    "name": "字段注入与CSP绕过",
+    "适用场景": [
+     "XSS防护",
+     "CSP策略",
+     "数据导入"
+    ],
+    "核心原理": [
+     "未过滤字段如颜色值",
+     "利用CSP允许的脚本执行方式"
+    ],
+    "决策树": [
+     "IF 存在未过滤字段 AND 有CSP → 尝试注入并绕过CSP"
+    ],
+    "示例": [
+     "标签颜色注入XSS绕过CSP"
+    ],
+    "迁移场景": [
+     "XSS",
+     "CSP绕过",
+     "存储型攻击"
+    ]
+   }
+  },
+  {
+   "id": 980876,
+   "knowledge_point": "XPC服务验证不严导致AV绕过",
+   "is_ai_likely_known": false,
+   "reason": "涉及macOS XPC服务特定验证缺陷，非通用知识，需深入理解XPC机制。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他平台的服务验证场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'XPC服务验证绕过'模式。",
+   "skill_framework": {
+    "name": "XPC服务验证绕过",
+    "适用场景": [
+     "macOS安全",
+     "服务间通信",
+     "权限控制"
+    ],
+    "核心原理": [
+     "XPC服务仅验证Team ID",
+     "客户端验证不严导致恶意调用"
+    ],
+    "决策树": [
+     "IF 存在XPC服务 AND 验证不严 → 尝试构造恶意客户端"
+    ],
+    "示例": [
+     "注入dylib连接XPC服务禁用AV"
+    ],
+    "迁移场景": [
+     "本地提权",
+     "安全软件绕过",
+     "权限提升"
+    ]
+   }
+  },
+  {
+   "id": 1334111,
+   "knowledge_point": "curl协议降级绕过TLS要求",
+   "is_ai_likely_known": false,
+   "reason": "针对curl特定实现缺陷，非通用知识，需了解协议状态机。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他协议客户端）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'协议降级攻击'模式。",
+   "skill_framework": {
+    "name": "协议降级攻击",
+    "适用场景": [
+     "TLS/SSL",
+     "协议客户端",
+     "中间人攻击"
+    ],
+    "核心原理": [
+     "客户端在特定条件下忽略TLS要求",
+     "利用服务器响应触发降级"
+    ],
+    "决策树": [
+     "IF 使用curl等客户端 AND 存在降级条件 → 尝试MitM触发"
+    ],
+    "示例": [
+     "服务器返回错误导致curl忽略--ssl-reqd"
+    ],
+    "迁移场景": [
+     "TLS降级",
+     "中间人攻击",
+     "数据泄露"
+    ]
+   }
+  }
+ ]
+}

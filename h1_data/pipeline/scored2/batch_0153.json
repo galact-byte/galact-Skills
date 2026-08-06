@@ -1,0 +1,304 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 5,
+  "not_worth": 10,
+  "top_ids": [
+   537670,
+   878420,
+   1106652,
+   321631,
+   414101
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 537670,
+   "knowledge_point": "导出Activity WebView 任意URL加载导致钓鱼/XSS",
+   "is_ai_likely_known": false,
+   "reason": "Android 组件导出与 WebView 组合利用的具体细节，AI 可能知道基础，但完整攻击链和防御细节需要系统化。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（Android 应用安全测试、组件导出检查、WebView 安全配置）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 Android 导出组件与 WebView 安全配置的检查清单和攻击链。",
+   "skill_framework": {
+    "name": "Android 导出组件与 WebView 安全配置检查",
+    "适用场景": [
+     "Android 应用安全测试",
+     "组件导出检查",
+     "WebView 安全配置"
+    ],
+    "核心原理": [
+     "导出组件可被外部应用启动，若处理 Intent 不当可导致任意 URL 加载",
+     "WebView 默认加载外部 URL 且可执行 JS，导致钓鱼或 XSS"
+    ],
+    "决策树": [
+     "IF 应用存在导出 Activity AND 处理 Intent 参数 → 检查是否加载到 WebView",
+     "IF WebView 加载外部 URL → 检查是否限制域名、禁用 JS 等"
+    ],
+    "示例": [
+     "恶意应用发送 Intent 启动导出 Activity，加载钓鱼页面"
+    ],
+    "迁移场景": [
+     "Android 渗透测试",
+     "移动应用安全评估"
+    ]
+   }
+  },
+  {
+   "id": 878420,
+   "knowledge_point": "npm 模块命令注入（不安全的命令格式化）",
+   "is_ai_likely_known": false,
+   "reason": "具体 npm 模块的漏洞细节，AI 可能不知道，但命令注入原理通用。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（供应链安全、代码审计、命令注入检测）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化供应链命令注入的检测和防御模式。",
+   "skill_framework": {
+    "name": "供应链命令注入检测与防御",
+    "适用场景": [
+     "npm 包安全审计",
+     "代码审计",
+     "供应链攻击检测"
+    ],
+    "核心原理": [
+     "用户输入未转义直接拼接进命令字符串",
+     "利用分号、注释符等注入额外命令"
+    ],
+    "决策树": [
+     "IF 代码中存在命令拼接 AND 输入未转义 → 尝试注入",
+     "IF 使用 exec 或类似函数 → 检查参数化"
+    ],
+    "示例": [
+     "用户输入 '; rm -rf /' 导致命令执行"
+    ],
+    "迁移场景": [
+     "DevOps 安全",
+     "软件供应链安全"
+    ]
+   }
+  },
+  {
+   "id": 498351,
+   "knowledge_point": "IDOR 与弱随机数结合绕过访问控制",
+   "is_ai_likely_known": true,
+   "reason": "IDOR 和弱随机数是常见知识，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他 IDOR 场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 490782,
+   "knowledge_point": "修改 thread_id 绕过授权（IDOR 变体）",
+   "is_ai_likely_known": true,
+   "reason": "IDOR 是通用知识，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他 IDOR 场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1018790,
+   "knowledge_point": "子域名接管（CNAME 未清理）",
+   "is_ai_likely_known": true,
+   "reason": "子域名接管是常见漏洞，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他子域名接管场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1106652,
+   "knowledge_point": "Rails redirect_to 数组参数导致 RCE",
+   "is_ai_likely_known": false,
+   "reason": "Rails 框架的特定行为，AI 可能不知道，需要专门知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他框架的类似参数处理）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化框架参数处理不当导致 RCE 的模式。",
+   "skill_framework": {
+    "name": "框架参数处理不当导致 RCE",
+    "适用场景": [
+     "Rails 应用安全测试",
+     "框架行为审计"
+    ],
+    "核心原理": [
+     "框架对数组参数的特殊处理，可能调用任意方法",
+     "redirect_to 接受数组参数时，可能调用 _url 方法"
+    ],
+    "决策树": [
+     "IF 使用 redirect_to AND 参数可控 → 尝试数组参数",
+     "IF 框架存在类似动态方法调用 → 检查参数类型"
+    ],
+    "示例": [
+     "redirect_to([\"string\"]) 触发任意方法调用"
+    ],
+    "迁移场景": [
+     "其他 MVC 框架",
+     "API 安全"
+    ]
+   }
+  },
+  {
+   "id": 174721,
+   "knowledge_point": "第三方服务未校验权限导致信息泄露",
+   "is_ai_likely_known": true,
+   "reason": "第三方服务权限校验是通用知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（依赖具体第三方服务）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 321631,
+   "knowledge_point": "Node.js Buffer 类型混淆导致 DoS 和内存泄露",
+   "is_ai_likely_known": false,
+   "reason": "Node.js Buffer 构造函数的类型混淆细节，AI 可能不知道。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他语言或框架的类似类型混淆问题）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化类型混淆导致资源消耗的检测和防御。",
+   "skill_framework": {
+    "name": "类型混淆导致资源消耗",
+    "适用场景": [
+     "Node.js 安全测试",
+     "代码审计"
+    ],
+    "核心原理": [
+     "Buffer 构造函数对参数类型处理不当，导致分配异常",
+     "传入数字类型可导致 CPU 耗尽或内存泄露"
+    ],
+    "决策树": [
+     "IF 代码中调用 Buffer 且参数可控 → 尝试传入数字",
+     "IF 存在类似类型混淆 → 检查参数验证"
+    ],
+    "示例": [
+     "Buffer(123) 导致异常分配"
+    ],
+    "迁移场景": [
+     "其他语言",
+     "框架安全"
+    ]
+   }
+  },
+  {
+   "id": 414101,
+   "knowledge_point": "导出 Activity WebView 任意 URL 加载导致 XSS/LFI/DoS",
+   "is_ai_likely_known": false,
+   "reason": "与 537670 类似，但更详细，AI 可能不知道具体攻击链。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（同 537670）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "合并到上层 Skill：Android 导出组件与 WebView 安全配置检查。",
+   "skill_framework": {
+    "name": "Android 导出组件与 WebView 安全配置检查",
+    "适用场景": [
+     "Android 应用安全测试",
+     "组件导出检查",
+     "WebView 安全配置"
+    ],
+    "核心原理": [
+     "导出组件可被外部应用启动，若处理 Intent 不当可导致任意 URL 加载",
+     "WebView 默认加载外部 URL 且可执行 JS，导致 XSS、LFI 等"
+    ],
+    "决策树": [
+     "IF 应用存在导出 Activity AND 处理 Intent 参数 → 检查是否加载到 WebView",
+     "IF WebView 加载外部 URL → 检查是否限制域名、禁用 JS 等"
+    ],
+    "示例": [
+     "恶意应用发送 Intent 启动导出 Activity，加载恶意 URL 执行 JS"
+    ],
+    "迁移场景": [
+     "Android 渗透测试",
+     "移动应用安全评估"
+    ]
+   }
+  },
+  {
+   "id": 46397,
+   "knowledge_point": "IDOR 变体：修改 user_id 触发删除通知邮件",
+   "is_ai_likely_known": true,
+   "reason": "IDOR 是通用知识，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他 IDOR 场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1558010,
+   "knowledge_point": "盲 XSS 攻击管理员",
+   "is_ai_likely_known": true,
+   "reason": "盲 XSS 是通用知识，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他 XSS 场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1656380,
+   "knowledge_point": "状态混淆：offerId 重放绕过角色变更",
+   "is_ai_likely_known": true,
+   "reason": "状态管理缺陷是通用知识，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他状态管理场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1569946,
+   "knowledge_point": "Set-Cookie 数量未限制导致 DoS",
+   "is_ai_likely_known": true,
+   "reason": "资源限制是通用知识，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（依赖具体协议实现）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 134300,
+   "knowledge_point": "API 与 UI 权限不一致导致信息泄露",
+   "is_ai_likely_known": true,
+   "reason": "API 与 UI 权限不一致是通用知识，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他 API 安全场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 325336,
+   "knowledge_point": "子域名接管（Azure CNAME 未清理）",
+   "is_ai_likely_known": true,
+   "reason": "子域名接管是常见漏洞，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他子域名接管场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，不单独固化。",
+   "skill_framework": null
+  }
+ ]
+}

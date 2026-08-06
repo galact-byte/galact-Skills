@@ -1,0 +1,366 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 8,
+  "not_worth": 7,
+  "top_ids": [
+   2244229,
+   1667974,
+   726117,
+   218872,
+   867699,
+   1747642,
+   784186,
+   110722
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 2244229,
+   "knowledge_point": "跨域导入动态JS文件窃取用户信息",
+   "is_ai_likely_known": false,
+   "reason": "利用SOP对脚本导入的豁免，结合动态JS内容依赖认证cookie，形成跨域信息泄露，属于浏览器机制与动态内容生成的组合，非通用知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何依赖cookie生成动态JS的场景，如用户个性化脚本）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'跨域脚本导入泄露'的原理、条件、检测方法和防御措施。",
+   "skill_framework": {
+    "name": "跨域动态脚本信息泄露检测与防御",
+    "适用场景": [
+     "Web应用安全测试",
+     "前端安全审计"
+    ],
+    "核心原理": [
+     "SOP允许跨域加载脚本",
+     "动态JS内容可能包含敏感信息（如用户ID）"
+    ],
+    "决策树": [
+     "IF 存在动态生成的JS文件 AND 内容依赖认证状态 → 尝试跨域导入并分析内容"
+    ],
+    "示例": [
+     "恶意网站导入https://target.com/sw.js，提取用户ID"
+    ],
+    "迁移场景": [
+     "用户跟踪",
+     "信息泄露测试"
+    ]
+   }
+  },
+  {
+   "id": 110722,
+   "knowledge_point": "PHP escapeshellarg整数溢出导致堆溢出",
+   "is_ai_likely_known": false,
+   "reason": "特定于PHP函数在内存限制下的整数溢出，属于框架行为利用，非通用知识。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他语言中类似长度计算函数）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'长度计算整数溢出'的检测模式，但注意低频，可合并到内存安全主题。",
+   "skill_framework": {
+    "name": "长度计算整数溢出检测",
+    "适用场景": [
+     "代码审计",
+     "漏洞挖掘"
+    ],
+    "核心原理": [
+     "长度参数在计算时可能溢出",
+     "溢出导致内存分配不足"
+    ],
+    "决策树": [
+     "IF 存在长度参数计算 AND 未检查溢出 → 尝试超长输入"
+    ],
+    "示例": [
+     "escapeshellarg超长字符串触发溢出"
+    ],
+    "迁移场景": [
+     "C/C++",
+     "PHP",
+     "Java"
+    ]
+   }
+  },
+  {
+   "id": 784186,
+   "knowledge_point": "N-API bufsize=0整数下溢导致内存破坏",
+   "is_ai_likely_known": false,
+   "reason": "特定于N-API函数对bufsize=0的处理缺陷，属于框架行为利用，非通用知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何API中类似边界条件处理）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'API边界条件检查'的通用模式，可合并到内存安全主题。",
+   "skill_framework": {
+    "name": "API边界条件检查",
+    "适用场景": [
+     "API安全测试",
+     "代码审计"
+    ],
+    "核心原理": [
+     "API对边界值（如0）处理不当",
+     "导致整数下溢或缓冲区溢出"
+    ],
+    "决策树": [
+     "IF API接受长度参数 AND 未明确禁止0值 → 测试bufsize=0"
+    ],
+    "示例": [
+     "napi_get_value_string_*传入bufsize=0"
+    ],
+    "迁移场景": [
+     "Node.js插件",
+     "C/C++库"
+    ]
+   }
+  },
+  {
+   "id": 784714,
+   "knowledge_point": "相对路径劫持命令执行",
+   "is_ai_likely_known": true,
+   "reason": "PATH劫持是通用知识，AI已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何依赖PATH的命令执行场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 202921,
+   "knowledge_point": "第三方身份验证信任缺陷导致账户接管",
+   "is_ai_likely_known": true,
+   "reason": "OAuth信任缺陷是通用知识，AI已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何第三方登录场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 28640,
+   "knowledge_point": "Erlang OTP整数溢出导致类型混淆",
+   "is_ai_likely_known": false,
+   "reason": "特定于Erlang内存分配机制，非通用知识。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（高度依赖Erlang内部结构）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt引导即可，不单独固化，因不可迁移。",
+   "skill_framework": null
+  },
+  {
+   "id": 1667974,
+   "knowledge_point": "Pause-based desync in Apache HTTPD",
+   "is_ai_likely_known": false,
+   "reason": "利用浏览器暂停行为与服务器解析差异，属于协议行为利用，非通用知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何HTTP服务器与浏览器解析差异）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'请求走私'的检测与利用方法，可合并到HTTP请求走私主题。",
+   "skill_framework": {
+    "name": "HTTP请求走私检测与利用",
+    "适用场景": [
+     "Web安全测试",
+     "渗透测试"
+    ],
+    "核心原理": [
+     "浏览器与服务器对请求边界解析不一致",
+     "利用暂停或特殊字符制造歧义"
+    ],
+    "决策树": [
+     "IF 存在代理或负载均衡 AND 解析差异 → 尝试构造走私请求"
+    ],
+    "示例": [
+     "浏览器暂停请求导致Apache解析为两个请求"
+    ],
+    "迁移场景": [
+     "HTTP/1.1",
+     "HTTP/2",
+     "代理服务器"
+    ]
+   }
+  },
+  {
+   "id": 895772,
+   "knowledge_point": "CTF综合攻击链（.git泄露、2FA绕过、CSS注入）",
+   "is_ai_likely_known": true,
+   "reason": "CTF技巧多为通用知识，AI已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到类似场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 165969,
+   "knowledge_point": "HKCU注册表劫持安装程序",
+   "is_ai_likely_known": true,
+   "reason": "注册表信任模型是通用知识，AI已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到Windows安装程序）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 218872,
+   "knowledge_point": "git submodule URL注入XSS",
+   "is_ai_likely_known": false,
+   "reason": "利用git submodule的url字段支持javascript:协议，且服务端未过滤，属于反直觉行为，非通用知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何用户可控的配置文件注入）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'配置文件注入XSS'的检测与防御，可合并到XSS主题。",
+   "skill_framework": {
+    "name": "配置文件注入XSS检测",
+    "适用场景": [
+     "Web应用安全测试",
+     "代码审计"
+    ],
+    "核心原理": [
+     "用户可控的配置文件（如.gitmodules）未过滤协议",
+     "支持javascript:等危险协议"
+    ],
+    "决策树": [
+     "IF 存在用户可控配置文件 AND 未过滤协议 → 尝试注入javascript: URL"
+    ],
+    "示例": [
+     "修改.gitmodules的url为javascript:alert(1)"
+    ],
+    "迁移场景": [
+     "Git服务",
+     "包管理器",
+     "配置文件解析"
+    ]
+   }
+  },
+  {
+   "id": 726117,
+   "knowledge_point": "curl URL解析器fragment混淆导致路径绕过",
+   "is_ai_likely_known": false,
+   "reason": "curl的URL解析器将'#'后片段与路径混淆，当片段后追加'?'时路径被重新解析，属于反直觉行为，非通用知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何URL解析器，如浏览器、代理）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'URL解析差异绕过'的原理与检测，可合并到URL解析安全主题。",
+   "skill_framework": {
+    "name": "URL解析差异绕过",
+    "适用场景": [
+     "SSRF",
+     "路径限制绕过",
+     "请求走私"
+    ],
+    "核心原理": [
+     "不同组件对URL的解析不一致",
+     "fragment和query的混淆导致路径变化"
+    ],
+    "决策树": [
+     "IF 存在URL解析 AND 有路径限制 → 尝试在fragment后加'?'"
+    ],
+    "示例": [
+     "http://host/safepath#/../../evil? 被解析为 /../../evil"
+    ],
+    "迁移场景": [
+     "curl",
+     "浏览器",
+     "代理服务器"
+    ]
+   }
+  },
+  {
+   "id": 590319,
+   "knowledge_point": "客户端下载路径遍历",
+   "is_ai_likely_known": true,
+   "reason": "路径遍历是通用知识，AI已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到客户端下载场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 131210,
+   "knowledge_point": "IDOR修改组ID绕过访问控制",
+   "is_ai_likely_known": true,
+   "reason": "IDOR是通用知识，AI已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何IDOR场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 867699,
+   "knowledge_point": "容器内写/etc/hosts导致宿主机磁盘耗尽",
+   "is_ai_likely_known": false,
+   "reason": "利用容器内/etc/hosts可写且挂载自宿主机，导致宿主机磁盘耗尽，属于容器隔离机制绕过，非通用知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何容器挂载可写文件场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'容器挂载文件滥用'的检测与防御，可合并到容器安全主题。",
+   "skill_framework": {
+    "name": "容器挂载文件滥用检测",
+    "适用场景": [
+     "容器安全测试",
+     "Kubernetes安全"
+    ],
+    "核心原理": [
+     "容器内某些文件可写且挂载自宿主机",
+     "写入大量数据可耗尽宿主机磁盘"
+    ],
+    "决策树": [
+     "IF 容器内存在可写挂载文件 AND 无大小限制 → 尝试写入大量数据"
+    ],
+    "示例": [
+     "写入/dev/null到/etc/hosts"
+    ],
+    "迁移场景": [
+     "Docker",
+     "Kubernetes",
+     "容器运行时"
+    ]
+   }
+  },
+  {
+   "id": 1747642,
+   "knowledge_point": "Node.js权限策略绕过 via process.mainModule",
+   "is_ai_likely_known": false,
+   "reason": "利用process.mainModule.require绕过权限策略，属于框架内部机制利用，非通用知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何模块加载限制绕过）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'模块加载限制绕过'的检测与防御，可合并到Node.js安全主题。",
+   "skill_framework": {
+    "name": "Node.js权限策略绕过检测",
+    "适用场景": [
+     "Node.js安全测试",
+     "代码审计"
+    ],
+    "核心原理": [
+     "权限策略限制模块导入",
+     "process.mainModule.require未受约束"
+    ],
+    "决策树": [
+     "IF 存在权限策略 AND 使用process.mainModule → 尝试绕过"
+    ],
+    "示例": [
+     "process.mainModule.require('fs')"
+    ],
+    "迁移场景": [
+     "Node.js",
+     "Electron",
+     "Deno"
+    ]
+   }
+  }
+ ]
+}

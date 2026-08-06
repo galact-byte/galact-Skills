@@ -1,0 +1,397 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 8,
+  "not_worth": 7,
+  "top_ids": [
+   470637,
+   836649,
+   526325,
+   315773,
+   204802,
+   1096907,
+   781175,
+   1297689
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 999765,
+   "knowledge_point": "未验证邮箱的工单系统导致账户接管",
+   "is_ai_likely_known": true,
+   "reason": "这是常见的业务逻辑漏洞，AI 训练数据中大量存在，直接提问即可获得类似思路。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（仅适用于支持工单系统，迁移性差）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 184698,
+   "knowledge_point": "参数篡改绕过邀请权限实现通话窃听",
+   "is_ai_likely_known": true,
+   "reason": "参数篡改是通用攻击手法，AI 已知，且此案例具体细节依赖特定应用，迁移性有限。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（仅适用于即时通讯应用的通话邀请功能）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1096907,
+   "knowledge_point": "Kubernetes Validating Webhook 资源耗尽导致 DoS",
+   "is_ai_likely_known": false,
+   "reason": "涉及 Kubernetes 控制面行为，非主流 AI 已知，需要深入理解 webhook 机制。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他 webhook 场景，如准入控制、API 网关）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'webhook 资源耗尽'的原理、触发条件和防御措施。",
+   "skill_framework": {
+    "name": "Webhook 资源耗尽攻击",
+    "适用场景": [
+     "Kubernetes 集群",
+     "API 网关",
+     "任何同步调用外部服务的场景"
+    ],
+    "核心原理": [
+     "外部 webhook 同步调用导致资源消耗",
+     "缺乏请求大小和并发限制"
+    ],
+    "决策树": [
+     "IF 存在外部 webhook AND 无资源限制 → 尝试并发发送大请求"
+    ],
+    "示例": [
+     "并发创建大 secret 导致 API 服务器崩溃"
+    ],
+    "迁移场景": [
+     "Kubernetes",
+     "微服务架构",
+     "API 管理"
+    ]
+   }
+  },
+  {
+   "id": 470637,
+   "knowledge_point": "macOS quarantine 属性缺失导致 Gatekeeper 绕过",
+   "is_ai_likely_known": false,
+   "reason": "涉及 macOS 安全机制的具体实现，AI 训练数据中不常见，且需要组合多个条件。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他下载场景，如浏览器、邮件客户端）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'quarantine 属性检查'的通用判断条件。",
+   "skill_framework": {
+    "name": "macOS quarantine 属性绕过",
+    "适用场景": [
+     "macOS 应用",
+     "文件下载",
+     "安全审计"
+    ],
+    "核心原理": [
+     "下载文件未设置 quarantine 属性",
+     "Gatekeeper 依赖该属性进行安全检查"
+    ],
+    "决策树": [
+     "IF 应用下载文件 AND 未设置 quarantine → 可能绕过 Gatekeeper"
+    ],
+    "示例": [
+     "Slack 下载 .terminal 文件无警告执行"
+    ],
+    "迁移场景": [
+     "macOS 安全",
+     "文件传输",
+     "供应链攻击"
+    ]
+   }
+  },
+  {
+   "id": 781175,
+   "knowledge_point": "GraphQL 子查询 NULL 值导致授权绕过",
+   "is_ai_likely_known": false,
+   "reason": "涉及 SQL 子查询对 NULL 值的处理，AI 可能不熟悉，且需要结合 GraphQL 上下文。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何使用子查询进行权限检查的场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'NULL 值导致授权绕过'的通用模式。",
+   "skill_framework": {
+    "name": "NULL 值授权绕过",
+    "适用场景": [
+     "GraphQL API",
+     "SQL 查询",
+     "权限检查"
+    ],
+    "核心原理": [
+     "子查询返回 NULL 时条件恒真",
+     "未显式检查 NULL 值"
+    ],
+    "决策树": [
+     "IF 权限检查使用子查询 AND 未处理 NULL → 尝试匿名访问"
+    ],
+    "示例": [
+     "匿名用户获得 CLAIMER 角色"
+    ],
+    "迁移场景": [
+     "API 安全",
+     "数据库安全",
+     "身份验证"
+    ]
+   }
+  },
+  {
+   "id": 836649,
+   "knowledge_point": "data-original 属性解码绕过 CSP 实现存储型 XSS",
+   "is_ai_likely_known": false,
+   "reason": "涉及特定框架的 redact 逻辑，AI 不常见，且绕过 CSP 的方法具有通用性。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何使用 data-* 属性存储编码内容的场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'data-* 属性解码绕过'的通用模式。",
+   "skill_framework": {
+    "name": "data-* 属性解码绕过",
+    "适用场景": [
+     "XSS 防护",
+     "CSP 绕过",
+     "HTML 渲染"
+    ],
+    "核心原理": [
+     "data-* 属性存储编码内容",
+     "解码时未重新过滤"
+    ],
+    "决策树": [
+     "IF 存在 data-* 属性 AND 解码后未过滤 → 尝试注入 HTML"
+    ],
+    "示例": [
+     "data-original 属性注入脚本"
+    ],
+    "迁移场景": [
+     "前端安全",
+     "CSP",
+     "Markdown 渲染"
+    ]
+   }
+  },
+  {
+   "id": 629879,
+   "knowledge_point": "Node.js 模块搜索路径滥用导致代码执行",
+   "is_ai_likely_known": false,
+   "reason": "涉及 Node.js 在 Windows 上的默认行为，AI 可能不熟悉，且影响广泛。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他语言或框架的模块解析机制）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'模块搜索路径滥用'的通用模式。",
+   "skill_framework": {
+    "name": "模块搜索路径滥用",
+    "适用场景": [
+     "Node.js 应用",
+     "依赖管理",
+     "供应链攻击"
+    ],
+    "核心原理": [
+     "用户目录被加入模块搜索路径",
+     "攻击者可放置恶意模块"
+    ],
+    "决策树": [
+     "IF 应用使用 require AND 用户目录在搜索路径 → 尝试放置恶意模块"
+    ],
+    "示例": [
+     "%userprofile%\\.node_modules 中的恶意 JS"
+    ],
+    "迁移场景": [
+     "Node.js",
+     "Python",
+     "Ruby"
+    ]
+   }
+  },
+  {
+   "id": 204802,
+   "knowledge_point": "环境变量覆盖 socket 路径绕过文件权限",
+   "is_ai_likely_known": false,
+   "reason": "涉及 PAM 模块和 ssh-agent 的交互，AI 不常见，且需要组合环境变量和 SUID 权限。",
+   "scene_frequency": "低频",
+   "migration_potential": "高（可迁移到其他使用环境变量指定资源路径的场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'环境变量信任'的通用风险。",
+   "skill_framework": {
+    "name": "环境变量信任绕过",
+    "适用场景": [
+     "PAM 认证",
+     "SSH 代理",
+     "任何使用环境变量指定资源路径的场景"
+    ],
+    "核心原理": [
+     "环境变量可被用户控制",
+     "未验证资源所有权"
+    ],
+    "决策树": [
+     "IF 程序使用环境变量指定资源 AND 未验证所有权 → 尝试指向其他用户资源"
+    ],
+    "示例": [
+     "SSH_AUTH_SOCK 指向其他用户 socket"
+    ],
+    "迁移场景": [
+     "Linux 安全",
+     "认证机制",
+     "权限提升"
+    ]
+   }
+  },
+  {
+   "id": 935503,
+   "knowledge_point": "XSS 结合 CSRF 创建管理员用户",
+   "is_ai_likely_known": true,
+   "reason": "XSS 和 CSRF 都是通用知识，组合利用也是常见思路，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他 CMS 或 Web 应用）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 248116,
+   "knowledge_point": "Primefaces EL 注入 RCE",
+   "is_ai_likely_known": true,
+   "reason": "Primefaces 漏洞是已知漏洞，AI 可能知道，且利用细节依赖特定版本。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（仅适用于 Primefaces 框架）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1297689,
+   "knowledge_point": "S3 bucket 删除后 DNS 记录未清理导致子域名接管",
+   "is_ai_likely_known": false,
+   "reason": "涉及云资源生命周期管理，AI 可能不熟悉，且可抽象为通用判断条件。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到其他云服务，如 Azure、GCP）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'云资源生命周期管理'的通用检查清单。",
+   "skill_framework": {
+    "name": "云资源生命周期管理",
+    "适用场景": [
+     "子域名接管",
+     "DNS 审计",
+     "云安全"
+    ],
+    "核心原理": [
+     "删除云资源后 DNS 记录未清理",
+     "攻击者可重新注册资源"
+    ],
+    "决策树": [
+     "IF DNS 指向已删除资源 → 尝试重新注册"
+    ],
+    "示例": [
+     "S3 bucket 接管"
+    ],
+    "迁移场景": [
+     "AWS",
+     "Azure",
+     "GCP"
+    ]
+   }
+  },
+  {
+   "id": 526325,
+   "knowledge_point": "Wiki 层级链接语法转换绕过 XSS 过滤",
+   "is_ai_likely_known": false,
+   "reason": "涉及 GitLab 特有的 Markdown 渲染逻辑，AI 不常见，且绕过方法独特。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他支持层级链接的 Markdown 渲染器）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'Markdown 链接协议绕过'的通用模式。",
+   "skill_framework": {
+    "name": "Markdown 链接协议绕过",
+    "适用场景": [
+     "XSS 防护",
+     "Markdown 渲染",
+     "内容安全"
+    ],
+    "核心原理": [
+     "渲染器将相对路径转换为 javascript: 协议",
+     "未对转换结果进行安全过滤"
+    ],
+    "决策树": [
+     "IF 支持层级链接 AND 未过滤转换结果 → 尝试 javascript: 协议"
+    ],
+    "示例": [
+     "[XSS](.alert(1);) 触发 XSS"
+    ],
+    "迁移场景": [
+     "GitLab",
+     "GitHub",
+     "其他 Markdown 编辑器"
+    ]
+   }
+  },
+  {
+   "id": 315773,
+   "knowledge_point": "GitHub 分支名注入命令导致 RCE",
+   "is_ai_likely_known": false,
+   "reason": "涉及 GitHub 分支名可包含 shell 元字符的特性，AI 可能不熟悉，且利用 npm 包生态。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他使用用户输入拼接命令的场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'用户输入拼接命令'的通用风险。",
+   "skill_framework": {
+    "name": "用户输入拼接命令注入",
+    "适用场景": [
+     "命令行工具",
+     "CI/CD 管道",
+     "任何使用 execSync 的场景"
+    ],
+    "核心原理": [
+     "用户输入未过滤直接拼入 shell 命令",
+     "shell 元字符可注入"
+    ],
+    "决策树": [
+     "IF 用户输入用于命令拼接 AND 未过滤 → 尝试注入元字符"
+    ],
+    "示例": [
+     "分支名 ;{echo,hello,world}>/tmp/c"
+    ],
+    "迁移场景": [
+     "Git 操作",
+     "自动化脚本",
+     "npm 包"
+    ]
+   }
+  },
+  {
+   "id": 310185,
+   "knowledge_point": "组权限与项目权限分离导致移除用户后仍可访问",
+   "is_ai_likely_known": true,
+   "reason": "这是常见的权限管理漏洞，AI 已知，且具体细节依赖特定应用。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（仅适用于组权限模型）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 772509,
+   "knowledge_point": "Content-Disposition 头路径遍历导致任意文件覆盖",
+   "is_ai_likely_known": true,
+   "reason": "路径遍历是通用知识，AI 已知，且此案例依赖具体库的实现。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他下载场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  }
+ ]
+}

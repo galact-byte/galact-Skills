@@ -1,0 +1,345 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 8,
+  "not_worth": 7,
+  "top_ids": [
+   1153862,
+   1024734,
+   712065,
+   150976,
+   639473,
+   320269,
+   633266,
+   2106708
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1153862,
+   "knowledge_point": "利用 Prerender 的 javascript 参数执行任意 JS 实现 SSRF",
+   "is_ai_likely_known": false,
+   "reason": "Prerender 服务特定参数利用，非通用知识，需具体了解该服务。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他预渲染服务或类似第三方服务）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化第三方预渲染服务的安全配置检查。",
+   "skill_framework": {
+    "name": "第三方预渲染服务 SSRF 防护",
+    "适用场景": [
+     "使用 Prerender 等预渲染服务的应用",
+     "SSRF 防护"
+    ],
+    "核心原理": [
+     "预渲染服务可能提供执行 JS 的参数，导致 SSRF",
+     "需限制或禁用此类参数"
+    ],
+    "决策树": [
+     "IF 应用使用预渲染服务 AND 服务支持 JS 执行参数 → 检查是否可访问内网"
+    ],
+    "示例": [
+     "Prerender 的 javascript 参数"
+    ],
+    "迁移场景": [
+     "其他预渲染服务",
+     "无头浏览器服务"
+    ]
+   }
+  },
+  {
+   "id": 1024734,
+   "knowledge_point": "DOMPurify 绕过：利用 MathML 和 SVG 的 mutation XSS",
+   "is_ai_likely_known": false,
+   "reason": "DOMPurify 绕过技术更新频繁，具体 mutation 利用细节非通用知识。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到其他 HTML 净化库）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 HTML 净化库的绕过测试方法论。",
+   "skill_framework": {
+    "name": "HTML 净化库绕过测试",
+    "适用场景": [
+     "XSS 防护",
+     "HTML 净化库配置"
+    ],
+    "核心原理": [
+     "利用 HTML 解析器的 mutation 行为绕过净化",
+     "MathML 和 SVG 的解析差异"
+    ],
+    "决策树": [
+     "IF 使用 DOMPurify 等净化库 → 测试 MathML/SVG 变体"
+    ],
+    "示例": [
+     "<math><mtext><table><mglyph><style><!--</style><img title=\"--><img src=1 onerror=alert(1)>\">"
+    ],
+    "迁移场景": [
+     "其他净化库",
+     "浏览器解析差异"
+    ]
+   }
+  },
+  {
+   "id": 712065,
+   "knowledge_point": "lodash 原型污染：zipObjectDeep 函数",
+   "is_ai_likely_known": false,
+   "reason": "具体函数漏洞，非通用知识，需特定版本。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到其他原型污染场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化原型污染检测与利用。",
+   "skill_framework": {
+    "name": "原型污染检测与利用",
+    "适用场景": [
+     "JavaScript 应用",
+     "JSON 解析",
+     "对象合并"
+    ],
+    "核心原理": [
+     "通过 __proto__ 属性污染原型链",
+     "影响所有对象"
+    ],
+    "决策树": [
+     "IF 应用使用 lodash 等库 AND 存在递归合并 → 测试原型污染"
+    ],
+    "示例": [
+     "_.zipObjectDeep(['__proto__.polluted'], ['yes'])"
+    ],
+    "迁移场景": [
+     "其他库",
+     "Node.js 核心函数"
+    ]
+   }
+  },
+  {
+   "id": 150976,
+   "knowledge_point": "Flash navigateToURL 绕过 local-with-filesystem 策略",
+   "is_ai_likely_known": false,
+   "reason": "Flash 已废弃，具体绕过技术非主流知识。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（Flash 已淘汰，迁移性差）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 639473,
+   "knowledge_point": "PGP 密钥服务器短 ID 碰撞与投毒",
+   "is_ai_likely_known": false,
+   "reason": "PGP 密钥服务器攻击细节非通用知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他信任模型）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化密钥验证最佳实践。",
+   "skill_framework": {
+    "name": "PGP 密钥验证与防投毒",
+    "适用场景": [
+     "软件分发",
+     "代码签名",
+     "安全通信"
+    ],
+    "核心原理": [
+     "短密钥 ID 易碰撞",
+     "密钥服务器可能被投毒"
+    ],
+    "决策树": [
+     "IF 使用 PGP 验证 → 使用完整指纹而非短 ID",
+     "IF 从密钥服务器获取 → 使用 HTTPS 并验证指纹"
+    ],
+    "示例": [
+     "使用完整 40 位指纹"
+    ],
+    "迁移场景": [
+     "其他信任模型",
+     "证书验证"
+    ]
+   }
+  },
+  {
+   "id": 320269,
+   "knowledge_point": "Node.js 4.x 中 new Buffer() 类型混淆导致未初始化内存泄露",
+   "is_ai_likely_known": false,
+   "reason": "特定版本行为，非通用知识。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他类型混淆场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化类型混淆与内存安全检测。",
+   "skill_framework": {
+    "name": "类型混淆导致的内存安全问题",
+    "适用场景": [
+     "Node.js 应用",
+     "C/C++ 扩展",
+     "类型转换"
+    ],
+    "核心原理": [
+     "类型混淆导致未初始化内存分配",
+     "泄露敏感信息"
+    ],
+    "决策树": [
+     "IF 使用 new Buffer() 且输入类型可变 → 检查类型混淆"
+    ],
+    "示例": [
+     "new Buffer(123) 分配未初始化内存"
+    ],
+    "迁移场景": [
+     "其他语言",
+     "其他 API"
+    ]
+   }
+  },
+  {
+   "id": 633266,
+   "knowledge_point": "macOS DYLD_INSERT_LIBRARIES 注入绕过应用完整性",
+   "is_ai_likely_known": false,
+   "reason": "macOS 动态链接器行为，非通用知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他操作系统动态链接器）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 macOS 应用安全加固检查。",
+   "skill_framework": {
+    "name": "macOS 应用完整性保护",
+    "适用场景": [
+     "macOS 应用开发",
+     "安全加固"
+    ],
+    "核心原理": [
+     "DYLD_INSERT_LIBRARIES 可注入恶意代码",
+     "需启用 Hardened Runtime"
+    ],
+    "决策树": [
+     "IF 开发 macOS 应用 → 启用 Hardened Runtime",
+     "IF 未启用 → 检查 DYLD 环境变量"
+    ],
+    "示例": [
+     "DYLD_INSERT_LIBRARIES=malicious.dylib"
+    ],
+    "迁移场景": [
+     "其他平台",
+     "动态链接器安全"
+    ]
+   }
+  },
+  {
+   "id": 16967,
+   "knowledge_point": "HTTP 响应头注入（CRLF）",
+   "is_ai_likely_known": true,
+   "reason": "CRLF 注入是常见知识，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他协议）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 1016966,
+   "knowledge_point": "Electron 应用域名校验绕过与 MIME 类型利用",
+   "is_ai_likely_known": false,
+   "reason": "Electron 特定逻辑，非通用知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他桌面框架）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：Electron 应用安全测试。",
+   "skill_framework": null
+  },
+  {
+   "id": 1132606,
+   "knowledge_point": "GraphQL 对象权限与渲染状态不一致导致信息泄露",
+   "is_ai_likely_known": false,
+   "reason": "业务逻辑漏洞，非通用知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他 API 设计）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：GraphQL API 安全测试。",
+   "skill_framework": null
+  },
+  {
+   "id": 192532,
+   "knowledge_point": "mruby 中 method_missing 与 prepend 交互导致 UAF",
+   "is_ai_likely_known": false,
+   "reason": "特定语言实现细节，非通用知识。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（特定于 mruby）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 2106708,
+   "knowledge_point": "HEAD/GET 请求差异绕过 MIME 校验（TOCTOU）",
+   "is_ai_likely_known": false,
+   "reason": "TOCTOU 类漏洞，具体利用方式非通用知识。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何基于 HEAD 校验的场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 TOCTOU 绕过测试。",
+   "skill_framework": {
+    "name": "TOCTOU 绕过：HEAD/GET 差异",
+    "适用场景": [
+     "内容校验",
+     "文件上传",
+     "URL 验证"
+    ],
+    "核心原理": [
+     "服务器先 HEAD 校验，后 GET 获取，存在时间差",
+     "攻击者利用请求方法差异返回不同内容"
+    ],
+    "决策树": [
+     "IF 服务器使用 HEAD 校验内容类型 → 尝试 GET 获取不同内容"
+    ],
+    "示例": [
+     "服务器脚本区分 HEAD/GET 返回不同 Content-Type"
+    ],
+    "迁移场景": [
+     "其他校验场景",
+     "缓存投毒"
+    ]
+   }
+  },
+  {
+   "id": 1081145,
+   "knowledge_point": "数组参数绕过 SQL 注入过滤",
+   "is_ai_likely_known": true,
+   "reason": "数组参数绕过是常见 SQL 注入技巧，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到其他过滤绕过）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 236607,
+   "knowledge_point": "zip 解压失败文件残留导致 RCE",
+   "is_ai_likely_known": false,
+   "reason": "具体业务逻辑缺陷，非通用知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他文件上传场景）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：文件上传安全测试。",
+   "skill_framework": null
+  },
+  {
+   "id": 962895,
+   "knowledge_point": "隐藏端点参数提升权限",
+   "is_ai_likely_known": true,
+   "reason": "参数篡改是常见业务逻辑漏洞，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到其他业务逻辑）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  }
+ ]
+}
