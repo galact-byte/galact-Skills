@@ -52,3 +52,6 @@ skills/*/recon/
 skills/*/report/
 skills/*/candidates.json
 skills/*/tools/__pycache__/
+
+# ===== skill 测试 e2e 运行时产物（可由 tests/e2e/run_e2e.py 再生成） =====
+tests/e2e/.run/

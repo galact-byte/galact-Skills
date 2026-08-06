@@ -1,6 +1,6 @@
 ---
 name: hunt-xss
-description: 在授权渗透测试中挖掘跨站脚本（XSS：反射型、存储型、DOM 型，含 WAF/CSP 绕过与 sink 分析）。当目标把用户输入回显到 HTML/JS/属性/URL 上下文、或前端把可控数据喂给危险 sink（innerHTML/eval/srcdoc）时使用——典型场景：搜索/评论/标题回显、SVG/上传、postMessage、javascript: URL、模板属性注入、绕 CSP。适用目标类型 Web 前端 / REST API。触发场景包括用户说"测下 XSS""这个参数会不会弹窗""能绕 CSP/WAF 吗""DOM XSS/存储型看一下"。输出：XSS 触发点 + 上下文 + PoC 的 finding（含 killed 记录）。
+description: 在授权渗透测试中挖掘跨站脚本（XSS：反射型、存储型、DOM 型，含 WAF/CSP 绕过与 sink 分析）。当目标把用户输入回显到 HTML/JS/属性/URL 上下文、或前端把可控数据喂给危险 sink（innerHTML/eval/srcdoc）时使用——典型场景：搜索/评论/标题回显、SVG/上传、postMessage、javascript:URL 伪协议、模板属性注入、绕 CSP。适用目标类型 Web 前端 / REST API。触发场景包括用户说"测下 XSS""这个参数会不会弹窗""能绕 CSP/WAF 吗""DOM XSS/存储型看一下"。输出：XSS 触发点 + 上下文 + PoC 的 finding（含 killed 记录）。
 allowed-tools: Read, Grep, Glob, Bash
 ---
 
