@@ -14,10 +14,13 @@
 skills/            15 个 skill（当前全为渗透类）
   hunt-*/          14 个"单类漏洞猎杀"skill（ssrf/xss/sqli/…）
   recognize-attack-surface/   攻击面识别与研判总线（路由到各 hunt skill）
-h1_data/           这些 skill 的素材来源：HackerOne 报告清洗 + LLM 评分蒸馏管线
+h1_data/           蒸馏管线的**配方**（代码 + 提示词 + pipeline/README）；
+                   中间数据/报告等可再生产物不入库（见 .gitignore）
 tests/             skill 测试套件（静态校验 + 本地靶标端到端检测）
-Prompt1/2/3.md     三轮筛选用的提示词（一轮评分 / 二轮 worth-skill / 三轮单例路由）
 ```
+
+> 蒸馏提示词的**可复用模板**（领域中立）不在本库，而是在个人 skill `distill-dataset-to-skills`
+> 的 `references/` 下；`h1_data/` 里只留填好的渗透实例版作样板。
 
 ### 每个 skill 的结构（渐进式披露）
 

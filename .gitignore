@@ -61,3 +61,21 @@ tests/e2e/.run/
 Thumbs.db
 .vscode/
 .idea/
+
+# ===== h1_data：只追踪"配方"（代码 + 提示词 + pipeline/README），忽略生成产物 =====
+# 中间批次数据（LLM 输出，可重跑；本地保留）
+h1_data/pipeline/scored/
+h1_data/pipeline/scored2/
+h1_data/pipeline/routed/
+h1_data/pipeline/candidate_shortlist.jsonl
+h1_data/pipeline/routing_all.json
+# 管线生成的报告（可由脚本再生成）
+h1_data/out/report.md
+h1_data/pipeline/candidate_shortlist.md
+h1_data/pipeline/candidate_recurring.md
+h1_data/pipeline/singleton_routing.md
+# 根目录原始设计版提示词（抄自公众号文章并填充；可复用形态已量化为
+# ~/.agents/skills/distill-dataset-to-skills 的 references 模板，实例不入库）
+/Prompt1.md
+/Prompt2.md
+/Prompt3.md
