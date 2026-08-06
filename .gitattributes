@@ -7,3 +7,9 @@
 # picking either side (task state lives in task.json, not index.md). See
 # .trellis/spec/cli/backend/directory-structure.md for details.
 .trellis/workspace/*/journal-*.md merge=union
+
+# 渗透 skill 的 shell 脚本必须以 LF 存储，否则 CRLF 会破坏 Linux/mac 上的
+# `#!/usr/bin/env bash` shebang 导致无法执行。无论各机器 core.autocrlf 如何都强制 LF。
+*.sh text eol=lf
+# hunt 工具 python 也统一 LF，保持跨平台一致
+skills/**/*.py text eol=lf
