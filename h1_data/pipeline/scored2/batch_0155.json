@@ -1,0 +1,321 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 6,
+  "not_worth": 9,
+  "top_ids": [
+   2213251,
+   604534,
+   121940,
+   1874260,
+   867513,
+   1398905
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 2213251,
+   "knowledge_point": "搜索功能索引非公开内容导致信息泄露",
+   "is_ai_likely_known": false,
+   "reason": "搜索功能索引范围与权限控制不一致的漏洞模式，AI可能不熟悉具体实现细节，但属于常见逻辑漏洞。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何具有搜索功能且区分公开/私有内容的应用）",
+   "source_quality": "中",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'搜索索引权限不一致'的检测与利用方法。",
+   "skill_framework": {
+    "name": "搜索功能信息泄露检测",
+    "适用场景": [
+     "具有搜索功能且区分公开/私有内容的应用",
+     "内容管理系统",
+     "协作平台"
+    ],
+    "核心原理": [
+     "搜索索引可能包含未授权内容",
+     "通过搜索词存在性判断泄露"
+    ],
+    "决策树": [
+     "IF 应用有搜索功能 AND 存在公开/私有内容区分 → 测试搜索私有内容关键词"
+    ],
+    "示例": [
+     "搜索非公开报告中的唯一词，观察结果"
+    ],
+    "迁移场景": [
+     "信息泄露测试",
+     "权限验证"
+    ]
+   }
+  },
+  {
+   "id": 604534,
+   "knowledge_point": "TOCTOU竞争条件导致状态不一致",
+   "is_ai_likely_known": true,
+   "reason": "竞争条件漏洞是通用知识，AI通常了解TOCTOU概念。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何涉及状态变更的操作）",
+   "source_quality": "中",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，提供竞争条件测试的系统化方法。",
+   "skill_framework": {
+    "name": "竞争条件（TOCTOU）测试与利用",
+    "适用场景": [
+     "用户状态变更操作",
+     "资源分配",
+     "支付流程"
+    ],
+    "核心原理": [
+     "检查与使用之间存在时间窗口",
+     "并发请求导致状态不一致"
+    ],
+    "决策树": [
+     "IF 操作涉及检查-更新模式 → 尝试并发请求"
+    ],
+    "示例": [
+     "并行发送加入群组请求，观察重复添加"
+    ],
+    "迁移场景": [
+     "业务逻辑漏洞",
+     "支付绕过"
+    ]
+   }
+  },
+  {
+   "id": 121940,
+   "knowledge_point": "命令注入结合CSRF实现远程代码执行",
+   "is_ai_likely_known": true,
+   "reason": "命令注入和CSRF都是常见漏洞，AI了解基本概念。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何通过Web管理接口的设备）",
+   "source_quality": "中",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，提供命令注入与CSRF结合的攻击链模板。",
+   "skill_framework": {
+    "name": "命令注入与CSRF结合攻击",
+    "适用场景": [
+     "Web管理控制台",
+     "嵌入式设备",
+     "网络设备"
+    ],
+    "核心原理": [
+     "未过滤参数注入命令",
+     "CSRF触发注入"
+    ],
+    "决策树": [
+     "IF 存在管理接口 AND 参数未过滤 → 尝试注入命令并构造CSRF"
+    ],
+    "示例": [
+     "URL中嵌入反引号命令，诱导管理员访问"
+    ],
+    "迁移场景": [
+     "远程代码执行",
+     "设备接管"
+    ]
+   }
+  },
+  {
+   "id": 43770,
+   "knowledge_point": "参数重用绕过支付",
+   "is_ai_likely_known": true,
+   "reason": "参数重用是常见业务逻辑漏洞，AI可能了解。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到类似下载/购买场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1874260,
+   "knowledge_point": "Chrome扩展innerHTML注入导致存储型XSS",
+   "is_ai_likely_known": false,
+   "reason": "扩展信任外部数据导致XSS的具体场景，AI可能不熟悉扩展开发细节。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何浏览器扩展或类似组件）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'扩展信任边界'的检测与利用方法。",
+   "skill_framework": {
+    "name": "浏览器扩展XSS检测",
+    "适用场景": [
+     "Chrome/Firefox扩展",
+     "任何处理外部数据的客户端组件"
+    ],
+    "核心原理": [
+     "扩展信任网页数据",
+     "innerHTML注入未转义HTML"
+    ],
+    "决策树": [
+     "IF 扩展处理外部数据 AND 使用innerHTML → 测试注入"
+    ],
+    "示例": [
+     "构造恶意问卷响应，注入HTML"
+    ],
+    "迁移场景": [
+     "XSS测试",
+     "组件安全"
+    ]
+   }
+  },
+  {
+   "id": 867513,
+   "knowledge_point": "邮箱验证状态跨流程滥用导致账户接管",
+   "is_ai_likely_known": false,
+   "reason": "跨组件流程信任漏洞，AI可能不熟悉具体业务逻辑。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何涉及邮箱验证和账户合并的流程）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'验证状态跨流程滥用'的检测与利用方法。",
+   "skill_framework": {
+    "name": "验证状态跨流程滥用检测",
+    "适用场景": [
+     "账户合并",
+     "邮箱变更",
+     "多组件流程"
+    ],
+    "核心原理": [
+     "已验证状态被其他流程信任",
+     "未重新验证"
+    ],
+    "决策树": [
+     "IF 存在邮箱变更流程 AND 存在账户合并 → 测试验证状态是否继承"
+    ],
+    "示例": [
+     "修改员工邮箱为受害者邮箱，利用已验证状态创建账户"
+    ],
+    "迁移场景": [
+     "账户接管",
+     "身份验证绕过"
+    ]
+   }
+  },
+  {
+   "id": 1047125,
+   "knowledge_point": "披露报告中API密钥未打码且未撤销",
+   "is_ai_likely_known": true,
+   "reason": "敏感信息泄露是通用知识，AI了解。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（特定于披露流程）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1253732,
+   "knowledge_point": "客户端异常状态处理不当导致崩溃",
+   "is_ai_likely_known": true,
+   "reason": "客户端输入验证不足是通用知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（特定于具体应用）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1398905,
+   "knowledge_point": "IDOR与负数量结合绕过支付",
+   "is_ai_likely_known": false,
+   "reason": "多步骤业务逻辑漏洞链，AI可能不熟悉具体组合。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何涉及对象引用和数量验证的场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'IDOR与业务逻辑组合'的检测与利用方法。",
+   "skill_framework": {
+    "name": "IDOR与业务逻辑组合攻击",
+    "适用场景": [
+     "对象引用场景",
+     "订单/支付流程"
+    ],
+    "核心原理": [
+     "IDOR修改对象",
+     "负数量绕过支付"
+    ],
+    "决策树": [
+     "IF 存在对象ID参数 AND 存在数量参数 → 尝试IDOR和负值"
+    ],
+    "示例": [
+     "修改customerAddress参数，设置负数量"
+    ],
+    "迁移场景": [
+     "支付绕过",
+     "信息泄露"
+    ]
+   }
+  },
+  {
+   "id": 987090,
+   "knowledge_point": "CVE-2020-3187利用",
+   "is_ai_likely_known": true,
+   "reason": "已知CVE漏洞，AI可能了解。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（特定于Cisco设备）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1626205,
+   "knowledge_point": "WordPress安装配置错误导致接管",
+   "is_ai_likely_known": true,
+   "reason": "WordPress配置错误是常见知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他CMS）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：CMS配置错误检测。",
+   "skill_framework": null
+  },
+  {
+   "id": 924407,
+   "knowledge_point": "Cisco ASA VPN路径遍历",
+   "is_ai_likely_known": true,
+   "reason": "路径遍历是通用漏洞，AI了解。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他VPN或网络设备）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：路径遍历检测与利用。",
+   "skill_framework": null
+  },
+  {
+   "id": 881855,
+   "knowledge_point": "废弃AJAX端点无CSRF防护",
+   "is_ai_likely_known": true,
+   "reason": "CSRF是通用知识，废弃代码问题也常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到任何有废弃端点的应用）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：CSRF防护检测。",
+   "skill_framework": null
+  },
+  {
+   "id": 579560,
+   "knowledge_point": "Node.js require路径遍历导致代码执行",
+   "is_ai_likely_known": false,
+   "reason": "框架特定行为，AI可能不熟悉larvitbase-www。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他动态require的框架）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：框架行为利用（Node.js require）。",
+   "skill_framework": null
+  },
+  {
+   "id": 136333,
+   "knowledge_point": "GitLab wiki渲染未过滤HTML导致XSS",
+   "is_ai_likely_known": true,
+   "reason": "存储型XSS是通用知识，GitLab wiki问题可能已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他wiki或内容渲染功能）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：存储型XSS检测与利用。",
+   "skill_framework": null
+  }
+ ]
+}

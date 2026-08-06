@@ -1,0 +1,397 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 8,
+  "not_worth": 7,
+  "top_ids": [
+   328486,
+   518669,
+   2262939,
+   310707,
+   1455248,
+   1824342,
+   1923672,
+   1520931
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 328486,
+   "knowledge_point": "Android深链Activity导出导致WebView任意URL加载与token窃取",
+   "is_ai_likely_known": false,
+   "reason": "深链导出与WebView组合攻击链在训练数据中不常见，需结合具体平台行为。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到iOS URL Scheme、其他深链处理场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化深链导出风险与WebView安全配置的检查清单。",
+   "skill_framework": {
+    "name": "移动深链与WebView安全审计",
+    "适用场景": [
+     "Android/iOS深链处理",
+     "WebView加载外部内容",
+     "OAuth回调"
+    ],
+    "核心原理": [
+     "导出的Activity可被外部触发",
+     "WebView加载任意URL时携带敏感cookie"
+    ],
+    "决策树": [
+     "IF 存在深链Activity AND 导出属性为true → 检查是否加载外部URL",
+     "IF WebView加载外部URL → 检查是否携带敏感cookie"
+    ],
+    "示例": [
+     "恶意链接触发深链Activity，WebView加载攻击者URL窃取token"
+    ],
+    "迁移场景": [
+     "移动应用安全测试",
+     "SDK安全评估"
+    ]
+   }
+  },
+  {
+   "id": 518669,
+   "knowledge_point": "ContentProvider投影映射限制绕过导致SQL注入",
+   "is_ai_likely_known": false,
+   "reason": "针对ContentProvider的投影限制绕过在训练数据中较少，需理解Android组件细节。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他URI过滤绕过场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化ContentProvider暴露面审计与投影映射一致性检查。",
+   "skill_framework": {
+    "name": "Android ContentProvider安全审计",
+    "适用场景": [
+     "ContentProvider暴露检查",
+     "SQL注入防护",
+     "URI权限控制"
+    ],
+    "核心原理": [
+     "投影映射限制不一致",
+     "projection参数可注入SQL"
+    ],
+    "决策树": [
+     "IF ContentProvider导出 → 检查所有URI的投影映射是否一致",
+     "IF 使用projection参数 → 检查是否参数化查询"
+    ],
+    "示例": [
+     "构造恶意projection绕过URI限制，注入SQL"
+    ],
+    "迁移场景": [
+     "Android应用安全测试",
+     "移动中间件安全"
+    ]
+   }
+  },
+  {
+   "id": 1077136,
+   "knowledge_point": "DOM clobbering覆盖document函数导致DoS",
+   "is_ai_likely_known": true,
+   "reason": "DOM clobbering是已知技术，但具体覆盖document函数导致DoS的案例较少。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到XSS防护、前端安全）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层Skill：前端XSS与DOM Clobbering防护",
+   "skill_framework": null
+  },
+  {
+   "id": 2262939,
+   "knowledge_point": "CDN配置指向未认领S3桶导致供应链攻击",
+   "is_ai_likely_known": false,
+   "reason": "云配置错误的具体案例在训练数据中不常见，需结合云服务知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他云服务配置审计）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化云资源配置审计与未认领资源检测。",
+   "skill_framework": {
+    "name": "云资源配置审计与未认领资源检测",
+    "适用场景": [
+     "CDN配置审计",
+     "S3桶所有权验证",
+     "供应链安全"
+    ],
+    "核心原理": [
+     "CDN与存储桶的信任关系",
+     "未认领资源可被攻击者控制"
+    ],
+    "决策树": [
+     "IF 使用CDN → 检查源站是否指向未认领的存储桶",
+     "IF 存在未认领桶 → 检查是否可被认领"
+    ],
+    "示例": [
+     "CloudFront指向未认领S3桶，攻击者认领后控制内容"
+    ],
+    "迁移场景": [
+     "云安全评估",
+     "DevSecOps"
+    ]
+   }
+  },
+  {
+   "id": 310707,
+   "knowledge_point": "原型污染通过__proto__属性导致DoS或RCE",
+   "is_ai_likely_known": true,
+   "reason": "原型污染是已知漏洞类型，但具体利用方式需结合框架。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到Node.js、浏览器等）",
+   "source_quality": "中",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化原型污染检测与防护决策树。",
+   "skill_framework": {
+    "name": "原型污染检测与防护",
+    "适用场景": [
+     "Node.js应用",
+     "前端JavaScript",
+     "JSON处理"
+    ],
+    "核心原理": [
+     "__proto__属性可污染原型",
+     "合并函数未过滤危险键"
+    ],
+    "决策树": [
+     "IF 存在对象合并操作 → 检查是否过滤__proto__",
+     "IF 用户输入可控制键名 → 检查是否影响原型"
+    ],
+    "示例": [
+     "提交恶意JSON，merge函数污染原型，导致后续请求异常"
+    ],
+    "迁移场景": [
+     "Web应用安全测试",
+     "框架安全评估"
+    ]
+   }
+  },
+  {
+   "id": 470544,
+   "knowledge_point": "绕过杀软脚本注入保护通过自下载和重运行脚本",
+   "is_ai_likely_known": false,
+   "reason": "针对杀软特定保护机制的绕过技术不常见，需深入理解其工作原理。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（高度依赖特定杀软实现）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt引导即可，不单独固化",
+   "skill_framework": null
+  },
+  {
+   "id": 125587,
+   "knowledge_point": "组合多个低危漏洞形成DoS攻击链",
+   "is_ai_likely_known": true,
+   "reason": "组合攻击是通用思路，但具体利用业务逻辑和基础设施交互的案例较少。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到业务逻辑安全测试）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层Skill：业务逻辑漏洞组合利用",
+   "skill_framework": null
+  },
+  {
+   "id": 895202,
+   "knowledge_point": "多步攻击链从信息泄露到CSS注入",
+   "is_ai_likely_known": true,
+   "reason": "CTF writeup中的技术点多为已知，但组合方式有启发性。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到综合渗透测试）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层Skill：综合渗透测试攻击链构建",
+   "skill_framework": null
+  },
+  {
+   "id": 295380,
+   "knowledge_point": "mruby虚拟机堆溢出利用异常处理与block交互",
+   "is_ai_likely_known": false,
+   "reason": "针对特定解释器内部行为的漏洞利用不常见，需深入理解虚拟机实现。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（高度依赖mruby实现）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt引导即可，不单独固化",
+   "skill_framework": null
+  },
+  {
+   "id": 1455248,
+   "knowledge_point": "整数溢出导致缓冲区分配不足进而堆溢出",
+   "is_ai_likely_known": false,
+   "reason": "针对Ruby C扩展的整数溢出利用不常见，需理解RSTRING_LEN等内部细节。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他C扩展、语言实现）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化整数溢出导致缓冲区溢出的检测与防护。",
+   "skill_framework": {
+    "name": "整数溢出导致缓冲区溢出检测",
+    "适用场景": [
+     "C/C++代码审计",
+     "语言扩展安全",
+     "内存安全"
+    ],
+    "核心原理": [
+     "乘法溢出导致分配过小",
+     "循环写入越界"
+    ],
+    "决策树": [
+     "IF 存在缓冲区大小计算 → 检查是否使用无符号整数",
+     "IF 存在乘法运算 → 检查是否可能溢出"
+    ],
+    "示例": [
+     "RSTRING_LEN*6溢出，ALLOCV_N分配不足，导致堆溢出"
+    ],
+    "迁移场景": [
+     "安全代码审计",
+     "漏洞挖掘"
+    ]
+   }
+  },
+  {
+   "id": 1824342,
+   "knowledge_point": "HAQL查询中表别名混淆导致跨表数据泄露",
+   "is_ai_likely_known": false,
+   "reason": "针对特定查询语言的别名混淆攻击不常见，需理解HAQL语法。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他查询语言）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化查询构建器安全审计与列引用验证。",
+   "skill_framework": {
+    "name": "查询构建器安全审计",
+    "适用场景": [
+     "自定义查询语言",
+     "ORM安全",
+     "数据泄露防护"
+    ],
+    "核心原理": [
+     "表别名混淆",
+     "未验证列引用"
+    ],
+    "决策树": [
+     "IF 存在查询构建器 → 检查是否严格验证列引用",
+     "IF 支持别名 → 检查是否可混淆表名"
+    ],
+    "示例": [
+     "HAQL中引用未选择的表列，通过布尔盲注获取数据"
+    ],
+    "迁移场景": [
+     "数据库安全",
+     "API安全"
+    ]
+   }
+  },
+  {
+   "id": 1923672,
+   "knowledge_point": "SAML RelayState开放重定向结合OAuth隐式授权窃取令牌",
+   "is_ai_likely_known": false,
+   "reason": "SAML与OAuth组合攻击链不常见，需理解多个协议交互。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他SSO协议）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化SSO与OAuth集成安全审计。",
+   "skill_framework": {
+    "name": "SSO与OAuth集成安全审计",
+    "适用场景": [
+     "SAML登录",
+     "OAuth授权",
+     "开放重定向防护"
+    ],
+    "核心原理": [
+     "RelayState未验证",
+     "OAuth隐式授权允许token泄露"
+    ],
+    "决策树": [
+     "IF 使用SAML → 检查RelayState是否验证",
+     "IF 使用OAuth → 检查是否使用授权码模式"
+    ],
+    "示例": [
+     "注入RelayState开放重定向，结合OAuth隐式授权窃取令牌"
+    ],
+    "迁移场景": [
+     "身份认证安全",
+     "API安全"
+    ]
+   }
+  },
+  {
+   "id": 1520931,
+   "knowledge_point": "Rust标准库remove_dir_all的TOCTOU漏洞",
+   "is_ai_likely_known": false,
+   "reason": "针对Rust标准库的TOCTOU漏洞不常见，需理解系统调用行为。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他文件操作API）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化TOCTOU漏洞检测与安全文件操作。",
+   "skill_framework": {
+    "name": "TOCTOU漏洞检测与防护",
+    "适用场景": [
+     "文件系统操作",
+     "权限提升",
+     "安全编码"
+    ],
+    "核心原理": [
+     "检查与使用之间存在时间窗口",
+     "符号链接替换"
+    ],
+    "决策树": [
+     "IF 存在文件操作 → 检查是否使用安全API",
+     "IF 操作目录 → 检查是否跟随符号链接"
+    ],
+    "示例": [
+     "攻击者替换目录为符号链接，导致删除任意文件"
+    ],
+    "迁移场景": [
+     "系统安全",
+     "安全开发"
+    ]
+   }
+  },
+  {
+   "id": 1067087,
+   "knowledge_point": "CTF多步攻击链组合多种技术",
+   "is_ai_likely_known": true,
+   "reason": "CTF中的技术多为已知，但组合方式有启发性。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到综合渗透测试）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层Skill：综合渗透测试攻击链构建",
+   "skill_framework": null
+  },
+  {
+   "id": 816637,
+   "knowledge_point": "有符号整数溢出绕过边界检查导致堆越界写",
+   "is_ai_likely_known": false,
+   "reason": "针对图像解码库的整数溢出利用不常见，需理解Huffman解码细节。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他解码库）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化有符号整数溢出检测与防护。",
+   "skill_framework": {
+    "name": "有符号整数溢出检测与防护",
+    "适用场景": [
+     "C/C++代码审计",
+     "图像处理库",
+     "内存安全"
+    ],
+    "核心原理": [
+     "有符号整数溢出",
+     "边界检查绕过"
+    ],
+    "决策树": [
+     "IF 存在整数运算 → 检查是否使用无符号类型",
+     "IF 存在边界检查 → 检查是否可被溢出绕过"
+    ],
+    "示例": [
+     "HuffmanDecodeImage中整数下溢导致越界写"
+    ],
+    "迁移场景": [
+     "安全代码审计",
+     "漏洞挖掘"
+    ]
+   }
+  }
+ ]
+}

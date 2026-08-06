@@ -1,0 +1,428 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 10,
+  "not_worth": 5,
+  "top_ids": [
+   695005,
+   931197,
+   85624,
+   126203,
+   1877919,
+   344595,
+   1178337,
+   497312,
+   982291,
+   1977252
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 695005,
+   "knowledge_point": "Pulse Secure SSL VPN 任意文件读取+命令注入链",
+   "is_ai_likely_known": true,
+   "reason": "该漏洞是已知 CVE，攻击链和 PoC 公开，AI 训练数据中常见，直接提问即可获得。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（依赖特定产品版本，不可迁移）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，无需固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 380873,
+   "knowledge_point": "lodash merge 原型污染",
+   "is_ai_likely_known": true,
+   "reason": "lodash 原型污染是经典漏洞，利用方式（constructor.prototype）广泛公开，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何使用 lodash merge 的应用）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：原型污染检测与利用。",
+   "skill_framework": null
+  },
+  {
+   "id": 931197,
+   "knowledge_point": "跨站 WebSocket 劫持（Origin 检查绕过）",
+   "is_ai_likely_known": false,
+   "reason": "利用特殊字符（如`和$）绕过 Origin 检查，属于浏览器与服务器解析差异，AI 可能不熟悉具体变体。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何依赖 Origin 校验的 WebSocket 或 CORS 场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 Origin 解析差异绕过技术。",
+   "skill_framework": {
+    "name": "Origin 校验绕过（特殊字符混淆）",
+    "适用场景": [
+     "WebSocket 跨站劫持",
+     "CORS 配置",
+     "CSRF 防护"
+    ],
+    "核心原理": [
+     "浏览器与服务器对 Origin 字符串解析不一致",
+     "特殊字符（如`、$）可绕过简单字符串匹配"
+    ],
+    "决策树": [
+     "IF 存在 Origin 校验 AND 校验基于字符串匹配 → 尝试插入特殊字符变体"
+    ],
+    "示例": [
+     "Origin: https://attacker.com` -> 绕过"
+    ],
+    "迁移场景": [
+     "WebSocket",
+     "CORS",
+     "CSRF"
+    ]
+   }
+  },
+  {
+   "id": 85624,
+   "knowledge_point": "点击劫持绕过（嵌套 iframe 与 CSP2 兼容性）",
+   "is_ai_likely_known": false,
+   "reason": "利用 SAMEORIGIN 只检查顶层窗口和 Safari/IE 不支持 CSP2 的细节，属于浏览器行为差异，AI 可能不深入。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何依赖 frame-ancestors 或 X-Frame-Options 的点击劫持防护）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化点击劫持绕过技术。",
+   "skill_framework": {
+    "name": "点击劫持绕过（嵌套 iframe 与 CSP 兼容性）",
+    "适用场景": [
+     "点击劫持防护评估",
+     "UI 红行动"
+    ],
+    "核心原理": [
+     "SAMEORIGIN 只检查顶层窗口，嵌套 iframe 可绕过",
+     "部分浏览器不支持 CSP2 的 frame-ancestors"
+    ],
+    "决策树": [
+     "IF 目标使用 X-Frame-Options: SAMEORIGIN → 尝试嵌套 iframe",
+     "IF 目标使用 frame-ancestors → 检查浏览器兼容性"
+    ],
+    "示例": [
+     "twitter.com -> attacker.com -> twitter.com 嵌套"
+    ],
+    "迁移场景": [
+     "点击劫持",
+     "CSRF"
+    ]
+   }
+  },
+  {
+   "id": 126203,
+   "knowledge_point": "CBC cut-and-paste 攻击构造任意明文",
+   "is_ai_likely_known": false,
+   "reason": "CBC 模式密文块拼接技术属于密码学误用，AI 可能不熟悉具体构造方法。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何使用 CBC 模式且未认证的加密场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 CBC 模式攻击技术。",
+   "skill_framework": {
+    "name": "CBC 模式 cut-and-paste 攻击",
+    "适用场景": [
+     "加密参数篡改",
+     "开放重定向",
+     "XSS"
+    ],
+    "核心原理": [
+     "CBC 模式密文块可拼接，无需密钥即可构造任意明文",
+     "服务端未验证密文完整性"
+    ],
+    "决策树": [
+     "IF 应用使用 CBC 模式加密 AND 未使用 HMAC → 尝试密文块拼接"
+    ],
+    "示例": [
+     "拼接密文块构造恶意 URL"
+    ],
+    "迁移场景": [
+     "加密协议",
+     "会话管理"
+    ]
+   }
+  },
+  {
+   "id": 1877919,
+   "knowledge_point": "Node.js 原型链绕过权限系统",
+   "is_ai_likely_known": false,
+   "reason": "利用 process.mainModule.__proto__.require() 绕过权限检查，属于 Node.js 内部机制，AI 可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何依赖原型链的权限控制场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化原型链绕过权限技术。",
+   "skill_framework": {
+    "name": "原型链绕过权限检查",
+    "适用场景": [
+     "Node.js 权限系统",
+     "沙箱逃逸"
+    ],
+    "核心原理": [
+     "通过原型链访问内部函数（如 require）",
+     "权限检查未覆盖原型链路径"
+    ],
+    "决策树": [
+     "IF 存在权限检查 AND 基于模块加载 → 尝试通过原型链调用 require"
+    ],
+    "示例": [
+     "process.mainModule.__proto__.require('fs')"
+    ],
+    "迁移场景": [
+     "Node.js 应用",
+     "Electron"
+    ]
+   }
+  },
+  {
+   "id": 344595,
+   "knowledge_point": "tar 硬链接任意文件覆盖",
+   "is_ai_likely_known": false,
+   "reason": "利用 tar 硬链接指向外部路径，绕过解压检查，属于 tar 格式语义滥用，AI 可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何 tar 解压场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 tar 解压安全检测。",
+   "skill_framework": {
+    "name": "tar 解压安全检测（硬链接与路径遍历）",
+    "适用场景": [
+     "文件上传解压",
+     "依赖包安装"
+    ],
+    "核心原理": [
+     "硬链接可指向外部路径，后续文件覆盖目标",
+     "解压库未规范化硬链接目标"
+    ],
+    "决策树": [
+     "IF 应用解压 tar 文件 → 检查硬链接目标是否在解压目录内"
+    ],
+    "示例": [
+     "构造含硬链接的 tar 包覆盖 /etc/passwd"
+    ],
+    "迁移场景": [
+     "文件上传",
+     "包管理器"
+    ]
+   }
+  },
+  {
+   "id": 1178337,
+   "knowledge_point": "DNS 响应特殊字符注入",
+   "is_ai_likely_known": false,
+   "reason": "Node.js DNS 库未过滤特殊字符，导致域名解析结果可包含 XSS payload，属于库实现差异，AI 可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何依赖 DNS 解析的应用）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 DNS 响应安全过滤。",
+   "skill_framework": {
+    "name": "DNS 响应特殊字符注入",
+    "适用场景": [
+     "域名解析",
+     "缓存投毒",
+     "XSS"
+    ],
+    "核心原理": [
+     "DNS 库未过滤特殊字符（如空字节、HTML 标签）",
+     "应用信任解析结果导致注入"
+    ],
+    "决策树": [
+     "IF 应用使用 DNS 解析结果 → 检查是否过滤特殊字符"
+    ],
+    "示例": [
+     "解析返回 <script>alert(1)</script>.example.com"
+    ],
+    "迁移场景": [
+     "DNS 解析",
+     "邮件系统"
+    ]
+   }
+  },
+  {
+   "id": 497312,
+   "knowledge_point": "ShellExecute 非 http 前缀命令注入",
+   "is_ai_likely_known": false,
+   "reason": "利用 ShellExecute 对非 http 前缀参数的处理差异，将自定义搜索引擎设置为命令，属于 Windows API 行为，AI 可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何使用 ShellExecute 的桌面应用）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 ShellExecute 安全使用。",
+   "skill_framework": {
+    "name": "ShellExecute 命令注入防护",
+    "适用场景": [
+     "桌面应用 URL 处理",
+     "自定义协议"
+    ],
+    "核心原理": [
+     "ShellExecute 对非 http 前缀参数可能执行命令",
+     "应用未验证 URL 协议"
+    ],
+    "决策树": [
+     "IF 应用使用 ShellExecute 处理 URL → 验证协议必须为 http/https"
+    ],
+    "示例": [
+     "设置搜索引擎为 'cmd.exe' 导致命令执行"
+    ],
+    "迁移场景": [
+     "Windows 应用",
+     "浏览器"
+    ]
+   }
+  },
+  {
+   "id": 982291,
+   "knowledge_point": "CSS url(cid://) 绕过 HTML 过滤器",
+   "is_ai_likely_known": false,
+   "reason": "利用 CSS 中的 url(cid://) 和 HTML 实体编码绕过过滤器，结合 Stimulus 框架自动提交，属于非预期组合，AI 可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何使用 HTML 过滤器的邮件或 Web 应用）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 HTML 过滤器绕过技术。",
+   "skill_framework": {
+    "name": "HTML 过滤器绕过（CSS 与实体编码）",
+    "适用场景": [
+     "邮件 XSS",
+     "富文本过滤"
+    ],
+    "核心原理": [
+     "CSS url(cid://) 可绕过 URL 过滤",
+     "HTML 实体编码绕过字符串匹配",
+     "框架自动提交表单"
+    ],
+    "决策树": [
+     "IF 存在 HTML 过滤器 → 尝试 CSS url 和实体编码组合"
+    ],
+    "示例": [
+     "<style>body{background:url(cid://x)}</style>"
+    ],
+    "迁移场景": [
+     "邮件系统",
+     "Web 应用"
+    ]
+   }
+  },
+  {
+   "id": 1977252,
+   "knowledge_point": "JavaScript 对象生命周期管理不当导致 UAF",
+   "is_ai_likely_known": false,
+   "reason": "利用 delete 和 GC 触发 UAF，涉及 V8 引擎和 C++ 对象管理，属于跨组件利用，AI 可能不熟悉。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到浏览器扩展或类似绑定场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 JavaScript 绑定生命周期管理。",
+   "skill_framework": {
+    "name": "JavaScript 绑定生命周期管理（UAF 防护）",
+    "适用场景": [
+     "浏览器扩展",
+     "Node.js 原生模块"
+    ],
+    "核心原理": [
+     "JavaScript 对象可被 delete 和 GC 回收",
+     "C++ 绑定未保持引用导致 UAF"
+    ],
+    "决策树": [
+     "IF 存在 JavaScript 与 C++ 绑定 → 检查对象生命周期是否一致"
+    ],
+    "示例": [
+     "delete ethereum 后调用 isUnlocked() 触发 UAF"
+    ],
+    "迁移场景": [
+     "浏览器扩展",
+     "Electron"
+    ]
+   }
+  },
+  {
+   "id": 785243,
+   "knowledge_point": "Unicode 不可见字符绕过应用名称唯一性校验",
+   "is_ai_likely_known": false,
+   "reason": "利用 U+180E 蒙古元音分隔符绕过唯一性校验，属于 Unicode 规范化问题，AI 可能不熟悉具体字符。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何依赖字符串唯一性校验的系统）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 Unicode 规范化安全检测。",
+   "skill_framework": {
+    "name": "Unicode 规范化绕过（不可见字符）",
+    "适用场景": [
+     "应用名称唯一性",
+     "用户名注册",
+     "OAuth 授权"
+    ],
+    "核心原理": [
+     "不可见字符（如 U+180E）被渲染为空白但系统视为不同字符",
+     "未规范化 Unicode 导致视觉欺骗"
+    ],
+    "决策树": [
+     "IF 存在字符串唯一性校验 → 尝试插入不可见字符变体"
+    ],
+    "示例": [
+     "应用名 'Twitter' 与 'Twitter᠎' 视觉相同"
+    ],
+    "迁移场景": [
+     "用户注册",
+     "OAuth 应用"
+    ]
+   }
+  },
+  {
+   "id": 498964,
+   "knowledge_point": "Zendesk CC 功能泄露验证码",
+   "is_ai_likely_known": false,
+   "reason": "利用 Zendesk 的 CC 功能将 Google 验证邮件公开，属于跨平台攻击链，AI 可能不熟悉。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（依赖特定平台 Zendesk 和 Google 账户流程）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 412673,
+   "knowledge_point": "Python xml.etree 哈希碰撞 DoS",
+   "is_ai_likely_known": true,
+   "reason": "Python 标准库哈希碰撞 DoS 是已知问题，AI 可能知道。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他 XML 解析器）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：XML 安全解析。",
+   "skill_framework": null
+  },
+  {
+   "id": 1431042,
+   "knowledge_point": "console.table 原型污染",
+   "is_ai_likely_known": false,
+   "reason": "console.table 的 properties 参数未过滤 __proto__，属于标准库意外行为，AI 可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何使用 console.table 的 Node.js 应用）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "合并到上层系统 Skill：原型污染检测与利用。",
+   "skill_framework": {
+    "name": "原型污染检测与利用（标准库）",
+    "适用场景": [
+     "Node.js 应用",
+     "浏览器控制台"
+    ],
+    "核心原理": [
+     "标准库函数未过滤 __proto__ 键",
+     "可污染 Object.prototype"
+    ],
+    "决策树": [
+     "IF 应用使用 console.table 且参数可控 → 尝试 __proto__ 键"
+    ],
+    "示例": [
+     "console.table({}, ['__proto__']) 污染原型"
+    ],
+    "迁移场景": [
+     "Node.js",
+     "浏览器"
+    ]
+   }
+  }
+ ]
+}

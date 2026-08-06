@@ -1,0 +1,376 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 8,
+  "not_worth": 7,
+  "top_ids": [
+   2384833,
+   1524555,
+   1575014,
+   224198,
+   2051257,
+   118582,
+   50752,
+   425200
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 118582,
+   "knowledge_point": "CSV注入：利用分号绕过字段封装执行公式",
+   "is_ai_likely_known": true,
+   "reason": "CSV注入是常见漏洞，AI通常知道基本防护（转义、禁止公式前缀），但分号绕过细节可能不广为人知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何CSV导出功能，以及类似的分隔符注入场景）",
+   "source_quality": "中",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，聚焦于CSV注入的绕过技巧和防御，可合并到'CSV注入'上层Skill。",
+   "skill_framework": {
+    "name": "CSV注入绕过与防御",
+    "适用场景": [
+     "CSV导出功能",
+     "Excel/Sheets解析",
+     "数据导出安全"
+    ],
+    "核心原理": [
+     "Excel解析CSV时，分号可分割字段，即使字段被引号包裹",
+     "公式前缀（=,+,-,@）可执行"
+    ],
+    "决策树": [
+     "IF 导出内容包含用户输入 AND 未转义公式前缀 → 尝试注入分号和公式"
+    ],
+    "示例": [
+     "标题: '=cmd|' /c calc'!A1' 或 ';=1+1'"
+    ],
+    "迁移场景": [
+     "CSV注入",
+     "公式注入",
+     "电子表格安全"
+    ]
+   }
+  },
+  {
+   "id": 1341957,
+   "knowledge_point": "哈希碰撞DoS：利用弱哈希和重复条目",
+   "is_ai_likely_known": true,
+   "reason": "哈希碰撞DoS是已知攻击类型，AI了解基本概念，但具体利用细节可能不深。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到任何使用哈希表的数据结构）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1595296,
+   "knowledge_point": "mod_isapi.c越界读：长度混淆",
+   "is_ai_likely_known": false,
+   "reason": "特定于Apache mod_isapi模块，训练数据少，需要具体代码知识。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（高度依赖特定模块）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 224198,
+   "knowledge_point": "内部组件信任：通过消息队列注入恶意任务实现RCE",
+   "is_ai_likely_known": false,
+   "reason": "涉及Sidekiq和instance_eval的具体利用，AI可能不熟悉，且属于跨组件攻击链。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何消息队列和Worker模型）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'内部组件信任边界'攻击模式，可合并到'消息队列安全'上层Skill。",
+   "skill_framework": {
+    "name": "消息队列注入与内部信任边界突破",
+    "适用场景": [
+     "Sidekiq",
+     "RabbitMQ",
+     "Kafka",
+     "任何任务队列"
+    ],
+    "核心原理": [
+     "内部组件间信任过度，未验证消息来源",
+     "Worker允许动态方法调用（如instance_eval）"
+    ],
+    "决策树": [
+     "IF 存在可访问的消息队列 AND Worker处理消息时未验证 → 尝试注入恶意任务"
+    ],
+    "示例": [
+     "向Sidekiq队列推送包含instance_eval的任务"
+    ],
+    "迁移场景": [
+     "RCE",
+     "内部网络渗透",
+     "微服务安全"
+    ]
+   }
+  },
+  {
+   "id": 1575014,
+   "knowledge_point": "路径规范化差异：Node.js SDK将`.`规范化为列表接口",
+   "is_ai_likely_known": false,
+   "reason": "特定于Node.js HTTP客户端和API设计，AI可能不熟悉这种具体绕过。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何使用路径规范化的框架和API设计）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'路径规范化差异'攻击模式，可合并到'路径规范化'上层Skill。",
+   "skill_framework": {
+    "name": "路径规范化差异利用",
+    "适用场景": [
+     "API设计",
+     "SDK开发",
+     "路由处理"
+    ],
+    "核心原理": [
+     "客户端和服务器对路径规范化不一致",
+     "`.`或`..`被规范化后改变路由"
+    ],
+    "决策树": [
+     "IF API有列表和详情接口 AND 客户端自动规范化路径 → 尝试传入`.`或`..`"
+    ],
+    "示例": [
+     "/sessions/. → /sessions/ 触发列表接口"
+    ],
+    "迁移场景": [
+     "路径遍历",
+     "API安全",
+     "信息泄露"
+    ]
+   }
+  },
+  {
+   "id": 50752,
+   "knowledge_point": "开放重定向：双斜杠和IP数字转换绕过域名限制",
+   "is_ai_likely_known": true,
+   "reason": "开放重定向是常见漏洞，AI知道基本绕过，但IP数字转换可能不广为人知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何重定向校验）",
+   "source_quality": "中",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，聚焦于开放重定向的绕过技巧，可合并到'开放重定向'上层Skill。",
+   "skill_framework": {
+    "name": "开放重定向绕过与防御",
+    "适用场景": [
+     "登录跳转",
+     "OAuth回调",
+     "URL重定向"
+    ],
+    "核心原理": [
+     "域名校验可被IP数字形式绕过",
+     "双斜杠可绕过某些解析"
+    ],
+    "决策树": [
+     "IF 重定向URL有域名白名单 → 尝试IP数字形式或双斜杠"
+    ],
+    "示例": [
+     "http://2130706433/ 或 //evil.com"
+    ],
+    "迁移场景": [
+     "开放重定向",
+     "SSRF",
+     "token泄露"
+    ]
+   }
+  },
+  {
+   "id": 2384833,
+   "knowledge_point": "curl --proto -all 参数解析缺陷导致协议未禁用",
+   "is_ai_likely_known": false,
+   "reason": "特定于curl的协议解析逻辑，AI可能不知道这个具体CVE，且属于反直觉行为。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何黑名单模式下的默认允许问题）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'黑名单模式下的默认允许'模式，可合并到'协议解析安全'上层Skill。",
+   "skill_framework": {
+    "name": "黑名单模式下的默认允许绕过",
+    "适用场景": [
+     "curl",
+     "协议过滤",
+     "安全配置"
+    ],
+    "核心原理": [
+     "黑名单移除所有项后，逻辑缺陷导致默认允许所有",
+     "解析器边界条件处理错误"
+    ],
+    "决策树": [
+     "IF 使用黑名单禁用协议 AND 移除所有协议 → 检查是否实际允许所有"
+    ],
+    "示例": [
+     "curl --proto -all http://... 实际允许所有协议"
+    ],
+    "迁移场景": [
+     "协议安全",
+     "配置错误",
+     "CVE分析"
+    ]
+   }
+  },
+  {
+   "id": 425200,
+   "knowledge_point": "XSS：javascript: URL编码和对象属性赋值绕过过滤",
+   "is_ai_likely_known": true,
+   "reason": "XSS是常见漏洞，AI知道javascript: URL绕过，但具体编码和对象属性利用可能不广为人知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何XSS过滤）",
+   "source_quality": "中",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，聚焦于XSS过滤绕过，可合并到'XSS'上层Skill。",
+   "skill_framework": {
+    "name": "XSS过滤绕过：javascript: URL变体",
+    "适用场景": [
+     "XSS防护",
+     "WAF绕过",
+     "输入过滤"
+    ],
+    "核心原理": [
+     "javascript: URL可被编码或通过对象属性赋值绕过",
+     "过滤不完整"
+    ],
+    "决策树": [
+     "IF 过滤javascript: → 尝试编码或对象属性赋值"
+    ],
+    "示例": [
+     "javascript:alert(1) 编码为 javascript&#58;alert(1)"
+    ],
+    "迁移场景": [
+     "XSS",
+     "WAF绕过",
+     "客户端安全"
+    ]
+   }
+  },
+  {
+   "id": 1524555,
+   "knowledge_point": "HTTP请求走私：Transfer-Encoding解析差异（chunkedchunked）",
+   "is_ai_likely_known": false,
+   "reason": "特定于llhttp解析器，AI可能不知道这个具体绕过，且属于协议解析差异。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何HTTP解析器差异）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'HTTP解析差异'攻击模式，可合并到'HTTP请求走私'上层Skill。",
+   "skill_framework": {
+    "name": "HTTP请求走私：Transfer-Encoding解析差异",
+    "适用场景": [
+     "HTTP服务器",
+     "代理",
+     "WAF"
+    ],
+    "核心原理": [
+     "前端和后端解析Transfer-Encoding不一致",
+     "宽松解析器忽略前缀"
+    ],
+    "决策树": [
+     "IF 存在代理和后端 AND 解析器不同 → 尝试TE变体如chunkedchunked"
+    ],
+    "示例": [
+     "Transfer-Encoding: chunkedchunked"
+    ],
+    "迁移场景": [
+     "请求走私",
+     "缓存投毒",
+     "会话劫持"
+    ]
+   }
+  },
+  {
+   "id": 212241,
+   "knowledge_point": "sprintf格式字符串攻击：整数溢出和错误处理",
+   "is_ai_likely_known": true,
+   "reason": "格式字符串攻击是已知漏洞，AI了解基本概念，但具体CHECK宏和snprintf返回值利用可能不广为人知。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（高度依赖具体代码）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 211477,
+   "knowledge_point": "多漏洞组合：CSRF+开放重定向+图片URL注入窃取token",
+   "is_ai_likely_known": true,
+   "reason": "组合攻击是常见思路，AI可能知道，但具体组合方式可能不广为人知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到OAuth和token泄露场景）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：'OAuth安全'。",
+   "skill_framework": null
+  },
+  {
+   "id": 242354,
+   "knowledge_point": "mruby虚拟机空指针解引用：ensure块中break导致状态不一致",
+   "is_ai_likely_known": false,
+   "reason": "特定于mruby虚拟机，AI可能不知道这个具体漏洞，且属于语言运行时行为。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（高度依赖特定运行时）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1878489,
+   "knowledge_point": "CRLF注入：undici库host头未过滤",
+   "is_ai_likely_known": true,
+   "reason": "CRLF注入是常见漏洞，AI知道基本概念，但特定库的host头绕过可能不广为人知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到任何HTTP库）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：'HTTP头注入'。",
+   "skill_framework": null
+  },
+  {
+   "id": 2051257,
+   "knowledge_point": "Node.js权限模型绕过：process.binding路径遍历",
+   "is_ai_likely_known": false,
+   "reason": "特定于Node.js内部API，AI可能不知道这个绕过，且属于框架行为利用。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何权限模型和内部API）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'内部API绕过权限模型'模式，可合并到'Node.js安全'上层Skill。",
+   "skill_framework": {
+    "name": "Node.js权限模型绕过：内部API利用",
+    "适用场景": [
+     "Node.js应用",
+     "权限模型",
+     "沙箱逃逸"
+    ],
+    "核心原理": [
+     "内部API（如process.binding）未经过权限模型检查",
+     "路径规范化不完整"
+    ],
+    "决策树": [
+     "IF 存在权限模型 AND 可调用内部API → 尝试路径遍历绕过"
+    ],
+    "示例": [
+     "process.binding('fs').mkdir('../evil')"
+    ],
+    "迁移场景": [
+     "沙箱逃逸",
+     "权限提升",
+     "路径遍历"
+    ]
+   }
+  },
+  {
+   "id": 983548,
+   "knowledge_point": "MobileIron RCE：认证绕过+反序列化+WAF绕过",
+   "is_ai_likely_known": false,
+   "reason": "特定于MobileIron和Hessian反序列化，AI可能不熟悉，且属于复杂攻击链。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到类似反序列化场景）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：'反序列化安全'。",
+   "skill_framework": null
+  }
+ ]
+}

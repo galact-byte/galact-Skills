@@ -1,0 +1,351 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 6,
+  "not_worth": 9,
+  "top_ids": [
+   205497,
+   488985,
+   817245,
+   523,
+   801743,
+   876148
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 205497,
+   "knowledge_point": "reStructuredText 链接语法注入 javascript: 协议导致存储型 XSS",
+   "is_ai_likely_known": false,
+   "reason": "reST 的链接语法细节和 javascript: 协议绕过属于特定框架行为，AI 可能不熟悉具体语法。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他标记语言如 Markdown、Textile 的链接处理）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化标记语言链接协议白名单校验的通用模式。",
+   "skill_framework": {
+    "name": "标记语言链接协议注入防护",
+    "适用场景": [
+     "用户生成内容渲染",
+     "文档预览",
+     "富文本编辑器"
+    ],
+    "核心原理": [
+     "标记语言解析器可能允许 javascript: 等危险协议",
+     "需对链接协议进行白名单校验"
+    ],
+    "决策树": [
+     "IF 用户输入被渲染为标记语言 AND 链接协议未校验 → 尝试 javascript: 等协议"
+    ],
+    "示例": [
+     "[click](javascript:alert(1))"
+    ],
+    "迁移场景": [
+     "Markdown",
+     "reST",
+     "Textile"
+    ]
+   }
+  },
+  {
+   "id": 488985,
+   "knowledge_point": "并发请求绕过一次性凭证领取限制（TOCTOU）",
+   "is_ai_likely_known": true,
+   "reason": "竞态条件绕过是常见漏洞模式，AI 通常了解基本概念。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（适用于任何一次性操作，如优惠券、邀请码、兑换码）",
+   "source_quality": "通用",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，系统化竞态条件测试和防御决策树。",
+   "skill_framework": {
+    "name": "竞态条件测试与防御",
+    "适用场景": [
+     "一次性凭证领取",
+     "余额扣减",
+     "库存扣减"
+    ],
+    "核心原理": [
+     "TOCTOU 竞态条件",
+     "并发请求导致多次执行"
+    ],
+    "决策树": [
+     "IF 存在一次性操作 AND 无幂等性 → 尝试并发请求"
+    ],
+    "示例": [
+     "同时发送多个 claim 请求"
+    ],
+    "迁移场景": [
+     "支付",
+     "优惠券",
+     "抽奖"
+    ]
+   }
+  },
+  {
+   "id": 817245,
+   "knowledge_point": "硬件钱包未验证解锁时间字段导致资金永久锁定",
+   "is_ai_likely_known": false,
+   "reason": "硬件钱包固件细节和协议字段验证属于特定领域，AI 可能不了解。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（特定于硬件钱包和区块链协议）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 523,
+   "knowledge_point": "NUL 字节绕过 ASN.1 解析器长度检查导致内存破坏",
+   "is_ai_likely_known": false,
+   "reason": "NUL 字节绕过属于特定解析器行为，AI 可能不熟悉具体细节。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他二进制解析器，如 TLS 证书、图像格式）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化二进制解析器 NUL 字节绕过模式。",
+   "skill_framework": {
+    "name": "二进制解析器 NUL 字节绕过",
+    "适用场景": [
+     "证书解析",
+     "文件格式解析",
+     "网络协议解析"
+    ],
+    "核心原理": [
+     "NUL 字节可能被忽略或截断",
+     "导致长度校验失效"
+    ],
+    "决策树": [
+     "IF 解析器处理二进制数据 AND 未使用二进制安全函数 → 尝试注入 NUL 字节"
+    ],
+    "示例": [
+     "证书中的 CN 字段包含 NUL 字节"
+    ],
+    "迁移场景": [
+     "ASN.1",
+     "PDF",
+     "ZIP"
+    ]
+   }
+  },
+  {
+   "id": 801743,
+   "knowledge_point": "并发重放购买验证请求导致金币通胀",
+   "is_ai_likely_known": true,
+   "reason": "竞态条件绕过是常见漏洞模式，AI 通常了解基本概念。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（适用于任何支付验证、兑换码、积分系统）",
+   "source_quality": "通用",
+   "worth_skill": true,
+   "suggested_handling": "合并到上层 Skill：竞态条件测试与防御。",
+   "skill_framework": {
+    "name": "竞态条件测试与防御",
+    "适用场景": [
+     "支付验证",
+     "兑换码",
+     "积分系统"
+    ],
+    "核心原理": [
+     "TOCTOU 竞态条件",
+     "并发请求导致多次验证通过"
+    ],
+    "决策树": [
+     "IF 存在一次性验证 AND 无幂等性 → 尝试并发重放"
+    ],
+    "示例": [
+     "同时发送多个 verify_purchase 请求"
+    ],
+    "迁移场景": [
+     "支付",
+     "优惠券",
+     "抽奖"
+    ]
+   }
+  },
+  {
+   "id": 876148,
+   "knowledge_point": "DOM XSS 通过参数直接注入 DOM 未编码",
+   "is_ai_likely_known": true,
+   "reason": "DOM XSS 是常见漏洞类型，AI 通常了解基本概念。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（适用于任何前端 DOM 操作）",
+   "source_quality": "通用",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，系统化 DOM XSS 检测和防御。",
+   "skill_framework": {
+    "name": "DOM XSS 检测与防御",
+    "适用场景": [
+     "前端搜索",
+     "URL 参数处理",
+     "单页应用"
+    ],
+    "核心原理": [
+     "不可信数据直接拼接到 DOM",
+     "未进行输出编码"
+    ],
+    "决策树": [
+     "IF 前端使用 innerHTML 或类似方法 AND 数据来自 URL 参数 → 尝试注入 HTML"
+    ],
+    "示例": [
+     "?q=<img src=x onerror=alert(1)>"
+    ],
+    "迁移场景": [
+     "React",
+     "Vue",
+     "Angular"
+    ]
+   }
+  },
+  {
+   "id": 167896,
+   "knowledge_point": "tar phar 中 uncompressed_filesize 字段未校验导致签名长度下溢",
+   "is_ai_likely_known": false,
+   "reason": "PHP phar 解析器细节和整数下溢属于特定框架行为，AI 可能不熟悉。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（特定于 PHP phar 格式）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1021776,
+   "knowledge_point": "支付创建接口未验证用户身份导致任意用户订单操作",
+   "is_ai_likely_known": true,
+   "reason": "未授权访问是常见漏洞模式，AI 通常了解基本概念。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（适用于任何资源操作接口）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 248601,
+   "knowledge_point": "PHP INI 解析整数溢出导致栈缓冲区溢出",
+   "is_ai_likely_known": false,
+   "reason": "PHP INI 解析器细节和整数溢出属于特定框架行为，AI 可能不熟悉。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（特定于 PHP INI 解析）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 166942,
+   "knowledge_point": "OAuth 回调 URL 只校验 host 不校验路径导致令牌泄露",
+   "is_ai_likely_known": true,
+   "reason": "OAuth 回调校验不严是常见漏洞模式，AI 通常了解基本概念。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（适用于任何 OAuth 实现）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 321444,
+   "knowledge_point": "跨平台用户名大小写规范化不一致导致身份混淆",
+   "is_ai_likely_known": false,
+   "reason": "跨平台规范化差异属于特定集成场景，AI 可能不熟悉具体案例。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他跨平台集成场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化跨平台输入规范化一致性检查。",
+   "skill_framework": {
+    "name": "跨平台输入规范化一致性检查",
+    "适用场景": [
+     "OAuth 集成",
+     "单点登录",
+     "用户身份关联"
+    ],
+    "核心原理": [
+     "不同平台对用户名等输入规范化处理不一致",
+     "导致身份混淆"
+    ],
+    "决策树": [
+     "IF 多个系统处理同一输入 AND 规范化规则不同 → 尝试大小写变体"
+    ],
+    "示例": [
+     "用户名 'Admin' 在一个系统被转为 'admin'，另一个系统保留原样"
+    ],
+    "迁移场景": [
+     "用户名",
+     "邮箱",
+     "手机号"
+    ]
+   }
+  },
+  {
+   "id": 88105,
+   "knowledge_point": "URL 路径反射未转义导致存储型 XSS",
+   "is_ai_likely_known": true,
+   "reason": "反射型 XSS 是常见漏洞类型，AI 通常了解基本概念。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（适用于任何 URL 参数反射）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 54733,
+   "knowledge_point": "sandbox iframe 禁用 JS 但保留表单提交绕过支付确认",
+   "is_ai_likely_known": false,
+   "reason": "sandbox 属性行为细节和绕过方式属于特定 HTML5 行为，AI 可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他依赖前端 JS 的确认场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 sandbox iframe 绕过模式。",
+   "skill_framework": {
+    "name": "sandbox iframe 绕过前端确认",
+    "适用场景": [
+     "支付确认",
+     "表单提交",
+     "权限确认"
+    ],
+    "核心原理": [
+     "sandbox 属性禁用 JS 但保留表单提交",
+     "绕过依赖 JS 的确认逻辑"
+    ],
+    "决策树": [
+     "IF 前端确认依赖 JS AND 存在 sandbox iframe → 尝试禁用 JS 提交表单"
+    ],
+    "示例": [
+     "<iframe sandbox=\"allow-forms\" src=\"...\">"
+    ],
+    "迁移场景": [
+     "支付",
+     "授权",
+     "注册"
+    ]
+   }
+  },
+  {
+   "id": 134292,
+   "knowledge_point": "API 全局 ID 导致跨项目资源访问",
+   "is_ai_likely_known": true,
+   "reason": "IDOR 是常见漏洞模式，AI 通常了解基本概念。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（适用于任何资源 ID 操作）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 402473,
+   "knowledge_point": "绝对路径绕过扩展名检查导致任意文件下载",
+   "is_ai_likely_known": true,
+   "reason": "路径遍历是常见漏洞模式，AI 通常了解基本概念。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（适用于任何文件下载功能）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  }
+ ]
+}

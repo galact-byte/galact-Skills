@@ -1,0 +1,369 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 8,
+  "not_worth": 7,
+  "top_ids": [
+   73240,
+   1807214,
+   270068,
+   637194,
+   1596663,
+   489146,
+   168116,
+   330351
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 73240,
+   "knowledge_point": "FTP协议整数溢出导致堆溢出",
+   "is_ai_likely_known": false,
+   "reason": "涉及FTP协议特定实现细节和整数溢出，非通用知识，需深入理解协议和内存管理。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他协议解析中的整数溢出场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化协议解析中整数溢出的检测与利用方法。",
+   "skill_framework": {
+    "name": "协议解析整数溢出检测与利用",
+    "适用场景": [
+     "FTP",
+     "HTTP",
+     "自定义协议解析"
+    ],
+    "核心原理": [
+     "整数溢出导致内存分配不足",
+     "攻击者控制数据大小触发溢出"
+    ],
+    "决策树": [
+     "IF 协议解析涉及长度字段 AND 未使用安全整数运算 → 尝试超大数据触发溢出"
+    ],
+    "示例": [
+     "恶意FTP服务器发送超大数据导致堆溢出"
+    ],
+    "迁移场景": [
+     "网络协议安全测试",
+     "内存安全审计"
+    ]
+   }
+  },
+  {
+   "id": 1807214,
+   "knowledge_point": "SnakeYAML反序列化漏洞",
+   "is_ai_likely_known": true,
+   "reason": "SnakeYAML反序列化漏洞是已知的通用问题，AI可能已了解。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到其他YAML解析库和反序列化场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，系统化反序列化漏洞检测与防御。",
+   "skill_framework": {
+    "name": "反序列化漏洞检测与防御",
+    "适用场景": [
+     "Java应用",
+     "YAML/JSON解析",
+     "框架集成"
+    ],
+    "核心原理": [
+     "不安全的反序列化允许任意类型实例化",
+     "攻击者构造恶意数据触发RCE"
+    ],
+    "决策树": [
+     "IF 使用SnakeYAML默认构造器 → 尝试恶意YAML",
+     "IF 使用SafeConstructor → 检查类型白名单"
+    ],
+    "示例": [
+     "构造恶意YAML触发Dynamics解析导致RCE"
+    ],
+    "迁移场景": [
+     "Java反序列化",
+     "Python pickle",
+     "PHP unserialize"
+    ]
+   }
+  },
+  {
+   "id": 270068,
+   "knowledge_point": "路径遍历绕过start_with?检查",
+   "is_ai_likely_known": false,
+   "reason": "针对Ruby的start_with?检查缺陷，非主流AI已知的通用知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他语言和框架的路径检查逻辑）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化路径遍历绕过技术。",
+   "skill_framework": {
+    "name": "路径遍历绕过技术",
+    "适用场景": [
+     "文件操作",
+     "gem安装",
+     "路径校验"
+    ],
+    "核心原理": [
+     "字符串前缀检查未考虑路径分隔符",
+     "构造特殊路径绕过检查"
+    ],
+    "决策树": [
+     "IF 使用start_with?检查路径 → 尝试添加../或编码变体"
+    ],
+    "示例": [
+     "构造gem名称覆盖其他gem文件"
+    ],
+    "迁移场景": [
+     "文件上传",
+     "下载",
+     "路径过滤"
+    ]
+   }
+  },
+  {
+   "id": 637194,
+   "knowledge_point": "Deeplink绕过生物认证",
+   "is_ai_likely_known": false,
+   "reason": "涉及移动应用生命周期和认证状态管理，非通用知识。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到其他认证绕过场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化认证状态管理漏洞检测。",
+   "skill_framework": {
+    "name": "认证状态管理漏洞检测",
+    "适用场景": [
+     "移动应用",
+     "Web应用",
+     "单点登录"
+    ],
+    "核心原理": [
+     "认证状态未在敏感操作前重新验证",
+     "利用应用生命周期绕过认证"
+    ],
+    "决策树": [
+     "IF 应用有deeplink处理 AND 未检查认证状态 → 尝试直接访问敏感功能"
+    ],
+    "示例": [
+     "通过deeplink绕过指纹认证"
+    ],
+    "迁移场景": [
+     "OAuth流程",
+     "会话管理"
+    ]
+   }
+  },
+  {
+   "id": 1596663,
+   "knowledge_point": "角色变更后权限残留",
+   "is_ai_likely_known": false,
+   "reason": "涉及业务逻辑中的状态混淆，非通用知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到权限管理场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化权限变更漏洞检测。",
+   "skill_framework": {
+    "name": "权限变更漏洞检测",
+    "适用场景": [
+     "用户角色管理",
+     "邀请机制",
+     "访问控制"
+    ],
+    "核心原理": [
+     "角色变更未撤销旧权限",
+     "令牌重用导致权限残留"
+    ],
+    "决策树": [
+     "IF 用户角色可变更 AND 未清理旧权限 → 尝试利用旧令牌"
+    ],
+    "示例": [
+     "创建隐藏管理员账户"
+    ],
+    "迁移场景": [
+     "多租户应用",
+     "RBAC系统"
+    ]
+   }
+  },
+  {
+   "id": 489146,
+   "knowledge_point": "GraphQL字段级授权缺失",
+   "is_ai_likely_known": true,
+   "reason": "GraphQL授权问题是已知的通用问题，AI可能已了解。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有GraphQL API）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，系统化GraphQL安全测试。",
+   "skill_framework": {
+    "name": "GraphQL安全测试",
+    "适用场景": [
+     "GraphQL API",
+     "数据泄露防护"
+    ],
+    "核心原理": [
+     "字段级授权缺失",
+     "查询任意用户数据"
+    ],
+    "决策树": [
+     "IF GraphQL接口存在 → 尝试查询其他用户数据"
+    ],
+    "示例": [
+     "构造查询获取任意用户PII"
+    ],
+    "迁移场景": [
+     "REST API",
+     "微服务"
+    ]
+   }
+  },
+  {
+   "id": 168116,
+   "knowledge_point": "空Referer绕过验证",
+   "is_ai_likely_known": false,
+   "reason": "针对Referer验证的绕过，非主流AI已知的通用知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到CSRF防护和来源验证）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化Referer验证绕过技术。",
+   "skill_framework": {
+    "name": "Referer验证绕过",
+    "适用场景": [
+     "CSRF防护",
+     "OAuth回调",
+     "iframe嵌入"
+    ],
+    "核心原理": [
+     "Referer为空时验证失效",
+     "使用meta标签禁用Referer"
+    ],
+    "决策树": [
+     "IF 使用Referer验证 → 尝试禁用Referer"
+    ],
+    "示例": [
+     "通过meta标签绕过getLoginStatus验证"
+    ],
+    "迁移场景": [
+     "Web安全",
+     "API安全"
+    ]
+   }
+  },
+  {
+   "id": 12583,
+   "knowledge_point": "XXE和SSRF",
+   "is_ai_likely_known": true,
+   "reason": "XXE是已知的通用漏洞，AI可能已了解。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到XML解析场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 642886,
+   "knowledge_point": "邮箱变更与密码重置流程分离",
+   "is_ai_likely_known": false,
+   "reason": "涉及具体业务逻辑，非通用知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他账户恢复流程）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 330351,
+   "knowledge_point": "Node.js Buffer未初始化内存泄露",
+   "is_ai_likely_known": false,
+   "reason": "涉及Node.js特定行为，非通用知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他语言的内存管理）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化内存安全检测。",
+   "skill_framework": {
+    "name": "内存安全检测",
+    "适用场景": [
+     "Node.js",
+     "C/C++",
+     "内存管理"
+    ],
+    "核心原理": [
+     "未初始化缓冲区导致信息泄露",
+     "边界检查缺失"
+    ],
+    "决策树": [
+     "IF 使用allocUnsafe → 检查读取边界"
+    ],
+    "示例": [
+     "ByteBuffer读取超出长度泄露内存"
+    ],
+    "迁移场景": [
+     "系统编程",
+     "嵌入式"
+    ]
+   }
+  },
+  {
+   "id": 72976,
+   "knowledge_point": "mailto链接注入",
+   "is_ai_likely_known": false,
+   "reason": "涉及邮件客户端解析差异，非通用知识。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（依赖特定邮件客户端）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 124277,
+   "knowledge_point": "React元素伪造XSS",
+   "is_ai_likely_known": true,
+   "reason": "React XSS是已知的通用问题，AI可能已了解。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到前端框架）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 125250,
+   "knowledge_point": "动态定价绕过",
+   "is_ai_likely_known": false,
+   "reason": "涉及业务逻辑状态混淆，非通用知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他动态定价系统）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 217007,
+   "knowledge_point": "存储型XSS",
+   "is_ai_likely_known": true,
+   "reason": "存储型XSS是已知的通用漏洞，AI可能已了解。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有Web应用）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 49759,
+   "knowledge_point": "开放重定向泄露CSRF令牌",
+   "is_ai_likely_known": false,
+   "reason": "涉及开放重定向与CSRF令牌泄露的结合，非通用知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到OAuth和会话管理）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：开放重定向与令牌泄露。",
+   "skill_framework": null
+  }
+ ]
+}

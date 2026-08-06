@@ -1,0 +1,303 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 5,
+  "not_worth": 10,
+  "top_ids": [
+   18843,
+   113120,
+   141700,
+   188972,
+   1382448
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1071918,
+   "knowledge_point": "共享会话跨子域未隔离导致权限提升",
+   "is_ai_likely_known": true,
+   "reason": "会话隔离是通用安全知识，AI 已知，且案例具体依赖特定实现。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（依赖具体子域架构）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 950881,
+   "knowledge_point": "IDOR 修改邮箱导致账户接管",
+   "is_ai_likely_known": true,
+   "reason": "IDOR 是通用漏洞，AI 已知，攻击链虽完整但无新意。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他 IDOR 场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：IDOR 检测与利用。",
+   "skill_framework": null
+  },
+  {
+   "id": 145467,
+   "knowledge_point": "未受保护的 API 端点绕过前端权限",
+   "is_ai_likely_known": true,
+   "reason": "API 权限检查缺失是通用知识，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到 API 安全测试）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：API 安全测试。",
+   "skill_framework": null
+  },
+  {
+   "id": 18843,
+   "knowledge_point": "OOM 触发 UAF 结合 JIT spray 绕过 DEP",
+   "is_ai_likely_known": false,
+   "reason": "OOM 触发 UAF 是特定内存管理缺陷，AI 训练数据少，且结合 JIT spray 的利用链复杂。",
+   "scene_frequency": "低频",
+   "migration_potential": "高（可迁移到其他内存破坏漏洞利用）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 OOM 触发 UAF 的原理和利用链。",
+   "skill_framework": {
+    "name": "OOM 触发 UAF 与 JIT spray 利用",
+    "适用场景": [
+     "浏览器插件漏洞挖掘",
+     "内存破坏漏洞利用"
+    ],
+    "核心原理": [
+     "内存分配失败路径未正确处理导致释放后使用",
+     "JIT spray 在内存中布置 shellcode 绕过 DEP"
+    ],
+    "决策树": [
+     "IF 目标存在 OOM 条件 AND 释放后引用 → 尝试触发 UAF",
+     "IF DEP 启用 → 使用 JIT spray 布置 shellcode"
+    ],
+    "示例": [
+     "构造大量对象触发 OOM，释放后引用，通过 JIT spray 执行代码"
+    ],
+    "迁移场景": [
+     "Flash Player",
+     "浏览器引擎",
+     "其他插件"
+    ]
+   }
+  },
+  {
+   "id": 188972,
+   "knowledge_point": "子域名接管实现持久 XSS",
+   "is_ai_likely_known": true,
+   "reason": "子域名接管是已知攻击技术，AI 可能了解，但案例展示了云服务配置缺陷的具体利用。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到云服务配置审计）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化子域名接管检测和利用流程。",
+   "skill_framework": {
+    "name": "子域名接管检测与利用",
+    "适用场景": [
+     "云服务配置审计",
+     "XSS 攻击"
+    ],
+    "核心原理": [
+     "未注册的 DNS 记录指向可注册的云服务资源",
+     "攻击者注册后控制子域名内容"
+    ],
+    "决策树": [
+     "IF 存在未注册的 CNAME 记录 → 尝试注册对应云服务",
+     "IF 注册成功 → 部署恶意脚本实现 XSS"
+    ],
+    "示例": [
+     "Elastic Beanstalk 子域名未注册，注册后部署恶意 JS"
+    ],
+    "迁移场景": [
+     "S3",
+     "Azure",
+     "Heroku"
+    ]
+   }
+  },
+  {
+   "id": 141700,
+   "knowledge_point": "硬链接绕过文件监控",
+   "is_ai_likely_known": false,
+   "reason": "硬链接绕过监控是文件系统行为利用，AI 训练数据少，且思路巧妙。",
+   "scene_frequency": "低频",
+   "migration_potential": "高（可迁移到其他文件监控绕过）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化硬链接绕过监控的原理和检测方法。",
+   "skill_framework": {
+    "name": "硬链接绕过文件监控",
+    "适用场景": [
+     "EDR 绕过",
+     "文件完整性监控绕过"
+    ],
+    "核心原理": [
+     "监控工具基于路径而非 inode 监控文件",
+     "硬链接指向同一 inode，修改硬链接不触发监控"
+    ],
+    "决策树": [
+     "IF 目标监控基于路径 → 创建硬链接并修改",
+     "IF 监控基于内容哈希 → 需同时修改内容"
+    ],
+    "示例": [
+     "创建 hosts 文件的硬链接，修改硬链接绕过 GlassWire 监控"
+    ],
+    "迁移场景": [
+     "Linux 文件系统",
+     "Windows NTFS"
+    ]
+   }
+  },
+  {
+   "id": 113120,
+   "knowledge_point": "整数溢出导致堆溢出",
+   "is_ai_likely_known": false,
+   "reason": "php_implode 的整数溢出是特定函数缺陷，AI 训练数据少，且利用链完整。",
+   "scene_frequency": "低频",
+   "migration_potential": "高（可迁移到其他整数溢出漏洞）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化整数溢出导致内存破坏的检测和利用。",
+   "skill_framework": {
+    "name": "整数溢出导致内存破坏",
+    "适用场景": [
+     "PHP 漏洞挖掘",
+     "内存破坏漏洞利用"
+    ],
+    "核心原理": [
+     "整数溢出绕过长度检查",
+     "堆溢出可控制寄存器值"
+    ],
+    "决策树": [
+     "IF 存在长度计算且未检查溢出 → 尝试构造大输入",
+     "IF 溢出导致堆溢出 → 尝试控制寄存器"
+    ],
+    "示例": [
+     "php_implode 中构造大量元素和长分隔符触发溢出"
+    ],
+    "迁移场景": [
+     "C/C++ 程序",
+     "其他脚本语言"
+    ]
+   }
+  },
+  {
+   "id": 99374,
+   "knowledge_point": "已删除员工重用授权链接",
+   "is_ai_likely_known": true,
+   "reason": "权限验证缺失是通用知识，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（依赖具体业务逻辑）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 871142,
+   "knowledge_point": "公开接口泄露敏感元数据",
+   "is_ai_likely_known": true,
+   "reason": "信息泄露是通用知识，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（依赖具体 API 设计）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 907311,
+   "knowledge_point": "LDAP 注入导致 DoS",
+   "is_ai_likely_known": true,
+   "reason": "LDAP 注入是通用漏洞，AI 已知，但 DoS 利用方式有一定新意。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他 LDAP 注入场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：LDAP 注入检测与利用。",
+   "skill_framework": null
+  },
+  {
+   "id": 1382448,
+   "knowledge_point": "换行符和超长 URL 触发重定向循环 DoS",
+   "is_ai_likely_known": false,
+   "reason": "利用换行符和超长 URL 触发重定向循环是特定协议行为，AI 训练数据少。",
+   "scene_frequency": "低频",
+   "migration_potential": "高（可迁移到其他协议解析绕过）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化协议解析差异导致 DoS 的原理。",
+   "skill_framework": {
+    "name": "协议解析差异导致 DoS",
+    "适用场景": [
+     "Web 服务器 DoS",
+     "WAF 绕过"
+    ],
+    "核心原理": [
+     "URL 解析器对换行符和长度处理不一致",
+     "触发重定向循环耗尽资源"
+    ],
+    "决策树": [
+     "IF 存在 URL 长度限制 → 尝试超长 URL",
+     "IF 存在重定向逻辑 → 尝试注入换行符"
+    ],
+    "示例": [
+     "构造 %0A 和超长 URL 触发重定向循环"
+    ],
+    "迁移场景": [
+     "HTTP 服务器",
+     "代理服务器"
+    ]
+   }
+  },
+  {
+   "id": 767482,
+   "knowledge_point": "调试控制台导致 RCE",
+   "is_ai_likely_known": true,
+   "reason": "调试功能暴露是通用知识，AI 已知。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（依赖具体环境）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 510759,
+   "knowledge_point": "IDOR 在 CSV 导出中泄露自定义字段 ID",
+   "is_ai_likely_known": true,
+   "reason": "IDOR 是通用漏洞，AI 已知，但导出功能中的 IDOR 有一定新意。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他导出功能）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：IDOR 检测与利用。",
+   "skill_framework": null
+  },
+  {
+   "id": 586251,
+   "knowledge_point": "目录写权限导致权限提升",
+   "is_ai_likely_known": true,
+   "reason": "目录权限配置不当是通用知识，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他服务配置）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：权限提升检测。",
+   "skill_framework": null
+  },
+  {
+   "id": 138881,
+   "knowledge_point": "API 响应差异枚举手机号",
+   "is_ai_likely_known": true,
+   "reason": "响应差异枚举是通用知识，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他枚举场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：信息枚举与侧信道。",
+   "skill_framework": null
+  }
+ ]
+}

@@ -1,0 +1,282 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 5,
+  "not_worth": 10,
+  "top_ids": [
+   303061,
+   2208656,
+   312510,
+   28865,
+   156542
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 303061,
+   "knowledge_point": "Base64编码绕过命令注入过滤",
+   "is_ai_likely_known": true,
+   "reason": "Base64编码绕过输入过滤是常见技术，AI普遍知晓。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他编码绕过场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 2208656,
+   "knowledge_point": "API端点未实施与UI一致的权限检查导致授权绕过",
+   "is_ai_likely_known": false,
+   "reason": "API与UI权限不一致是具体框架（Airflow）的缺陷，非通用知识。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（适用于所有Web应用API权限一致性检查）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'API与UI权限一致性检查'的决策树。",
+   "skill_framework": {
+    "name": "API与UI权限一致性检查",
+    "适用场景": [
+     "Web应用API端点",
+     "权限验证",
+     "授权绕过测试"
+    ],
+    "核心原理": [
+     "API端点可能未继承UI的权限模型",
+     "需确保所有端点执行相同权限验证"
+    ],
+    "决策树": [
+     "IF 存在API端点 AND UI有权限控制 → 测试API是否绕过权限"
+    ],
+    "示例": [
+     "Airflow API绕过DAG权限"
+    ],
+    "迁移场景": [
+     "REST API",
+     "GraphQL",
+     "微服务"
+    ]
+   }
+  },
+  {
+   "id": 2231019,
+   "knowledge_point": "存储插件输入未净化导致权限提升",
+   "is_ai_likely_known": false,
+   "reason": "特定CVE（CVE-2023-5528）细节非通用知识。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（依赖特定插件和平台）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 154410,
+   "knowledge_point": "跨功能模块IDOR",
+   "is_ai_likely_known": true,
+   "reason": "IDOR是常见漏洞类型，跨模块利用是常见变体。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他IDOR场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：IDOR测试方法论。",
+   "skill_framework": null
+  },
+  {
+   "id": 1066790,
+   "knowledge_point": "内部端点未受保护导致DoS",
+   "is_ai_likely_known": true,
+   "reason": "内部端点暴露是常见配置错误，AI普遍知晓。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（依赖具体环境）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 903363,
+   "knowledge_point": "OTP暴力枚举绕过认证",
+   "is_ai_likely_known": true,
+   "reason": "OTP暴力枚举是常见攻击，AI普遍知晓。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他OTP场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：认证绕过测试。",
+   "skill_framework": null
+  },
+  {
+   "id": 312510,
+   "knowledge_point": "nginx alias配置错误导致路径遍历",
+   "is_ai_likely_known": false,
+   "reason": "nginx alias配置错误的具体利用方式（/media../）非主流AI已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（适用于所有nginx配置）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'nginx alias路径遍历'的检测与利用。",
+   "skill_framework": {
+    "name": "nginx alias路径遍历检测与利用",
+    "适用场景": [
+     "nginx配置审计",
+     "路径遍历测试"
+    ],
+    "核心原理": [
+     "alias与location路径拼接差异",
+     "使用../跳出目录"
+    ],
+    "决策树": [
+     "IF nginx配置存在alias AND location不匹配 → 尝试路径遍历"
+    ],
+    "示例": [
+     "/media../mobs/settings.py"
+    ],
+    "迁移场景": [
+     "Apache",
+     "IIS",
+     "CDN"
+    ]
+   }
+  },
+  {
+   "id": 511459,
+   "knowledge_point": "npm模块命令注入",
+   "is_ai_likely_known": true,
+   "reason": "命令注入是常见漏洞，npm模块注入是常见场景。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（依赖具体模块）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 320679,
+   "knowledge_point": "Base64编码绕过XSS过滤",
+   "is_ai_likely_known": true,
+   "reason": "Base64编码绕过是常见XSS绕过技术。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他编码绕过）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：XSS绕过技术。",
+   "skill_framework": null
+  },
+  {
+   "id": 915133,
+   "knowledge_point": "顺序ID枚举导致IDOR",
+   "is_ai_likely_known": true,
+   "reason": "顺序ID枚举是IDOR常见利用方式。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他IDOR场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：IDOR测试方法论。",
+   "skill_framework": null
+  },
+  {
+   "id": 98012,
+   "knowledge_point": "参数名注入XSS",
+   "is_ai_likely_known": true,
+   "reason": "参数名注入是XSS变种，AI普遍知晓。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（依赖具体上下文）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：XSS绕过技术。",
+   "skill_framework": null
+  },
+  {
+   "id": 1847140,
+   "knowledge_point": "配置组合导致权限绕过",
+   "is_ai_likely_known": false,
+   "reason": "Argo CD特定配置组合（sharding）非通用知识。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（依赖特定系统）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 28865,
+   "knowledge_point": "路径遍历绕过重定向过滤器",
+   "is_ai_likely_known": false,
+   "reason": "利用/../绕过重定向过滤器是具体绕过技术，非主流AI已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（适用于所有重定向过滤）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'路径规范化绕过过滤器'技术。",
+   "skill_framework": {
+    "name": "路径规范化绕过过滤器",
+    "适用场景": [
+     "开放重定向",
+     "URL过滤",
+     "WAF绕过"
+    ],
+    "核心原理": [
+     "路径规范化差异",
+     "使用/../绕过过滤器"
+    ],
+    "决策树": [
+     "IF 存在URL过滤 AND 使用路径遍历 → 尝试绕过"
+    ],
+    "示例": [
+     "/../redirect/secure?url=..."
+    ],
+    "迁移场景": [
+     "SSRF",
+     "XSS",
+     "CSRF"
+    ]
+   }
+  },
+  {
+   "id": 208734,
+   "knowledge_point": "CSRF token置空绕过",
+   "is_ai_likely_known": true,
+   "reason": "CSRF token置空是常见绕过技术。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他CSRF场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：CSRF测试方法论。",
+   "skill_framework": null
+  },
+  {
+   "id": 156542,
+   "knowledge_point": "邮箱验证流程状态混淆",
+   "is_ai_likely_known": false,
+   "reason": "利用视觉混淆和业务逻辑缺陷接管邮箱，非主流AI已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（适用于所有邮箱验证流程）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'邮箱验证流程状态混淆'检测与利用。",
+   "skill_framework": {
+    "name": "邮箱验证流程状态混淆检测与利用",
+    "适用场景": [
+     "邮箱验证",
+     "账户接管",
+     "业务逻辑测试"
+    ],
+    "核心原理": [
+     "未区分已验证和未验证邮箱的重发行为",
+     "视觉混淆诱导用户操作"
+    ],
+    "决策树": [
+     "IF 存在邮箱重发功能 AND 未验证邮箱可触发 → 尝试构造相似邮箱"
+    ],
+    "示例": [
+     "a1ice vs alice"
+    ],
+    "迁移场景": [
+     "短信验证",
+     "密码重置"
+    ]
+   }
+  }
+ ]
+}

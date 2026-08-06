@@ -1,0 +1,388 @@
+{
+ "summary": {
+  "total": 14,
+  "worth_skill": 8,
+  "not_worth": 6,
+  "top_ids": [
+   955016,
+   1681275,
+   110293,
+   423467,
+   377592,
+   172411,
+   73246,
+   897385
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 2101076,
+   "knowledge_point": "CRLF注入绕过SAML域名强制",
+   "is_ai_likely_known": true,
+   "reason": "CRLF注入是通用知识，AI已知，且此案例具体实现细节依赖特定代码，迁移性有限。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（仅适用于SAML域名校验场景，且需具体代码支持）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 593712,
+   "knowledge_point": "Web缓存欺骗（添加静态文件后缀）",
+   "is_ai_likely_known": true,
+   "reason": "Web缓存欺骗是已知攻击技术，AI能回答基本概念，但此案例的具体利用细节（如.css后缀）可能不广为人知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（适用于任何缓存服务器，可迁移到CDN、反向代理等）",
+   "source_quality": "中",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化Web缓存欺骗的检测与利用方法。",
+   "skill_framework": {
+    "name": "Web缓存欺骗检测与利用",
+    "适用场景": [
+     "CDN配置",
+     "反向代理",
+     "缓存服务器"
+    ],
+    "核心原理": [
+     "缓存服务器根据文件扩展名或路径决定是否缓存",
+     "动态页面被缓存后，攻击者可通过URL诱导受害者访问并获取敏感信息"
+    ],
+    "决策树": [
+     "IF 存在缓存机制 AND 动态页面可被缓存 → 尝试添加静态文件后缀（如.css）并观察响应头"
+    ],
+    "示例": [
+     "/messages/all.css → 缓存动态内容"
+    ],
+    "迁移场景": [
+     "信息泄露",
+     "会话劫持"
+    ]
+   }
+  },
+  {
+   "id": 926638,
+   "knowledge_point": "curl -J选项的TOCTOU漏洞",
+   "is_ai_likely_known": false,
+   "reason": "curl具体选项的权限检查逻辑错误，训练数据稀少，需深入理解文件系统行为。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他文件下载工具或类似权限检查场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化TOCTOU类漏洞的检测与利用模式。",
+   "skill_framework": {
+    "name": "TOCTOU漏洞检测与利用（文件操作）",
+    "适用场景": [
+     "文件下载",
+     "文件上传",
+     "权限检查"
+    ],
+    "核心原理": [
+     "检查与使用之间存在时间差，导致条件竞争",
+     "攻击者可在检查后修改文件状态"
+    ],
+    "决策树": [
+     "IF 存在文件操作 AND 检查与使用分离 → 尝试在检查后修改文件属性"
+    ],
+    "示例": [
+     "curl -J -O 覆盖可写不可读文件"
+    ],
+    "迁移场景": [
+     "文件系统操作",
+     "权限提升"
+    ]
+   }
+  },
+  {
+   "id": 955016,
+   "knowledge_point": "Windows路径规范化绕过命令注入防护",
+   "is_ai_likely_known": false,
+   "reason": "Windows路径解析的反直觉行为（不验证中间目录）是特定于系统的知识，AI可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何拼接前缀后执行外部程序的场景，如命令执行、程序加载）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化Windows路径规范化绕过技术。",
+   "skill_framework": {
+    "name": "Windows路径规范化绕过",
+    "适用场景": [
+     "命令注入防护",
+     "程序执行",
+     "文件访问控制"
+    ],
+    "核心原理": [
+     "Windows路径解析不验证中间目录存在性",
+     "通过路径穿越绕过前缀限制"
+    ],
+    "决策树": [
+     "IF 存在拼接前缀后执行外部程序 AND 运行在Windows → 尝试使用路径穿越字符"
+    ],
+    "示例": [
+     "docker-credential-/../../.../calc.exe"
+    ],
+    "迁移场景": [
+     "命令注入",
+     "任意文件读写"
+    ]
+   }
+  },
+  {
+   "id": 1681275,
+   "knowledge_point": "依赖混淆（包管理器请求转发）",
+   "is_ai_likely_known": true,
+   "reason": "依赖混淆是已知攻击，但此案例的特定绕过（--extra-index-url触发转发）可能不广为人知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（适用于所有包管理器，如npm、pip、Maven等）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化依赖混淆的检测与利用方法。",
+   "skill_framework": {
+    "name": "依赖混淆攻击检测与利用",
+    "适用场景": [
+     "包管理器配置",
+     "CI/CD流程",
+     "软件供应链"
+    ],
+    "核心原理": [
+     "包管理器可能将请求转发到公共仓库",
+     "攻击者可在公共仓库上传同名恶意包"
+    ],
+    "决策树": [
+     "IF 使用包管理器 AND 配置了多个源 → 检查是否存在内部包与公共包同名"
+    ],
+    "示例": [
+     "--index-url 与 --extra-index-url 同时配置时，内部包未找到则转发到公共源"
+    ],
+    "迁移场景": [
+     "供应链攻击",
+     "RCE"
+    ]
+   }
+  },
+  {
+   "id": 110293,
+   "knowledge_point": "OAuth回调验证绕过（路径遍历+开放重定向）",
+   "is_ai_likely_known": false,
+   "reason": "路径遍历绕过协议检查是特定于OAuth实现的细节，AI可能不熟悉。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（适用于所有OAuth/OIDC实现，可迁移到回调URL验证场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化OAuth回调验证绕过技术。",
+   "skill_framework": {
+    "name": "OAuth回调验证绕过",
+    "适用场景": [
+     "OAuth2.0",
+     "OIDC",
+     "SSO"
+    ],
+    "核心原理": [
+     "回调URL验证可能不严格，允许路径遍历",
+     "结合开放重定向窃取授权码或token"
+    ],
+    "决策树": [
+     "IF 存在OAuth回调验证 AND 验证不严格 → 尝试路径遍历绕过协议检查"
+    ],
+    "示例": [
+     "callback_url = https://attacker.com/a/../home"
+    ],
+    "迁移场景": [
+     "账户接管",
+     "token窃取"
+    ]
+   }
+  },
+  {
+   "id": 1960107,
+   "knowledge_point": "API未校验权限和状态导致业务逻辑绕过",
+   "is_ai_likely_known": true,
+   "reason": "API权限校验缺失是通用知识，AI已知，且此案例具体业务逻辑依赖特定应用。",
+   "scene_frequency": "高频",
+   "migration_potential": "低（仅适用于特定业务API）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 423467,
+   "knowledge_point": "WebSocket消息类型混淆覆盖公钥",
+   "is_ai_likely_known": false,
+   "reason": "利用消息类型混淆覆盖公钥是特定于协议设计的漏洞，AI可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何使用WebSocket或类似消息协议的加密通信场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化WebSocket消息类型混淆攻击。",
+   "skill_framework": {
+    "name": "WebSocket消息类型混淆攻击",
+    "适用场景": [
+     "WebSocket通信",
+     "实时应用",
+     "加密协议"
+    ],
+    "核心原理": [
+     "消息类型未严格区分，攻击者可发送恶意类型覆盖关键数据",
+     "结合网络攻击（如ARP欺骗）实现中间人"
+    ],
+    "决策树": [
+     "IF 使用WebSocket AND 消息类型可混淆 → 尝试发送恶意类型覆盖公钥等关键数据"
+    ],
+    "示例": [
+     "发送类型为'公钥更新'的消息覆盖接收者公钥"
+    ],
+    "迁移场景": [
+     "会话劫持",
+     "信息泄露"
+    ]
+   }
+  },
+  {
+   "id": 172411,
+   "knowledge_point": "PHP类型混淆导致堆溢出",
+   "is_ai_likely_known": false,
+   "reason": "PHP内部数据结构类型混淆是特定于PHP扩展开发的知识，AI可能不熟悉。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他语言或框架的类似类型混淆漏洞）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化类型混淆漏洞的检测与利用。",
+   "skill_framework": {
+    "name": "类型混淆漏洞检测与利用",
+    "适用场景": [
+     "PHP扩展",
+     "C/C++程序",
+     "内存安全"
+    ],
+    "核心原理": [
+     "变量类型未严格检查，导致对错误类型调用函数",
+     "可导致内存破坏"
+    ],
+    "决策树": [
+     "IF 存在类型转换或函数调用 AND 未检查类型 → 尝试构造输入触发类型混淆"
+    ],
+    "示例": [
+     "对zend_string调用zend_hash_index_update"
+    ],
+    "迁移场景": [
+     "RCE",
+     "内存破坏"
+    ]
+   }
+  },
+  {
+   "id": 897385,
+   "knowledge_point": "空值绕过2FA验证",
+   "is_ai_likely_known": true,
+   "reason": "空值绕过是通用知识，AI已知，且此案例具体实现细节依赖特定代码。",
+   "scene_frequency": "高频",
+   "migration_potential": "低（仅适用于2FA验证场景，且需具体代码支持）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 308610,
+   "knowledge_point": "客户端可控权限字段绕过授权",
+   "is_ai_likely_known": true,
+   "reason": "客户端可控权限字段是通用知识，AI已知，且此案例具体实现细节依赖特定应用。",
+   "scene_frequency": "高频",
+   "migration_potential": "低（仅适用于特定业务API）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 377592,
+   "knowledge_point": "重复tx pub key导致余额计算错误",
+   "is_ai_likely_known": false,
+   "reason": "Monero协议特定行为，AI可能不熟悉，且此案例展示了反直觉的余额计算逻辑。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他加密货币或类似账本系统）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化加密货币协议逻辑漏洞的检测。",
+   "skill_framework": {
+    "name": "加密货币协议逻辑漏洞检测",
+    "适用场景": [
+     "区块链",
+     "加密货币钱包",
+     "交易所"
+    ],
+    "核心原理": [
+     "协议设计缺陷可能导致余额计算错误",
+     "攻击者可利用重复密钥或交易放大余额"
+    ],
+    "决策树": [
+     "IF 存在余额计算逻辑 AND 交易唯一性未验证 → 尝试构造重复交易"
+    ],
+    "示例": [
+     "重复使用tx pub key导致余额翻倍"
+    ],
+    "迁移场景": [
+     "资金盗窃",
+     "逻辑漏洞"
+    ]
+   }
+  },
+  {
+   "id": 73246,
+   "knowledge_point": "php_curl回调导致UAF",
+   "is_ai_likely_known": false,
+   "reason": "PHP curl扩展的特定UAF漏洞，AI可能不熟悉，且利用链复杂。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他语言或框架的类似回调机制）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化回调机制导致的UAF漏洞检测。",
+   "skill_framework": {
+    "name": "回调机制导致的UAF漏洞检测",
+    "适用场景": [
+     "PHP扩展",
+     "事件驱动编程",
+     "资源管理"
+    ],
+    "核心原理": [
+     "回调中释放资源后，外部仍持有引用",
+     "可导致UAF"
+    ],
+    "决策树": [
+     "IF 存在回调机制 AND 回调中可能释放资源 → 尝试在回调后使用资源"
+    ],
+    "示例": [
+     "CURLOPT_FILE回调中关闭流导致UAF"
+    ],
+    "迁移场景": [
+     "RCE",
+     "内存破坏"
+    ]
+   }
+  },
+  {
+   "id": 138869,
+   "knowledge_point": "XMLRPC默认密码认证绕过",
+   "is_ai_likely_known": true,
+   "reason": "默认凭据问题是通用知识，AI已知，且此案例具体实现细节依赖特定插件。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（仅适用于WordPress插件场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 229417,
+   "knowledge_point": "密码重置流程状态混淆",
+   "is_ai_likely_known": true,
+   "reason": "密码重置流程漏洞是通用知识，AI已知，且此案例具体实现细节依赖特定应用。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（仅适用于密码重置场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  }
+ ]
+}

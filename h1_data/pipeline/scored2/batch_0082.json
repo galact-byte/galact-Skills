@@ -1,0 +1,311 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 5,
+  "not_worth": 10,
+  "top_ids": [
+   1990421,
+   481518,
+   462442,
+   1884159,
+   278095
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1990421,
+   "knowledge_point": "libcurl siglongjmp 竞争条件导致崩溃",
+   "is_ai_likely_known": false,
+   "reason": "涉及 libcurl 特定版本内部实现细节，训练数据中不常见，需深入理解信号处理与线程交互。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他使用信号处理与全局状态的库或应用）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'信号处理与全局状态竞争'的检测与防御模式。",
+   "skill_framework": {
+    "name": "信号处理与全局状态竞争条件检测",
+    "适用场景": [
+     "多线程应用使用信号处理",
+     "库或框架内部全局状态",
+     "超时处理机制"
+    ],
+    "核心原理": [
+     "信号处理器中访问非异步信号安全的全局状态",
+     "siglongjmp 跳转导致状态不一致"
+    ],
+    "决策树": [
+     "IF 应用使用信号处理 AND 存在全局状态 → 检查信号处理器是否访问全局状态",
+     "IF 使用 siglongjmp → 检查跳转后状态是否一致"
+    ],
+    "示例": [
+     "libcurl 多线程 + alarm() + siglongjmp() 导致崩溃"
+    ],
+    "迁移场景": [
+     "其他 C/C++ 库",
+     "嵌入式系统",
+     "网络服务"
+    ]
+   }
+  },
+  {
+   "id": 1077022,
+   "knowledge_point": "Tor 窗口 DNS 泄露真实 IP",
+   "is_ai_likely_known": true,
+   "reason": "Tor 隐私保护是常见知识，DNS 泄露是已知问题，AI 可能了解。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（特定于 Tor 浏览器，迁移性有限）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 297751,
+   "knowledge_point": "IDOR 修改 authtoken 权限",
+   "is_ai_likely_known": true,
+   "reason": "IDOR 是常见漏洞，AI 已广泛了解。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他 IDOR 场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：IDOR 检测与利用。",
+   "skill_framework": null
+  },
+  {
+   "id": 481518,
+   "knowledge_point": "GraphQL 负值参数绕过速率限制",
+   "is_ai_likely_known": false,
+   "reason": "GraphQL 成本计算中的负数漏洞是特定逻辑缺陷，训练数据中不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他成本计算或配额系统）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'成本计算逻辑缺陷'的检测与利用模式。",
+   "skill_framework": {
+    "name": "成本计算逻辑缺陷利用",
+    "适用场景": [
+     "GraphQL 速率限制",
+     "API 配额系统",
+     "资源消耗计算"
+    ],
+    "核心原理": [
+     "成本计算未对参数进行非负校验",
+     "负值参数导致成本为负，可无限补充资源"
+    ],
+    "决策树": [
+     "IF 存在成本计算 AND 参数可控制 → 尝试负值参数",
+     "IF 成本为负 → 可利用绕过限制"
+    ],
+    "示例": [
+     "GraphQL 查询成本为负，绕过速率限制"
+    ],
+    "迁移场景": [
+     "API 计费系统",
+     "云资源配额",
+     "游戏内经济系统"
+    ]
+   }
+  },
+  {
+   "id": 462442,
+   "knowledge_point": "端口抢占冒充 RPC 服务器",
+   "is_ai_likely_known": false,
+   "reason": "利用端口抢占进行服务器冒充是较新颖的攻击手法，AI 可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何基于 TCP 的 RPC 或服务）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'端口抢占与服务冒充'的检测与防御模式。",
+   "skill_framework": {
+    "name": "端口抢占与服务冒充",
+    "适用场景": [
+     "本地 RPC 服务",
+     "未加密的通信协议",
+     "客户端自动连接服务"
+    ],
+    "核心原理": [
+     "攻击者抢占端口，冒充合法服务",
+     "客户端未验证服务器身份"
+    ],
+    "决策树": [
+     "IF 服务使用固定端口 AND 无认证 → 尝试抢占端口",
+     "IF 客户端自动连接 → 可冒充"
+    ],
+    "示例": [
+     "Monero 钱包 RPC 端口抢占"
+    ],
+    "迁移场景": [
+     "数据库服务",
+     "消息队列",
+     "微服务通信"
+    ]
+   }
+  },
+  {
+   "id": 149268,
+   "knowledge_point": "头像 URL 功能导致任意文件上传",
+   "is_ai_likely_known": true,
+   "reason": "任意文件上传是常见漏洞，AI 已广泛了解。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他文件上传场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：文件上传漏洞检测与利用。",
+   "skill_framework": null
+  },
+  {
+   "id": 1884159,
+   "knowledge_point": "Node.js 解析畸形 X509 证书导致崩溃",
+   "is_ai_likely_known": false,
+   "reason": "涉及 Node.js 内部断言机制，训练数据中不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他解析器或框架）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'畸形输入触发断言崩溃'的检测与防御模式。",
+   "skill_framework": {
+    "name": "畸形输入触发断言崩溃",
+    "适用场景": [
+     "解析器处理不可信输入",
+     "框架内部断言",
+     "安全关键组件"
+    ],
+    "核心原理": [
+     "输入未通过有效性检查，触发断言",
+     "断言失败导致进程崩溃"
+    ],
+    "决策树": [
+     "IF 解析器处理不可信输入 → 尝试构造畸形数据",
+     "IF 存在断言 → 尝试触发"
+    ],
+    "示例": [
+     "Node.js 解析无效公钥证书导致崩溃"
+    ],
+    "迁移场景": [
+     "其他语言解析器",
+     "加密库",
+     "网络协议实现"
+    ]
+   }
+  },
+  {
+   "id": 1888351,
+   "knowledge_point": "调试脚本缓存 HTTP 头导致信息泄露",
+   "is_ai_likely_known": true,
+   "reason": "调试脚本暴露信息是常见问题，AI 可能了解。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（特定于调试脚本，迁移性有限）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 145745,
+   "knowledge_point": "尾随空格绕过组名匹配",
+   "is_ai_likely_known": true,
+   "reason": "输入规范化绕过是常见漏洞，AI 已广泛了解。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他输入校验场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：输入规范化绕过。",
+   "skill_framework": null
+  },
+  {
+   "id": 1375393,
+   "knowledge_point": "权限继承链导致越权批准状态检查",
+   "is_ai_likely_known": true,
+   "reason": "权限继承是常见授权问题，AI 可能了解。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他权限系统）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：授权绕过检测。",
+   "skill_framework": null
+  },
+  {
+   "id": 278095,
+   "knowledge_point": "URL 空白字符绕过主机名检测",
+   "is_ai_likely_known": false,
+   "reason": "URL 解析差异是特定技术，训练数据中不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到 URL 解析、SSRF、重定向等场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'URL 解析差异绕过'的检测与利用模式。",
+   "skill_framework": {
+    "name": "URL 解析差异绕过",
+    "适用场景": [
+     "URL 重定向",
+     "SSRF 防护",
+     "主机名验证"
+    ],
+    "核心原理": [
+     "不同解析器对空白字符处理不一致",
+     "显示的主机与实际跳转的主机不同"
+    ],
+    "决策树": [
+     "IF 存在 URL 验证 → 尝试插入空白字符",
+     "IF 显示与实际不一致 → 可利用"
+    ],
+    "示例": [
+     "%0A 绕过主机名检测"
+    ],
+    "迁移场景": [
+     "WAF 绕过",
+     "钓鱼链接",
+     "开放重定向"
+    ]
+   }
+  },
+  {
+   "id": 985150,
+   "knowledge_point": "跨应用导航绕过权限检查",
+   "is_ai_likely_known": true,
+   "reason": "跨应用权限绕过是常见问题，AI 可能了解。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他多应用系统）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：授权绕过检测。",
+   "skill_framework": null
+  },
+  {
+   "id": 1695454,
+   "knowledge_point": "IDOR 结合错误消息泄露敏感信息",
+   "is_ai_likely_known": true,
+   "reason": "IDOR 和错误信息泄露是常见漏洞，AI 已广泛了解。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他 IDOR 场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：IDOR 检测与利用。",
+   "skill_framework": null
+  },
+  {
+   "id": 254588,
+   "knowledge_point": "未过期静态签名导致授权绕过",
+   "is_ai_likely_known": true,
+   "reason": "签名过期问题常见，AI 可能了解。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他签名系统）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：授权绕过检测。",
+   "skill_framework": null
+  },
+  {
+   "id": 642515,
+   "knowledge_point": "同步客户端重命名绕过权限检查",
+   "is_ai_likely_known": false,
+   "reason": "利用同步客户端本地状态与服务器不一致是特定攻击手法，AI 可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他同步应用）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：同步应用权限绕过。",
+   "skill_framework": null
+  }
+ ]
+}

@@ -1,0 +1,349 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 8,
+  "not_worth": 7,
+  "top_ids": [
+   228648,
+   5928,
+   108082,
+   1369312,
+   2334460,
+   2209665,
+   2233,
+   410015
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 228648,
+   "knowledge_point": "通过注册恶意软件依赖的域名触发killswitch，实现被动防御",
+   "is_ai_likely_known": true,
+   "reason": "WannaCrypt killswitch事件广为人知，AI训练数据中常见，直接提问即可获得完整解释。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（仅适用于依赖外部域名且存在killswitch的恶意软件，场景特殊）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 544928,
+   "knowledge_point": "利用本地服务未授权API提权至SYSTEM",
+   "is_ai_likely_known": true,
+   "reason": "本地服务未授权访问导致提权是常见漏洞模式，AI已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他本地服务提权场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 410015,
+   "knowledge_point": "利用报告计数差异侧信道探测私有程序存在性",
+   "is_ai_likely_known": false,
+   "reason": "侧信道探测私有程序存在性属于非主流技巧，AI训练数据中不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他平台的功能差异探测，如用户存在性、资源存在性）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'功能差异侧信道探测'的通用方法。",
+   "skill_framework": {
+    "name": "功能差异侧信道探测",
+    "适用场景": [
+     "探测私有程序/资源存在性",
+     "用户枚举",
+     "权限边界探测"
+    ],
+    "核心原理": [
+     "系统对存在与不存在资源的响应存在可观察差异",
+     "通过构造请求并对比响应差异推断隐藏信息"
+    ],
+    "决策树": [
+     "IF 目标平台存在计数/统计功能 AND 可控制输入 → 对比前后差异"
+    ],
+    "示例": [
+     "创建报告后观察个人资料计数变化，推断私有程序存在"
+    ],
+    "迁移场景": [
+     "SaaS平台",
+     "社交网络",
+     "API服务"
+    ]
+   }
+  },
+  {
+   "id": 5928,
+   "knowledge_point": "利用应用层压缩（zlib）构造解压炸弹导致DoS",
+   "is_ai_likely_known": false,
+   "reason": "针对XMPP压缩的具体攻击（xmppbomb）在AI训练数据中不常见，需要特定协议知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何支持压缩的协议，如HTTP、WebSocket、SSH）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'压缩炸弹'攻击模式及防御。",
+   "skill_framework": {
+    "name": "压缩炸弹攻击与防御",
+    "适用场景": [
+     "支持应用层压缩的协议",
+     "资源限制缺失的服务"
+    ],
+    "核心原理": [
+     "高压缩比数据在解压时消耗大量资源",
+     "攻击者发送极小体积数据触发资源耗尽"
+    ],
+    "决策树": [
+     "IF 协议支持压缩 AND 未限制解压后大小 → 构造高压缩比数据"
+    ],
+    "示例": [
+     "XMPP xmppbomb: 4GB空白字符压缩至4MB"
+    ],
+    "迁移场景": [
+     "HTTP压缩",
+     "WebSocket压缩",
+     "SSH压缩"
+    ]
+   }
+  },
+  {
+   "id": 108082,
+   "knowledge_point": "利用CFB模式可延展性篡改密文，结合已知明文注入恶意代码",
+   "is_ai_likely_known": false,
+   "reason": "CFB位翻转攻击虽已知，但结合EXE文件结构进行实际利用的案例在AI训练数据中不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何使用非认证加密模式存储数据的场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'加密模式可延展性利用'的通用方法。",
+   "skill_framework": {
+    "name": "加密模式可延展性利用",
+    "适用场景": [
+     "存储加密使用非认证模式（CFB、CTR、ECB）",
+     "密文可被篡改且无完整性校验"
+    ],
+    "核心原理": [
+     "CFB/CTR模式允许位翻转，且不破坏解密",
+     "结合已知明文可构造任意密文"
+    ],
+    "决策树": [
+     "IF 加密模式为CFB/CTR AND 无认证 → 尝试位翻转攻击"
+    ],
+    "示例": [
+     "翻转PE头使程序执行DOS stub，注入shellcode"
+    ],
+    "迁移场景": [
+     "文件加密",
+     "数据库加密",
+     "传输加密"
+    ]
+   }
+  },
+  {
+   "id": 110801,
+   "knowledge_point": "通过CSRF触发SSRF，绕过内网访问控制",
+   "is_ai_likely_known": true,
+   "reason": "CSRF+SSRF组合是常见攻击模式，AI已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他CSRF触发敏感操作的场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1369312,
+   "knowledge_point": "利用DNS rebinding绕过SSRF防护，访问云元数据服务",
+   "is_ai_likely_known": false,
+   "reason": "DNS rebinding攻击虽已知，但针对云元数据服务的具体绕过技巧在AI训练数据中不常见。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何基于IP过滤的SSRF防护）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'DNS rebinding绕过SSRF'的完整攻击链。",
+   "skill_framework": {
+    "name": "DNS rebinding绕过SSRF防护",
+    "适用场景": [
+     "SSRF防护基于IP黑名单/白名单",
+     "云环境元数据服务"
+    ],
+    "核心原理": [
+     "DNS解析结果在两次请求间变化，绕过IP校验",
+     "利用TTL极短的域名"
+    ],
+    "决策树": [
+     "IF SSRF防护基于IP过滤 AND 使用DNS解析 → 尝试DNS rebinding"
+    ],
+    "示例": [
+     "解析到公网IP通过校验，第二次解析到内网IP访问元数据"
+    ],
+    "迁移场景": [
+     "云环境",
+     "内网探测",
+     "WAF绕过"
+    ]
+   }
+  },
+  {
+   "id": 953083,
+   "knowledge_point": "利用安装过程中的时间窗口绕过购买检查",
+   "is_ai_likely_known": true,
+   "reason": "竞争条件绕过业务逻辑是常见漏洞模式，AI已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他安装/购买流程）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 42797,
+   "knowledge_point": "利用框架递归解析缺陷导致DoS",
+   "is_ai_likely_known": true,
+   "reason": "深层嵌套参数导致递归耗尽是常见框架漏洞，AI已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他框架的类似解析）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 295276,
+   "knowledge_point": "利用异常处理与块交互触发use-after-free",
+   "is_ai_likely_known": false,
+   "reason": "针对mruby虚拟机内部状态管理的具体漏洞在AI训练数据中不常见。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（高度依赖mruby特定实现，不可迁移）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 2334460,
+   "knowledge_point": "绕过反序列化保护配置（enable_xcom_pickling=False）实现RCE",
+   "is_ai_likely_known": false,
+   "reason": "针对Airflow特定配置的绕过技巧在AI训练数据中不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他反序列化保护被绕过的场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'反序列化保护绕过'的通用模式。",
+   "skill_framework": {
+    "name": "反序列化保护绕过",
+    "适用场景": [
+     "框架/应用禁用反序列化但仍有数据流",
+     "跨组件数据交换"
+    ],
+    "核心原理": [
+     "安全配置可能未覆盖所有数据路径",
+     "攻击者寻找未受保护的入口"
+    ],
+    "决策树": [
+     "IF 存在反序列化保护 AND 数据流复杂 → 寻找未覆盖的路径"
+    ],
+    "示例": [
+     "Airflow XCom在禁用pickling时仍可反序列化"
+    ],
+    "迁移场景": [
+     "消息队列",
+     "缓存系统",
+     "任务调度"
+    ]
+   }
+  },
+  {
+   "id": 2209665,
+   "knowledge_point": "利用URL编码差异绕过敏感信息掩码",
+   "is_ai_likely_known": false,
+   "reason": "针对Airflow特定掩码逻辑的绕过技巧在AI训练数据中不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何基于参数解析的掩码/过滤机制）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'参数解析差异绕过'的通用方法。",
+   "skill_framework": {
+    "name": "参数解析差异绕过",
+    "适用场景": [
+     "敏感信息掩码",
+     "输入过滤",
+     "WAF规则"
+    ],
+    "核心原理": [
+     "不同层对同一参数解析不一致",
+     "利用编码差异（如URL编码、Unicode）绕过"
+    ],
+    "决策树": [
+     "IF 存在基于参数值的过滤/掩码 → 尝试编码变体"
+    ],
+    "示例": [
+     "未编码的加号被解析为空格，导致掩码失效"
+    ],
+    "迁移场景": [
+     "Web应用",
+     "API网关",
+     "日志系统"
+    ]
+   }
+  },
+  {
+   "id": 1005421,
+   "knowledge_point": "通过CRLF注入Set-Cookie头实现持久DoS",
+   "is_ai_likely_known": true,
+   "reason": "CRLF注入是常见漏洞，AI已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他响应头注入场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 630227,
+   "knowledge_point": "pm2 install函数命令注入",
+   "is_ai_likely_known": true,
+   "reason": "命令注入是常见漏洞，AI已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他命令拼接场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 2233,
+   "knowledge_point": "利用MySQL字符集截断绕过邮箱域名验证",
+   "is_ai_likely_known": false,
+   "reason": "MySQL utf8截断行为的具体利用在AI训练数据中不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何依赖数据库字符集截断的验证逻辑）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'数据库字符集截断绕过'的通用方法。",
+   "skill_framework": {
+    "name": "数据库字符集截断绕过",
+    "适用场景": [
+     "邮箱/域名验证",
+     "唯一性约束",
+     "输入长度限制"
+    ],
+    "核心原理": [
+     "数据库字符集（如utf8）对某些Unicode字符截断",
+     "截断后数据与预期不符"
+    ],
+    "决策树": [
+     "IF 验证依赖数据库存储 AND 使用非utf8mb4字符集 → 尝试特殊Unicode字符"
+    ],
+    "示例": [
+     "注册包含特殊字符的邮箱，数据库截断后绕过域名验证"
+    ],
+    "迁移场景": [
+     "用户注册",
+     "数据校验",
+     "访问控制"
+    ]
+   }
+  }
+ ]
+}

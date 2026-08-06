@@ -1,0 +1,377 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 8,
+  "not_worth": 7,
+  "top_ids": [
+   1785079,
+   1715536,
+   207321,
+   563268,
+   1364797,
+   1702864,
+   2352957,
+   293689
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1785079,
+   "knowledge_point": "业务逻辑状态校验缺失导致敏感信息泄露",
+   "is_ai_likely_known": true,
+   "reason": "业务逻辑漏洞是常见漏洞类型，AI 训练数据中大量存在，直接提问即可获得类似思路。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他业务状态校验场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1715536,
+   "knowledge_point": "JavaScript 原型链污染导致框架崩溃",
+   "is_ai_likely_known": false,
+   "reason": "利用 constructor 作为 Content-Type 触发 Fastify 崩溃，属于框架特定行为，训练数据稀少。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何使用 in 操作符检查属性的框架）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化原型链污染检测与防御。",
+   "skill_framework": {
+    "name": "JavaScript 原型链污染检测与防御",
+    "适用场景": [
+     "Web 框架属性检查",
+     "对象属性校验",
+     "安全配置解析"
+    ],
+    "核心原理": [
+     "使用 in 操作符检查属性时，会沿原型链查找，导致 constructor 等属性被误判",
+     "攻击者可利用此特性触发意外行为"
+    ],
+    "决策树": [
+     "IF 代码使用 in 操作符检查属性 AND 属性名用户可控 → 尝试 constructor 等原型属性"
+    ],
+    "示例": [
+     "发送 Content-Type: constructor 导致 Fastify 崩溃"
+    ],
+    "迁移场景": [
+     "Node.js 框架",
+     "浏览器扩展",
+     "JSON 解析器"
+    ]
+   }
+  },
+  {
+   "id": 207321,
+   "knowledge_point": "mrb_value 类型混淆导致 ASLR 绕过",
+   "is_ai_likely_known": false,
+   "reason": "涉及 mruby 内部实现细节，训练数据稀少，需深入理解联合体类型混淆。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他使用联合体实现动态类型的语言）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化类型混淆检测与防御。",
+   "skill_framework": {
+    "name": "动态类型语言类型混淆漏洞检测",
+    "适用场景": [
+     "mruby",
+     "Ruby",
+     "Python 扩展",
+     "其他使用联合体的语言"
+    ],
+    "核心原理": [
+     "动态类型语言使用联合体存储值，类型混淆可导致指针泄露",
+     "重载运算符可改变类型转换行为"
+    ],
+    "决策树": [
+     "IF 语言使用联合体表示值 AND 存在用户可重载的运算符 → 尝试类型混淆"
+    ],
+    "示例": [
+     "重载 <=> 返回对象指针，泄露地址绕过 ASLR"
+    ],
+    "迁移场景": [
+     "CTF 二进制利用",
+     "语言运行时安全",
+     "嵌入式系统"
+    ]
+   }
+  },
+  {
+   "id": 1343300,
+   "knowledge_point": "Webview URL 注入与 JS bridge 接管",
+   "is_ai_likely_known": true,
+   "reason": "移动端 Webview 漏洞是常见主题，AI 训练数据充足。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他 Webview 场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 563268,
+   "knowledge_point": "Unicode 双向算法绕过域名显示",
+   "is_ai_likely_known": false,
+   "reason": "RTLO 字符利用属于非主流知识，训练数据较少，需专门研究。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到 URL 显示、邮件客户端、聊天软件等）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 Unicode 控制字符绕过检测。",
+   "skill_framework": {
+    "name": "Unicode 控制字符绕过检测",
+    "适用场景": [
+     "URL 显示",
+     "重定向页面",
+     "邮件客户端",
+     "聊天软件"
+    ],
+    "核心原理": [
+     "Unicode 双向算法可反转字符显示顺序",
+     "攻击者插入 U+202E 隐藏真实域名"
+    ],
+    "决策树": [
+     "IF 用户可控制 URL 显示 AND 未过滤控制字符 → 尝试插入 U+202E"
+    ],
+    "示例": [
+     "http://evil.com‮@trusted.com 显示为 trusted.com"
+    ],
+    "迁移场景": [
+     "网络钓鱼防御",
+     "安全 UI 设计",
+     "输入验证"
+    ]
+   }
+  },
+  {
+   "id": 1364797,
+   "knowledge_point": "URL 路径解析差异绕过 SSRF 防护",
+   "is_ai_likely_known": false,
+   "reason": "利用 /info.php/test.html 绕过扩展名检查，属于 URL 解析差异，训练数据较少。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何 URL 校验场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 URL 规范化与 SSRF 绕过检测。",
+   "skill_framework": {
+    "name": "URL 规范化与 SSRF 绕过检测",
+    "适用场景": [
+     "SSRF 防护",
+     "URL 白名单校验",
+     "文件下载功能"
+    ],
+    "核心原理": [
+     "URL 路径解析差异导致扩展名检查被绕过",
+     "未过滤私有 IP 导致内网访问"
+    ],
+    "决策树": [
+     "IF 存在远程抓取功能 AND 未过滤私有 IP → 尝试路径后缀绕过扩展名检查"
+    ],
+    "示例": [
+     "http://192.168.1.1/info.php/test.html 绕过 .php 检查"
+    ],
+    "迁移场景": [
+     "WAF 绕过",
+     "代理服务器",
+     "CDN 配置"
+    ]
+   }
+  },
+  {
+   "id": 852091,
+   "knowledge_point": "时间窗口竞争条件导致任意内核驱动安装",
+   "is_ai_likely_known": true,
+   "reason": "竞争条件漏洞是常见类型，AI 训练数据充足。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他安装流程）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1091303,
+   "knowledge_point": "权限边界混淆导致 GraphQL 数据泄露",
+   "is_ai_likely_known": true,
+   "reason": "权限配置不一致是常见问题，AI 训练数据充足。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他权限模型）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1702864,
+   "knowledge_point": "Unicode 混淆 IP 地址绕过 SSRF 过滤",
+   "is_ai_likely_known": false,
+   "reason": "使用全角字符表示 IP 地址，属于非主流绕过技术，训练数据稀少。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何 IP 过滤场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 IP 规范化与绕过检测。",
+   "skill_framework": {
+    "name": "IP 地址规范化与绕过检测",
+    "适用场景": [
+     "SSRF 防护",
+     "IP 黑名单",
+     "WAF 规则"
+    ],
+    "核心原理": [
+     "Unicode 字符（如全角数字）可绕过基于字符串匹配的过滤",
+     "IP 地址需规范化后再校验"
+    ],
+    "决策树": [
+     "IF 存在 IP 过滤 AND 基于字符串匹配 → 尝试全角数字等 Unicode 变体"
+    ],
+    "示例": [
+     "http://１９２.１６８.１.１ 绕过 IP 黑名单"
+    ],
+    "迁移场景": [
+     "网络访问控制",
+     "日志分析",
+     "安全监控"
+    ]
+   }
+  },
+  {
+   "id": 317711,
+   "knowledge_point": "安全机制依赖组件失效时回退",
+   "is_ai_likely_known": true,
+   "reason": "安全机制失效回退是常见设计缺陷，AI 训练数据充足。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他安全控制）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 2352957,
+   "knowledge_point": "HTTP 重定向时敏感头未清除",
+   "is_ai_likely_known": false,
+   "reason": "undici 遗漏 Proxy-Authorization 头，属于具体实现缺陷，训练数据稀少。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何 HTTP 客户端）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化重定向敏感头处理检测。",
+   "skill_framework": {
+    "name": "HTTP 重定向敏感头处理检测",
+    "适用场景": [
+     "HTTP 客户端开发",
+     "代理服务器",
+     "安全测试"
+    ],
+    "核心原理": [
+     "跨域重定向时需清除所有认证相关头",
+     "遗漏 Proxy-Authorization 导致凭据泄露"
+    ],
+    "决策树": [
+     "IF 存在重定向处理 AND 未清除所有敏感头 → 检查 Proxy-Authorization"
+    ],
+    "示例": [
+     "undici 重定向时泄露 Proxy-Authorization"
+    ],
+    "迁移场景": [
+     "浏览器",
+     "curl",
+     "Node.js 应用"
+    ]
+   }
+  },
+  {
+   "id": 293689,
+   "knowledge_point": "HTTP 参数重复解析差异绕过签名",
+   "is_ai_likely_known": false,
+   "reason": "利用参数重复绕过签名校验，属于解析差异，训练数据较少。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何签名校验场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化参数解析差异绕过检测。",
+   "skill_framework": {
+    "name": "HTTP 参数解析差异绕过检测",
+    "适用场景": [
+     "签名校验",
+     "WAF 规则",
+     "参数验证"
+    ],
+    "核心原理": [
+     "不同组件对重复参数解析不一致",
+     "攻击者利用此差异绕过签名保护"
+    ],
+    "决策树": [
+     "IF 存在签名校验 AND 参数可重复 → 尝试重复参数绕过"
+    ],
+    "示例": [
+     "?url=legit&url=evil 绕过签名校验"
+    ],
+    "迁移场景": [
+     "OAuth 流程",
+     "支付回调",
+     "API 网关"
+    ]
+   }
+  },
+  {
+   "id": 1050244,
+   "knowledge_point": "会话令牌替换绕过 2FA",
+   "is_ai_likely_known": true,
+   "reason": "会话管理漏洞是常见类型，AI 训练数据充足。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他会话管理场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 176308,
+   "knowledge_point": "Flash 跨域策略绕过 OAuth",
+   "is_ai_likely_known": true,
+   "reason": "Flash 跨域漏洞是旧知识，AI 训练数据充足，且 Flash 已淘汰。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（Flash 已淘汰，迁移性差）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 369218,
+   "knowledge_point": "浏览器自定义协议处理绕过安全限制",
+   "is_ai_likely_known": false,
+   "reason": "利用 ssh:// 和 file:// 协议组合攻击，属于非主流知识，训练数据稀少。",
+   "scene_frequency": "低频",
+   "migration_potential": "高（可迁移到其他自定义协议）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化浏览器协议处理安全检测。",
+   "skill_framework": {
+    "name": "浏览器自定义协议处理安全检测",
+    "适用场景": [
+     "浏览器安全",
+     "协议处理",
+     "URL 导航"
+    ],
+    "核心原理": [
+     "浏览器对自定义协议处理不一致",
+     "攻击者可利用协议组合绕过安全限制"
+    ],
+    "决策树": [
+     "IF 网页可导航到自定义协议 AND 未限制敏感协议 → 尝试 ssh:// 和 file:// 组合"
+    ],
+    "示例": [
+     "诱导用户点击 ssh:// 链接泄露用户名，再打开 file:// 执行恶意文件"
+    ],
+    "迁移场景": [
+     "移动浏览器",
+     "桌面应用",
+     "Web 安全"
+    ]
+   }
+  }
+ ]
+}

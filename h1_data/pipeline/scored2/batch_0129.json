@@ -1,0 +1,327 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 6,
+  "not_worth": 9,
+  "top_ids": [
+   1444501,
+   1912783,
+   271324,
+   1582160,
+   292673,
+   665722
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 999789,
+   "knowledge_point": "通过修改team_handle参数绕过离开程序流程获取新邀请",
+   "is_ai_likely_known": true,
+   "reason": "参数篡改导致业务逻辑绕过是通用知识，AI训练数据中常见，直接提问即可获得类似思路。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（依赖具体业务参数，难以跨场景复用）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1444501,
+   "knowledge_point": "URI解析器正则表达式灾难性回溯导致ReDoS",
+   "is_ai_likely_known": false,
+   "reason": "特定标准库（Ruby URI）的正则表达式性能缺陷，训练数据稀少，需深入理解RFC3986和回溯机制。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他语言/库的URI解析器，以及任何使用正则表达式解析用户输入的组件）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'正则表达式灾难性回溯'的检测与利用方法。",
+   "skill_framework": {
+    "name": "正则表达式灾难性回溯（ReDoS）检测与利用",
+    "适用场景": [
+     "URI解析",
+     "输入验证",
+     "日志分析"
+    ],
+    "核心原理": [
+     "嵌套量词导致指数级回溯",
+     "特定输入模式触发性能瓶颈"
+    ],
+    "决策树": [
+     "IF 使用正则解析用户输入 AND 正则含嵌套量词 → 构造多个特殊字符（如#）测试响应时间"
+    ],
+    "示例": [
+     "Ruby URI解析器对含两个#的URL响应时间急剧增加"
+    ],
+    "迁移场景": [
+     "ReDoS漏洞挖掘",
+     "性能测试",
+     "WAF绕过"
+    ]
+   }
+  },
+  {
+   "id": 149598,
+   "knowledge_point": "2FA实现缺陷导致暴力破解和锁定后仍验证密码",
+   "is_ai_likely_known": true,
+   "reason": "2FA暴力破解和锁定逻辑缺陷是常见漏洞模式，AI训练数据充足。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他认证机制，但原理通用）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：认证绕过与暴力破解防御。",
+   "skill_framework": null
+  },
+  {
+   "id": 292673,
+   "knowledge_point": "修改邮箱无需密码验证导致账户接管",
+   "is_ai_likely_known": true,
+   "reason": "关键操作缺乏身份验证是通用业务逻辑漏洞，AI已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何账户关键操作，如修改密码、绑定手机等）",
+   "source_quality": "通用",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'关键操作身份验证缺失'的检测与利用框架。",
+   "skill_framework": {
+    "name": "关键操作身份验证缺失检测与利用",
+    "适用场景": [
+     "账户管理",
+     "邮箱/手机变更",
+     "密码重置"
+    ],
+    "核心原理": [
+     "服务端未对敏感操作强制要求密码或旧凭据验证"
+    ],
+    "决策树": [
+     "IF 存在已登录会话 AND 可修改邮箱/手机等关键信息 → 尝试直接修改并观察是否要求密码"
+    ],
+    "示例": [
+     "修改邮箱后利用忘记密码功能接管账户"
+    ],
+    "迁移场景": [
+     "账户接管",
+     "权限提升",
+     "业务逻辑漏洞挖掘"
+    ]
+   }
+  },
+  {
+   "id": 271324,
+   "knowledge_point": "IDN同形字绕过homograph修复",
+   "is_ai_likely_known": false,
+   "reason": "涉及URL解析差异和IDN同形字的具体绕过技巧，训练数据较少，需要组合知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到URL验证、域名安全、钓鱼防护等场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'URL解析差异绕过'的通用方法。",
+   "skill_framework": {
+    "name": "URL解析差异绕过（IDN同形字、斜杠变体）",
+    "适用场景": [
+     "URL验证",
+     "域名黑名单",
+     "钓鱼防护"
+    ],
+    "核心原理": [
+     "不同组件对URL解析不一致",
+     "IDN同形字视觉混淆"
+    ],
+    "决策树": [
+     "IF 存在URL校验 AND 校验与显示使用不同解析 → 尝试IDN同形字、额外斜杠等变体"
+    ],
+    "示例": [
+     "使用punycode和原始IDN混合构造URL绕过警告"
+    ],
+    "迁移场景": [
+     "SSRF",
+     "开放重定向",
+     "WAF绕过"
+    ]
+   }
+  },
+  {
+   "id": 241608,
+   "knowledge_point": "多账户绑定同一邮箱导致状态混淆",
+   "is_ai_likely_known": true,
+   "reason": "邮箱唯一性校验缺失是常见逻辑漏洞，AI已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（依赖具体业务逻辑，难以抽象）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1912783,
+   "knowledge_point": "libcurl连接池复用未校验SSH密钥导致连接重用",
+   "is_ai_likely_known": false,
+   "reason": "特定框架（libcurl）的连接池复用缺陷，训练数据稀少，需要深入理解连接池机制。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他连接池实现，如HTTP连接池、数据库连接池）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'连接池复用安全校验'的检测与利用方法。",
+   "skill_framework": {
+    "name": "连接池复用安全校验缺陷检测与利用",
+    "适用场景": [
+     "HTTP客户端",
+     "SSH连接",
+     "数据库连接"
+    ],
+    "核心原理": [
+     "连接池复用未校验所有安全相关选项",
+     "导致使用错误凭据或配置"
+    ],
+    "决策树": [
+     "IF 使用连接池 AND 可设置不同安全选项（如密钥） → 尝试切换选项并观察是否复用旧连接"
+    ],
+    "示例": [
+     "libcurl设置不同SSH密钥后仍复用旧连接"
+    ],
+    "迁移场景": [
+     "身份认证绕过",
+     "会话固定",
+     "中间人攻击"
+    ]
+   }
+  },
+  {
+   "id": 717716,
+   "knowledge_point": "GraphQL IDOR导致任意团队VPN状态操作",
+   "is_ai_likely_known": true,
+   "reason": "IDOR是通用漏洞，AI已知，但GraphQL特定场景可能需额外知识。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他GraphQL API，但原理通用）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：GraphQL API安全测试。",
+   "skill_framework": null
+  },
+  {
+   "id": 2270225,
+   "knowledge_point": "OpenSSL RSA时序侧信道（Marvin Attack）",
+   "is_ai_likely_known": false,
+   "reason": "密码学实现时序攻击是高级主题，训练数据较少，需要专业知识。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他密码学实现，但需要特定条件）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：密码学实现安全审计。",
+   "skill_framework": null
+  },
+  {
+   "id": 665722,
+   "knowledge_point": "修改请求参数绕过MFA",
+   "is_ai_likely_known": true,
+   "reason": "参数篡改绕过认证是通用知识，AI已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何认证流程，但原理简单）",
+   "source_quality": "通用",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'MFA绕过技术'的检测与利用框架。",
+   "skill_framework": {
+    "name": "MFA绕过技术检测与利用",
+    "适用场景": [
+     "登录流程",
+     "双因素认证",
+     "设备信任"
+    ],
+    "核心原理": [
+     "服务端未验证MFA状态，信任客户端参数"
+    ],
+    "决策树": [
+     "IF 存在MFA流程 AND 请求参数包含mode/secureLogin等 → 尝试修改参数观察是否绕过"
+    ],
+    "示例": [
+     "修改mode和secureLogin参数绕过MFA"
+    ],
+    "迁移场景": [
+     "认证绕过",
+     "账户接管",
+     "业务逻辑漏洞"
+    ]
+   }
+  },
+  {
+   "id": 1034023,
+   "knowledge_point": "子域名指向第三方服务未配置导致接管",
+   "is_ai_likely_known": true,
+   "reason": "子域名接管是常见漏洞，AI已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他第三方服务，但原理通用）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：子域名接管检测与利用。",
+   "skill_framework": null
+  },
+  {
+   "id": 157412,
+   "knowledge_point": "未授权ajax端点导致任意查询和meta修改",
+   "is_ai_likely_known": true,
+   "reason": "未授权端点访问是通用漏洞，AI已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他CMS，但原理通用）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：Web应用未授权访问检测。",
+   "skill_framework": null
+  },
+  {
+   "id": 1582160,
+   "knowledge_point": "URL变体绕过域名级重定向限制",
+   "is_ai_likely_known": false,
+   "reason": "URL解析差异的具体变体（//、/\\、\\\\）绕过，训练数据可能不全面，需要系统化知识。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到开放重定向、SSRF、WAF绕过等）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'URL解析差异绕过'的通用方法（与271324合并）。",
+   "skill_framework": {
+    "name": "URL解析差异绕过（斜杠变体、编码）",
+    "适用场景": [
+     "开放重定向",
+     "SSRF",
+     "WAF绕过"
+    ],
+    "核心原理": [
+     "不同组件对URL路径解析不一致",
+     "特殊字符如//、/\\、\\\\被解释为外部链接"
+    ],
+    "决策树": [
+     "IF 存在URL校验 AND 校验基于前缀匹配 → 尝试//、/\\、\\\\等变体"
+    ],
+    "示例": [
+     "使用//绕过以/开头的校验"
+    ],
+    "迁移场景": [
+     "开放重定向",
+     "SSRF",
+     "URL验证"
+    ]
+   }
+  },
+  {
+   "id": 138179,
+   "knowledge_point": "SSLv2弱密钥交换导致会话密钥恢复",
+   "is_ai_likely_known": true,
+   "reason": "SSLv2协议缺陷是已知历史漏洞，AI训练数据充足。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（依赖旧协议，现代系统已禁用）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1438052,
+   "knowledge_point": "并发请求绕过faucet限额",
+   "is_ai_likely_known": true,
+   "reason": "竞争条件绕过限额是通用漏洞，AI已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他限额场景，但原理通用）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：竞争条件检测与利用。",
+   "skill_framework": null
+  }
+ ]
+}

@@ -1,0 +1,297 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 5,
+  "not_worth": 10,
+  "top_ids": [
+   2237099,
+   1084342,
+   95089,
+   247028,
+   593229
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1084342,
+   "knowledge_point": "利用极端浮点值触发 sprintf 缓冲区溢出",
+   "is_ai_likely_known": false,
+   "reason": "该知识点涉及 Python ctypes 内部实现细节，且需要构造特定浮点值，属于非通用知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他使用 sprintf 格式化浮点数的场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'极端浮点值触发格式化溢出'的原理与检测方法。",
+   "skill_framework": {
+    "name": "极端浮点值触发格式化溢出",
+    "适用场景": [
+     "C/C++ 代码审计",
+     "Python 扩展模块安全测试"
+    ],
+    "核心原理": [
+     "sprintf 等函数未限制输出长度",
+     "极端浮点值（如 1e300）产生超长字符串"
+    ],
+    "决策树": [
+     "IF 代码使用 sprintf 格式化浮点数 AND 输入可控 → 尝试极端值触发溢出"
+    ],
+    "示例": [
+     "PyCArg_repr 中 sprintf(buf, \"%g\", value) 传入 1e300"
+    ],
+    "迁移场景": [
+     "其他语言绑定",
+     "嵌入式系统"
+    ]
+   }
+  },
+  {
+   "id": 56511,
+   "knowledge_point": "IDOR 使其他用户会话失效",
+   "is_ai_likely_known": true,
+   "reason": "IDOR 是常见漏洞，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "低（仅适用于会话管理场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 247028,
+   "knowledge_point": "IRC 协议消息序列触发 UAF",
+   "is_ai_likely_known": false,
+   "reason": "涉及 IRC 协议和 Irssi 内部实现，非通用知识。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他协议解析器）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'协议消息序列触发状态混淆'的通用模式。",
+   "skill_framework": {
+    "name": "协议消息序列触发状态混淆",
+    "适用场景": [
+     "IRC 客户端",
+     "其他协议解析器"
+    ],
+    "核心原理": [
+     "畸形参数导致内部状态不一致",
+     "生命周期管理缺陷"
+    ],
+    "决策树": [
+     "IF 协议解析器存在状态管理 AND 可发送畸形参数 → 尝试构造消息序列触发 UAF"
+    ],
+    "示例": [
+     "WHO 命令畸形掩码导致 nicklist 哈希表操作顺序错误"
+    ],
+    "迁移场景": [
+     "聊天协议",
+     "网络服务"
+    ]
+   }
+  },
+  {
+   "id": 95089,
+   "knowledge_point": "multipart 字段名注入 XSS",
+   "is_ai_likely_known": false,
+   "reason": "该攻击面较罕见，AI 可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他表单解析场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'multipart 字段名注入'的检测与防御。",
+   "skill_framework": {
+    "name": "multipart 字段名注入",
+    "适用场景": [
+     "Web 表单处理",
+     "文件上传"
+    ],
+    "核心原理": [
+     "字段名未过滤直接输出",
+     "multipart 解析宽松"
+    ],
+    "决策树": [
+     "IF 表单字段名用户可控 AND 输出未编码 → 尝试注入 HTML"
+    ],
+    "示例": [
+     "字段名中注入 <img src=x onerror=alert(1)>"
+    ],
+    "迁移场景": [
+     "API 参数",
+     "邮件解析"
+    ]
+   }
+  },
+  {
+   "id": 514897,
+   "knowledge_point": "IDOR 枚举用户地址",
+   "is_ai_likely_known": true,
+   "reason": "IDOR 是常见漏洞，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "低（仅适用于地址枚举）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 66121,
+   "knowledge_point": "Flash 文件触发 XSS",
+   "is_ai_likely_known": true,
+   "reason": "Flash 相关漏洞已过时，AI 已知。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（Flash 已废弃）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 105753,
+   "knowledge_point": "XXE 通过 FTP 外带数据",
+   "is_ai_likely_known": true,
+   "reason": "XXE 是常见漏洞，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "低（仅适用于 XXE）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 2237099,
+   "knowledge_point": "HTTP 请求走私：前置空格 Content-Length 解析分歧",
+   "is_ai_likely_known": false,
+   "reason": "该技术涉及 Node.js 特定解析器行为，且较新，AI 可能不熟悉。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何 HTTP 解析器分歧场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'HTTP 解析分歧'的检测与利用。",
+   "skill_framework": {
+    "name": "HTTP 解析分歧检测与利用",
+    "适用场景": [
+     "Web 安全测试",
+     "反代配置审计"
+    ],
+    "核心原理": [
+     "前端与后端解析器对畸形头处理不一致",
+     "利用分歧走私请求"
+    ],
+    "决策树": [
+     "IF 存在反代 AND 后端为 Node.js → 尝试前置空格 Content-Length"
+    ],
+    "示例": [
+     "' Content-length: 0' 导致前端忽略，后端解析为实际长度"
+    ],
+    "迁移场景": [
+     "CL.TE",
+     "TE.CL",
+     "重复头"
+    ]
+   }
+  },
+  {
+   "id": 100938,
+   "knowledge_point": "API 层权限缺失",
+   "is_ai_likely_known": true,
+   "reason": "API 权限校验是常见知识。",
+   "scene_frequency": "高频",
+   "migration_potential": "低（仅适用于 API 权限）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 73491,
+   "knowledge_point": "路径分隔符解析差异导致缓冲区溢出",
+   "is_ai_likely_known": false,
+   "reason": "涉及特定产品实现，非通用知识。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（仅适用于特定产品）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 216294,
+   "knowledge_point": "会话重放漏洞",
+   "is_ai_likely_known": true,
+   "reason": "会话管理是常见知识。",
+   "scene_frequency": "高频",
+   "migration_potential": "低（仅适用于会话管理）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 1579374,
+   "knowledge_point": "浏览器重定向差异导致开放重定向",
+   "is_ai_likely_known": true,
+   "reason": "开放重定向是常见漏洞。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（仅适用于浏览器行为）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 593229,
+   "knowledge_point": "整数溢出导致越界读",
+   "is_ai_likely_known": false,
+   "reason": "涉及 iconv 库特定实现，非通用知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他使用 iconv 的场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'整数溢出导致越界读'的检测模式。",
+   "skill_framework": {
+    "name": "整数溢出导致越界读",
+    "适用场景": [
+     "C/C++ 代码审计",
+     "字符编码转换"
+    ],
+    "核心原理": [
+     "size_t 下溢",
+     "循环条件缺陷"
+    ],
+    "决策树": [
+     "IF 代码使用 size_t 计算长度 AND 输入可控 → 尝试触发下溢"
+    ],
+    "示例": [
+     "_php_iconv_mime_decode 中整数溢出导致越界读"
+    ],
+    "迁移场景": [
+     "其他编码库",
+     "网络协议"
+    ]
+   }
+  },
+  {
+   "id": 84709,
+   "knowledge_point": "禁用账户后 token 未失效",
+   "is_ai_likely_known": true,
+   "reason": "token 失效是常见知识。",
+   "scene_frequency": "高频",
+   "migration_potential": "低（仅适用于账户管理）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 1672459,
+   "knowledge_point": "OAuth redirect 参数注入 javascript: 协议",
+   "is_ai_likely_known": true,
+   "reason": "OAuth 重定向漏洞是常见知识。",
+   "scene_frequency": "高频",
+   "migration_potential": "低（仅适用于 OAuth 流程）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  }
+ ]
+}

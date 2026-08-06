@@ -1,0 +1,493 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 10,
+  "not_worth": 5,
+  "top_ids": [
+   263718,
+   2138080,
+   2187833,
+   824163,
+   302338,
+   44513,
+   1167608,
+   1378175,
+   2279346,
+   10554
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 263718,
+   "knowledge_point": "同源iframe脚本导致权限提升（XSS到RCE）",
+   "is_ai_likely_known": false,
+   "reason": "同源iframe的DOM完全控制虽为通用知识，但结合WordPress插件编辑器实现权限提升的具体攻击链不常见，AI可能无法直接给出完整利用步骤。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何同源iframe场景，如CMS、管理后台）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化同源iframe权限提升的通用攻击模式。",
+   "skill_framework": {
+    "name": "同源iframe权限提升攻击",
+    "适用场景": [
+     "CMS后台",
+     "管理面板",
+     "任何同源iframe嵌入场景"
+    ],
+    "核心原理": [
+     "同源策略下iframe可完全控制父页面DOM",
+     "利用XSS注入iframe操作，实现权限提升"
+    ],
+    "决策树": [
+     "IF 存在XSS AND 同源iframe嵌入敏感功能 → 尝试注入iframe操作"
+    ],
+    "示例": [
+     "WordPress编辑器XSS→iframe加载插件编辑器→修改PHP文件→RCE"
+    ],
+    "迁移场景": [
+     "XSS到RCE",
+     "权限提升",
+     "后台接管"
+    ]
+   }
+  },
+  {
+   "id": 2138080,
+   "knowledge_point": "Electron contextBridge序列化异常绕过上下文隔离",
+   "is_ai_likely_known": false,
+   "reason": "Electron contextBridge的序列化异常绕过是较新的框架漏洞，训练数据可能不足，AI可能无法准确描述。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何使用contextBridge的Electron应用）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化Electron上下文隔离绕过技术。",
+   "skill_framework": {
+    "name": "Electron上下文隔离绕过",
+    "适用场景": [
+     "Electron应用安全测试",
+     "桌面应用渗透"
+    ],
+    "核心原理": [
+     "contextBridge序列化异常可导致隔离失效",
+     "利用异常处理绕过上下文隔离"
+    ],
+    "决策树": [
+     "IF 目标为Electron应用 AND 使用contextBridge → 测试不可序列化对象"
+    ],
+    "示例": [
+     "构造不可序列化对象→触发异常→获取特权访问"
+    ],
+    "迁移场景": [
+     "Electron安全",
+     "桌面应用RCE"
+    ]
+   }
+  },
+  {
+   "id": 2187833,
+   "knowledge_point": "SOCKS5状态机缺陷导致堆溢出",
+   "is_ai_likely_known": false,
+   "reason": "SOCKS5状态机缺陷的具体利用细节不常见，AI可能无法给出精确的绕过方法。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何SOCKS5代理实现）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化协议状态机缺陷利用模式。",
+   "skill_framework": {
+    "name": "协议状态机缺陷利用",
+    "适用场景": [
+     "SOCKS5代理",
+     "其他有状态协议解析器"
+    ],
+    "核心原理": [
+     "状态机变量未更新导致长度检查绕过",
+     "利用延迟响应触发堆溢出"
+    ],
+    "决策树": [
+     "IF 目标使用SOCKS5 AND 存在状态机 → 测试延迟响应和长度边界"
+    ],
+    "示例": [
+     "控制Location头→延迟SOCKS响应→堆溢出→RCE"
+    ],
+    "迁移场景": [
+     "协议解析",
+     "内存破坏"
+    ]
+   }
+  },
+  {
+   "id": 824163,
+   "knowledge_point": "FTP列表解析中strtok与strstr分隔符假设差异导致信息泄露",
+   "is_ai_likely_known": false,
+   "reason": "具体到Squid FTP解析器的内部假设差异，AI可能无法直接给出利用方法。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何使用类似解析逻辑的代理或服务）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化解析器分隔符假设差异利用。",
+   "skill_framework": {
+    "name": "解析器分隔符假设差异利用",
+    "适用场景": [
+     "FTP代理",
+     "HTTP代理",
+     "任何使用strtok/strstr解析的组件"
+    ],
+    "核心原理": [
+     "解析器对分隔符的假设与实际输入不一致",
+     "利用制表符和重复字符导致指针越界"
+    ],
+    "决策树": [
+     "IF 目标解析FTP列表 AND 使用strtok/strstr → 构造特殊列表项"
+    ],
+    "示例": [
+     "恶意FTP服务器返回特制列表→Squid解析错误→泄露内存数据"
+    ],
+    "迁移场景": [
+     "信息泄露",
+     "内存越界"
+    ]
+   }
+  },
+  {
+   "id": 302338,
+   "knowledge_point": "Ruby Dir类NULL字符截断路径绕过",
+   "is_ai_likely_known": false,
+   "reason": "Ruby Dir类对NULL字符的处理缺陷是特定语言行为，AI可能无法直接给出利用方法。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他语言或框架的路径处理）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化NULL字符截断路径的通用绕过技术。",
+   "skill_framework": {
+    "name": "NULL字符截断路径绕过",
+    "适用场景": [
+     "文件操作",
+     "路径验证",
+     "任何使用系统调用的语言"
+    ],
+    "核心原理": [
+     "系统调用对NULL字符截断，而语言层未检查",
+     "利用截断访问非预期目录"
+    ],
+    "决策树": [
+     "IF 输入路径包含NULL字符 AND 语言层未过滤 → 尝试截断"
+    ],
+    "示例": [
+     "Dir方法传入包含NULL的路径→截断→访问其他目录"
+    ],
+    "迁移场景": [
+     "路径遍历",
+     "文件访问控制"
+    ]
+   }
+  },
+  {
+   "id": 44513,
+   "knowledge_point": "IP解析差异绕过（IPv6变体）",
+   "is_ai_likely_known": false,
+   "reason": "Rails中正则与IPAddr解析不一致的具体绕过，AI可能无法直接给出。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何IP白名单校验）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化IP解析差异绕过技术。",
+   "skill_framework": {
+    "name": "IP解析差异绕过（IPv6变体）",
+    "适用场景": [
+     "IP白名单",
+     "访问控制",
+     "WAF绕过"
+    ],
+    "核心原理": [
+     "正则表达式与IP解析库不一致",
+     "利用IPv6地址变体绕过"
+    ],
+    "决策树": [
+     "IF 存在IP白名单 AND 使用正则匹配 → 尝试IPv6变体"
+    ],
+    "示例": [
+     "X-Forwarded-For: 0000::1 绕过Rails Web Console白名单"
+    ],
+    "迁移场景": [
+     "SSRF",
+     "认证绕过"
+    ]
+   }
+  },
+  {
+   "id": 1167608,
+   "knowledge_point": "Git diff解析器缺陷注入恶意脚本",
+   "is_ai_likely_known": false,
+   "reason": "针对Homebrew Cask的git diff解析器缺陷，AI可能无法直接给出利用方法。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他自动合并diff的场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化diff解析器缺陷利用模式。",
+   "skill_framework": {
+    "name": "Diff解析器缺陷利用",
+    "适用场景": [
+     "自动合并系统",
+     "代码审查工具",
+     "包管理器"
+    ],
+    "核心原理": [
+     "解析器对diff格式的假设缺陷",
+     "构造特殊diff混淆解析器"
+    ],
+    "决策树": [
+     "IF 目标自动合并diff AND 解析器有缺陷 → 构造恶意diff"
+    ],
+    "示例": [
+     "构造恶意diff→注入Ruby脚本→自动合并→执行"
+    ],
+    "迁移场景": [
+     "供应链攻击",
+     "代码注入"
+    ]
+   }
+  },
+  {
+   "id": 1378175,
+   "knowledge_point": "Ingress-nginx注解注入获取service account token",
+   "is_ai_likely_known": false,
+   "reason": "Kubernetes ingress-nginx注解注入的具体利用，AI可能无法直接给出。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他注解驱动的配置系统）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化注解注入攻击模式。",
+   "skill_framework": {
+    "name": "注解注入攻击",
+    "适用场景": [
+     "Kubernetes ingress",
+     "配置驱动系统",
+     "注解驱动的框架"
+    ],
+    "核心原理": [
+     "注解未转义导致注入",
+     "注入nginx指令读取文件"
+    ],
+    "决策树": [
+     "IF 目标使用注解配置 AND 未转义 → 尝试注入"
+    ],
+    "示例": [
+     "创建恶意ingress→注入nginx指令→读取token"
+    ],
+    "迁移场景": [
+     "配置注入",
+     "权限提升"
+    ]
+   }
+  },
+  {
+   "id": 2279346,
+   "knowledge_point": "CSP绕过利用Angular库和nonce窃取",
+   "is_ai_likely_known": false,
+   "reason": "利用Angular的ng-on-error和nonce窃取绕过CSP，AI可能无法直接给出。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他使用Angular或类似框架的CSP绕过）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化CSP绕过技术。",
+   "skill_framework": {
+    "name": "CSP绕过（利用框架库）",
+    "适用场景": [
+     "CSP防护的Web应用",
+     "使用Angular等框架"
+    ],
+    "核心原理": [
+     "利用框架库的CSP绕过",
+     "窃取nonce加载恶意脚本"
+    ],
+    "决策树": [
+     "IF 目标使用CSP AND 允许Google脚本 → 尝试Angular绕过"
+    ],
+    "示例": [
+     "注入Angular模板→加载Google脚本→窃取nonce→加载恶意脚本"
+    ],
+    "迁移场景": [
+     "XSS",
+     "CSP绕过"
+    ]
+   }
+  },
+  {
+   "id": 10554,
+   "knowledge_point": "内部转账功能绕过2FA",
+   "is_ai_likely_known": true,
+   "reason": "业务逻辑缺陷，内部转账未强制2FA，属于通用知识，AI可直接回答。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他业务逻辑）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 358339,
+   "knowledge_point": "WebDAV搜索和预览API绕过文件访问控制",
+   "is_ai_likely_known": false,
+   "reason": "具体到WebDAV搜索和预览API的绕过，AI可能无法直接给出。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他API端点）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化API端点访问控制绕过技术。",
+   "skill_framework": {
+    "name": "API端点访问控制绕过",
+    "适用场景": [
+     "文件共享服务",
+     "云存储",
+     "任何有多个API端点的系统"
+    ],
+    "核心原理": [
+     "访问控制规则未覆盖所有API端点",
+     "利用搜索和预览功能绕过"
+    ],
+    "决策树": [
+     "IF 存在文件访问控制 AND 有搜索/预览API → 测试绕过"
+    ],
+    "示例": [
+     "通过WebDAV搜索列出文件→预览API访问内容"
+    ],
+    "迁移场景": [
+     "授权绕过",
+     "信息泄露"
+    ]
+   }
+  },
+  {
+   "id": 121863,
+   "knowledge_point": "HTTP URL解析缓冲区溢出覆盖函数指针",
+   "is_ai_likely_known": false,
+   "reason": "PHP URL解析的具体溢出利用，AI可能无法直接给出。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他解析器）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化解析器缓冲区溢出利用模式。",
+   "skill_framework": {
+    "name": "解析器缓冲区溢出利用",
+    "适用场景": [
+     "HTTP解析器",
+     "URL解析",
+     "任何解析器"
+    ],
+    "核心原理": [
+     "偏移量检查不足导致溢出",
+     "覆盖函数指针执行任意代码"
+    ],
+    "决策树": [
+     "IF 目标解析URL AND 存在长度校验缺陷 → 尝试溢出"
+    ],
+    "示例": [
+     "构造恶意HTTP请求→溢出→覆盖函数指针→RCE"
+    ],
+    "迁移场景": [
+     "内存破坏",
+     "RCE"
+    ]
+   }
+  },
+  {
+   "id": 221432,
+   "knowledge_point": "CSRF token泄露通过双斜杠绝对URL",
+   "is_ai_likely_known": false,
+   "reason": "利用双斜杠构造绝对URL泄露token，AI可能无法直接给出。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何URL处理）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化URL规范化绕过技术。",
+   "skill_framework": {
+    "name": "URL规范化绕过",
+    "适用场景": [
+     "CSRF防护",
+     "URL验证",
+     "同源检查"
+    ],
+    "核心原理": [
+     "双斜杠使相对URL变为绝对URL",
+     "绕过同源检查泄露token"
+    ],
+    "决策树": [
+     "IF 存在URL处理 AND 未规范化 → 尝试双斜杠"
+    ],
+    "示例": [
+     "构造恶意链接→前端JS生成绝对URL→泄露token"
+    ],
+    "迁移场景": [
+     "CSRF",
+     "信息泄露"
+    ]
+   }
+  },
+  {
+   "id": 761726,
+   "knowledge_point": "SOP绕过利用浏览器缓存",
+   "is_ai_likely_known": false,
+   "reason": "利用浏览器缓存绕过CORS，AI可能无法直接给出。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何浏览器缓存场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化浏览器缓存绕过技术。",
+   "skill_framework": {
+    "name": "浏览器缓存绕过SOP",
+    "适用场景": [
+     "CORS防护",
+     "浏览器安全",
+     "XS-Leak"
+    ],
+    "核心原理": [
+     "利用缓存机制绕过CORS凭据限制",
+     "读取缓存中的认证响应"
+    ],
+    "决策树": [
+     "IF 目标使用CORS AND 缓存未禁用 → 尝试强制缓存"
+    ],
+    "示例": [
+     "fetch强制缓存→读取认证响应→窃取数据"
+    ],
+    "迁移场景": [
+     "信息泄露",
+     "SOP绕过"
+    ]
+   }
+  },
+  {
+   "id": 674540,
+   "knowledge_point": "mod_remoteip PROXY协议解析缺陷",
+   "is_ai_likely_known": false,
+   "reason": "Apache mod_remoteip的PROXY协议解析缺陷，AI可能无法直接给出。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他PROXY协议实现）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化PROXY协议解析缺陷利用。",
+   "skill_framework": {
+    "name": "PROXY协议解析缺陷利用",
+    "适用场景": [
+     "反向代理",
+     "负载均衡",
+     "任何使用PROXY协议的服务"
+    ],
+    "核心原理": [
+     "长度未校验和状态逻辑错误",
+     "利用恶意PROXY头触发溢出"
+    ],
+    "决策树": [
+     "IF 目标使用PROXY协议 AND 解析有缺陷 → 尝试恶意头"
+    ],
+    "示例": [
+     "发送恶意PROXY头→栈溢出或DoS→可能RCE"
+    ],
+    "迁移场景": [
+     "内存破坏",
+     "DoS"
+    ]
+   }
+  }
+ ]
+}

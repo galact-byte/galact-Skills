@@ -1,0 +1,377 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 8,
+  "not_worth": 7,
+  "top_ids": [
+   514224,
+   810880,
+   576532,
+   164916,
+   1084904,
+   231524,
+   18691,
+   62400
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 308155,
+   "knowledge_point": "html-janitor clean() 使用 innerHTML 导致 XSS",
+   "is_ai_likely_known": true,
+   "reason": "innerHTML 导致 XSS 是通用知识，AI 已知，且 PoC 简单，无特殊绕过。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（仅针对该库，通用性差）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，无需固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 576532,
+   "knowledge_point": "postMessage 未验证 origin 导致 DOM XSS",
+   "is_ai_likely_known": false,
+   "reason": "postMessage 滥用是常见漏洞，但具体到 Shopify 后台的跨组件攻击链（主题编辑功能）具有特定性，AI 可能不熟悉。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何使用 postMessage 的 Web 应用）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 postMessage 安全验证的决策树。",
+   "skill_framework": {
+    "name": "postMessage 安全验证",
+    "适用场景": [
+     "Web 应用消息通信",
+     "跨域通信",
+     "后台管理界面"
+    ],
+    "核心原理": [
+     "未验证 event.origin 导致任意来源消息被处理",
+     "消息内容未校验导致注入"
+    ],
+    "决策树": [
+     "IF 使用 postMessage 接收消息 → 检查是否验证 origin",
+     "IF 未验证 → 尝试构造恶意页面发送消息"
+    ],
+    "示例": [
+     "恶意页面 postMessage 触发 XSS"
+    ],
+    "迁移场景": [
+     "DOM XSS",
+     "CSRF",
+     "信息泄露"
+    ]
+   }
+  },
+  {
+   "id": 164916,
+   "knowledge_point": "Flash 跨域策略配置错误导致同源策略绕过",
+   "is_ai_likely_known": false,
+   "reason": "Flash 已过时，但 crossdomain.xml 配置错误是特定知识，AI 可能不熟悉。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他跨域策略如 CORS）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，但注明 Flash 已过时，可迁移到 CORS 配置检查。",
+   "skill_framework": {
+    "name": "跨域策略配置错误检测",
+    "适用场景": [
+     "Flash 应用",
+     "CORS 配置",
+     "跨域资源共享"
+    ],
+    "核心原理": [
+     "allowdomain('*') 或 crossdomain.xml 允许任意域",
+     "CORS 配置过宽"
+    ],
+    "决策树": [
+     "IF 存在 Flash 或 CORS 配置 → 检查是否允许任意域",
+     "IF 允许 → 尝试跨域读取"
+    ],
+    "示例": [
+     "crossdomain.xml 允许 *"
+    ],
+    "迁移场景": [
+     "信息泄露",
+     "CSRF",
+     "数据窃取"
+    ]
+   }
+  },
+  {
+   "id": 514224,
+   "knowledge_point": "换行符绕过 URL 白名单实现 SSRF",
+   "is_ai_likely_known": false,
+   "reason": "换行符绕过 URL 校验是特定技巧，AI 可能不熟悉，且具有反直觉性。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何 URL 校验场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 URL 校验绕过技术。",
+   "skill_framework": {
+    "name": "URL 校验绕过（换行符/控制字符）",
+    "适用场景": [
+     "SSRF 防护",
+     "URL 白名单",
+     "WAF 规则"
+    ],
+    "核心原理": [
+     "校验层与请求层对 URL 解析不一致",
+     "换行符使白名单前缀通过但实际请求内网"
+    ],
+    "决策树": [
+     "IF 存在 URL 白名单 → 尝试在 URL 中插入 %0A 等控制字符",
+     "IF 校验通过但请求不同 → 利用"
+    ],
+    "示例": [
+     "http://127.0.0.1:22/?%0A+合法前缀"
+    ],
+    "迁移场景": [
+     "SSRF",
+     "开放重定向",
+     "DNS 重绑定"
+    ]
+   }
+  },
+  {
+   "id": 1084904,
+   "knowledge_point": "GraphQL API 权限校验缺失导致越权",
+   "is_ai_likely_known": false,
+   "reason": "GraphQL 权限绕过是特定于 API 设计的问题，AI 可能不熟悉具体案例。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何 GraphQL API）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 GraphQL 权限测试方法。",
+   "skill_framework": {
+    "name": "GraphQL 权限绕过检测",
+    "适用场景": [
+     "GraphQL API 安全测试",
+     "权限控制"
+    ],
+    "核心原理": [
+     "后端未对每个 mutation 进行细粒度权限校验",
+     "前端限制可被绕过"
+    ],
+    "决策树": [
+     "IF 存在 GraphQL API → 枚举所有 mutation",
+     "IF 发现高权限操作 → 尝试用低权限用户调用"
+    ],
+    "示例": [
+     "低权限用户调用 convertUsersFromSaml"
+    ],
+    "迁移场景": [
+     "越权",
+     "IDOR",
+     "业务逻辑漏洞"
+    ]
+   }
+  },
+  {
+   "id": 54034,
+   "knowledge_point": "Reflected Filename Download (RFD) 攻击",
+   "is_ai_likely_known": true,
+   "reason": "RFD 是已知攻击类型，AI 可能了解，但具体利用细节可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到下载功能）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 810880,
+   "knowledge_point": "2FA 绑定 IDOR 与验证接口缺陷组合导致 ATO",
+   "is_ai_likely_known": false,
+   "reason": "2FA 流程中的 IDOR 和认证缺陷组合是特定知识，AI 可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何 2FA 实现）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 2FA 安全测试要点。",
+   "skill_framework": {
+    "name": "2FA 流程安全测试",
+    "适用场景": [
+     "双因素认证实现",
+     "账户安全"
+    ],
+    "核心原理": [
+     "2FA 绑定接口未校验 ID 归属",
+     "验证接口仅凭 ID 和 code 认证"
+    ],
+    "决策树": [
+     "IF 存在 2FA 绑定接口 → 尝试绑定他人 ID",
+     "IF 验证接口不校验密码 → 尝试直接登录"
+    ],
+    "示例": [
+     "攻击者绑定受害者 2FA 后登录"
+    ],
+    "迁移场景": [
+     "ATO",
+     "IDOR",
+     "认证绕过"
+    ]
+   }
+  },
+  {
+   "id": 18691,
+   "knowledge_point": "框架嵌套解析导致 XSS",
+   "is_ai_likely_known": false,
+   "reason": "特定框架的解析顺序和自动链接行为是特定知识，AI 可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他富文本编辑器）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，但建议合并到上层 XSS 防御 Skill。",
+   "skill_framework": {
+    "name": "富文本编辑器 XSS 绕过",
+    "适用场景": [
+     "富文本编辑器",
+     "Markdown 解析",
+     "HTML 清理"
+    ],
+    "核心原理": [
+     "嵌套解析导致自动链接注入",
+     "输入过滤不完整"
+    ],
+    "决策树": [
+     "IF 使用富文本编辑器 → 测试嵌套语法",
+     "IF 自动链接功能 → 尝试注入事件属性"
+    ],
+    "示例": [
+     "meme 语法嵌套触发 onerror"
+    ],
+    "迁移场景": [
+     "XSS",
+     "HTML 注入"
+    ]
+   }
+  },
+  {
+   "id": 2012636,
+   "knowledge_point": "跨平台存储型 XSS（Crowdsignal 到 WordPress）",
+   "is_ai_likely_known": true,
+   "reason": "存储型 XSS 是通用知识，跨平台传播是常见场景，AI 可能已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到第三方组件集成）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1061292,
+   "knowledge_point": "未授权访问管理员 API 导致信息泄露",
+   "is_ai_likely_known": true,
+   "reason": "未授权访问是通用知识，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "低（仅针对该 API）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 231524,
+   "knowledge_point": "IE11 下 CSP 绕过实现存储型 XSS",
+   "is_ai_likely_known": false,
+   "reason": "IE11 的 CSP 绕过是特定浏览器兼容性问题，AI 可能不熟悉。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他浏览器兼容性测试）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，但注明 IE11 已过时，可迁移到现代浏览器 CSP 测试。",
+   "skill_framework": {
+    "name": "CSP 绕过技术",
+    "适用场景": [
+     "CSP 策略测试",
+     "浏览器兼容性"
+    ],
+    "核心原理": [
+     "不同浏览器对 CSP 支持不一致",
+     "SVG onload 和 IMG onerror 绕过"
+    ],
+    "决策树": [
+     "IF 存在 CSP → 测试不同浏览器",
+     "IF 使用 IE11 → 尝试 SVG/IMG 事件"
+    ],
+    "示例": [
+     "IE11 下 SVG onload 绕过 CSP"
+    ],
+    "迁移场景": [
+     "XSS",
+     "CSP 绕过"
+    ]
+   }
+  },
+  {
+   "id": 1724016,
+   "knowledge_point": "共享权限修改绕过安全视图",
+   "is_ai_likely_known": true,
+   "reason": "权限修改绕过是通用业务逻辑漏洞，AI 可能已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（特定于共享功能）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 181816,
+   "knowledge_point": "文档标题未转义导致存储型 XSS",
+   "is_ai_likely_known": true,
+   "reason": "输出编码缺失是通用知识，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "低（仅针对标题字段）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 62400,
+   "knowledge_point": "content-type 错误导致 XSS（Flash 交互）",
+   "is_ai_likely_known": false,
+   "reason": "content-type 错误导致 XSS 是特定技术，AI 可能不熟悉，且涉及 Flash 交互。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到任何 JSON 响应）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 content-type 校验。",
+   "skill_framework": {
+    "name": "Content-Type 错误导致 XSS",
+    "适用场景": [
+     "JSON 响应",
+     "文件上传",
+     "Flash 交互"
+    ],
+    "核心原理": [
+     "响应 content-type 错误导致 HTML 渲染",
+     "用户输入未编码"
+    ],
+    "决策树": [
+     "IF 存在 JSON 端点 → 检查 content-type",
+     "IF 为 text/html → 尝试注入 HTML"
+    ],
+    "示例": [
+     "PDF 标题注入 XSS"
+    ],
+    "迁移场景": [
+     "XSS",
+     "MIME 混淆"
+    ]
+   }
+  },
+  {
+   "id": 478367,
+   "knowledge_point": "整数溢出导致 use-after-free",
+   "is_ai_likely_known": false,
+   "reason": "特定函数 imagescale 的整数溢出是底层知识，AI 可能不熟悉。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（特定于 PHP 图像处理）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化，因为依赖具体代码。",
+   "skill_framework": null
+  }
+ ]
+}

@@ -1,0 +1,392 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 8,
+  "not_worth": 7,
+  "top_ids": [
+   2224,
+   882258,
+   276031,
+   378148,
+   882923,
+   736522,
+   827816,
+   236599
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 2224,
+   "knowledge_point": "数据库字段长度截断导致邮箱域名白名单绕过",
+   "is_ai_likely_known": false,
+   "reason": "利用数据库VARCHAR长度截断绕过域名白名单，属于数据库行为与业务逻辑结合的反直觉漏洞，AI训练数据中不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何依赖字符串长度限制的校验场景，如用户名、URL、参数等）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'长度截断绕过'的通用模式，包括原理、触发条件、防御措施。",
+   "skill_framework": {
+    "name": "长度截断绕过（数据库字段长度限制）",
+    "适用场景": [
+     "邮箱域名白名单",
+     "用户名黑名单",
+     "URL参数校验"
+    ],
+    "核心原理": [
+     "数据库字段长度限制导致字符串被截断",
+     "校验层与存储层对字符串长度处理不一致"
+    ],
+    "决策树": [
+     "IF 存在字符串长度限制 AND 校验基于完整字符串 → 尝试超长输入观察截断行为"
+    ],
+    "示例": [
+     "注册超长邮箱，使@allowed-domain.com被截断，绕过白名单"
+    ],
+    "迁移场景": [
+     "认证绕过",
+     "输入校验绕过",
+     "数据完整性攻击"
+    ]
+   }
+  },
+  {
+   "id": 882258,
+   "knowledge_point": "用户名复用导致数据隔离失效",
+   "category": "业务逻辑 / 状态混淆",
+   "is_ai_likely_known": false,
+   "reason": "用户删除后未级联清理数据，导致同名新用户继承旧数据，属于业务逻辑缺陷，AI训练数据中不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何使用用户名作为关联键的系统，如论坛、云存储、协作平台）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'用户生命周期管理'的检查清单，包括删除、重建、数据隔离。",
+   "skill_framework": {
+    "name": "用户生命周期管理缺陷（用户名复用与数据隔离）",
+    "适用场景": [
+     "用户注册/删除/重建流程",
+     "多租户系统",
+     "数据隔离要求高的应用"
+    ],
+    "核心原理": [
+     "删除用户时未级联清理关联数据",
+     "用户名作为外键导致新旧数据混淆"
+    ],
+    "决策树": [
+     "IF 系统允许用户名复用 AND 删除用户不彻底 → 测试重建同名用户是否可访问旧数据"
+    ],
+    "示例": [
+     "删除用户后重建同名用户，登录后读取旧数据"
+    ],
+    "迁移场景": [
+     "IDOR",
+     "数据泄露",
+     "权限提升"
+    ]
+   }
+  },
+  {
+   "id": 276031,
+   "knowledge_point": "Electron preload脚本作用域缺陷导致RCE",
+   "category": "跨组件攻击链 / 框架行为利用",
+   "is_ai_likely_known": false,
+   "reason": "利用Markdown解析器XSS结合Electron preload脚本作用域问题，通过Proxy重写RegExp.prototype.test绕过安全检查，属于框架特定行为，AI训练数据中不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何基于Electron的桌面应用，以及类似preload脚本场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'Electron安全'的检查清单，包括preload脚本隔离、openExternal白名单、Markdown解析器安全。",
+   "skill_framework": {
+    "name": "Electron应用安全（preload脚本与RCE）",
+    "适用场景": [
+     "Electron桌面应用",
+     "Markdown渲染",
+     "外部协议调用"
+    ],
+    "核心原理": [
+     "preload脚本与主进程共享作用域",
+     "RegExp.prototype.test可被重写",
+     "openExternal未严格校验"
+    ],
+    "决策树": [
+     "IF 应用使用Electron AND 存在XSS → 尝试重写RegExp.prototype.test绕过检查"
+    ],
+    "示例": [
+     "通过Markdown注入XSS，重写RegExp.prototype.test，调用shell.openExternal执行任意应用"
+    ],
+    "迁移场景": [
+     "XSS",
+     "RCE",
+     "沙箱逃逸"
+    ]
+   }
+  },
+  {
+   "id": 240821,
+   "knowledge_point": "第三方认证token未验证导致账户接管",
+   "category": "认证绕过 / 授权绕过",
+   "is_ai_likely_known": true,
+   "reason": "服务端未验证第三方token，属于常见认证逻辑缺失，AI训练数据中常见。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何第三方登录场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 453820,
+   "knowledge_point": "URL编码绕过文件忽略规则",
+   "category": "路径遍历 / 配置错误",
+   "is_ai_likely_known": true,
+   "reason": "URL编码绕过路径过滤是常见技术，AI训练数据中常见。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何路径过滤场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 154405,
+   "knowledge_point": "评论引用功能越权访问",
+   "category": "授权绕过 / 业务逻辑",
+   "is_ai_likely_known": true,
+   "reason": "引用功能未校验权限，属于常见IDOR，AI训练数据中常见。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何引用/关联功能）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 27404,
+   "knowledge_point": "IDOR删除他人信用卡",
+   "category": "授权绕过 / 业务逻辑",
+   "is_ai_likely_known": true,
+   "reason": "直接使用ID未校验所有权，属于典型IDOR，AI训练数据中常见。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何资源ID操作）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 378148,
+   "knowledge_point": "正则表达式对换行符匹配缺陷导致任意文件写入",
+   "category": "跨组件攻击链 / 框架行为利用",
+   "is_ai_likely_known": false,
+   "reason": "利用正则`%r{.*/\\.{1,2}$}`不匹配包含换行的路径，创建名为`.\nevil`的符号链接绕过过滤，属于正则表达式与文件系统交互的反直觉行为，AI训练数据中不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何使用正则过滤文件名的场景，以及符号链接处理）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'正则表达式绕过'的通用模式，包括换行符、编码、特殊字符。",
+   "skill_framework": {
+    "name": "正则表达式绕过（换行符与特殊字符）",
+    "适用场景": [
+     "文件名过滤",
+     "URL路径校验",
+     "输入黑名单"
+    ],
+    "核心原理": [
+     "正则表达式默认不匹配换行符",
+     "文件系统允许文件名包含换行符",
+     "校验与文件系统处理不一致"
+    ],
+    "决策树": [
+     "IF 存在正则过滤 AND 允许文件名包含特殊字符 → 尝试包含换行符的变体"
+    ],
+    "示例": [
+     "创建名为`.\nevil`的符号链接绕过过滤"
+    ],
+    "迁移场景": [
+     "任意文件上传",
+     "路径遍历",
+     "RCE"
+    ]
+   }
+  },
+  {
+   "id": 882923,
+   "knowledge_point": "jsonpath递归下降导致DoS",
+   "category": "协议行为利用 / 框架行为利用",
+   "is_ai_likely_known": false,
+   "reason": "利用jsonpath的递归下降操作符导致指数级计算，属于解析器算法复杂度问题，AI训练数据中不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何使用递归下降解析器的场景，如JSONPath、XPath、正则表达式）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'解析器算法复杂度DoS'的通用模式，包括递归下降、指数级计算。",
+   "skill_framework": {
+    "name": "解析器算法复杂度DoS（递归下降）",
+    "适用场景": [
+     "JSONPath",
+     "XPath",
+     "正则表达式",
+     "任何递归解析器"
+    ],
+    "核心原理": [
+     "递归下降操作符导致指数级计算",
+     "输入长度可控但计算量爆炸"
+    ],
+    "决策树": [
+     "IF 存在解析器 AND 支持递归操作符 → 构造深层嵌套或复杂表达式测试"
+    ],
+    "示例": [
+     "构造恶意jsonpath表达式触发递归下降，耗尽CPU/内存"
+    ],
+    "迁移场景": [
+     "DoS",
+     "资源耗尽",
+     "拒绝服务"
+    ]
+   }
+  },
+  {
+   "id": 736522,
+   "knowledge_point": "JWT验证逻辑不完整导致身份伪造",
+   "category": "认证绕过 / 类型混淆",
+   "is_ai_likely_known": false,
+   "reason": "只验证refreshToken不验证token本身，导致可篡改token payload，属于JWT验证逻辑缺陷，AI训练数据中不常见。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何使用JWT或类似token的系统）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'JWT验证完整性'的检查清单，包括签名、过期、payload完整性。",
+   "skill_framework": {
+    "name": "JWT验证完整性检查",
+    "适用场景": [
+     "JWT认证",
+     "OAuth2",
+     "任何token-based认证"
+    ],
+    "核心原理": [
+     "验证逻辑不完整，只验证部分字段",
+     "token payload可被篡改"
+    ],
+    "决策树": [
+     "IF 使用JWT AND 验证逻辑不完整 → 尝试篡改payload观察是否被接受"
+    ],
+    "示例": [
+     "篡改token payload，重放后身份伪造"
+    ],
+    "迁移场景": [
+     "认证绕过",
+     "权限提升",
+     "账户接管"
+    ]
+   }
+  },
+  {
+   "id": 186352,
+   "knowledge_point": "HTTP明文下载二进制导致供应链攻击",
+   "category": "协议行为利用 / 跨组件攻击链",
+   "is_ai_likely_known": true,
+   "reason": "HTTP明文传输和缺乏校验是常见问题，AI训练数据中常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何软件安装、更新流程）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 827816,
+   "knowledge_point": "客户端信任权限标志导致权限提升",
+   "category": "授权绕过 / 业务逻辑",
+   "is_ai_likely_known": false,
+   "reason": "通过修改响应体中的权限字段提升权限，属于客户端信任问题，AI训练数据中不常见。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何依赖客户端权限标志的系统）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'客户端信任'的通用模式，包括响应篡改、权限标志。",
+   "skill_framework": {
+    "name": "客户端信任绕过（响应篡改与权限标志）",
+    "适用场景": [
+     "权限控制",
+     "功能开关",
+     "任何客户端状态"
+    ],
+    "核心原理": [
+     "服务端未独立验证权限",
+     "客户端提供的权限标志被信任"
+    ],
+    "决策树": [
+     "IF 权限控制依赖客户端状态 → 尝试修改响应体或请求参数"
+    ],
+    "示例": [
+     "修改响应体中的权限字段，将只读提升为完全控制"
+    ],
+    "迁移场景": [
+     "权限提升",
+     "越权访问",
+     "功能滥用"
+    ]
+   }
+  },
+  {
+   "id": 236599,
+   "knowledge_point": "stristr子串匹配绕过开放重定向保护",
+   "category": "开放重定向 / 协议行为利用",
+   "is_ai_likely_known": false,
+   "reason": "利用stristr的子串匹配缺陷，在Referer中嵌入目标域名即可绕过校验，属于PHP函数行为利用，AI训练数据中不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何使用子串匹配的校验场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'子串匹配绕过'的通用模式，包括stristr、strpos等函数。",
+   "skill_framework": {
+    "name": "子串匹配绕过（stristr/strpos）",
+    "适用场景": [
+     "开放重定向",
+     "URL白名单",
+     "域名校验"
+    ],
+    "核心原理": [
+     "子串匹配只检查包含关系",
+     "攻击者可在合法域名前插入目标域名"
+    ],
+    "决策树": [
+     "IF 使用子串匹配校验域名 → 尝试在Referer或URL中嵌入目标域名"
+    ],
+    "示例": [
+     "在Referer中注入目标域名，绕过重定向校验"
+    ],
+    "迁移场景": [
+     "开放重定向",
+     "SSRF",
+     "CSRF"
+    ]
+   }
+  },
+  {
+   "id": 894623,
+   "knowledge_point": "多阶段攻击链（信息泄露到RCE）",
+   "category": "跨组件攻击链 / 认证绕过 / SSRF",
+   "is_ai_likely_known": true,
+   "reason": "攻击链涉及多个常见漏洞组合，AI训练数据中常见。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（高度依赖具体环境）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1415436,
+   "knowledge_point": "Django数据库缓存pickle反序列化RCE",
+   "category": "反序列化 / 跨组件攻击链",
+   "is_ai_likely_known": true,
+   "reason": "pickle反序列化漏洞是常见知识，AI训练数据中常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何使用pickle或类似反序列化机制的场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，无需单独固化。",
+   "skill_framework": null
+  }
+ ]
+}

@@ -1,0 +1,302 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 5,
+  "not_worth": 10,
+  "top_ids": [
+   1444539,
+   890747,
+   180977,
+   181321,
+   1650273
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1489141,
+   "knowledge_point": "ReDoS in Rack::Multipart",
+   "is_ai_likely_known": true,
+   "reason": "ReDoS 是通用知识，AI 已知如何检测和防御，且该案例是具体框架的已知漏洞。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（ReDoS 检测方法通用，但具体正则和触发字符串依赖具体实现）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1101882,
+   "knowledge_point": "curl --referer ';auto' 泄露凭据",
+   "is_ai_likely_known": true,
+   "reason": "curl 的 Referer 行为是已知的，且该漏洞是具体版本缺陷，AI 可能已知。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（仅影响 curl 特定功能，迁移性差）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 660563,
+   "knowledge_point": "Node.js 模块加载路径遍历导致代码执行",
+   "is_ai_likely_known": true,
+   "reason": "路径遍历和未校验的 require 是常见漏洞，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他语言或框架的模块加载）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：路径遍历与代码执行。",
+   "skill_framework": null
+  },
+  {
+   "id": 890747,
+   "knowledge_point": "EMV 协议 DDA 模式下 CVM 列表篡改绕过 PIN 验证",
+   "is_ai_likely_known": false,
+   "reason": "EMV 协议细节和 DDA 模式下的攻击是专业领域知识，AI 训练数据可能不足。",
+   "scene_frequency": "低频",
+   "migration_potential": "高（可迁移到其他支付协议或安全协议设计）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 EMV 协议攻击的机制和防御要点。",
+   "skill_framework": {
+    "name": "EMV 协议攻击与防御",
+    "适用场景": [
+     "支付终端安全测试",
+     "支付协议设计",
+     "安全评估"
+    ],
+    "核心原理": [
+     "DDA 模式下 CVM 列表未受保护",
+     "攻击者可篡改验证方式"
+    ],
+    "决策树": [
+     "IF 目标使用 EMV 协议 AND 支持 DDA 模式 → 尝试篡改 CVM 列表"
+    ],
+    "示例": [
+     "使用楔形设备进行中间人攻击，篡改 CVM 列表，将在线 PIN 改为离线 PIN"
+    ],
+    "迁移场景": [
+     "其他支付协议",
+     "安全协议设计"
+    ]
+   }
+  },
+  {
+   "id": 1070510,
+   "knowledge_point": "客户端信任导致授权绕过",
+   "is_ai_likely_known": true,
+   "reason": "客户端信任是通用知识，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "低（具体场景，但原理通用）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 706934,
+   "knowledge_point": "Kernel#JSON 绕过 CVE-2013-0269 修复",
+   "is_ai_likely_known": true,
+   "reason": "该 CVE 和绕过技术是已知的，AI 可能已知。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（特定框架和版本）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：反序列化漏洞与绕过。",
+   "skill_framework": null
+  },
+  {
+   "id": 2037902,
+   "knowledge_point": "邀请机制绕过邮箱验证导致 SSO 认证绕过",
+   "is_ai_likely_known": true,
+   "reason": "邮箱验证绕过和 SSO 信任链滥用是常见攻击模式，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他 SSO 实现）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：认证绕过与 SSO 安全。",
+   "skill_framework": null
+  },
+  {
+   "id": 180977,
+   "knowledge_point": "mruby 异常处理中 to_s 重写导致 SIGABRT",
+   "is_ai_likely_known": false,
+   "reason": "mruby 内部错误处理机制的细节是特定框架知识，AI 可能不熟悉。",
+   "scene_frequency": "低频",
+   "migration_potential": "高（可迁移到其他语言运行时或沙箱逃逸）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化沙箱逃逸和异常处理利用的通用模式。",
+   "skill_framework": {
+    "name": "沙箱逃逸与异常处理利用",
+    "适用场景": [
+     "沙箱安全测试",
+     "语言运行时安全",
+     "拒绝服务攻击"
+    ],
+    "核心原理": [
+     "异常处理中调用用户可重写的方法",
+     "利用回调副作用导致崩溃"
+    ],
+    "决策树": [
+     "IF 目标使用沙箱 AND 允许自定义类 → 尝试重写异常相关方法"
+    ],
+    "示例": [
+     "重写 to_s 方法，在异常处理中触发 SIGABRT"
+    ],
+    "迁移场景": [
+     "其他语言运行时",
+     "沙箱逃逸"
+    ]
+   }
+  },
+  {
+   "id": 461780,
+   "knowledge_point": "杀毒软件忽略 HSTS 策略",
+   "is_ai_likely_known": true,
+   "reason": "HSTS 和 MitM 是通用知识，AI 已知。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（特定产品行为）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1650273,
+   "knowledge_point": "Nginx off-by-slash 配置错误导致路径遍历",
+   "is_ai_likely_known": true,
+   "reason": "Nginx 配置错误是常见问题，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到其他 Web 服务器配置）",
+   "source_quality": "通用",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 Web 服务器路径解析差异的检测和防御。",
+   "skill_framework": {
+    "name": "Web 服务器路径解析差异",
+    "适用场景": [
+     "Web 服务器配置审计",
+     "路径遍历漏洞检测",
+     "安全加固"
+    ],
+    "核心原理": [
+     "location 和 alias 路径拼接差异",
+     "off-by-slash 导致目录穿越"
+    ],
+    "决策树": [
+     "IF 使用 Nginx AND 存在 alias 指令 → 检查路径斜杠匹配"
+    ],
+    "示例": [
+     "/metrics../ 绕过 alias 限制访问上级目录"
+    ],
+    "迁移场景": [
+     "Apache",
+     "IIS",
+     "其他 Web 服务器"
+    ]
+   }
+  },
+  {
+   "id": 1444539,
+   "knowledge_point": "libcurl 在 64 位 Windows 上的整数截断导致内存泄露",
+   "is_ai_likely_known": false,
+   "reason": "平台 ABI 差异导致的整数截断是反直觉的，AI 可能不熟悉。",
+   "scene_frequency": "低频",
+   "migration_potential": "高（可迁移到其他跨平台库或系统）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化跨平台整数宽度差异导致的漏洞模式。",
+   "skill_framework": {
+    "name": "跨平台整数宽度差异漏洞",
+    "适用场景": [
+     "跨平台库安全测试",
+     "内存安全",
+     "信息泄露"
+    ],
+    "核心原理": [
+     "不同平台 sizeof(long) 不同",
+     "整数截断导致哨兵值误判"
+    ],
+    "决策树": [
+     "IF 目标使用跨平台库 AND 涉及长度参数 → 检查整数类型宽度"
+    ],
+    "示例": [
+     "4294967295 截断为 -1 触发 strlen 越界读"
+    ],
+    "迁移场景": [
+     "其他 C/C++ 库",
+     "系统调用"
+    ]
+   }
+  },
+  {
+   "id": 268228,
+   "knowledge_point": "密码重置流程中的 IDOR 导致跨组账户接管",
+   "is_ai_likely_known": true,
+   "reason": "IDOR 和密码重置绕过是常见漏洞，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他业务流程）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：IDOR 与授权绕过。",
+   "skill_framework": null
+  },
+  {
+   "id": 181321,
+   "knowledge_point": "mruby Array#to_h 回调导致 UAF",
+   "is_ai_likely_known": false,
+   "reason": "mruby 内部回调副作用导致的内存破坏是特定框架知识，AI 可能不熟悉。",
+   "scene_frequency": "低频",
+   "migration_potential": "高（可迁移到其他语言运行时或回调机制）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化回调副作用导致的内存破坏模式。",
+   "skill_framework": {
+    "name": "回调副作用导致的内存破坏",
+    "适用场景": [
+     "语言运行时安全",
+     "内存安全",
+     "沙箱逃逸"
+    ],
+    "核心原理": [
+     "回调中修改对象状态",
+     "后续访问使用过期引用"
+    ],
+    "决策树": [
+     "IF 目标使用回调机制 AND 回调可修改对象 → 检查后续访问"
+    ],
+    "示例": [
+     "在 to_ary 回调中清空数组导致越界访问"
+    ],
+    "迁移场景": [
+     "其他语言运行时",
+     "事件驱动系统"
+    ]
+   }
+  },
+  {
+   "id": 1489077,
+   "knowledge_point": "预览 URL 永久有效绕过密码更改",
+   "is_ai_likely_known": true,
+   "reason": "业务逻辑缺陷是常见问题，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（具体业务场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 198927,
+   "knowledge_point": "Ruby JSON 解析器对无效 Unicode 代理对处理不当导致段错误",
+   "is_ai_likely_known": true,
+   "reason": "Unicode 解析错误是已知问题，AI 可能已知。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（特定框架和版本）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：解析器安全与内存破坏。",
+   "skill_framework": null
+  }
+ ]
+}

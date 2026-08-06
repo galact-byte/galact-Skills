@@ -1,0 +1,419 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 8,
+  "not_worth": 7,
+  "top_ids": [
+   416040,
+   608656,
+   195635,
+   1261413,
+   630903,
+   1020371,
+   716677,
+   52635
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 608656,
+   "knowledge_point": "禁用账户后 GraphQL 端点未同步状态检查导致授权绕过",
+   "is_ai_likely_known": false,
+   "reason": "业务逻辑与 API 层分离导致的状态检查缺失，属于具体实现缺陷，AI 训练数据中不常见。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（所有 API 端点、微服务架构、状态管理场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'账户状态检查一致性'的检测与防御模式。",
+   "skill_framework": {
+    "name": "账户状态检查一致性（禁用/注销后 API 仍可用）",
+    "适用场景": [
+     "GraphQL/REST API 授权",
+     "微服务状态同步",
+     "会话管理"
+    ],
+    "核心原理": [
+     "业务层与 API 层状态检查不同步",
+     "禁用账户后未撤销令牌或未在 API 层校验状态"
+    ],
+    "决策树": [
+     "IF 存在账户禁用/注销功能 AND API 端点未统一校验状态 → 尝试直接调用 API 操作数据"
+    ],
+    "示例": [
+     "禁用账户后直接调用 GraphQL 查询/变更"
+    ],
+    "迁移场景": [
+     "授权绕过",
+     "数据完整性",
+     "账户生命周期管理"
+    ]
+   }
+  },
+  {
+   "id": 195635,
+   "knowledge_point": "URL 解析差异：使用 // 绕过域名检查",
+   "is_ai_likely_known": true,
+   "reason": "// 绕过 URL 检查是常见技巧，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（SSRF、URL 验证、WAF 绕过）",
+   "source_quality": "通用",
+   "worth_skill": true,
+   "suggested_handling": "合并到上层 Skill：'URL 解析差异绕过'，作为子技巧。",
+   "skill_framework": {
+    "name": "URL 解析差异绕过（协议相对 URL、编码、大小写）",
+    "适用场景": [
+     "SSRF 防护",
+     "URL 白名单校验",
+     "WAF 规则"
+    ],
+    "核心原理": [
+     "校验层与请求层对 URL 解析不一致",
+     "协议相对 URL 可绕过基于子串的检查"
+    ],
+    "决策树": [
+     "IF 存在 URL 黑名单/白名单 AND 校验基于子串 → 尝试 // 替代 http://"
+    ],
+    "示例": [
+     "//evil.com 绕过 http:// 检查"
+    ],
+    "迁移场景": [
+     "SSRF",
+     "开放重定向",
+     "CSP 绕过"
+    ]
+   }
+  },
+  {
+   "id": 1261413,
+   "knowledge_point": "HEIC 预览调用 Imagick 导致任意文件读取",
+   "is_ai_likely_known": false,
+   "reason": "HEIC 预览触发 Imagick 的特定行为，属于框架行为利用，AI 训练数据中不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（文件处理库、图像处理、SSRF）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'图像处理库滥用'的检测与防御。",
+   "skill_framework": {
+    "name": "图像处理库滥用（Imagick/ImageMagick 等）",
+    "适用场景": [
+     "文件上传",
+     "图像预览",
+     "SSRF 防护"
+    ],
+    "核心原理": [
+     "图像处理库支持多种格式，可能触发危险功能",
+     "通过 SVG 等格式的 xlink:href 读取文件"
+    ],
+    "决策树": [
+     "IF 存在图像处理功能 AND 支持 HEIC/SVG 等格式 → 尝试上传恶意文件触发文件读取"
+    ],
+    "示例": [
+     "上传恶意 HEIC 文件，通过 SVG 的 xlink:href 读取 /etc/passwd"
+    ],
+    "迁移场景": [
+     "文件读取",
+     "SSRF",
+     "RCE"
+    ]
+   }
+  },
+  {
+   "id": 1149144,
+   "knowledge_point": "SSRF 渲染路径导致 XSS 并利用点击劫持绕过 CSRF",
+   "is_ai_likely_known": true,
+   "reason": "SSRF 导致 XSS 和点击劫持是常见组合，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（SSRF 与 XSS 组合攻击）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 630903,
+   "knowledge_point": "OpenSSL 配置文件搜索路径导致 DLL 劫持",
+   "is_ai_likely_known": false,
+   "reason": "OpenSSL 搜索当前目录配置和 DLL 的行为，属于特定库的路径搜索行为，AI 训练数据中不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（DLL 劫持、路径搜索顺序、配置加载）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'路径搜索顺序滥用'的检测与防御。",
+   "skill_framework": {
+    "name": "路径搜索顺序滥用（DLL 劫持、配置文件劫持）",
+    "适用场景": [
+     "Windows 应用安全",
+     "DLL 加载",
+     "配置文件加载"
+    ],
+    "核心原理": [
+     "应用搜索当前目录的 DLL 或配置文件",
+     "低权限用户可放置恶意文件，管理员运行时被加载"
+    ],
+    "决策树": [
+     "IF 应用加载 DLL/配置文件 AND 搜索路径包含当前目录 → 尝试放置恶意文件"
+    ],
+    "示例": [
+     "创建恶意 openssl.cnf 和 DLL 实现代码执行"
+    ],
+    "迁移场景": [
+     "权限提升",
+     "代码执行",
+     "供应链攻击"
+    ]
+   }
+  },
+  {
+   "id": 1020371,
+   "knowledge_point": "账户关闭后预签名 URL 未失效导致文件上传",
+   "is_ai_likely_known": false,
+   "reason": "预签名 URL 的生命周期管理缺陷，属于具体实现问题，AI 训练数据中不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（预签名 URL、令牌撤销、云存储）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'预签名 URL 生命周期管理'的检测与防御。",
+   "skill_framework": {
+    "name": "预签名 URL 生命周期管理（账户关闭后仍有效）",
+    "适用场景": [
+     "云存储（AWS S3、Azure Blob）",
+     "文件上传",
+     "令牌撤销"
+    ],
+    "核心原理": [
+     "预签名 URL 在签发后独立于账户状态",
+     "账户关闭时未撤销相关令牌"
+    ],
+    "决策树": [
+     "IF 存在预签名 URL 功能 AND 账户关闭未撤销令牌 → 尝试重放上传请求"
+    ],
+    "示例": [
+     "关闭账户后使用旧预签名 URL 上传文件"
+    ],
+    "迁移场景": [
+     "数据完整性",
+     "授权绕过",
+     "云安全"
+    ]
+   }
+  },
+  {
+   "id": 416040,
+   "knowledge_point": "浏览器协议权限模型缺陷：url: 前缀嵌套绕过",
+   "is_ai_likely_known": false,
+   "reason": "Brave 浏览器特有的协议权限模型缺陷，AI 训练数据中不常见，且反直觉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（浏览器权限模型、协议处理、外部应用启动）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'协议权限模型绕过'的检测与防御。",
+   "skill_framework": {
+    "name": "浏览器协议权限模型绕过（url: 前缀嵌套）",
+    "适用场景": [
+     "浏览器安全",
+     "协议处理",
+     "外部应用启动"
+    ],
+    "核心原理": [
+     "权限检查只匹配外层协议，未解析最终协议",
+     "url: 前缀可嵌套任意协议，绕过用户确认"
+    ],
+    "决策树": [
+     "IF 浏览器支持自定义协议 AND 权限模型基于前缀匹配 → 尝试 url:mailto: 等嵌套"
+    ],
+    "示例": [
+     "window.open('url:mailto:'+payload) 免确认启动邮件客户端"
+    ],
+    "迁移场景": [
+     "浏览器漏洞",
+     "钓鱼攻击",
+     "系统崩溃"
+    ]
+   }
+  },
+  {
+   "id": 716677,
+   "knowledge_point": "CDN 域名分配机制滥用导致子域名接管",
+   "is_ai_likely_known": false,
+   "reason": "Fastly freetls 域名可被任意账户注册，属于特定 CDN 的分配机制，AI 训练数据中不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（子域名接管、CSP 绕过、CDN 配置）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'CDN 域名分配机制滥用'的检测与防御。",
+   "skill_framework": {
+    "name": "CDN 域名分配机制滥用（freetls 子域名接管）",
+    "适用场景": [
+     "子域名接管",
+     "CSP 绕过",
+     "CDN 配置审计"
+    ],
+    "核心原理": [
+     "CDN 提供可注册的免费域名，如 *.freetls.fastly.net",
+     "攻击者注册目标域名对应的子域名，获得控制权"
+    ],
+    "决策树": [
+     "IF 目标使用 CDN 免费域名 AND 该域名可被第三方注册 → 尝试注册并验证控制权"
+    ],
+    "示例": [
+     "注册 gl-canary.freetls.fastly.net 接管 GitLab 的 CSP 白名单域名"
+    ],
+    "迁移场景": [
+     "子域名接管",
+     "CSP 绕过",
+     "钓鱼"
+    ]
+   }
+  },
+  {
+   "id": 52635,
+   "knowledge_point": "Referer 检查绕过：使用 iframe 和 about:blank 剥离 Referer",
+   "is_ai_likely_known": true,
+   "reason": "剥离 Referer 绕过 CSRF 是常见技巧，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（CSRF 防护、Referer 检查）",
+   "source_quality": "通用",
+   "worth_skill": true,
+   "suggested_handling": "合并到上层 Skill：'CSRF 防护绕过'，作为子技巧。",
+   "skill_framework": {
+    "name": "CSRF 防护绕过（Referer 剥离）",
+    "适用场景": [
+     "CSRF 防护",
+     "Referer 检查",
+     "表单提交"
+    ],
+    "核心原理": [
+     "服务器依赖 Referer 检查，但 Referer 可被剥离",
+     "使用 iframe 和 about:blank 可发送无 Referer 的请求"
+    ],
+    "决策树": [
+     "IF 存在 CSRF 防护基于 Referer AND 无 token → 尝试剥离 Referer 提交请求"
+    ],
+    "示例": [
+     "使用 <iframe src='about:blank'> 提交表单"
+    ],
+    "迁移场景": [
+     "CSRF",
+     "点击劫持",
+     "请求伪造"
+    ]
+   }
+  },
+  {
+   "id": 199779,
+   "knowledge_point": "利用 CSP 允许的域名进行数据外泄（Google Analytics）",
+   "is_ai_likely_known": true,
+   "reason": "利用 CSP 白名单域名进行数据外泄是常见思路，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（CSP 绕过、数据外泄）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1066135,
+   "knowledge_point": "CTF 解题 writeup 中的多漏洞组合",
+   "is_ai_likely_known": true,
+   "reason": "CTF 题目中的漏洞利用是教学性质，AI 已知。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（教学场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 2104566,
+   "knowledge_point": "Node.js 权限策略绕过：module.constructor.createRequire()",
+   "is_ai_likely_known": false,
+   "reason": "Node.js 内部机制绕过权限策略，属于框架行为利用，AI 训练数据中不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（Node.js 安全、权限模型、模块加载）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'Node.js 权限策略绕过'的检测与防御。",
+   "skill_framework": {
+    "name": "Node.js 权限策略绕过（createRequire）",
+    "适用场景": [
+     "Node.js 应用安全",
+     "权限策略",
+     "模块加载"
+    ],
+    "核心原理": [
+     "权限策略限制模块访问，但 createRequire 可创建指向其他模块的 require 函数",
+     "绕过权限检查加载未授权模块"
+    ],
+    "决策树": [
+     "IF 使用 Node.js 权限策略 AND 应用允许用户控制模块路径 → 尝试 createRequire 绕过"
+    ],
+    "示例": [
+     "module.constructor.createRequire() 加载受限模块"
+    ],
+    "迁移场景": [
+     "RCE",
+     "权限提升",
+     "供应链攻击"
+    ]
+   }
+  },
+  {
+   "id": 1187156,
+   "knowledge_point": "RDoc 生成 HTML 时转义不完整导致 XSS",
+   "is_ai_likely_known": false,
+   "reason": "RDoc 特定实现缺陷，AI 训练数据中不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（文档生成工具、XSS 过滤）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层 Skill：'XSS 过滤绕过'，作为子技巧。",
+   "skill_framework": null
+  },
+  {
+   "id": 171670,
+   "knowledge_point": "HTML5 实体绕过 xss_clean() 正则过滤",
+   "is_ai_likely_known": false,
+   "reason": "利用 HTML5 标准实体绕过正则过滤器，属于特定过滤器的缺陷，AI 训练数据中不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（XSS 过滤、WAF 绕过、实体编码）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'HTML 实体绕过过滤器'的检测与防御。",
+   "skill_framework": {
+    "name": "HTML 实体绕过过滤器（&NewLine; 等）",
+    "适用场景": [
+     "XSS 过滤",
+     "WAF 绕过",
+     "输入验证"
+    ],
+    "核心原理": [
+     "正则过滤器未考虑 HTML5 标准实体",
+     "实体解码后形成危险协议或标签"
+    ],
+    "决策树": [
+     "IF 存在基于正则的 XSS 过滤器 AND 未处理实体 → 尝试使用 &NewLine; 等实体绕过"
+    ],
+    "示例": [
+     "javascript&colon;alert(1) 绕过 javascript: 检查"
+    ],
+    "迁移场景": [
+     "XSS",
+     "WAF 绕过",
+     "输入过滤"
+    ]
+   }
+  },
+  {
+   "id": 80298,
+   "knowledge_point": "反斜杠转义绕过单引号过滤导致 XSS",
+   "is_ai_likely_known": true,
+   "reason": "反斜杠转义绕过是常见技巧，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（XSS 过滤、输入验证）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  }
+ ]
+}

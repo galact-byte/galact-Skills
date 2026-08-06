@@ -1,0 +1,332 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 6,
+  "not_worth": 9,
+  "top_ids": [
+   156520,
+   1848176,
+   317243,
+   1848730,
+   411075,
+   199286
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 96007,
+   "knowledge_point": "子域名接管：未认领的 Heroku 应用",
+   "is_ai_likely_known": true,
+   "reason": "子域名接管是常见漏洞类型，AI 训练数据充足，直接提问即可获得检测和利用方法。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他云服务如 AWS、Azure 的未认领资源）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1848176,
+   "knowledge_point": "IDOR：通过 API 端点直接修改资源 ID 枚举用户信息",
+   "is_ai_likely_known": true,
+   "reason": "IDOR 是常见漏洞，AI 已知其原理和检测方法，但此案例提供了完整的复现步骤和影响范围，可作为系统化测试的参考。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（适用于所有 REST API 资源 ID 枚举场景）",
+   "source_quality": "中",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 IDOR 检测的决策树和测试步骤，强调对象级授权验证。",
+   "skill_framework": {
+    "name": "IDOR 检测与利用",
+    "适用场景": [
+     "REST API 资源访问",
+     "用户数据枚举",
+     "权限验证测试"
+    ],
+    "核心原理": [
+     "对象级授权缺失",
+     "资源 ID 可预测或可枚举"
+    ],
+    "决策树": [
+     "IF API 端点接受资源 ID AND 未验证所有权 → 尝试遍历 ID 并观察响应差异"
+    ],
+    "示例": [
+     "GET /api/v1/permission/user/{id}/ 遍历 ID 获取他人信息"
+    ],
+    "迁移场景": [
+     "Web 应用",
+     "移动应用后端",
+     "微服务 API"
+    ]
+   }
+  },
+  {
+   "id": 317243,
+   "knowledge_point": "window.opener 绕过：利用换行符绕过 rel=noreferrer 添加",
+   "is_ai_likely_known": false,
+   "reason": "换行符绕过正则或解析逻辑属于具体实现细节，AI 可能不熟悉，需要专门知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他链接属性过滤绕过，如 rel=noopener）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化链接属性过滤绕过的原理和测试方法。",
+   "skill_framework": {
+    "name": "链接属性过滤绕过（rel=noreferrer/noopener）",
+    "适用场景": [
+     "XSS 防护",
+     "Tabnabbing 防护",
+     "链接净化"
+    ],
+    "核心原理": [
+     "解析差异：换行符等特殊字符可绕过正则匹配",
+     "浏览器对链接属性的处理与服务器解析不一致"
+    ],
+    "决策树": [
+     "IF 应用添加 rel=noreferrer 但未严格解析链接 → 尝试在 URL 中插入换行符等特殊字符"
+    ],
+    "示例": [
+     "构造包含换行符的链接，点击后新页面可访问 window.opener"
+    ],
+    "迁移场景": [
+     "XSS 防护",
+     "CSRF 防护",
+     "链接重定向"
+    ]
+   }
+  },
+  {
+   "id": 582349,
+   "knowledge_point": "内部端点未继承资源级权限导致信息泄露",
+   "is_ai_likely_known": true,
+   "reason": "内部端点授权缺失是常见问题，AI 已知其原理，但此案例可抽象为通用模式。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他内部 API 端点）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：API 授权一致性检查。",
+   "skill_framework": null
+  },
+  {
+   "id": 1434967,
+   "knowledge_point": "文档链接指向未注册 GitHub 账户导致账户接管",
+   "is_ai_likely_known": true,
+   "reason": "利用未注册账户进行接管是已知攻击模式，AI 可能了解，但此案例展示了文档信任链的利用，有一定启发性。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（特定于文档链接和 GitHub 账户）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 156520,
+   "knowledge_point": "管理端点凭据与 API key 解耦且无撤销机制，导致低权成员可永久访问管理功能",
+   "is_ai_likely_known": false,
+   "reason": "这种凭据解耦和不可撤销的组合是具体实现缺陷，AI 可能不熟悉，需要专门知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何管理端点凭据管理场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化管理凭据安全设计原则和检测方法。",
+   "skill_framework": {
+    "name": "管理凭据安全设计",
+    "适用场景": [
+     "管理 API 设计",
+     "权限分离",
+     "凭据生命周期管理"
+    ],
+    "核心原理": [
+     "管理凭据必须独立于业务凭据且可吊销",
+     "敏感凭据不应出现在前端源码",
+     "成员变更应级联吊销权限"
+    ],
+    "决策树": [
+     "IF 存在管理端点 AND 凭据来自前端源码 → 检查是否可被低权用户获取",
+     "IF 凭据不可撤销 → 风险高"
+    ],
+    "示例": [
+     "Algolia /1/admin/* 端点 signature 泄露，成员移除后仍有效"
+    ],
+    "迁移场景": [
+     "SaaS 平台",
+     "云服务管理",
+     "内部工具"
+    ]
+   }
+  },
+  {
+   "id": 2001913,
+   "knowledge_point": "邮件系统信任 FROM 字段导致伪造工单",
+   "is_ai_likely_known": true,
+   "reason": "邮件伪造是常见问题，AI 已知 SPF/DKIM 等防护，此案例无新意。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（特定于邮件系统）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 519059,
+   "knowledge_point": "客户端状态覆盖服务端设置导致隐私设置失效",
+   "is_ai_likely_known": true,
+   "reason": "跨端状态同步问题常见，AI 已知服务端应作为权威，此案例缺少技术细节。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他客户端-服务端同步场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：客户端-服务端状态一致性检查。",
+   "skill_framework": null
+  },
+  {
+   "id": 1848730,
+   "knowledge_point": "CORS 配置错误：反射任意 Origin 并允许凭据",
+   "is_ai_likely_known": true,
+   "reason": "CORS 配置错误是常见漏洞，AI 已知其原理和检测方法，但此案例提供了完整 PoC，可系统化测试。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（适用于所有 CORS 配置检查）",
+   "source_quality": "中",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 CORS 配置检测的决策树和利用方法。",
+   "skill_framework": {
+    "name": "CORS 配置错误检测与利用",
+    "适用场景": [
+     "跨域资源共享配置",
+     "API 安全测试",
+     "浏览器安全"
+    ],
+    "核心原理": [
+     "服务器反射任意 Origin 且允许凭据",
+     "浏览器携带 Cookie 发送跨域请求"
+    ],
+    "决策树": [
+     "IF 响应包含 Access-Control-Allow-Origin: <任意 Origin> AND Access-Control-Allow-Credentials: true → 可跨域读取数据"
+    ],
+    "示例": [
+     "构造恶意页面，利用反射 Origin 读取用户信息"
+    ],
+    "迁移场景": [
+     "Web 应用",
+     "API 网关",
+     "微服务"
+    ]
+   }
+  },
+  {
+   "id": 127948,
+   "knowledge_point": "存储型 XSS：通过 Referer 头注入日志，影响管理员",
+   "is_ai_likely_known": true,
+   "reason": "存储型 XSS 是常见漏洞，AI 已知其原理，此案例无新意。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他日志注入场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：XSS 检测与防护。",
+   "skill_framework": null
+  },
+  {
+   "id": 411075,
+   "knowledge_point": "业务逻辑缺陷：并发请求绕过数量限制删除他人帖子",
+   "is_ai_likely_known": true,
+   "reason": "竞争条件绕过限制是常见业务逻辑漏洞，AI 已知其原理，但此案例可抽象为通用模式。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（适用于任何基于数量限制的业务逻辑）",
+   "source_quality": "中",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化竞争条件检测和利用方法。",
+   "skill_framework": {
+    "name": "竞争条件绕过业务限制",
+    "适用场景": [
+     "限流机制",
+     "操作次数限制",
+     "投票/报告功能"
+    ],
+    "核心原理": [
+     "并发请求绕过单次检查",
+     "服务端未原子化操作"
+    ],
+    "决策树": [
+     "IF 存在基于数量的限制 AND 操作非原子 → 尝试并发提交多个请求"
+    ],
+    "示例": [
+     "并发提交滥用报告，触发自动删除"
+    ],
+    "迁移场景": [
+     "Web 应用",
+     "API 限流",
+     "业务逻辑测试"
+    ]
+   }
+  },
+  {
+   "id": 1360593,
+   "knowledge_point": "目录遍历上传 PHP 文件实现 RCE（CVE-2021-40870）",
+   "is_ai_likely_known": true,
+   "reason": "已知 CVE 的利用，AI 可能了解，但此案例涉及多组件，可抽象为通用模式。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他文件上传场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：文件上传安全。",
+   "skill_framework": null
+  },
+  {
+   "id": 1691501,
+   "knowledge_point": "盲 SSRF：通过图片 URL 下载器访问内网并泄露信息",
+   "is_ai_likely_known": true,
+   "reason": "SSRF 是常见漏洞，AI 已知其原理和检测方法，但此案例展示了完整利用链，可系统化测试。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（适用于所有 URL 下载功能）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：SSRF 检测与利用。",
+   "skill_framework": null
+  },
+  {
+   "id": 199286,
+   "knowledge_point": "API 端点未实施与 UI 相同的权限检查导致越权",
+   "is_ai_likely_known": true,
+   "reason": "UI 与 API 权限不一致是常见问题，AI 已知其原理，但此案例可抽象为通用模式。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（适用于所有 API 与 UI 并存的系统）",
+   "source_quality": "中",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 API 与 UI 权限一致性检查方法。",
+   "skill_framework": {
+    "name": "API 与 UI 权限一致性检查",
+    "适用场景": [
+     "Web 应用",
+     "移动应用后端",
+     "微服务"
+    ],
+    "核心原理": [
+     "UI 可能隐藏功能但 API 未限制",
+     "API 端点应独立验证权限"
+    ],
+    "决策树": [
+     "IF 存在 UI 操作 AND 对应 API 端点 → 比较权限检查是否一致",
+     "IF 不一致 → 尝试直接调用 API 绕过 UI 限制"
+    ],
+    "示例": [
+     "组管理员通过 API 移除用户，绕过 UI 限制"
+    ],
+    "迁移场景": [
+     "REST API",
+     "GraphQL",
+     "内部工具"
+    ]
+   }
+  },
+  {
+   "id": 100500,
+   "knowledge_point": "DOM XSS：利用 URL 片段不编码特性注入 payload",
+   "is_ai_likely_known": true,
+   "reason": "DOM XSS 是常见漏洞，AI 已知其原理，但此案例展示了浏览器行为利用，有一定启发性。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他 DOM XSS 场景）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：XSS 检测与防护。",
+   "skill_framework": null
+  }
+ ]
+}

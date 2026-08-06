@@ -1,0 +1,378 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 8,
+  "not_worth": 7,
+  "top_ids": [
+   350401,
+   532225,
+   192940,
+   1173436,
+   878394,
+   1702859,
+   681617,
+   134299
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 350401,
+   "knowledge_point": "Node.js 反序列化中利用 IIFE 和全局对象访问执行任意代码",
+   "is_ai_likely_known": false,
+   "reason": "虽然反序列化漏洞是通用知识，但结合 Node.js 的 IIFE 和全局对象访问的具体利用方式在训练数据中不常见，需要特定环境知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他 Node.js 反序列化场景，如 JSON.parse 的 reviver 函数）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 Node.js 反序列化中利用 IIFE 和全局对象访问的通用模式。",
+   "skill_framework": {
+    "name": "Node.js 反序列化代码执行（IIFE 与全局对象）",
+    "适用场景": [
+     "Node.js 应用反序列化不可信数据",
+     "JSON.parse 或 eval 场景"
+    ],
+    "核心原理": [
+     "反序列化时执行构造的代码",
+     "利用 IIFE 立即执行函数和全局对象访问绕过限制"
+    ],
+    "决策树": [
+     "IF 存在反序列化入口 AND 使用 eval 或 Function 构造 → 尝试注入 IIFE 访问全局对象"
+    ],
+    "示例": [
+     "{\"rce\":\"this.constructor.constructor('return process')().mainModule.require('child_process').execSync('id')\"}"
+    ],
+    "迁移场景": [
+     "Node.js 应用",
+     "Electron 应用"
+    ]
+   }
+  },
+  {
+   "id": 532225,
+   "knowledge_point": "Android deeplink 中 navigation_bar_type 参数绕过 host 校验",
+   "is_ai_likely_known": false,
+   "reason": "该绕过技术特定于 Android deeplink 处理，且涉及具体参数，训练数据中不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他移动端 deeplink 校验绕过场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 deeplink 参数绕过 host 校验的通用模式。",
+   "skill_framework": {
+    "name": "Android deeplink 校验绕过（参数注入）",
+    "适用场景": [
+     "Android 应用 deeplink 处理",
+     "WebView 加载控制"
+    ],
+    "核心原理": [
+     "deeplink 参数影响导航行为",
+     "host 校验不完整，可通过额外参数绕过"
+    ],
+    "决策树": [
+     "IF deeplink 有 host 校验 AND 存在额外参数影响导航 → 尝试修改参数绕过"
+    ],
+    "示例": [
+     "intent://example.com/#Intent;scheme=https;S.navigation_bar_type=transparent;end"
+    ],
+    "迁移场景": [
+     "移动端应用",
+     "WebView 安全"
+    ]
+   }
+  },
+  {
+   "id": 192940,
+   "knowledge_point": "远程文件包含（RFI）导致恶意文件托管、XSS 和 SSRF",
+   "is_ai_likely_known": true,
+   "reason": "RFI 是通用漏洞类型，AI 已知基本概念和利用方式。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他文件包含场景，但具体利用取决于应用）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1173436,
+   "knowledge_point": "默认配置导致隐私数据泄露（联邦云 ID 发送到查找服务器）",
+   "is_ai_likely_known": false,
+   "reason": "该案例揭示了默认配置的隐私缺陷，属于具体产品行为，AI 可能不知道。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他默认配置导致数据泄露的场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化默认配置安全审计的通用模式。",
+   "skill_framework": {
+    "name": "默认配置安全审计（隐私数据泄露）",
+    "适用场景": [
+     "云服务默认配置",
+     "隐私设置默认值"
+    ],
+    "核心原理": [
+     "默认配置可能忽略用户隐私设置",
+     "后台任务无条件发送数据"
+    ],
+    "决策树": [
+     "IF 存在默认配置 AND 涉及数据共享 → 检查是否尊重用户可见性设置"
+    ],
+    "示例": [
+     "Nextcloud 默认发送联邦云 ID 到查找服务器"
+    ],
+    "迁移场景": [
+     "SaaS 应用",
+     "社交网络"
+    ]
+   }
+  },
+  {
+   "id": 878394,
+   "knowledge_point": "JavaScript 原型污染（通过 __proto__ 属性）",
+   "is_ai_likely_known": true,
+   "reason": "原型污染是 Node.js 生态的已知漏洞类型，AI 可能了解基本概念。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何使用 merge 或类似函数的 JavaScript 应用）",
+   "source_quality": "通用",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化原型污染的检测和利用模式，因为高频且可迁移。",
+   "skill_framework": {
+    "name": "JavaScript 原型污染检测与利用",
+    "适用场景": [
+     "Node.js 应用",
+     "前端库"
+    ],
+    "核心原理": [
+     "merge 函数未过滤 __proto__ 等键",
+     "污染 Object.prototype 影响所有对象"
+    ],
+    "决策树": [
+     "IF 存在递归合并对象函数 AND 未过滤危险键 → 尝试构造 __proto__ payload"
+    ],
+    "示例": [
+     "JSON.parse('{\"__proto__\":{\"polluted\":true}}')"
+    ],
+    "迁移场景": [
+     "Node.js",
+     "浏览器扩展"
+    ]
+   }
+  },
+  {
+   "id": 1702859,
+   "knowledge_point": "Ruby JSON.load 反序列化导致 ReDoS 或意外对象",
+   "is_ai_likely_known": false,
+   "reason": "JSON.load 的类加载特性是 Ruby 特有行为，AI 可能不知道具体利用。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他使用 JSON.load 的 Ruby 应用）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 Ruby JSON.load 反序列化风险。",
+   "skill_framework": {
+    "name": "Ruby JSON.load 反序列化风险",
+    "适用场景": [
+     "Ruby 应用使用 JSON.load 处理不可信数据"
+    ],
+    "核心原理": [
+     "JSON.load 可加载任意类",
+     "构造 json_class 字段触发"
+    ],
+    "决策树": [
+     "IF 使用 JSON.load AND 输入不可信 → 尝试构造 json_class 字段"
+    ],
+    "示例": [
+     "{\"json_class\":\"Regexp\",\"source\":\"a+\",\"options\":0}"
+    ],
+    "迁移场景": [
+     "Ruby on Rails",
+     "Sinatra"
+    ]
+   }
+  },
+  {
+   "id": 745171,
+   "knowledge_point": "未认证 API 暴露敏感信息（测试环境未隔离）",
+   "is_ai_likely_known": true,
+   "reason": "未认证 API 是常见问题，AI 已知基本概念。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他 API 安全场景，但具体利用取决于环境）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 681617,
+   "knowledge_point": "通过 torrent 文件名在 localhost 上存储 XSS",
+   "is_ai_likely_known": false,
+   "reason": "该攻击链涉及 torrent 下载器和本地服务信任，属于特定场景，AI 可能不知道。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他下载文件名注入场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化本地服务信任和文件名注入的通用模式。",
+   "skill_framework": {
+    "name": "本地服务信任与文件名注入（存储 XSS）",
+    "适用场景": [
+     "下载管理器",
+     "本地 Web 服务"
+    ],
+    "核心原理": [
+     "文件名未过滤",
+     "浏览器信任 localhost 上下文"
+    ],
+    "决策树": [
+     "IF 存在下载功能 AND 文件名未过滤 → 尝试注入脚本"
+    ],
+    "示例": [
+     "<script>alert(1)</script>.torrent"
+    ],
+    "迁移场景": [
+     "浏览器扩展",
+     "桌面应用"
+    ]
+   }
+  },
+  {
+   "id": 134299,
+   "knowledge_point": "多态关联 IDOR（noteable_id 跨项目引用）",
+   "is_ai_likely_known": false,
+   "reason": "多态关联的 IDOR 利用是特定于 Rails 等框架的，AI 可能不知道具体绕过。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他多态关联场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化多态关联 IDOR 的检测和利用。",
+   "skill_framework": {
+    "name": "多态关联 IDOR 检测与利用",
+    "适用场景": [
+     "Rails 应用",
+     "其他使用多态关联的框架"
+    ],
+    "核心原理": [
+     "noteable_id 未校验归属",
+     "多态关联允许跨项目引用"
+    ],
+    "决策树": [
+     "IF 存在多态关联 AND 未校验对象归属 → 尝试修改 ID 引用其他对象"
+    ],
+    "示例": [
+     "POST /api/v4/projects/1/notes with noteable_id=2"
+    ],
+    "迁移场景": [
+     "Ruby on Rails",
+     "Laravel"
+    ]
+   }
+  },
+  {
+   "id": 621308,
+   "knowledge_point": "mruby 类型混淆导致空指针解引用",
+   "is_ai_likely_known": false,
+   "reason": "mruby 特定行为，AI 可能不知道。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（特定于 mruby）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 816560,
+   "knowledge_point": "SQL 注入通过 xp_cmdshell 实现 RCE",
+   "is_ai_likely_known": true,
+   "reason": "SQL 注入和 xp_cmdshell 是通用知识，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他 SQL 注入场景，但具体利用取决于数据库）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1454002,
+   "knowledge_point": "Android 导出 Activity 通过 URI 权限授予读取私有文件",
+   "is_ai_likely_known": false,
+   "reason": "该攻击链涉及 Android 组件间通信和 URI 权限，AI 可能不知道具体利用。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他 Android 组件间通信场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 Android 导出组件和 URI 权限的利用。",
+   "skill_framework": {
+    "name": "Android 导出组件与 URI 权限利用",
+    "适用场景": [
+     "Android 应用组件间通信",
+     "文件访问控制"
+    ],
+    "核心原理": [
+     "导出 Activity 可被外部调用",
+     "URI 权限授予可读取私有文件"
+    ],
+    "决策树": [
+     "IF 存在导出组件 AND 接受 URI → 尝试传入 file:// URI 读取私有文件"
+    ],
+    "示例": [
+     "intent://... with SEND_MULTIPLE and file:///data/data/app/files/secret"
+    ],
+    "迁移场景": [
+     "Android 应用",
+     "移动安全"
+    ]
+   }
+  },
+  {
+   "id": 1372216,
+   "knowledge_point": "IDOR 通过修改对象 ID 泄露数据",
+   "is_ai_likely_known": true,
+   "reason": "IDOR 是通用漏洞类型，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他 IDOR 场景，但具体利用取决于应用）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 148300,
+   "knowledge_point": "缓存投毒通过 Host 头导致存储 XSS",
+   "is_ai_likely_known": false,
+   "reason": "缓存投毒是较高级技术，AI 可能不知道具体细节。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他缓存投毒场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化缓存投毒和 Host 头校验的通用模式。",
+   "skill_framework": {
+    "name": "缓存投毒（Host 头注入）",
+    "适用场景": [
+     "Web 缓存",
+     "CDN"
+    ],
+    "核心原理": [
+     "缓存键未包含 Host 头",
+     "恶意 Host 头被缓存"
+    ],
+    "决策树": [
+     "IF 存在缓存 AND 缓存键未包含 Host 头 → 尝试修改 Host 头投毒"
+    ],
+    "示例": [
+     "GET / HTTP/1.1 Host: evil.com"
+    ],
+    "迁移场景": [
+     "Web 应用",
+     "CDN 配置"
+    ]
+   }
+  },
+  {
+   "id": 965914,
+   "knowledge_point": "libuv realpath 缓冲区溢出（pathconf 失败回退）",
+   "is_ai_likely_known": false,
+   "reason": "该漏洞涉及系统调用行为，AI 可能不知道。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（特定于 libuv）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  }
+ ]
+}

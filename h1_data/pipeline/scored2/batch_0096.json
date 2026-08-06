@@ -1,0 +1,307 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 5,
+  "not_worth": 10,
+  "top_ids": [
+   268113,
+   1559262,
+   302651,
+   495382,
+   2429894
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 268113,
+   "knowledge_point": "Tor隐藏服务去匿名化：伪造rendezvous point绕过验证",
+   "is_ai_likely_known": false,
+   "reason": "Tor协议内部细节和攻击手法在训练数据中不常见，需要深入理解协议设计缺陷。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他匿名网络或P2P协议的安全分析）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化Tor协议攻击面分析框架，包括协议验证缺失的检测方法。",
+   "skill_framework": {
+    "name": "匿名网络协议攻击面分析（以Tor为例）",
+    "适用场景": [
+     "匿名网络协议安全审计",
+     "P2P协议设计缺陷分析"
+    ],
+    "核心原理": [
+     "协议层未验证关键字段一致性（如IP与指纹）",
+     "恶意节点可操纵路由路径"
+    ],
+    "决策树": [
+     "IF 目标使用Tor或类似匿名网络 → 检查rendezvous point验证机制",
+     "IF 存在验证缺失 → 尝试伪造IP和指纹"
+    ],
+    "示例": [
+     "伪造hsdir提供的rendezvous point，结合恶意guard实现去匿名化"
+    ],
+    "迁移场景": [
+     "I2P",
+     "Freenet",
+     "其他P2P匿名通信"
+    ]
+   }
+  },
+  {
+   "id": 242765,
+   "knowledge_point": "邀请令牌未绑定邮箱导致账户接管",
+   "is_ai_likely_known": true,
+   "reason": "这是常见的业务逻辑漏洞，AI通常知道邀请链接应绑定邮箱。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他邀请/注册流程）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1356,
+   "knowledge_point": "PHP imagecrop()整数溢出导致堆溢出",
+   "is_ai_likely_known": false,
+   "reason": "特定函数的具体漏洞细节在训练数据中不常见，但属于内存破坏类通用知识。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（高度依赖具体函数和代码）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1184379,
+   "knowledge_point": "javascript: URL协议绕过导致XSS",
+   "is_ai_likely_known": true,
+   "reason": "javascript: URL绕过是常见XSS技巧，AI普遍知道。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他URL scheme过滤场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1559262,
+   "knowledge_point": "Rails数组参数解析导致批量token验证绕过速率限制",
+   "is_ai_likely_known": false,
+   "reason": "框架对数组参数的特殊处理属于框架行为利用，训练数据中不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他框架的数组参数处理，如PHP、Node.js）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'参数类型混淆'的检测和利用方法。",
+   "skill_framework": {
+    "name": "参数类型混淆绕过（数组参数注入）",
+    "适用场景": [
+     "Web应用参数校验",
+     "速率限制绕过",
+     "批量操作漏洞"
+    ],
+    "核心原理": [
+     "框架将数组参数解析为SQL IN子句",
+     "校验层与执行层对参数类型理解不一致"
+    ],
+    "决策树": [
+     "IF 存在参数校验 AND 框架支持数组参数 → 尝试将参数改为数组",
+     "IF 查询变为IN子句 → 批量验证或绕过限制"
+    ],
+    "示例": [
+     "token[]=a&token[]=b → WHERE token IN ('a','b')"
+    ],
+    "迁移场景": [
+     "Rails",
+     "Laravel",
+     "Express"
+    ]
+   }
+  },
+  {
+   "id": 1276742,
+   "knowledge_point": "data: URL SVG存储型XSS",
+   "is_ai_likely_known": true,
+   "reason": "data: URL和SVG XSS是常见技巧，AI普遍知道。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他富文本编辑器）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 390362,
+   "knowledge_point": "file://和brave://同源导致本地文件读取",
+   "is_ai_likely_known": false,
+   "reason": "特定浏览器的同源策略定义差异，训练数据中不常见。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（高度依赖特定浏览器）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 248659,
+   "knowledge_point": "PHP WDDX反序列化越界读",
+   "is_ai_likely_known": false,
+   "reason": "特定库的边界检查缺陷，训练数据中不常见。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（高度依赖具体库）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 302651,
+   "knowledge_point": "重定向跟随导致凭据泄露",
+   "is_ai_likely_known": false,
+   "reason": "客户端自动携带Authorization头到任意域的行为，训练数据中不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何自动跟随重定向的客户端）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'重定向跟随凭据泄露'的检测和防御。",
+   "skill_framework": {
+    "name": "重定向跟随凭据泄露检测",
+    "适用场景": [
+     "客户端安全测试",
+     "开放重定向漏洞利用",
+     "凭据保护"
+    ],
+    "核心原理": [
+     "客户端在重定向时自动携带Authorization头",
+     "重定向到攻击者域导致凭据泄露"
+    ],
+    "决策树": [
+     "IF 客户端支持自动重定向 AND 请求包含凭据 → 测试重定向到外部域",
+     "IF 凭据被发送 → 存在泄露风险"
+    ],
+    "示例": [
+     "Burp Repeater跟随重定向发送Basic Auth到攻击者域"
+    ],
+    "迁移场景": [
+     "浏览器",
+     "API客户端",
+     "爬虫"
+    ]
+   }
+  },
+  {
+   "id": 16330,
+   "knowledge_point": "Web漏洞到BGP路由注入的跨组件攻击链",
+   "is_ai_likely_known": false,
+   "reason": "跨Web和BGP的攻击链在训练数据中不常见，需要多领域知识。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（高度依赖特定网络设备）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1694304,
+   "knowledge_point": "点赞端点未验证可见性结合数据导出泄露Circle推文",
+   "is_ai_likely_known": true,
+   "reason": "访问控制缺失是常见漏洞，AI普遍知道。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他社交平台）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 495382,
+   "knowledge_point": "ShellExecute对URL和命令解析差异导致命令注入",
+   "is_ai_likely_known": false,
+   "reason": "桌面应用对系统调用的误用，训练数据中不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他使用ShellExecute或类似API的应用）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'系统调用解析差异'的检测和利用。",
+   "skill_framework": {
+    "name": "系统调用解析差异命令注入",
+    "适用场景": [
+     "桌面应用安全测试",
+     "命令注入漏洞挖掘"
+    ],
+    "核心原理": [
+     "ShellExecute将URL和命令混合解析",
+     "用户输入可被解释为命令"
+    ],
+    "决策树": [
+     "IF 应用使用ShellExecute或类似API AND 用户输入可控制URL → 尝试注入命令",
+     "IF 命令被执行 → 存在漏洞"
+    ],
+    "示例": [
+     "设置搜索引擎为恶意命令，选择文本触发执行"
+    ],
+    "迁移场景": [
+     "Windows API",
+     "其他系统调用"
+    ]
+   }
+  },
+  {
+   "id": 1063039,
+   "knowledge_point": "phar://流包装器反序列化",
+   "is_ai_likely_known": true,
+   "reason": "phar反序列化是PHP安全中的常见知识，AI普遍知道。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他PHP应用）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 2429894,
+   "knowledge_point": "libuv域名解析漏洞导致SSRF",
+   "is_ai_likely_known": false,
+   "reason": "底层库的特定解析漏洞，训练数据中不常见。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到其他使用libuv或类似库的运行时）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'底层库解析差异导致SSRF'的检测和防御。",
+   "skill_framework": {
+    "name": "底层库解析差异SSRF绕过",
+    "适用场景": [
+     "SSRF防护绕过",
+     "Node.js应用安全测试"
+    ],
+    "核心原理": [
+     "libuv域名解析与标准解析器行为不一致",
+     "可构造特殊域名绕过IP过滤"
+    ],
+    "决策树": [
+     "IF 应用使用Node.js或libuv AND 存在SSRF防护 → 测试特殊域名解析",
+     "IF 解析结果指向内网 → 存在SSRF"
+    ],
+    "示例": [
+     "构造恶意域名使libuv解析到内网IP"
+    ],
+    "迁移场景": [
+     "Node.js",
+     "Deno",
+     "其他使用libuv的运行时"
+    ]
+   }
+  },
+  {
+   "id": 1364851,
+   "knowledge_point": "WordPress插件目录审核漏洞导致供应链攻击",
+   "is_ai_likely_known": false,
+   "reason": "供应链攻击的具体手法在训练数据中不常见，但属于通用攻击模式。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他插件/扩展市场）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  }
+ ]
+}

@@ -1,0 +1,327 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 6,
+  "not_worth": 9,
+  "top_ids": [
+   230234,
+   452920,
+   397130,
+   123125,
+   1397940,
+   301526
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 230234,
+   "knowledge_point": "AngularJS 模板注入导致反射型 XSS",
+   "is_ai_likely_known": false,
+   "reason": "AngularJS 模板注入的具体语法和绕过方式（如 {{constructor.constructor('...')()}}）并非主流 AI 广泛掌握，需要专门知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他模板引擎如 Vue、React 的 dangerouslySetInnerHTML 等）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化模板注入的检测与利用方法。",
+   "skill_framework": {
+    "name": "模板注入检测与利用（AngularJS 等）",
+    "适用场景": [
+     "Web 应用中的模板引擎",
+     "XSS 测试"
+    ],
+    "核心原理": [
+     "用户输入被直接拼入模板表达式",
+     "模板引擎执行表达式导致任意代码执行"
+    ],
+    "决策树": [
+     "IF 输入被反射且应用使用模板引擎 → 尝试注入 {{7*7}} 等探测表达式",
+     "IF 探测成功 → 尝试 {{constructor.constructor('alert(1)')()}} 执行任意 JS"
+    ],
+    "示例": [
+     "{{7*7}} 返回 49",
+     "{{constructor.constructor('alert(document.domain)')()}} 执行 alert"
+    ],
+    "迁移场景": [
+     "AngularJS",
+     "Vue",
+     "React 的 dangerouslySetInnerHTML",
+     "其他模板引擎"
+    ]
+   }
+  },
+  {
+   "id": 452920,
+   "knowledge_point": "使用可变用户名作为身份标识导致账户接管",
+   "is_ai_likely_known": false,
+   "reason": "该案例揭示了使用可变用户名作为身份标识的缺陷，属于非直观的业务逻辑漏洞，AI 可能不会主动想到。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何使用用户名作为外键的系统）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化身份绑定最佳实践。",
+   "skill_framework": {
+    "name": "身份绑定安全（使用不可变标识）",
+    "适用场景": [
+     "用户账户系统",
+     "OAuth 集成",
+     "第三方身份关联"
+    ],
+    "核心原理": [
+     "用户名可变，若作为身份标识，攻击者可利用改名接管他人账户"
+    ],
+    "决策树": [
+     "IF 系统使用用户名作为关联键 → 检查是否使用不可变 ID",
+     "IF 使用用户名 → 建议改用不可变 ID"
+    ],
+    "示例": [
+     "GitHub 用户名可变，Liberapay 绑定用户名导致冒充"
+    ],
+    "迁移场景": [
+     "任何使用用户名作为外键的系统"
+    ]
+   }
+  },
+  {
+   "id": 289313,
+   "knowledge_point": "Gemspec homepage 字段注入 javascript: 协议导致存储型 XSS",
+   "is_ai_likely_known": true,
+   "reason": "协议白名单校验是常见安全知识，AI 已知。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（特定于 RubyGems 生态）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1238749,
+   "knowledge_point": "缺少速率限制导致资源耗尽",
+   "is_ai_likely_known": true,
+   "reason": "速率限制是通用安全知识，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他资源创建接口）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 397130,
+   "knowledge_point": "通过 view-source 发现未受保护的 GraphQL 端点绕过 Okta 认证",
+   "is_ai_likely_known": false,
+   "reason": "该技术涉及 Okta 重定向前的短暂加载暴露 JS，进而发现未保护端点，属于非直观的绕过技巧。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他 SSO 或认证中间件）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化通过前端 JS 发现隐藏端点的技巧。",
+   "skill_framework": {
+    "name": "通过前端 JS 发现隐藏端点",
+    "适用场景": [
+     "Web 应用安全测试",
+     "认证绕过"
+    ],
+    "核心原理": [
+     "前端 JS 可能包含未受保护的 API 端点",
+     "认证重定向前的加载可能暴露敏感资源"
+    ],
+    "决策树": [
+     "IF 应用有 SSO 认证 → 尝试 view-source 查看重定向前加载的 JS",
+     "IF 发现 JS → 分析其中 API 端点",
+     "IF 端点未受保护 → 直接访问获取数据"
+    ],
+    "示例": [
+     "view-source:https://example.com 发现 GraphQL 端点，未授权访问"
+    ],
+    "迁移场景": [
+     "Okta",
+     "Auth0",
+     "其他 SSO"
+    ]
+   }
+  },
+  {
+   "id": 665398,
+   "knowledge_point": "子域名接管（悬空 CNAME）",
+   "is_ai_likely_known": true,
+   "reason": "子域名接管是常见漏洞，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何云服务）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 677557,
+   "knowledge_point": "HTTP/2 早期推送导致 Use-After-Free",
+   "is_ai_likely_known": false,
+   "reason": "该漏洞涉及 HTTP/2 推送机制的时序问题，属于特定协议实现细节，AI 可能不熟悉。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（特定于 HTTP/2 实现）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 123125,
+   "knowledge_point": "数组参数导致服务端拼接错误引发 XSS",
+   "is_ai_likely_known": false,
+   "reason": "利用数组参数结构混淆绕过输入验证，属于非直观技巧。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他参数类型混淆场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化参数类型混淆的检测与利用。",
+   "skill_framework": {
+    "name": "参数类型混淆绕过输入验证",
+    "适用场景": [
+     "Web 应用参数处理",
+     "XSS 测试"
+    ],
+    "核心原理": [
+     "服务端对参数类型处理不当，将数组拼接为字符串时未转义"
+    ],
+    "决策树": [
+     "IF 参数可接受数组 → 尝试构造多维数组",
+     "IF 服务端拼接数组到 HTML → 注入事件属性"
+    ],
+    "示例": [
+     "properties[builder_id][payload] 导致注入 onmouseover"
+    ],
+    "迁移场景": [
+     "PHP",
+     "Ruby",
+     "Node.js 等后端语言"
+    ]
+   }
+  },
+  {
+   "id": 1397940,
+   "knowledge_point": "XSSJacking 将 Self-XSS 转化为实际攻击",
+   "is_ai_likely_known": false,
+   "reason": "XSSJacking 是一种较新的攻击技术，结合 iframe 绕过 CSP 和 X-Frame-Options，AI 可能不熟悉。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他 Self-XSS 场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 XSSJacking 技术。",
+   "skill_framework": {
+    "name": "XSSJacking 技术",
+    "适用场景": [
+     "Self-XSS 升级",
+     "邮件模板注入"
+    ],
+    "核心原理": [
+     "通过 iframe 嵌入目标页面，诱导用户操作，绕过 CSP 和 X-Frame-Options"
+    ],
+    "决策树": [
+     "IF 存在 Self-XSS → 尝试通过 iframe 嵌入目标页面",
+     "IF 用户可被诱导点击 → 触发 XSS"
+    ],
+    "示例": [
+     "在邮件中嵌入 iframe 加载目标页面，诱导用户点击"
+    ],
+    "迁移场景": [
+     "邮件客户端",
+     "Web 应用"
+    ]
+   }
+  },
+  {
+   "id": 363934,
+   "knowledge_point": "Ruby Rational 解析器极大指数导致 SEGV",
+   "is_ai_likely_known": false,
+   "reason": "该漏洞涉及 Ruby 标准库的边界条件处理，属于特定实现细节。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（特定于 Ruby）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 915140,
+   "knowledge_point": "Export 功能绕过页面权限限制",
+   "is_ai_likely_known": true,
+   "reason": "功能级授权缺失是常见漏洞，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他导出功能）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 301526,
+   "knowledge_point": "第三方脚本导致敏感令牌泄露",
+   "is_ai_likely_known": false,
+   "reason": "该案例揭示了第三方脚本可能泄露 URL 中的敏感参数，属于供应链风险，AI 可能不会主动考虑。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何第三方脚本集成）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化第三方脚本安全审查。",
+   "skill_framework": {
+    "name": "第三方脚本安全审查",
+    "适用场景": [
+     "Web 应用集成第三方脚本",
+     "信息泄露防护"
+    ],
+    "核心原理": [
+     "第三方脚本可能自动请求并携带 URL 参数",
+     "敏感令牌不应出现在 URL 中"
+    ],
+    "决策树": [
+     "IF 页面包含第三方脚本 → 检查脚本是否发送 URL 参数",
+     "IF 发送 → 检查参数是否包含敏感信息"
+    ],
+    "示例": [
+     "邀请令牌通过 Bing 脚本泄露"
+    ],
+    "迁移场景": [
+     "分析工具",
+     "广告脚本",
+     "任何第三方 JS"
+    ]
+   }
+  },
+  {
+   "id": 212074,
+   "knowledge_point": "mruby instance_exec 与 ensure 交互导致 SIGSEGV",
+   "is_ai_likely_known": false,
+   "reason": "该漏洞涉及 mruby 运行时特定交互，属于实现细节。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（特定于 mruby）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1692788,
+   "knowledge_point": "GraphQL 查询中对象级授权缺失",
+   "is_ai_likely_known": true,
+   "reason": "GraphQL 授权缺失是常见漏洞，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何 GraphQL API）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1178239,
+   "knowledge_point": "开放重定向到任意协议导致会话接管",
+   "is_ai_likely_known": true,
+   "reason": "开放重定向是常见漏洞，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他重定向场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，不单独固化。",
+   "skill_framework": null
+  }
+ ]
+}

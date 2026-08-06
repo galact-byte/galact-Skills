@@ -1,0 +1,303 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 5,
+  "not_worth": 10,
+  "top_ids": [
+   504514,
+   767770,
+   710006,
+   674866,
+   384719
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 293490,
+   "knowledge_point": "重置密码接口的IDOR导致邮箱泄露",
+   "is_ai_likely_known": true,
+   "reason": "IDOR是通用知识，AI已知，且此案例无特殊绕过技巧。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他IDOR场景，但通用）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 504514,
+   "knowledge_point": "Web缓存投毒通过X-Forwarded-Host泄露CSRF token",
+   "is_ai_likely_known": false,
+   "reason": "缓存投毒与动态内容组合的细节，AI可能不深入，且涉及缓存键配置。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到所有缓存投毒场景，如CDN、代理）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化缓存投毒原理、缓存键配置、检测方法。",
+   "skill_framework": {
+    "name": "Web缓存投毒检测与利用",
+    "适用场景": [
+     "CDN配置",
+     "反向代理",
+     "应用缓存"
+    ],
+    "核心原理": [
+     "缓存键未包含影响响应的头",
+     "攻击者控制头注入恶意内容"
+    ],
+    "决策树": [
+     "IF 存在缓存 AND 响应动态生成链接 → 测试X-Forwarded-Host等头是否影响缓存键"
+    ],
+    "示例": [
+     "注入X-Forwarded-Host: evil.com → 缓存页面链接指向evil.com"
+    ],
+    "迁移场景": [
+     "CSRF",
+     "XSS",
+     "信息泄露"
+    ]
+   }
+  },
+  {
+   "id": 867052,
+   "knowledge_point": "API参数篡改导致对象级授权缺失",
+   "is_ai_likely_known": true,
+   "reason": "对象级授权缺失是通用知识，AI已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他API场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 47357,
+   "knowledge_point": "CSRF Token未绑定用户会话",
+   "is_ai_likely_known": true,
+   "reason": "CSRF Token绑定会话是通用知识，AI已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他CSRF场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 476179,
+   "knowledge_point": "畸形magic文件触发堆溢出",
+   "is_ai_likely_known": false,
+   "reason": "特定解析器边界检查缺失，AI可能不熟悉，但利用条件苛刻。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（依赖具体解析器）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 767770,
+   "knowledge_point": "嵌套属性绕过黑名单过滤",
+   "is_ai_likely_known": false,
+   "reason": "嵌套属性绕过黑名单是高级技巧，AI可能不深入。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到所有参数过滤场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化嵌套属性绕过原理、检测方法。",
+   "skill_framework": {
+    "name": "嵌套属性绕过黑名单过滤",
+    "适用场景": [
+     "API参数过滤",
+     "对象导入",
+     "批量操作"
+    ],
+    "核心原理": [
+     "黑名单过滤不递归",
+     "嵌套属性可绕过顶层过滤"
+    ],
+    "决策树": [
+     "IF 存在参数过滤 AND 支持嵌套对象 → 尝试在嵌套属性中注入敏感字段"
+    ],
+    "示例": [
+     "attributes[issue_ids]绕过对issue_ids的过滤"
+    ],
+    "迁移场景": [
+     "IDOR",
+     "权限提升",
+     "数据篡改"
+    ]
+   }
+  },
+  {
+   "id": 710006,
+   "knowledge_point": "搜索API未校验对象权限",
+   "is_ai_likely_known": false,
+   "reason": "搜索API权限校验缺失是常见但AI可能不深入，且可批量利用。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有搜索功能）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化搜索API权限校验检测方法。",
+   "skill_framework": {
+    "name": "搜索API权限校验缺失检测",
+    "适用场景": [
+     "全文搜索",
+     "数据库搜索",
+     "日志搜索"
+    ],
+    "核心原理": [
+     "搜索索引未包含权限信息",
+     "搜索API未过滤结果"
+    ],
+    "决策树": [
+     "IF 存在搜索功能 AND 搜索结果包含私有数据 → 测试未授权搜索"
+    ],
+    "示例": [
+     "搜索私有笔记，返回结果"
+    ],
+    "迁移场景": [
+     "信息泄露",
+     "数据枚举"
+    ]
+   }
+  },
+  {
+   "id": 674866,
+   "knowledge_point": "API参数绕过会话成员检查",
+   "is_ai_likely_known": false,
+   "reason": "特定API参数绕过成员检查，AI可能不深入，但属于业务逻辑缺陷。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到所有会话/成员检查场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化API参数绕过权限检查的检测方法。",
+   "skill_framework": {
+    "name": "API参数绕过权限检查",
+    "适用场景": [
+     "会话管理",
+     "成员验证",
+     "多租户应用"
+    ],
+    "核心原理": [
+     "权限检查依赖特定参数",
+     "攻击者控制参数绕过检查"
+    ],
+    "决策树": [
+     "IF 存在权限检查 AND 检查基于参数 → 尝试修改参数绕过"
+    ],
+    "示例": [
+     "传入insertuserid绕过inConversation检查"
+    ],
+    "迁移场景": [
+     "IDOR",
+     "越权访问"
+    ]
+   }
+  },
+  {
+   "id": 858874,
+   "knowledge_point": "利用Less的JavaScript执行功能实现存储XSS",
+   "is_ai_likely_known": false,
+   "reason": "Less的JavaScript执行功能是特定框架行为，AI可能不熟悉。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他模板引擎）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：模板引擎安全。",
+   "skill_framework": null
+  },
+  {
+   "id": 811776,
+   "knowledge_point": "无速率限制的暴力破解",
+   "is_ai_likely_known": true,
+   "reason": "暴力破解防护是通用知识，AI已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他认证接口）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 399462,
+   "knowledge_point": "SSTI利用宏功能绕过过滤",
+   "is_ai_likely_known": false,
+   "reason": "SSTI宏绕过是高级技巧，AI可能不深入。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到所有模板引擎）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：模板注入检测与利用。",
+   "skill_framework": null
+  },
+  {
+   "id": 504761,
+   "knowledge_point": "phar文件解析缓冲区溢出",
+   "is_ai_likely_known": false,
+   "reason": "特定解析器漏洞，AI可能不熟悉，但利用条件苛刻。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（依赖具体解析器）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 244287,
+   "knowledge_point": "密码重置令牌未绑定邮箱",
+   "is_ai_likely_known": true,
+   "reason": "密码重置令牌绑定邮箱是通用知识，AI已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他密码重置场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 496405,
+   "knowledge_point": "富文本编辑器属性未转义导致存储XSS",
+   "is_ai_likely_known": true,
+   "reason": "富文本XSS是通用知识，AI已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他富文本场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 384719,
+   "knowledge_point": "Windows平台PHP函数open_basedir绕过",
+   "is_ai_likely_known": false,
+   "reason": "平台差异导致的函数行为不一致，AI可能不熟悉，且可抽象为通用判断。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到所有跨平台文件操作函数）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化跨平台函数安全检查差异检测。",
+   "skill_framework": {
+    "name": "跨平台文件操作函数安全检查差异",
+    "适用场景": [
+     "PHP沙箱",
+     "open_basedir",
+     "文件访问控制"
+    ],
+    "核心原理": [
+     "不同平台对同一函数的实现不同",
+     "安全检查可能缺失"
+    ],
+    "决策树": [
+     "IF 存在文件操作函数 AND 跨平台部署 → 测试各平台是否一致执行安全检查"
+    ],
+    "示例": [
+     "Windows上linkinfo绕过open_basedir"
+    ],
+    "迁移场景": [
+     "沙箱绕过",
+     "路径探测"
+    ]
+   }
+  }
+ ]
+}

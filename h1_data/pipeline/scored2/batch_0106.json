@@ -1,0 +1,306 @@
+{
+ "summary": {
+  "total": 14,
+  "worth_skill": 5,
+  "not_worth": 9,
+  "top_ids": [
+   310690,
+   771596,
+   331302,
+   222020,
+   1257428
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 310690,
+   "knowledge_point": "indexOf返回-1导致路径遍历过滤失效",
+   "is_ai_likely_known": false,
+   "reason": "该漏洞源于开发者对indexOf的错误使用，属于具体代码逻辑错误，AI训练数据中此类特定错误模式不常见，且需要结合具体代码上下文才能触发。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何使用indexOf进行过滤的路径遍历、SSRF、命令注入等场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'indexOf误用导致过滤失效'的检测模式，包括代码审计和黑盒测试方法。",
+   "skill_framework": {
+    "name": "indexOf误用导致安全过滤失效",
+    "适用场景": [
+     "路径遍历防护",
+     "SSRF黑名单",
+     "命令注入过滤"
+    ],
+    "核心原理": [
+     "开发者误以为indexOf返回0表示存在，实际返回-1表示不存在，导致条件判断恒真或恒假",
+     "过滤逻辑形同虚设"
+    ],
+    "决策树": [
+     "IF 代码中使用indexOf进行黑名单过滤 AND 判断条件为>=0或==-1 → 尝试绕过"
+    ],
+    "示例": [
+     "if (path.indexOf('..') >= 0) { reject; } // 实际应检查== -1"
+    ],
+    "迁移场景": [
+     "代码审计",
+     "黑盒测试",
+     "WAF规则绕过"
+    ]
+   }
+  },
+  {
+   "id": 1257428,
+   "knowledge_point": "第三方应用代理绕过内部API权限检查",
+   "is_ai_likely_known": false,
+   "reason": "该漏洞涉及Shopify特定业务逻辑和第三方应用信任边界，AI训练数据中缺乏此类具体案例，且需要理解应用与核心API的信任关系。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何平台型应用，如SaaS、PaaS，第三方应用与核心API的权限边界）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'第三方应用代理绕过'的检测思路，包括审计第三方应用API权限和信任边界。",
+   "skill_framework": {
+    "name": "第三方应用代理绕过内部API权限",
+    "适用场景": [
+     "SaaS平台",
+     "开放API平台",
+     "应用商店生态"
+    ],
+    "核心原理": [
+     "第三方应用可能拥有比普通用户更高的API权限",
+     "通过第三方应用调用敏感API可绕过用户级权限检查"
+    ],
+    "决策树": [
+     "IF 平台存在第三方应用 AND 应用可调用敏感API → 尝试以低权限用户通过应用调用"
+    ],
+    "示例": [
+     "使用GraphiQL应用调用appCreditCreate mutation"
+    ],
+    "迁移场景": [
+     "API权限测试",
+     "业务逻辑漏洞",
+     "越权访问"
+    ]
+   }
+  },
+  {
+   "id": 242727,
+   "knowledge_point": "Android内容提供者导出导致敏感信息泄露",
+   "is_ai_likely_known": true,
+   "reason": "Android组件导出配置错误是常见漏洞，AI训练数据中已有大量相关案例，属于通用知识。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他移动平台或组件导出场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 226199,
+   "knowledge_point": "CSRF+开放重定向组合改变JIRA集成设置",
+   "is_ai_likely_known": true,
+   "reason": "CSRF和开放重定向是常见漏洞，组合利用也是常见攻击模式，AI训练数据中已有大量案例。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他集成设置场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 222020,
+   "knowledge_point": "命令行工具参数注入（--debugger）导致任意代码执行",
+   "is_ai_likely_known": false,
+   "reason": "该漏洞利用Mercurial特定参数，属于具体工具行为，AI训练数据中缺乏此类细节，且需要了解hg-ssh包装器。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他命令行工具，如git、svn，参数注入导致代码执行）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'命令行工具参数注入'的检测模式，包括审计包装器和参数过滤。",
+   "skill_framework": {
+    "name": "命令行工具参数注入导致代码执行",
+    "适用场景": [
+     "SSH包装器",
+     "受限shell",
+     "CI/CD工具"
+    ],
+    "核心原理": [
+     "用户可控参数未过滤，可注入工具特定选项（如--debugger）",
+     "工具选项触发额外功能"
+    ],
+    "决策树": [
+     "IF 存在包装器传递用户参数给命令行工具 AND 工具存在危险选项 → 尝试注入"
+    ],
+    "示例": [
+     "hg --debugger 进入Python调试器"
+    ],
+    "迁移场景": [
+     "代码审计",
+     "黑盒测试",
+     "沙箱逃逸"
+    ]
+   }
+  },
+  {
+   "id": 771596,
+   "knowledge_point": "Node.js遗留API url.parse()与WHATWG URL解析差异导致CRLF注入绕过",
+   "is_ai_likely_known": false,
+   "reason": "该漏洞涉及Node.js特定API行为差异，AI训练数据中缺乏此类细节，且需要理解两个解析器的差异。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他语言或框架中遗留API与标准API的差异）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'遗留API与标准API解析差异'的检测模式，包括审计安全决策使用的API。",
+   "skill_framework": {
+    "name": "遗留API与标准API解析差异绕过",
+    "适用场景": [
+     "URL解析",
+     "hostname校验",
+     "SSRF防护"
+    ],
+    "核心原理": [
+     "不同API对同一输入解析结果不同",
+     "安全决策使用遗留API，实际请求使用标准API"
+    ],
+    "决策树": [
+     "IF 安全校验使用url.parse() AND 实际请求使用WHATWG URL → 尝试CRLF等特殊字符"
+    ],
+    "示例": [
+     "url.parse('http://example.com\\n\\r@evil.com').hostname返回example.com"
+    ],
+    "迁移场景": [
+     "SSRF",
+     "WAF绕过",
+     "认证绕过"
+    ]
+   }
+  },
+  {
+   "id": 216822,
+   "knowledge_point": "信任的S3存储和imageproxy导致存储XSS",
+   "is_ai_likely_known": true,
+   "reason": "存储XSS和信任边界利用是常见漏洞，AI训练数据中已有大量案例。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他云存储和代理场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 968328,
+   "knowledge_point": "反向tabnabbing漏洞",
+   "is_ai_likely_known": true,
+   "reason": "反向tabnabbing是常见漏洞，AI训练数据中已有大量案例，属于通用知识。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到任何使用target=_blank的场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 230029,
+   "knowledge_point": "strip_tags不转义属性导致存储XSS",
+   "is_ai_likely_known": true,
+   "reason": "strip_tags的局限性是常见知识，AI训练数据中已有大量案例。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他过滤函数）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 46916,
+   "knowledge_point": "Markdown解析器特殊字符交互导致XSS",
+   "is_ai_likely_known": false,
+   "reason": "该漏洞涉及特定Markdown解析器的行为，AI训练数据中缺乏此类细节，且需要理解解析器内部逻辑。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他解析器，如BBCode、Wiki标记）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：Markdown解析器安全测试。",
+   "skill_framework": null
+  },
+  {
+   "id": 333008,
+   "knowledge_point": "绕过客户端验证篡改参数注入存储XSS",
+   "is_ai_likely_known": true,
+   "reason": "客户端验证可绕过是常见知识，AI训练数据中已有大量案例。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到任何客户端验证场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 2122644,
+   "knowledge_point": "脱敏逻辑遗漏特定活动类型导致信息泄露",
+   "is_ai_likely_known": false,
+   "reason": "该漏洞涉及具体业务逻辑的脱敏遗漏，AI训练数据中缺乏此类案例，且需要理解业务活动类型。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他脱敏场景，如日志、导出）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：数据脱敏逻辑审计。",
+   "skill_framework": null
+  },
+  {
+   "id": 423454,
+   "knowledge_point": "CSV文件名注入存储XSS跨组织数据泄露",
+   "is_ai_likely_known": true,
+   "reason": "文件名注入和存储XSS是常见漏洞，AI训练数据中已有大量案例。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他文件上传场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 331302,
+   "knowledge_point": "包名包含检查绕过Android访问控制",
+   "is_ai_likely_known": false,
+   "reason": "该漏洞利用包名包含子串的检查逻辑，属于反直觉的授权检查，AI训练数据中缺乏此类案例，且需要理解Android包名机制。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何基于字符串包含的授权检查，如URL、用户名、角色）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'字符串包含授权检查绕过'的检测模式，包括代码审计和黑盒测试。",
+   "skill_framework": {
+    "name": "字符串包含授权检查绕过",
+    "适用场景": [
+     "Android组件访问控制",
+     "URL白名单",
+     "角色权限检查"
+    ],
+    "核心原理": [
+     "开发者使用字符串包含（如contains）进行授权判断",
+     "攻击者可以控制字符串内容，通过包含特定子串绕过检查"
+    ],
+    "决策树": [
+     "IF 授权检查使用contains或indexOf AND 攻击者可控输入 → 尝试包含合法子串"
+    ],
+    "示例": [
+     "包名包含'com.nextcloud.client'绕过检查"
+    ],
+    "迁移场景": [
+     "Android安全",
+     "Web应用",
+     "API授权"
+    ]
+   }
+  },
+  {
+   "id": 673724,
+   "knowledge_point": "权限撤销未级联到已生成token导致越权访问",
+   "is_ai_likely_known": true,
+   "reason": "权限撤销不彻底是常见问题，AI训练数据中已有大量案例，属于通用知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他共享链接、token场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，无需单独固化。",
+   "skill_framework": null
+  }
+ ]
+}

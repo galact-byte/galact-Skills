@@ -1,0 +1,302 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 5,
+  "not_worth": 10,
+  "top_ids": [
+   889160,
+   810320,
+   1085782,
+   672245,
+   337189
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 889160,
+   "knowledge_point": "curl 对不完整 HTTP 头的解析挂起导致 DoS",
+   "is_ai_likely_known": false,
+   "reason": "curl 对畸形 HTTP 响应的具体解析行为属于实现细节，训练数据中不常见，需实际测试才能发现。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他 HTTP 客户端库、代理、服务器解析器）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'HTTP 解析器挂起'的检测与利用方法。",
+   "skill_framework": {
+    "name": "HTTP 解析器挂起检测与利用",
+    "适用场景": [
+     "HTTP 客户端",
+     "代理服务器",
+     "任何解析 HTTP 响应的组件"
+    ],
+    "核心原理": [
+     "不完整的 HTTP 头（如缺少终止符）导致解析器进入等待状态",
+     "攻击者可控响应内容时，可造成 DoS"
+    ],
+    "决策树": [
+     "IF 目标解析 HTTP 响应 AND 攻击者可控制响应内容 → 尝试发送不完整头字段，观察是否挂起"
+    ],
+    "示例": [
+     "发送 'Location: ' 无值且无结束符，导致 curl 挂起"
+    ],
+    "迁移场景": [
+     "SSRF 中利用恶意服务器响应",
+     "代理缓存投毒",
+     "客户端 DoS"
+    ]
+   }
+  },
+  {
+   "id": 1406926,
+   "knowledge_point": "通过替代共享路径绕过强制密码策略",
+   "is_ai_likely_known": true,
+   "reason": "业务逻辑绕过是常见漏洞类型，AI 能理解基本概念，但具体实现细节需结合目标。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他文件共享、协作平台）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。可合并到上层 Skill：'业务逻辑绕过模式'。",
+   "skill_framework": null
+  },
+  {
+   "id": 810320,
+   "knowledge_point": "API 端点缺乏服务端权限校验导致越权操作",
+   "is_ai_likely_known": true,
+   "reason": "服务端权限校验缺失是通用知识，AI 已知，但系统化检测方法仍有价值。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（适用于所有 API 端点，尤其是 REST/GraphQL）",
+   "source_quality": "通用",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'API 端点权限校验缺失'的检测与利用流程。",
+   "skill_framework": {
+    "name": "API 端点权限校验缺失检测",
+    "适用场景": [
+     "REST API",
+     "GraphQL API",
+     "微服务架构"
+    ],
+    "核心原理": [
+     "前端隐藏操作不代表后端有权限校验",
+     "攻击者可直接构造请求调用未授权端点"
+    ],
+    "决策树": [
+     "IF 存在 API 端点 AND 未明确权限要求 → 尝试以低权限用户调用，观察是否成功"
+    ],
+    "示例": [
+     "只读用户直接 DELETE /api/memberships/{id} 删除管理员"
+    ],
+    "迁移场景": [
+     "IDOR 检测",
+     "水平越权",
+     "垂直越权"
+    ]
+   }
+  },
+  {
+   "id": 258710,
+   "knowledge_point": "浏览器 download 属性绕过 file:// 下载限制",
+   "is_ai_likely_known": false,
+   "reason": "特定浏览器对 download 属性的处理差异属于实现细节，训练数据少。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（仅影响特定浏览器，迁移性差）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。属于浏览器安全策略绕过，可合并到上层 Skill：'浏览器安全策略绕过'。",
+   "skill_framework": null
+  },
+  {
+   "id": 184715,
+   "knowledge_point": "mruby VM 指令 OP_ARYCAT 的 use-after-free",
+   "is_ai_likely_known": false,
+   "reason": "特定 VM 指令的边界条件导致 UAF，属于框架内部实现，训练数据稀少。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（仅影响 mruby，迁移性差）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。属于特定框架漏洞，可合并到上层 Skill：'解释器/VM 内存破坏'。",
+   "skill_framework": null
+  },
+  {
+   "id": 1104120,
+   "knowledge_point": "SQL 注入绕过 WAF 并利用 xp_cmdshell 实现 RCE",
+   "is_ai_likely_known": true,
+   "reason": "SQL 注入和 WAF 绕过是通用知识，AI 已知，但具体绕过技巧可能需系统化。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（适用于所有 SQL 注入场景，尤其是 MSSQL）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。可合并到上层 Skill：'SQL 注入利用与 WAF 绕过'。",
+   "skill_framework": null
+  },
+  {
+   "id": 419891,
+   "knowledge_point": "CSRF 导致账户接管（通过更改未确认邮箱）",
+   "is_ai_likely_known": true,
+   "reason": "CSRF 和账户接管是通用知识，AI 已知，但具体流程可能需系统化。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（适用于所有 Web 应用，尤其是涉及邮箱确认的流程）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。可合并到上层 Skill：'CSRF 攻击与防御'。",
+   "skill_framework": null
+  },
+  {
+   "id": 784676,
+   "knowledge_point": "NUL 字符绕过输入过滤导致 iOS 应用崩溃",
+   "is_ai_likely_known": true,
+   "reason": "控制字符绕过输入过滤是通用知识，AI 已知，但具体应用场景可能需系统化。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他输入验证场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。可合并到上层 Skill：'输入验证绕过'。",
+   "skill_framework": null
+  },
+  {
+   "id": 13959,
+   "knowledge_point": "通过修改 URL 路径绕过文件访问控制",
+   "is_ai_likely_known": true,
+   "reason": "路径修改绕过访问控制是通用知识，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他文件访问控制场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。可合并到上层 Skill：'访问控制绕过'。",
+   "skill_framework": null
+  },
+  {
+   "id": 1085782,
+   "knowledge_point": "IDOR 利用 302 重定向响应体携带数据绕过前端检查",
+   "is_ai_likely_known": false,
+   "reason": "利用 302 响应体携带数据绕过前端跳转检查，属于非典型技巧，训练数据少。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何重定向场景，如 OAuth、支付回调）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'重定向响应体数据泄露'的检测与利用。",
+   "skill_framework": {
+    "name": "重定向响应体数据泄露检测",
+    "适用场景": [
+     "IDOR 检测",
+     "OAuth 流程",
+     "支付回调"
+    ],
+    "核心原理": [
+     "服务器在 302 响应体中附带敏感数据",
+     "前端跳转检查可能忽略响应体，导致数据泄露"
+    ],
+    "决策树": [
+     "IF 存在重定向端点 AND 响应体可能包含数据 → 检查响应体是否泄露敏感信息"
+    ],
+    "示例": [
+     "遍历 ID 参数，302 响应体附带 PDF 文件"
+    ],
+    "迁移场景": [
+     "批量数据提取",
+     "绕过前端限制"
+    ]
+   }
+  },
+  {
+   "id": 672245,
+   "knowledge_point": "PHP 反序列化触发 GC 与析构函数交互导致 UAF",
+   "is_ai_likely_known": false,
+   "reason": "PHP 内部 GC 机制与析构函数的交互导致 UAF，属于框架内部实现，训练数据稀少。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他语言/框架的 GC 机制，如 Java、Python）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'反序列化触发 GC 相关 UAF'的检测与利用。",
+   "skill_framework": {
+    "name": "反序列化触发 GC 相关 UAF",
+    "适用场景": [
+     "PHP 反序列化",
+     "Java 反序列化",
+     "Python pickle"
+    ],
+    "核心原理": [
+     "反序列化过程中对象生命周期管理不当",
+     "GC 与析构函数交互导致释放后使用"
+    ],
+    "决策树": [
+     "IF 目标使用反序列化 AND 存在析构函数 → 尝试构造恶意序列化数据，观察是否触发 UAF"
+    ],
+    "示例": [
+     "构造特定对象图，触发 GC 在析构函数执行后释放内存"
+    ],
+    "迁移场景": [
+     "内存破坏",
+     "RCE"
+    ]
+   }
+  },
+  {
+   "id": 331691,
+   "knowledge_point": "邀请链接未失效导致未授权用户加入团队",
+   "is_ai_likely_known": true,
+   "reason": "邀请链接状态管理缺陷是通用知识，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他邀请/令牌场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。可合并到上层 Skill：'状态管理缺陷'。",
+   "skill_framework": null
+  },
+  {
+   "id": 46485,
+   "knowledge_point": "OAuth token 重用导致会话固定",
+   "is_ai_likely_known": true,
+   "reason": "OAuth 会话固定是通用知识，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他 OAuth 实现）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。可合并到上层 Skill：'OAuth 安全'。",
+   "skill_framework": null
+  },
+  {
+   "id": 337189,
+   "knowledge_point": "浏览器扩展资源 URL 中的 UUID 用于用户追踪",
+   "is_ai_likely_known": false,
+   "reason": "扩展资源 URL 暴露唯一标识导致隐私泄露，属于特定浏览器扩展行为，训练数据少。",
+   "scene_frequency": "低频",
+   "migration_potential": "高（可迁移到其他浏览器扩展、Web 应用中的唯一标识泄露）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'扩展资源 URL 唯一标识泄露'的检测与利用。",
+   "skill_framework": {
+    "name": "扩展资源 URL 唯一标识泄露检测",
+    "适用场景": [
+     "浏览器扩展",
+     "Web 应用中的静态资源 URL"
+    ],
+    "核心原理": [
+     "扩展资源 URL 包含唯一标识（如 UUID）",
+     "网页可读取该 URL，用于跨站追踪用户"
+    ],
+    "决策树": [
+     "IF 目标使用浏览器扩展 AND 资源 URL 包含唯一标识 → 尝试从网页读取该 URL，验证是否可追踪"
+    ],
+    "示例": [
+     "读取 moz-extension://UUID 识别用户"
+    ],
+    "迁移场景": [
+     "隐私泄露",
+     "用户追踪"
+    ]
+   }
+  },
+  {
+   "id": 1590237,
+   "knowledge_point": "WordPress REST API 路由未设置权限回调导致信息泄露",
+   "is_ai_likely_known": true,
+   "reason": "REST API 权限回调缺失是通用知识，AI 已知，但具体检测方法可能需系统化。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（适用于所有 WordPress 插件和 REST API）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。可合并到上层 Skill：'WordPress 安全'。",
+   "skill_framework": null
+  }
+ ]
+}

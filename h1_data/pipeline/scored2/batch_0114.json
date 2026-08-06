@@ -1,0 +1,307 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 5,
+  "not_worth": 10,
+  "top_ids": [
+   57603,
+   583987,
+   265740,
+   1001218,
+   1051734
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 57603,
+   "knowledge_point": "OAuth2 撤销操作未级联失效 authorization code 导致授权绕过",
+   "is_ai_likely_known": false,
+   "reason": "OAuth2 规范中撤销语义的细节（code 与 token 的级联失效）在主流 AI 知识中不常见，且该案例揭示了反直觉行为：撤销应用后旧 code 仍可兑换新 token。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到 OAuth2 实现、授权码流程、令牌撤销机制等场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 OAuth2 撤销语义的完整检查清单和测试方法。",
+   "skill_framework": {
+    "name": "OAuth2 撤销语义完整性检查",
+    "适用场景": [
+     "OAuth2 授权服务器",
+     "授权码流程",
+     "令牌撤销机制"
+    ],
+    "核心原理": [
+     "撤销操作必须级联失效该授权关系下全部凭证（code、refresh_token、access_token）",
+     "授权码在兑换后或撤销后应立即失效"
+    ],
+    "决策树": [
+     "IF 存在 OAuth2 撤销功能 → 测试撤销后旧 code 是否仍可兑换新 token",
+     "IF 可兑换 → 漏洞存在"
+    ],
+    "示例": [
+     "撤销应用后，使用旧 authorization code 请求 token 端点，若成功则存在漏洞"
+    ],
+    "迁移场景": [
+     "OAuth2 实现",
+     "单点登录系统",
+     "API 授权管理"
+    ]
+   }
+  },
+  {
+   "id": 431633,
+   "knowledge_point": "权限检查不对称：编辑/删除操作未校验与创建操作相同的权限",
+   "is_ai_likely_known": true,
+   "reason": "权限检查不对称是常见漏洞模式，AI 已知，且该案例具体依赖 Shopify 的权限模型，迁移性一般。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到任何多权限系统，但需具体配置）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 511044,
+   "knowledge_point": "服务端未校验金额与计划匹配，通过枚举 plan_id 免费获取会员",
+   "is_ai_likely_known": true,
+   "reason": "业务逻辑漏洞中金额校验缺失是常见问题，AI 已知，且该案例依赖具体业务实现。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（依赖具体业务逻辑，不可通用）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 265740,
+   "knowledge_point": "Referer 头泄露敏感令牌导致账户接管",
+   "is_ai_likely_known": true,
+   "reason": "Referer 泄露是已知问题，但该案例展示了密码重置令牌泄露的具体场景，且可迁移到其他敏感参数。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何通过 URL 传递敏感参数的场景）",
+   "source_quality": "中",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 Referer 泄露的检测和防御方法。",
+   "skill_framework": {
+    "name": "Referer 泄露敏感信息检测与防御",
+    "适用场景": [
+     "密码重置",
+     "邀请链接",
+     "一次性令牌"
+    ],
+    "核心原理": [
+     "浏览器自动在跨域请求中发送 Referer 头",
+     "敏感参数在 URL 中传递时可能被泄露"
+    ],
+    "决策树": [
+     "IF 敏感参数在 URL 中 → 检查页面是否包含外链 → 若包含，测试 Referer 是否泄露"
+    ],
+    "示例": [
+     "密码重置链接包含 token，用户点击第三方链接，Referer 携带 token"
+    ],
+    "迁移场景": [
+     "Web 应用",
+     "API 回调",
+     "邮件客户端"
+    ]
+   }
+  },
+  {
+   "id": 1001218,
+   "knowledge_point": "deepExtend 函数未正确处理 __proto__ 导致原型污染",
+   "is_ai_likely_known": true,
+   "reason": "原型污染是已知漏洞类型，但该案例涉及特定库（@firebase/util），且 PoC 清晰，可迁移到其他类似库。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何使用 deepExtend 或类似合并函数的库）",
+   "source_quality": "中",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化原型污染检测和防御方法。",
+   "skill_framework": {
+    "name": "原型污染检测与防御",
+    "适用场景": [
+     "JavaScript 库",
+     "JSON 处理",
+     "对象合并"
+    ],
+    "核心原理": [
+     "__proto__ 属性可修改对象原型",
+     "合并函数未过滤危险属性时导致污染"
+    ],
+    "决策树": [
+     "IF 存在对象合并函数 → 测试传入 __proto__ 是否影响原型"
+    ],
+    "示例": [
+     "deepExtend({}, JSON.parse('{\"__proto__\": {\"polluted\": true}}'))"
+    ],
+    "迁移场景": [
+     "前端框架",
+     "后端 JSON 解析",
+     "配置合并"
+    ]
+   }
+  },
+  {
+   "id": 914331,
+   "knowledge_point": "IDOR 导致修改他人笔记并注入 HTML",
+   "is_ai_likely_known": true,
+   "reason": "IDOR 是常见漏洞，HTML 注入也是已知问题，组合虽有一定启发性但迁移性一般。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到任何对象级授权场景）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：IDOR 检测与防御。",
+   "skill_framework": null
+  },
+  {
+   "id": 733248,
+   "knowledge_point": "利用畸形 iframe 标签绕过 XSS 过滤",
+   "is_ai_likely_known": true,
+   "reason": "XSS 绕过技术是常见知识，AI 已知，且该案例具体依赖 WordPress 的过滤机制。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他 CMS 或过滤机制）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：XSS 绕过技术。",
+   "skill_framework": null
+  },
+  {
+   "id": 484434,
+   "knowledge_point": "使用 HTML 实体编码绕过 XSS 过滤",
+   "is_ai_likely_known": true,
+   "reason": "HTML 实体编码绕过是常见 XSS 绕过技术，AI 已知，且该案例具体依赖 imgur 的过滤实现。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他过滤机制）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：XSS 绕过技术。",
+   "skill_framework": null
+  },
+  {
+   "id": 583987,
+   "knowledge_point": "自定义协议 deeplink 绕过 CSRF 防护",
+   "is_ai_likely_known": false,
+   "reason": "移动端自定义协议绕过 Web CSRF 防护是较冷门的知识，AI 可能不熟悉，且该案例揭示了跨平台安全机制差异。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何移动应用自定义协议处理）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化自定义协议绕过 CSRF 的检测和防御方法。",
+   "skill_framework": {
+    "name": "自定义协议绕过 CSRF 检测与防御",
+    "适用场景": [
+     "移动应用",
+     "deeplink 处理",
+     "CSRF 防护"
+    ],
+    "核心原理": [
+     "自定义协议（如 pscp://）可直接调用应用内功能，绕过 Web 端 CSRF token 检查",
+     "应用内敏感操作未校验来源"
+    ],
+    "决策树": [
+     "IF 应用支持自定义协议 → 检查协议处理是否校验来源 → 若未校验，测试敏感操作"
+    ],
+    "示例": [
+     "构造恶意网页，点击链接触发 pscp://follow?user=attacker，应用内执行关注操作"
+    ],
+    "迁移场景": [
+     "Android/iOS 应用",
+     "桌面应用",
+     "浏览器扩展"
+    ]
+   }
+  },
+  {
+   "id": 1820953,
+   "knowledge_point": "非店主员工可转移 Shopify 管理的域名",
+   "is_ai_likely_known": true,
+   "reason": "权限控制缺失是常见问题，AI 已知，且该案例具体依赖 Shopify 的权限模型。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（依赖具体业务逻辑）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 980599,
+   "knowledge_point": "ts-dot-prop 的 set 函数未过滤 __proto__ 导致原型污染",
+   "is_ai_likely_known": true,
+   "reason": "原型污染是已知漏洞类型，且该案例与 1001218 类似，可合并。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到类似库）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：原型污染检测与防御。",
+   "skill_framework": null
+  },
+  {
+   "id": 195134,
+   "knowledge_point": "订阅 API 未正确校验权限导致 guest 用户访问私有 MR",
+   "is_ai_likely_known": true,
+   "reason": "API 端点权限校验不一致是常见问题，AI 已知，且该案例具体依赖 GitLab 的实现。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到任何多端点 API）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：API 权限校验一致性检查。",
+   "skill_framework": null
+  },
+  {
+   "id": 377206,
+   "knowledge_point": "settingcontent-ms 文件缺少 MOTW 导致双击执行代码",
+   "is_ai_likely_known": false,
+   "reason": "Windows 特定文件类型与 MOTW 的交互是较冷门知识，AI 可能不熟悉，且该案例揭示了跨组件攻击链。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他 Windows 文件类型）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化，因场景频率低。",
+   "skill_framework": null
+  },
+  {
+   "id": 1051734,
+   "knowledge_point": "报告功能无速率限制导致评论被自动删除",
+   "is_ai_likely_known": true,
+   "reason": "速率限制缺失是常见业务逻辑漏洞，AI 已知，但该案例展示了多用户交互的滥用，可迁移到其他类似功能。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何有阈值触发自动操作的功能）",
+   "source_quality": "中",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化速率限制缺失的检测和防御方法。",
+   "skill_framework": {
+    "name": "速率限制缺失检测与防御",
+    "适用场景": [
+     "报告功能",
+     "投票功能",
+     "评论删除"
+    ],
+    "核心原理": [
+     "无速率限制时，攻击者可批量提交请求触发阈值",
+     "自动操作可能被滥用"
+    ],
+    "决策树": [
+     "IF 存在自动触发操作的功能 → 检查是否有速率限制 → 若无，测试批量提交是否可触发"
+    ],
+    "示例": [
+     "创建多个账户，对目标评论重复提交报告，达到阈值后评论被自动删除"
+    ],
+    "迁移场景": [
+     "Web 应用",
+     "API 端点",
+     "内容审核系统"
+    ]
+   }
+  },
+  {
+   "id": 1133536,
+   "knowledge_point": "嵌入式表单未检查用户封禁状态导致封禁绕过",
+   "is_ai_likely_known": true,
+   "reason": "状态检查缺失是常见业务逻辑漏洞，AI 已知，且该案例具体依赖 HackerOne 的嵌入式表单实现。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到任何有状态检查的场景）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：业务逻辑状态检查完整性。",
+   "skill_framework": null
+  }
+ ]
+}

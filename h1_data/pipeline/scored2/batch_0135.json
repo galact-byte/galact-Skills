@@ -1,0 +1,306 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 5,
+  "not_worth": 10,
+  "top_ids": [
+   1189162,
+   1783015,
+   223363,
+   48100,
+   1353603
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 152591,
+   "knowledge_point": "Flash 对象绕过 HTML 过滤导致存储型 XSS",
+   "is_ai_likely_known": true,
+   "reason": "Flash XSS 是已知的旧技术，AI 训练数据中常见，直接提问即可获得答案。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（Flash 已废弃，迁移性差）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1189162,
+   "knowledge_point": "端到端加密中公钥未验证导致信任模型缺陷",
+   "is_ai_likely_known": false,
+   "reason": "涉及加密协议信任模型的具体缺陷，训练数据较少，需要深入理解。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何端到端加密系统、密钥交换协议）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'公钥验证缺失'的检测与防御。",
+   "skill_framework": {
+    "name": "端到端加密公钥验证缺失检测",
+    "适用场景": [
+     "端到端加密应用",
+     "密钥交换协议",
+     "安全通信"
+    ],
+    "核心原理": [
+     "客户端未验证公钥与私钥匹配",
+     "恶意管理员可替换公钥导致数据泄露"
+    ],
+    "决策树": [
+     "IF 应用使用端到端加密 AND 客户端未验证公钥 → 尝试替换公钥测试"
+    ],
+    "示例": [
+     "替换用户公钥后，新设备加密数据可被解密"
+    ],
+    "迁移场景": [
+     "加密通信",
+     "身份验证",
+     "密钥管理"
+    ]
+   }
+  },
+  {
+   "id": 17512,
+   "knowledge_point": "密码重置令牌可预测且无速率限制导致账户接管",
+   "is_ai_likely_known": true,
+   "reason": "暴力破解令牌是常见攻击，AI 已知，但具体防御措施可系统化。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（适用于所有密码重置流程）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：密码重置安全。",
+   "skill_framework": null
+  },
+  {
+   "id": 1550400,
+   "knowledge_point": "后端未校验权限导致越权操作",
+   "is_ai_likely_known": true,
+   "reason": "后端权限校验缺失是通用知识，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（适用于所有 Web 应用）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：访问控制与权限校验。",
+   "skill_framework": null
+  },
+  {
+   "id": 397445,
+   "knowledge_point": "MongoDB 注入利用 $regex 操作符进行盲注",
+   "is_ai_likely_known": true,
+   "reason": "NoSQL 注入是已知攻击，AI 训练数据常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（适用于所有 NoSQL 数据库）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：NoSQL 注入检测与防御。",
+   "skill_framework": null
+  },
+  {
+   "id": 355501,
+   "knowledge_point": "路径遍历绕过扩展名限制",
+   "is_ai_likely_known": true,
+   "reason": "路径遍历是通用知识，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（适用于文件读取场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：路径遍历防护。",
+   "skill_framework": null
+  },
+  {
+   "id": 1783015,
+   "knowledge_point": "Host 头注入绕过访问控制访问内部子域名",
+   "is_ai_likely_known": false,
+   "reason": "Host 头注入的利用方式多样，且此案例影响多个子域名，AI 可能不全面。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（适用于所有基于域名的访问控制）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'Host 头注入'的检测与利用。",
+   "skill_framework": {
+    "name": "Host 头注入检测与利用",
+    "适用场景": [
+     "基于域名的访问控制",
+     "虚拟主机",
+     "SSRF"
+    ],
+    "核心原理": [
+     "服务器未校验 Host 头",
+     "可访问同一 IP 上的其他子域名"
+    ],
+    "决策树": [
+     "IF 应用使用 Host 头进行路由 AND 未校验 → 尝试修改 Host 头访问内部域名"
+    ],
+    "示例": [
+     "修改 Host 头为 internal.example.com 获取敏感信息"
+    ],
+    "迁移场景": [
+     "SSRF",
+     "缓存投毒",
+     "密码重置"
+    ]
+   }
+  },
+  {
+   "id": 223363,
+   "knowledge_point": "终端转义序列注入日志导致任意终端命令执行",
+   "is_ai_likely_known": false,
+   "reason": "终端转义序列注入是较冷门的技术，AI 可能不熟悉。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（适用于日志系统）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'日志注入'的检测与防御。",
+   "skill_framework": {
+    "name": "日志注入与终端转义序列攻击",
+    "适用场景": [
+     "日志系统",
+     "终端应用",
+     "监控系统"
+    ],
+    "核心原理": [
+     "未过滤的用户输入写入日志",
+     "终端解析转义序列执行命令"
+    ],
+    "决策树": [
+     "IF 日志记录用户输入 AND 未转义 → 尝试注入转义序列"
+    ],
+    "示例": [
+     "用户名包含 \\x1b]0;cmd\\x07 修改终端标题"
+    ],
+    "迁移场景": [
+     "日志审计",
+     "终端安全",
+     "SIEM"
+    ]
+   }
+  },
+  {
+   "id": 48100,
+   "knowledge_point": "TTF 字体解析内存破坏导致内核权限提升",
+   "is_ai_likely_known": false,
+   "reason": "内核级字体解析漏洞是高级技术，AI 训练数据少。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（高度依赖具体系统）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'字体解析安全'的检测与防御。",
+   "skill_framework": {
+    "name": "字体解析安全检测",
+    "适用场景": [
+     "操作系统",
+     "字体渲染库",
+     "沙箱环境"
+    ],
+    "核心原理": [
+     "字体解析器对畸形数据缺乏边界检查",
+     "导致内存破坏"
+    ],
+    "决策树": [
+     "IF 应用解析字体文件 AND 未沙箱化 → 尝试畸形字体测试"
+    ],
+    "示例": [
+     "构造恶意 TTF 触发 win32k.sys 越界写"
+    ],
+    "迁移场景": [
+     "文件解析",
+     "内核安全",
+     "沙箱逃逸"
+    ]
+   }
+  },
+  {
+   "id": 306414,
+   "knowledge_point": "反斜杠绕过 rel=noreferrer 实现 tabnabbing",
+   "is_ai_likely_known": true,
+   "reason": "tabnabbing 是已知攻击，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（适用于链接保护）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：浏览器安全与链接保护。",
+   "skill_framework": null
+  },
+  {
+   "id": 1579820,
+   "knowledge_point": "附件所有权检查缺失导致 IDOR",
+   "is_ai_likely_known": true,
+   "reason": "IDOR 是通用知识，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（适用于所有对象引用）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：IDOR 检测与防御。",
+   "skill_framework": null
+  },
+  {
+   "id": 488643,
+   "knowledge_point": "日历订阅泄露隐藏信息",
+   "is_ai_likely_known": true,
+   "reason": "信息泄露是通用知识，AI 已知。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（特定场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1446107,
+   "knowledge_point": "验证后未锁定个人信息导致 KYC 绕过",
+   "is_ai_likely_known": true,
+   "reason": "业务逻辑缺陷是通用知识，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（适用于 KYC 流程）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：业务逻辑安全。",
+   "skill_framework": null
+  },
+  {
+   "id": 729341,
+   "knowledge_point": "双重链接转换导致 XSS 但被 CSP 阻止",
+   "is_ai_likely_known": true,
+   "reason": "XSS 是通用知识，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（适用于输入处理）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：XSS 防护。",
+   "skill_framework": null
+  },
+  {
+   "id": 1353603,
+   "knowledge_point": "Windows 路径解析差异绕过路径遍历防护",
+   "is_ai_likely_known": false,
+   "reason": "跨平台路径解析差异是具体技术，AI 可能不全面。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（适用于跨平台应用）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'路径解析差异'的检测与防御。",
+   "skill_framework": {
+    "name": "跨平台路径解析差异绕过",
+    "适用场景": [
+     "文件访问控制",
+     "路径遍历防护",
+     "跨平台应用"
+    ],
+    "核心原理": [
+     "不同操作系统路径解析差异",
+     "如 Windows 的 c: 前缀"
+    ],
+    "决策树": [
+     "IF 应用使用路径前缀检查 AND 跨平台 → 尝试 Windows 特殊路径"
+    ],
+    "示例": [
+     "使用 c:..\\..\\ 绕过 startsWith('..') 检查"
+    ],
+    "迁移场景": [
+     "文件上传",
+     "下载",
+     "配置读取"
+    ]
+   }
+  }
+ ]
+}

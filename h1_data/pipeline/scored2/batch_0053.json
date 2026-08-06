@@ -1,0 +1,426 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 10,
+  "not_worth": 5,
+  "top_ids": [
+   1087122,
+   893922,
+   198734,
+   1071832,
+   148151,
+   497047,
+   722327,
+   1401444,
+   303730,
+   863979
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1087122,
+   "knowledge_point": "HTML注入到打印输出导致物理盗窃",
+   "is_ai_likely_known": false,
+   "reason": "将XSS转化为物理攻击的案例较少，AI可能不熟悉打印流程中的信任链。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他打印场景，如发票、标签）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'打印输出注入'的原理和防御。",
+   "skill_framework": {
+    "name": "打印输出注入攻击",
+    "适用场景": [
+     "物流装箱单",
+     "发票",
+     "标签打印"
+    ],
+    "核心原理": [
+     "用户输入未过滤直接进入打印模板",
+     "打印内容被篡改影响物理流程"
+    ],
+    "决策树": [
+     "IF 用户输入进入打印模板 AND 未编码 → 尝试HTML注入"
+    ],
+    "示例": [
+     "邮箱字段注入CSS隐藏真实数量"
+    ],
+    "迁移场景": [
+     "物理安全",
+     "供应链"
+    ]
+   }
+  },
+  {
+   "id": 893922,
+   "knowledge_point": "IP-in-IP协议默认路由任意流量",
+   "is_ai_likely_known": false,
+   "reason": "协议设计缺陷，AI可能不熟悉具体细节。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他隧道协议，如GRE）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'隧道协议滥用'的检测和防御。",
+   "skill_framework": {
+    "name": "隧道协议滥用检测",
+    "适用场景": [
+     "网络设备",
+     "防火墙",
+     "DDoS防护"
+    ],
+    "核心原理": [
+     "IP-in-IP默认接受任意源和目的地址",
+     "可用于反射DDoS和绕过ACL"
+    ],
+    "决策树": [
+     "IF 设备支持IP-in-IP AND 未配置过滤 → 尝试利用"
+    ],
+    "示例": [
+     "发送IP-in-IP包反射流量"
+    ],
+    "迁移场景": [
+     "GRE",
+     "IPv6隧道"
+    ]
+   }
+  },
+  {
+   "id": 198734,
+   "knowledge_point": "GMP反序列化类型混淆导致RCE",
+   "is_ai_likely_known": false,
+   "reason": "PHP反序列化类型混淆的具体案例，AI可能不熟悉GMP对象。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他反序列化场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'反序列化类型混淆'的利用和防御。",
+   "skill_framework": {
+    "name": "反序列化类型混淆攻击",
+    "适用场景": [
+     "PHP应用",
+     "Java应用",
+     "Python应用"
+    ],
+    "核心原理": [
+     "反序列化时类型混淆导致属性覆盖",
+     "结合eval等危险函数实现RCE"
+    ],
+    "决策树": [
+     "IF 存在反序列化入口 AND 可控属性 → 尝试类型混淆"
+    ],
+    "示例": [
+     "GMP对象属性覆盖注入代码"
+    ],
+    "迁移场景": [
+     "Java反序列化",
+     "Python pickle"
+    ]
+   }
+  },
+  {
+   "id": 1071832,
+   "knowledge_point": "MSI修复功能提权",
+   "is_ai_likely_known": false,
+   "reason": "MSI修复提权案例较少，AI可能不熟悉具体机制。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他安装包提权）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'安装包提权'的利用和防御。",
+   "skill_framework": {
+    "name": "安装包提权攻击",
+    "适用场景": [
+     "Windows系统",
+     "MSI安装包"
+    ],
+    "核心原理": [
+     "MSI修复功能加载可控DLL",
+     "非管理员可触发提权"
+    ],
+    "决策树": [
+     "IF 存在MSI文件 AND 可写目录 → 尝试修复提权"
+    ],
+    "示例": [
+     "msiexec /fa加载恶意DLL"
+    ],
+    "迁移场景": [
+     "其他安装包格式"
+    ]
+   }
+  },
+  {
+   "id": 148151,
+   "knowledge_point": "SMB map to guest认证绕过",
+   "is_ai_likely_known": false,
+   "reason": "SMB默认配置绕过，AI可能不熟悉具体配置。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他认证绕过场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'默认配置认证绕过'的检测和防御。",
+   "skill_framework": {
+    "name": "默认配置认证绕过",
+    "适用场景": [
+     "SMB服务",
+     "其他认证服务"
+    ],
+    "核心原理": [
+     "map to guest允许无效用户登录",
+     "默认配置不安全"
+    ],
+    "决策树": [
+     "IF 存在SMB服务 AND 未禁用map to guest → 尝试绕过"
+    ],
+    "示例": [
+     "无效用户登录成功"
+    ],
+    "迁移场景": [
+     "FTP",
+     "数据库"
+    ]
+   }
+  },
+  {
+   "id": 497047,
+   "knowledge_point": "CI/CD token绕过用户封禁",
+   "is_ai_likely_known": false,
+   "reason": "CI/CD token生命周期与用户状态脱钩，AI可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他token管理场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'Token生命周期管理'的检测和防御。",
+   "skill_framework": {
+    "name": "Token生命周期管理",
+    "适用场景": [
+     "CI/CD系统",
+     "API认证"
+    ],
+    "核心原理": [
+     "token不检查用户状态",
+     "挂起job可无限延长token有效期"
+    ],
+    "决策树": [
+     "IF token与用户状态脱钩 AND 可挂起job → 尝试绕过"
+    ],
+    "示例": [
+     "封禁用户仍可用token拉取代码"
+    ],
+    "迁移场景": [
+     "OAuth",
+     "JWT"
+    ]
+   }
+  },
+  {
+   "id": 722327,
+   "knowledge_point": "编码换行符绕过Nginx配置触发php-fpm下溢",
+   "is_ai_likely_known": false,
+   "reason": "CVE-2019-11043具体细节，AI可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他编码绕过场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'编码绕过'的利用和防御。",
+   "skill_framework": {
+    "name": "编码绕过攻击",
+    "适用场景": [
+     "Web服务器",
+     "WAF",
+     "输入验证"
+    ],
+    "核心原理": [
+     "编码换行符破坏正则匹配",
+     "触发缓冲区下溢"
+    ],
+    "决策树": [
+     "IF 存在正则匹配 AND 可输入编码字符 → 尝试绕过"
+    ],
+    "示例": [
+     "%0a绕过fastcgi_split_pathinfo"
+    ],
+    "迁移场景": [
+     "URL编码",
+     "Unicode"
+    ]
+   }
+  },
+  {
+   "id": 1401444,
+   "knowledge_point": "Lua沙箱逃逸通过loadstring",
+   "is_ai_likely_known": false,
+   "reason": "Lua沙箱逃逸的具体案例，AI可能不熟悉loadstring的不安全性。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他沙箱逃逸场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'沙箱逃逸'的利用和防御。",
+   "skill_framework": {
+    "name": "沙箱逃逸攻击",
+    "适用场景": [
+     "Lua沙箱",
+     "其他脚本沙箱"
+    ],
+    "核心原理": [
+     "loadstring等函数可绕过沙箱",
+     "依赖可选扩展"
+    ],
+    "决策树": [
+     "IF 存在沙箱 AND 允许loadstring → 尝试逃逸"
+    ],
+    "示例": [
+     "注入Lua代码执行系统命令"
+    ],
+    "迁移场景": [
+     "Python沙箱",
+     "JavaScript沙箱"
+    ]
+   }
+  },
+  {
+   "id": 303730,
+   "knowledge_point": "X-Forwarded-Host缓存投毒导致存储型XSS",
+   "is_ai_likely_known": false,
+   "reason": "缓存投毒结合DOM XSS的具体案例，AI可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他缓存投毒场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'缓存投毒'的利用和防御。",
+   "skill_framework": {
+    "name": "缓存投毒攻击",
+    "适用场景": [
+     "CDN",
+     "Web缓存",
+     "反向代理"
+    ],
+    "核心原理": [
+     "反射头被缓存",
+     "影响其他用户"
+    ],
+    "决策树": [
+     "IF 存在缓存 AND 反射头 → 尝试投毒"
+    ],
+    "示例": [
+     "X-Forwarded-Host注入恶意内容"
+    ],
+    "迁移场景": [
+     "X-Forwarded-Proto",
+     "X-Real-IP"
+    ]
+   }
+  },
+  {
+   "id": 863979,
+   "knowledge_point": "kubectl 301重定向重放Authorization头",
+   "is_ai_likely_known": false,
+   "reason": "分布式系统中重定向信任问题，AI可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他客户端重定向场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'重定向凭据重放'的检测和防御。",
+   "skill_framework": {
+    "name": "重定向凭据重放攻击",
+    "适用场景": [
+     "Kubernetes",
+     "HTTP客户端",
+     "API调用"
+    ],
+    "核心原理": [
+     "客户端跟随重定向并重放凭据",
+     "可绕过防火墙和认证"
+    ],
+    "决策树": [
+     "IF 客户端跟随重定向 AND 重放凭据 → 尝试利用"
+    ],
+    "示例": [
+     "伪造kubelet重定向exec请求"
+    ],
+    "迁移场景": [
+     "curl",
+     "浏览器"
+    ]
+   }
+  },
+  {
+   "id": 526570,
+   "knowledge_point": "邮件创建MR绕过push规则",
+   "is_ai_likely_known": true,
+   "reason": "不同入口检查不一致是常见问题，AI可能知道。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他多入口场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 862882,
+   "knowledge_point": "GTM注入XSS跨域影响",
+   "is_ai_likely_known": true,
+   "reason": "第三方信任链问题，AI可能知道。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他第三方服务）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1573634,
+   "knowledge_point": "curl更新文件未保留权限",
+   "is_ai_likely_known": false,
+   "reason": "具体工具行为缺陷，AI可能不熟悉。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（特定工具行为）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 144782,
+   "knowledge_point": "smtplib STARTTLS剥离攻击",
+   "is_ai_likely_known": false,
+   "reason": "协议实现缺陷，AI可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他TLS剥离场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化'TLS剥离攻击'的检测和防御。",
+   "skill_framework": {
+    "name": "TLS剥离攻击",
+    "适用场景": [
+     "SMTP",
+     "其他协议"
+    ],
+    "核心原理": [
+     "客户端未检查STARTTLS响应",
+     "可静默降级"
+    ],
+    "决策树": [
+     "IF 客户端支持STARTTLS AND 未检查响应 → 尝试剥离"
+    ],
+    "示例": [
+     "中间人注入响应"
+    ],
+    "迁移场景": [
+     "IMAP",
+     "POP3"
+    ]
+   }
+  },
+  {
+   "id": 398054,
+   "knowledge_point": "postMessage未验证来源导致DOM XSS",
+   "is_ai_likely_known": true,
+   "reason": "postMessage安全问题是常见知识，AI可能知道。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有postMessage场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：postMessage安全。",
+   "skill_framework": null
+  }
+ ]
+}

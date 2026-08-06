@@ -1,0 +1,304 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 5,
+  "not_worth": 10,
+  "top_ids": [
+   55030,
+   1115139,
+   187305,
+   381356,
+   1350401
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 55030,
+   "knowledge_point": "PHP反序列化中SoapClient::__call()类型混淆导致RCE",
+   "is_ai_likely_known": false,
+   "reason": "涉及PHP内部宏Z_ARRVAL_P对属性类型的假设，属于底层实现细节，训练数据中不常见，需深入源码分析。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他PHP魔术方法或类似内部宏使用场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化PHP反序列化中类型混淆的检测与利用方法。",
+   "skill_framework": {
+    "name": "PHP反序列化类型混淆利用",
+    "适用场景": [
+     "PHP反序列化漏洞挖掘",
+     "代码审计",
+     "CTF"
+    ],
+    "核心原理": [
+     "unserialize()允许控制对象属性类型",
+     "内部宏如Z_ARRVAL_P假设属性为数组，类型混淆导致内存破坏"
+    ],
+    "决策树": [
+     "IF 存在unserialize() AND 类方法直接使用属性值作为数组 → 尝试传入非数组类型"
+    ],
+    "示例": [
+     "SoapClient::__call()中__default_headers属性"
+    ],
+    "迁移场景": [
+     "其他PHP魔术方法",
+     "内部函数调用"
+    ]
+   }
+  },
+  {
+   "id": 719856,
+   "knowledge_point": "dot-prop库原型污染",
+   "is_ai_likely_known": true,
+   "reason": "原型污染是常见漏洞，AI已知通用知识，搜索即可获得。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有JavaScript对象属性设置场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 887879,
+   "knowledge_point": "存储型XSS在删除操作时触发",
+   "is_ai_likely_known": true,
+   "reason": "XSS是常见漏洞，延迟触发是变体，但AI已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他业务操作触发XSS的场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 892289,
+   "knowledge_point": "点击劫持+自XSS+剪贴板API账户接管",
+   "is_ai_likely_known": true,
+   "reason": "点击劫持和自XSS是常见技术，组合攻击链AI已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他浏览器特性组合）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 217358,
+   "knowledge_point": "子域名接管通过参数注入绕过修复",
+   "is_ai_likely_known": true,
+   "reason": "子域名接管是常见漏洞，参数注入是通用技术。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他SaaS平台）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 301458,
+   "knowledge_point": "WordPress桌面应用file://协议RCE",
+   "is_ai_likely_known": false,
+   "reason": "涉及桌面应用与Web技术结合，file://协议滥用，训练数据少。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（特定于Electron类应用）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1971610,
+   "knowledge_point": "SAML登出后会话未终止导致认证绕过",
+   "is_ai_likely_known": true,
+   "reason": "SAML会话管理是常见知识，AI已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他SSO协议）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1115139,
+   "knowledge_point": "HTML过滤器绕过（<svg><style><h1/>前缀）导致SSRF",
+   "is_ai_likely_known": false,
+   "reason": "利用HTML解析器容错特性绕过过滤，属于非预期行为，训练数据少。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有HTML过滤场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化HTML过滤器绕过技术。",
+   "skill_framework": {
+    "name": "HTML过滤器绕过（解析器容错）",
+    "适用场景": [
+     "XSS防护绕过",
+     "SSRF防护绕过",
+     "WAF绕过"
+    ],
+    "核心原理": [
+     "HTML解析器对畸形标签的容错处理",
+     "使用<svg><style><h1/>等前缀使过滤器失效"
+    ],
+    "决策树": [
+     "IF 存在HTML过滤 AND 过滤基于黑名单 → 尝试畸形标签组合"
+    ],
+    "示例": [
+     "<svg><style><h1/><iframe src=...>"
+    ],
+    "迁移场景": [
+     "XSS",
+     "SSRF",
+     "内容安全策略绕过"
+    ]
+   }
+  },
+  {
+   "id": 1046630,
+   "knowledge_point": "OAuth CSRF绕过通过null byte注入state参数",
+   "is_ai_likely_known": false,
+   "reason": "null byte注入在OAuth流程中不常见，训练数据少。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他参数校验场景）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1179232,
+   "knowledge_point": "通过篡改cookie中的steamid锁定2FA账户",
+   "is_ai_likely_known": true,
+   "reason": "cookie篡改是常见漏洞，AI已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他cookie信任场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1543159,
+   "knowledge_point": "直接修改API状态字段绕过审核和支付",
+   "is_ai_likely_known": true,
+   "reason": "API参数篡改是常见漏洞，AI已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有状态字段校验场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 915114,
+   "knowledge_point": "IDOR导致账户接管",
+   "is_ai_likely_known": true,
+   "reason": "IDOR是常见漏洞，AI已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有对象引用场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 187305,
+   "knowledge_point": "strncmp零长度比较导致无限循环",
+   "is_ai_likely_known": false,
+   "reason": "strncmp在n=0时返回0的行为是C库边界情况，训练数据少。",
+   "scene_frequency": "低频",
+   "migration_potential": "高（可迁移到所有使用strncmp的解析器）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化C库函数边界行为利用。",
+   "skill_framework": {
+    "name": "C库函数边界行为利用（strncmp等）",
+    "适用场景": [
+     "解析器漏洞挖掘",
+     "模糊测试",
+     "代码审计"
+    ],
+    "核心原理": [
+     "strncmp在n=0时总是返回0，导致错误匹配",
+     "长度为零的标识符可触发无限循环"
+    ],
+    "决策树": [
+     "IF 代码使用strncmp比较字符串 AND 长度参数可能为零 → 尝试构造零长度输入"
+    ],
+    "示例": [
+     "Ruby解析器中的heredoc标识符"
+    ],
+    "迁移场景": [
+     "其他C库函数",
+     "协议解析"
+    ]
+   }
+  },
+  {
+   "id": 381356,
+   "knowledge_point": "客户端竞争条件+postMessage无源检查+data:URL钓鱼",
+   "is_ai_likely_known": false,
+   "reason": "组合了竞争条件、postMessage和Safari特性，训练数据少。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他客户端竞态和消息验证场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化客户端竞态与postMessage安全。",
+   "skill_framework": {
+    "name": "客户端竞态与postMessage安全",
+    "适用场景": [
+     "前端安全测试",
+     "钓鱼攻击",
+     "CSP绕过"
+    ],
+    "核心原理": [
+     "postMessage未检查origin",
+     "竞争条件导致伪造消息先到达",
+     "Safari允许data:导航"
+    ],
+    "决策树": [
+     "IF 页面使用postMessage且未检查origin → 尝试竞态注入",
+     "IF 目标支持data:URL → 尝试钓鱼"
+    ],
+    "示例": [
+     "Marketo表单处理"
+    ],
+    "迁移场景": [
+     "其他浏览器",
+     "Web消息API"
+    ]
+   }
+  },
+  {
+   "id": 1350401,
+   "knowledge_point": "密码重置流程状态混淆绕过邮箱验证",
+   "is_ai_likely_known": false,
+   "reason": "密码重置流程中的状态混淆不常见，训练数据少。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他验证流程）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化验证状态混淆利用。",
+   "skill_framework": {
+    "name": "验证状态混淆利用",
+    "适用场景": [
+     "邮箱验证绕过",
+     "密码重置漏洞",
+     "账户接管"
+    ],
+    "核心原理": [
+     "验证状态未正确绑定到持有验证链接的用户",
+     "密码重置流程中可提交任意邮箱完成验证"
+    ],
+    "决策树": [
+     "IF 存在密码重置流程 AND 验证状态与邮箱字段关联 → 尝试提交受害者邮箱和任意密码"
+    ],
+    "示例": [
+     "Google账户重置流程"
+    ],
+    "迁移场景": [
+     "其他验证流程",
+     "多步骤业务逻辑"
+    ]
+   }
+  }
+ ]
+}

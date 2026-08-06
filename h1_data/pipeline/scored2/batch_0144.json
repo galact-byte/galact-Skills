@@ -1,0 +1,279 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 4,
+  "not_worth": 11,
+  "top_ids": [
+   905543,
+   974892,
+   204048,
+   2094473
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 905543,
+   "knowledge_point": "GraphQL API 权限校验缺失导致越权操作",
+   "is_ai_likely_known": false,
+   "reason": "GraphQL 特有的查询结构、批量操作和权限绕过技巧在训练数据中不常见，且需要结合具体业务逻辑。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（适用于所有 GraphQL API 的权限校验场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 GraphQL 权限校验的测试方法和防御策略。",
+   "skill_framework": {
+    "name": "GraphQL API 权限校验绕过测试与防御",
+    "适用场景": [
+     "GraphQL API 安全测试",
+     "权限校验设计"
+    ],
+    "核心原理": [
+     "GraphQL 端点可能未对每个字段或操作进行权限校验",
+     "客户端可构造任意查询或变更，绕过前端限制"
+    ],
+    "决策树": [
+     "IF 目标使用 GraphQL AND 存在低权限用户 → 枚举所有 mutation 和 query，尝试直接调用"
+    ],
+    "示例": [
+     "低权限用户直接调用 addCash mutation 并指定其他员工 ID"
+    ],
+    "迁移场景": [
+     "GraphQL API 安全测试",
+     "权限校验设计"
+    ]
+   }
+  },
+  {
+   "id": 119471,
+   "knowledge_point": "jQuery $() 作为 DOM XSS sink 的利用",
+   "is_ai_likely_known": true,
+   "reason": "jQuery 的 $() 解析 HTML 导致 XSS 是已知的通用知识，搜索即可获得。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他使用 jQuery 的 DOM XSS 场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 45960,
+   "knowledge_point": "widget 预览接口未校验权限导致 IDOR",
+   "is_ai_likely_known": true,
+   "reason": "IDOR 是常见漏洞，widget 接口未校验权限属于典型 IDOR 案例，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他 widget 或预览功能）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：IDOR 测试与防御。",
+   "skill_framework": null
+  },
+  {
+   "id": 974892,
+   "knowledge_point": "并发请求导致余额重复增加（竞争条件）",
+   "is_ai_likely_known": false,
+   "reason": "竞争条件的具体利用和防御（如事务、锁）在训练数据中不常见，需要系统化方法。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（适用于所有涉及余额、库存等资源操作的场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化竞争条件测试和防御的决策树。",
+   "skill_framework": {
+    "name": "竞争条件（Race Condition）测试与防御",
+    "适用场景": [
+     "余额操作",
+     "库存扣减",
+     "优惠券使用"
+    ],
+    "核心原理": [
+     "并发请求绕过原子性检查",
+     "缺乏锁或事务导致状态不一致"
+    ],
+    "决策树": [
+     "IF 存在资源操作 AND 无锁或事务 → 使用并发工具（如 Turbo Intruder）发送重复请求"
+    ],
+    "示例": [
+     "并发转移数据积分导致余额增加"
+    ],
+    "迁移场景": [
+     "金融系统",
+     "电商系统",
+     "积分系统"
+    ]
+   }
+  },
+  {
+   "id": 189834,
+   "knowledge_point": "利用 referrer 和 IE 解析差异触发 DOM XSS",
+   "is_ai_likely_known": true,
+   "reason": "referrer 注入和 IE 特定行为是已知的 XSS 技巧，AI 可回答。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（依赖 IE 特定行为，现代浏览器不适用）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，无需单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 204048,
+   "knowledge_point": "业务逻辑未验证 SSN 真实性导致非法注册",
+   "is_ai_likely_known": false,
+   "reason": "针对 SSN 等身份信息的真实性校验缺失，在训练数据中不常见，且涉及合规要求。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（适用于所有涉及身份验证的注册流程）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化身份验证逻辑测试和防御。",
+   "skill_framework": {
+    "name": "身份验证逻辑缺陷测试与防御",
+    "适用场景": [
+     "用户注册",
+     "身份验证流程"
+    ],
+    "核心原理": [
+     "业务逻辑未验证身份信息的真实性",
+     "分步注册流程可被利用"
+    ],
+    "决策树": [
+     "IF 注册流程涉及身份信息 AND 未与权威数据源核对 → 尝试使用伪造信息"
+    ],
+    "示例": [
+     "使用无效 SSN 和出生日期完成注册"
+    ],
+    "迁移场景": [
+     "金融开户",
+     "政府服务",
+     "电商注册"
+    ]
+   }
+  },
+  {
+   "id": 212067,
+   "knowledge_point": "CI 日志泄露 GitHub token",
+   "is_ai_likely_known": true,
+   "reason": "CI 日志泄露凭据是常见的安全问题，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他 CI/CD 系统）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：CI/CD 安全配置。",
+   "skill_framework": null
+  },
+  {
+   "id": 2067247,
+   "knowledge_point": "GraphQL mutation 未校验业务规则（如队长数量）",
+   "is_ai_likely_known": true,
+   "reason": "业务规则校验缺失是常见问题，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他业务规则校验场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：GraphQL API 安全测试。",
+   "skill_framework": null
+  },
+  {
+   "id": 121827,
+   "knowledge_point": "CSRF 导致账户绑定替换",
+   "is_ai_likely_known": true,
+   "reason": "CSRF 是常见漏洞，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他社交绑定场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：CSRF 测试与防御。",
+   "skill_framework": null
+  },
+  {
+   "id": 403783,
+   "knowledge_point": "小数数量导致价格计算错误",
+   "is_ai_likely_known": true,
+   "reason": "输入验证缺失是常见问题，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他数值输入场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：输入验证测试与防御。",
+   "skill_framework": null
+  },
+  {
+   "id": 2094473,
+   "knowledge_point": "GET 请求绕过暴力破解防护",
+   "is_ai_likely_known": false,
+   "reason": "针对请求方法差异绕过速率限制的技巧在训练数据中不常见，需要系统化测试。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（适用于所有认证速率限制场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化认证速率限制绕过测试和防御。",
+   "skill_framework": {
+    "name": "认证速率限制绕过测试与防御",
+    "适用场景": [
+     "登录接口",
+     "密码重置",
+     "OTP 验证"
+    ],
+    "核心原理": [
+     "速率限制可能仅针对特定请求方法或参数",
+     "攻击者可通过改变请求方法绕过"
+    ],
+    "决策树": [
+     "IF 存在登录尝试限制 AND 限制基于 POST → 尝试使用 GET 请求"
+    ],
+    "示例": [
+     "将密码作为 GET 参数传递，绕过 POST 限制"
+    ],
+    "迁移场景": [
+     "Web 应用认证",
+     "API 安全"
+    ]
+   }
+  },
+  {
+   "id": 19451,
+   "knowledge_point": "图片文件名注入 XSS",
+   "is_ai_likely_known": true,
+   "reason": "文件名注入 XSS 是已知的存储型 XSS 变体，AI 可回答。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他文件上传场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：文件上传安全。",
+   "skill_framework": null
+  },
+  {
+   "id": 782979,
+   "knowledge_point": "iframe 触发 SSRF 泄露内部信息",
+   "is_ai_likely_known": true,
+   "reason": "SSRF 是常见漏洞，iframe 触发是已知技巧。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他 PDF 导出场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：SSRF 测试与防御。",
+   "skill_framework": null
+  },
+  {
+   "id": 1787644,
+   "knowledge_point": "未授权访问下载资产列表",
+   "is_ai_likely_known": true,
+   "reason": "IDOR 是常见漏洞，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他资源访问场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：IDOR 测试与防御。",
+   "skill_framework": null
+  },
+  {
+   "id": 1213237,
+   "knowledge_point": "DELETE 请求 IDOR 删除任意消息",
+   "is_ai_likely_known": true,
+   "reason": "IDOR 是常见漏洞，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他对象操作场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：IDOR 测试与防御。",
+   "skill_framework": null
+  }
+ ]
+}

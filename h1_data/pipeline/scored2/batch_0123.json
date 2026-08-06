@@ -1,0 +1,366 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 8,
+  "not_worth": 7,
+  "top_ids": [
+   271007,
+   874107,
+   192749,
+   209352,
+   329837,
+   94087,
+   141839,
+   138025
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 271007,
+   "knowledge_point": "SVG动画元素动态修改xlink:href绕过过滤实现存储型XSS",
+   "is_ai_likely_known": false,
+   "reason": "SVG动画元素动态修改xlink:href绕过过滤属于较冷门的绕过技巧，AI训练数据中可能不常见，需要专门知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何使用SVG过滤的场景，如富文本编辑器、文件上传等）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化SVG过滤绕过技巧，包括原理、触发条件、绕过方法。",
+   "skill_framework": {
+    "name": "SVG过滤绕过（动画元素动态修改属性）",
+    "适用场景": [
+     "富文本编辑器",
+     "Markdown渲染",
+     "SVG上传"
+    ],
+    "核心原理": [
+     "过滤静态属性但未考虑动态修改",
+     "animate元素可动态改变xlink:href等属性"
+    ],
+    "决策树": [
+     "IF 存在SVG过滤 AND 允许animate元素 → 尝试动态修改危险属性"
+    ],
+    "示例": [
+     "<svg><animate attributeName=\"xlink:href\" values=\"javascript:alert(1)\" /></svg>"
+    ],
+    "迁移场景": [
+     "XSS",
+     "内容安全策略绕过"
+    ]
+   }
+  },
+  {
+   "id": 141839,
+   "knowledge_point": "PCRE正则引擎边界条件导致内存破坏",
+   "is_ai_likely_known": false,
+   "reason": "PCRE引擎内部边界条件利用属于底层知识，AI可能不熟悉具体细节，且需要特定版本。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他正则引擎的类似问题）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，但注明依赖具体版本，提供通用检测思路。",
+   "skill_framework": {
+    "name": "正则引擎边界条件利用",
+    "适用场景": [
+     "用户输入正则的Web应用",
+     "正则引擎版本已知"
+    ],
+    "核心原理": [
+     "正则引擎对offset的假设错误",
+     "特殊正则触发未定义行为"
+    ],
+    "决策树": [
+     "IF 用户可控正则 AND 引擎版本旧 → 测试边界条件"
+    ],
+    "示例": [
+     "构造超长正则或特殊字符组合"
+    ],
+    "迁移场景": [
+     "内存破坏",
+     "拒绝服务"
+    ]
+   }
+  },
+  {
+   "id": 94087,
+   "knowledge_point": "S3对象键路径遍历导致任意文件读取",
+   "is_ai_likely_known": false,
+   "reason": "S3键名控制缺失导致路径遍历属于云安全配置问题，AI可能不熟悉具体利用方式。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何云存储服务，如Azure Blob、GCS）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化云存储键名控制检查清单。",
+   "skill_framework": {
+    "name": "云存储键名路径遍历",
+    "适用场景": [
+     "S3",
+     "Azure Blob",
+     "GCS"
+    ],
+    "核心原理": [
+     "用户可控键名未规范化",
+     "路径遍历导致越权访问"
+    ],
+    "决策树": [
+     "IF 用户可控对象键 AND 服务端未规范化 → 尝试路径遍历"
+    ],
+    "示例": [
+     "filepath=../../other-bucket/file"
+    ],
+    "迁移场景": [
+     "云存储",
+     "对象存储"
+    ]
+   }
+  },
+  {
+   "id": 124429,
+   "knowledge_point": "业务逻辑参数篡改导致存储型XSS",
+   "is_ai_likely_known": true,
+   "reason": "参数篡改和XSS是常见漏洞，AI普遍了解。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他业务逻辑漏洞）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 616770,
+   "knowledge_point": "富文本编辑器Source模式绕过过滤",
+   "is_ai_likely_known": true,
+   "reason": "富文本编辑器绕过是常见话题，AI可能知道。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他编辑器）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 46747,
+   "knowledge_point": "水平权限提升通过直接API调用",
+   "is_ai_likely_known": true,
+   "reason": "水平权限提升是常见漏洞，AI普遍了解。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他权限提升场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 874107,
+   "knowledge_point": "CDN路径与S3 bucket映射导致信任边界混淆",
+   "is_ai_likely_known": false,
+   "reason": "CDN路径与bucket映射的信任边界混淆属于较冷门的基础设施配置问题，AI可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他CDN和云存储组合）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化CDN与云存储映射的安全检查。",
+   "skill_framework": {
+    "name": "CDN与云存储映射信任边界混淆",
+    "适用场景": [
+     "CDN配置",
+     "云存储绑定"
+    ],
+    "核心原理": [
+     "CDN路径与bucket名直接对应",
+     "攻击者可控bucket名导致任意文件托管"
+    ],
+    "决策树": [
+     "IF CDN路径包含用户可控bucket名 → 尝试上传恶意内容"
+    ],
+    "示例": [
+     "https://cdn.example.com/hotbox/attacker-bucket/"
+    ],
+    "迁移场景": [
+     "CDN",
+     "云存储",
+     "XSS"
+    ]
+   }
+  },
+  {
+   "id": 192749,
+   "knowledge_point": "CRLF注入与缓存投毒结合",
+   "is_ai_likely_known": false,
+   "reason": "CRLF注入和缓存投毒的组合利用属于较高级技巧，AI可能不熟悉具体细节。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何HTTP响应拆分和缓存场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化CRLF注入与缓存投毒的攻击链。",
+   "skill_framework": {
+    "name": "CRLF注入与缓存投毒",
+    "适用场景": [
+     "HTTP响应拆分",
+     "缓存服务器"
+    ],
+    "核心原理": [
+     "注入CRLF构造恶意响应",
+     "缓存服务器缓存恶意响应"
+    ],
+    "决策树": [
+     "IF 存在CRLF注入 AND 有缓存 → 尝试缓存投毒"
+    ],
+    "示例": [
+     "%0d%0aSet-Cookie:...",
+     "注入恶意响应头"
+    ],
+    "迁移场景": [
+     "HTTP响应拆分",
+     "缓存投毒",
+     "XSS"
+    ]
+   }
+  },
+  {
+   "id": 1198517,
+   "knowledge_point": "自定义emoji的src属性未转义导致存储型XSS",
+   "is_ai_likely_known": true,
+   "reason": "属性未转义是常见XSS原因，AI普遍了解。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他属性未转义场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 209352,
+   "knowledge_point": "Referer头泄露密码重置令牌",
+   "is_ai_likely_known": false,
+   "reason": "Referer泄露令牌属于较冷门的信息泄露方式，AI可能不熟悉具体利用。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何敏感页面）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化Referer泄露检测和防御。",
+   "skill_framework": {
+    "name": "Referer头泄露敏感信息",
+    "适用场景": [
+     "密码重置",
+     "令牌传递"
+    ],
+    "核心原理": [
+     "第三方资源加载导致Referer泄露",
+     "令牌在URL中"
+    ],
+    "决策树": [
+     "IF 敏感页面加载第三方资源 AND URL含令牌 → 检查Referer策略"
+    ],
+    "示例": [
+     "<img src=\"https://evil.com\">"
+    ],
+    "迁移场景": [
+     "信息泄露",
+     "账户接管"
+    ]
+   }
+  },
+  {
+   "id": 118631,
+   "knowledge_point": "JSONP接口泄露token且token不失效",
+   "is_ai_likely_known": true,
+   "reason": "JSONP和token管理是常见话题，AI可能知道。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他JSONP场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 138025,
+   "knowledge_point": "指针加法溢出绕过内存边界检查",
+   "is_ai_likely_known": false,
+   "reason": "指针运算溢出属于底层内存破坏技巧，AI可能不熟悉具体细节。",
+   "scene_frequency": "低频",
+   "migration_potential": "中（可迁移到其他内存管理代码）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，但注明依赖具体代码，提供通用检测思路。",
+   "skill_framework": {
+    "name": "指针运算溢出利用",
+    "适用场景": [
+     "C/C++代码",
+     "内存管理"
+    ],
+    "核心原理": [
+     "指针加法溢出导致越界",
+     "绕过边界检查"
+    ],
+    "决策树": [
+     "IF 存在指针运算 AND 用户可控大小 → 测试溢出"
+    ],
+    "示例": [
+     "ptr + size 溢出"
+    ],
+    "迁移场景": [
+     "内存破坏",
+     "提权"
+    ]
+   }
+  },
+  {
+   "id": 87854,
+   "knowledge_point": "用户名字段未转义导致存储型XSS",
+   "is_ai_likely_known": true,
+   "reason": "用户名字段XSS是常见漏洞，AI普遍了解。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他用户输入字段）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 329837,
+   "knowledge_point": "路径遍历过滤绕过（..././变体）",
+   "is_ai_likely_known": false,
+   "reason": "路径遍历过滤绕过变体属于较冷门技巧，AI可能不熟悉所有变体。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何路径过滤场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化路径遍历绕过变体库。",
+   "skill_framework": {
+    "name": "路径遍历过滤绕过变体",
+    "适用场景": [
+     "文件读取",
+     "文件上传"
+    ],
+    "核心原理": [
+     "过滤逻辑不完善",
+     "变体如..././绕过简单替换"
+    ],
+    "决策树": [
+     "IF 存在路径过滤 AND 简单替换 → 尝试变体"
+    ],
+    "示例": [
+     "..././",
+     "....//",
+     "..;/"
+    ],
+    "迁移场景": [
+     "路径遍历",
+     "文件操作"
+    ]
+   }
+  },
+  {
+   "id": 2209130,
+   "knowledge_point": "SQL注入结合WAF绕过（注释和堆叠查询）",
+   "is_ai_likely_known": true,
+   "reason": "SQL注入和WAF绕过是常见话题，AI普遍了解。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他SQL注入场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  }
+ ]
+}

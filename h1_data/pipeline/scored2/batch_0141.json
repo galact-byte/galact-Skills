@@ -1,0 +1,296 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 5,
+  "not_worth": 10,
+  "top_ids": [
+   2294930,
+   308489,
+   1838329,
+   59659,
+   330650
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 2294930,
+   "knowledge_point": "Salesforce Aura 框架 getItems 控制器未授权访问与 ID 枚举导致 PII 泄露",
+   "is_ai_likely_known": false,
+   "reason": "Salesforce Aura 框架的具体控制器和默认配置问题，训练数据中较少，需要特定框架知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他低代码平台或框架的默认配置审计）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'低代码平台默认配置审计'的流程，包括识别公开控制器、测试对象级权限、ID 枚举等。",
+   "skill_framework": {
+    "name": "低代码平台默认配置审计（以 Salesforce Aura 为例）",
+    "适用场景": [
+     "Salesforce 安全评估",
+     "其他低代码平台（如 Mendix、OutSystems）安全测试"
+    ],
+    "核心原理": [
+     "平台默认配置可能允许未授权访问",
+     "顺序 ID 可枚举导致批量数据泄露"
+    ],
+    "决策树": [
+     "IF 目标使用低代码平台 → 检查公开控制器/API → 测试对象级权限 → 尝试 ID 枚举"
+    ],
+    "示例": [
+     "通过 getItems 控制器枚举 Contact 记录"
+    ],
+    "迁移场景": [
+     "低代码平台安全评估",
+     "SaaS 应用配置审计"
+    ]
+   }
+  },
+  {
+   "id": 506161,
+   "knowledge_point": "构建过程通过 HTTP 下载依赖导致供应链攻击",
+   "is_ai_likely_known": true,
+   "reason": "这是常见的供应链安全知识，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（仅涉及构建配置）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 220185,
+   "knowledge_point": "密码重置令牌未在密码更改后失效",
+   "is_ai_likely_known": true,
+   "reason": "这是常见的令牌生命周期管理问题，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他令牌失效场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：令牌生命周期管理。",
+   "skill_framework": null
+  },
+  {
+   "id": 308489,
+   "knowledge_point": "WordPress 插件未授权反序列化漏洞利用",
+   "is_ai_likely_known": false,
+   "reason": "具体插件 wpjobmanager 的漏洞细节，训练数据中可能不常见，但反序列化漏洞本身是已知的。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他 WordPress 插件或 PHP 应用的反序列化漏洞检测）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'WordPress 插件反序列化漏洞检测'的流程，包括识别 AJAX 接口、测试未授权访问、构造 payload。",
+   "skill_framework": {
+    "name": "WordPress 插件反序列化漏洞检测",
+    "适用场景": [
+     "WordPress 插件安全审计",
+     "PHP 应用反序列化漏洞测试"
+    ],
+    "核心原理": [
+     "用户输入直接传入反序列化函数",
+     "未授权 AJAX 接口可被远程触发"
+    ],
+    "决策树": [
+     "IF 目标为 WordPress 插件 → 枚举 AJAX 接口 → 测试未授权访问 → 检查反序列化点"
+    ],
+    "示例": [
+     "wpjobmanager 的 AJAX 接口触发反序列化"
+    ],
+    "迁移场景": [
+     "PHP 应用安全测试",
+     "CMS 插件审计"
+    ]
+   }
+  },
+  {
+   "id": 1838329,
+   "knowledge_point": "GraphQL 聚合查询绕过权限过滤泄露私有数据",
+   "is_ai_likely_known": false,
+   "reason": "GraphQL 聚合功能绕过权限是较新的攻击面，AI 可能不完全掌握。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他 GraphQL 实现）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'GraphQL 聚合查询权限绕过'的检测与利用方法。",
+   "skill_framework": {
+    "name": "GraphQL 聚合查询权限绕过",
+    "适用场景": [
+     "GraphQL API 安全测试",
+     "信息泄露漏洞挖掘"
+    ],
+    "核心原理": [
+     "聚合字段可能未应用权限过滤",
+     "通过聚合枚举数据"
+    ],
+    "决策树": [
+     "IF 目标使用 GraphQL → 测试聚合字段 → 检查是否泄露私有数据"
+    ],
+    "示例": [
+     "使用 aggs 聚合 handle 字段泄露私有项目"
+    ],
+    "迁移场景": [
+     "GraphQL API 审计",
+     "数据泄露测试"
+    ]
+   }
+  },
+  {
+   "id": 1282282,
+   "knowledge_point": "Unicode 同形字符替换绕过抄袭检测",
+   "is_ai_likely_known": true,
+   "reason": "Unicode 同形字符攻击是已知的，AI 可能了解。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（仅适用于文本处理场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 993975,
+   "knowledge_point": "Windows 路径分隔符反斜杠绕过路径遍历过滤",
+   "is_ai_likely_known": true,
+   "reason": "这是常见的平台差异利用，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他平台差异利用）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：路径遍历绕过技术。",
+   "skill_framework": null
+  },
+  {
+   "id": 154400,
+   "knowledge_point": "通过 URL hash 注入任意 cookie",
+   "is_ai_likely_known": false,
+   "reason": "利用 location hash 设置 cookie 的具体技巧，AI 可能不完全掌握。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他 cookie 注入场景）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：Cookie 注入与会话固定攻击。",
+   "skill_framework": null
+  },
+  {
+   "id": 59659,
+   "knowledge_point": "账户禁用后未撤销待确认邮箱令牌导致重新激活",
+   "is_ai_likely_known": false,
+   "reason": "状态混淆导致禁用绕过，AI 可能不完全掌握。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他状态变更场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'账户状态变更后的令牌撤销'检查清单。",
+   "skill_framework": {
+    "name": "账户状态变更后的令牌撤销检查",
+    "适用场景": [
+     "账户安全测试",
+     "业务逻辑漏洞挖掘"
+    ],
+    "核心原理": [
+     "账户禁用后未撤销待处理操作",
+     "状态混淆导致绕过"
+    ],
+    "决策树": [
+     "IF 账户被禁用 → 检查待处理令牌 → 尝试确认操作"
+    ],
+    "示例": [
+     "禁用账户通过确认新邮箱重新激活"
+    ],
+    "迁移场景": [
+     "用户管理功能测试",
+     "状态机安全审计"
+    ]
+   }
+  },
+  {
+   "id": 330650,
+   "knowledge_point": "macOS 大小写不敏感文件系统绕过 ignore 配置",
+   "is_ai_likely_known": false,
+   "reason": "利用文件系统大小写敏感性差异绕过配置，AI 可能不完全掌握。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他依赖文件系统特性的场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'文件系统特性差异利用'的检测方法。",
+   "skill_framework": {
+    "name": "文件系统特性差异利用（大小写敏感性）",
+    "适用场景": [
+     "文件访问控制绕过",
+     "配置绕过测试"
+    ],
+    "核心原理": [
+     "不同操作系统文件系统行为差异",
+     "字符串匹配未考虑大小写"
+    ],
+    "决策树": [
+     "IF 目标运行在 macOS → 尝试改变文件名大小写 → 检查是否绕过过滤"
+    ],
+    "示例": [
+     "将文件名改为大写绕过 ignore 列表"
+    ],
+    "迁移场景": [
+     "跨平台应用安全测试",
+     "文件系统行为审计"
+    ]
+   }
+  },
+  {
+   "id": 880863,
+   "knowledge_point": "权限变更后 to-do 列表未及时更新导致信息泄露",
+   "is_ai_likely_known": true,
+   "reason": "这是常见的权限变更同步问题，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他权限变更场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：权限变更后的数据访问控制。",
+   "skill_framework": null
+  },
+  {
+   "id": 852103,
+   "knowledge_point": "PHP urldecode() 越界读漏洞",
+   "is_ai_likely_known": true,
+   "reason": "这是已知的 CVE，AI 可能了解。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（特定函数漏洞）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 1066504,
+   "knowledge_point": "CTF 挑战中的多漏洞组合利用",
+   "is_ai_likely_known": true,
+   "reason": "CTF 中的常见漏洞组合，AI 已知。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（特定挑战）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 1103582,
+   "knowledge_point": "Jira 插件未验证权限导致 JWT 泄露",
+   "is_ai_likely_known": true,
+   "reason": "这是常见的权限验证缺失问题，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他插件权限验证）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：插件权限验证审计。",
+   "skill_framework": null
+  },
+  {
+   "id": 1832494,
+   "knowledge_point": "Blind SSRF 利用 Python requests 错误差异进行端口扫描",
+   "is_ai_likely_known": true,
+   "reason": "SSRF 端口扫描是常见技术，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他 SSRF 场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：SSRF 利用与端口扫描。",
+   "skill_framework": null
+  }
+ ]
+}

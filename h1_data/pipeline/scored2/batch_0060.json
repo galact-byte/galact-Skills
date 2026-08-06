@@ -1,0 +1,356 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 8,
+  "not_worth": 7,
+  "top_ids": [
+   180582,
+   116286,
+   205481,
+   1019891,
+   977697,
+   405100,
+   164224,
+   1379656
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 180582,
+   "knowledge_point": "PHP整数溢出导致堆溢出",
+   "is_ai_likely_known": true,
+   "reason": "整数溢出导致堆溢出是通用安全知识，AI训练数据中常见，直接提问即可获得基本概念。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他语言/框架的整数溢出场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 116286,
+   "knowledge_point": "Python partial对象类型混淆导致内存破坏",
+   "is_ai_likely_known": false,
+   "reason": "针对Python标准库内部结构的类型混淆利用，属于特定运行时漏洞，训练数据稀少。",
+   "scene_frequency": "低频",
+   "migration_potential": "高（可迁移到其他语言运行时类型混淆攻击）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'语言运行时类型混淆'的通用攻击模式。",
+   "skill_framework": {
+    "name": "语言运行时类型混淆攻击",
+    "适用场景": [
+     "Python",
+     "Ruby",
+     "JavaScript 等解释器漏洞挖掘"
+    ],
+    "核心原理": [
+     "利用对象内部结构的不一致，导致类型混淆，进而控制函数指针或内存布局"
+    ],
+    "决策树": [
+     "IF 目标使用解释型语言 AND 存在对象操作接口 → 分析对象内部结构，寻找类型混淆点"
+    ],
+    "示例": [
+     "Python partial 对象构造恶意参数触发类型混淆"
+    ],
+    "迁移场景": [
+     "CTF",
+     "漏洞研究",
+     "运行时安全"
+    ]
+   }
+  },
+  {
+   "id": 205481,
+   "knowledge_point": "WordPress unzip_file 路径遍历",
+   "is_ai_likely_known": true,
+   "reason": "zip 路径遍历是常见漏洞类型，AI 已知基本概念，但具体到 WordPress 函数可能需搜索。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何文件解压功能）",
+   "source_quality": "通用",
+   "worth_skill": true,
+   "suggested_handling": "合并到上层系统 Skill：'文件解压路径遍历防护'。",
+   "skill_framework": {
+    "name": "文件解压路径遍历防护",
+    "适用场景": [
+     "CMS",
+     "文件上传功能",
+     "压缩包处理"
+    ],
+    "核心原理": [
+     "解压时未规范化路径，导致写入目标目录之外"
+    ],
+    "决策树": [
+     "IF 存在文件解压功能 AND 未校验条目路径 → 尝试 ../ 绕过"
+    ],
+    "示例": [
+     "WordPress unzip_file 写入 PHP 文件"
+    ],
+    "迁移场景": [
+     "任意文件上传",
+     "RCE"
+    ]
+   }
+  },
+  {
+   "id": 1019891,
+   "knowledge_point": "Windows命名管道中间人攻击",
+   "is_ai_likely_known": false,
+   "reason": "命名管道安全描述符配置错误导致中间人攻击，属于特定系统调用行为，训练数据较少。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他IPC机制如Unix域套接字）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'IPC 中间人攻击'的通用模式。",
+   "skill_framework": {
+    "name": "IPC 中间人攻击（命名管道/Unix域套接字）",
+    "适用场景": [
+     "Windows 服务",
+     "本地进程通信",
+     "数据库连接"
+    ],
+    "核心原理": [
+     "利用安全描述符配置错误，创建恶意管道实例，劫持客户端连接"
+    ],
+    "决策树": [
+     "IF 存在命名管道 AND 创建权限宽松 → 尝试创建同名管道进行中间人攻击"
+    ],
+    "示例": [
+     "创建恶意管道实例窃取数据库通信"
+    ],
+    "迁移场景": [
+     "本地提权",
+     "数据窃取"
+    ]
+   }
+  },
+  {
+   "id": 977697,
+   "knowledge_point": "iframe srcdoc 绕过 CSP 实现存储型 XSS",
+   "is_ai_likely_known": false,
+   "reason": "iframe srcdoc 绕过 CSP 是较新的技巧，AI 可能不完全掌握，且需要结合具体框架行为。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何 CSP 防护的 XSS 场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'CSP 绕过之 iframe srcdoc'。",
+   "skill_framework": {
+    "name": "CSP 绕过之 iframe srcdoc",
+    "适用场景": [
+     "XSS 防护",
+     "CSP 策略绕过"
+    ],
+    "核心原理": [
+     "srcdoc 内容被视为独立文档，不受父页面 CSP 限制"
+    ],
+    "决策树": [
+     "IF 存在 CSP 且允许 iframe → 尝试 srcdoc 注入外部脚本"
+    ],
+    "示例": [
+     "GitLab merge request 页面存储型 XSS"
+    ],
+    "迁移场景": [
+     "存储型 XSS",
+     "DOM XSS"
+    ]
+   }
+  },
+  {
+   "id": 1298902,
+   "knowledge_point": "API 对象级权限校验缺失",
+   "is_ai_likely_known": true,
+   "reason": "对象级授权缺失是通用知识，AI 已知，但具体到 Reddit 私有 subreddit 可能需搜索。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何 API 资源访问控制）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 390346,
+   "knowledge_point": "IDOR 通过修改 ID 访问他人照片",
+   "is_ai_likely_known": true,
+   "reason": "IDOR 是通用漏洞类型，AI 已知，且此案例 ID 看似随机，利用难度高，可迁移性一般。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他 IDOR 场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 405100,
+   "knowledge_point": "OAuth redirect_uri 前缀匹配绕过",
+   "is_ai_likely_known": false,
+   "reason": "OAuth redirect_uri 前缀匹配漏洞是经典但具体的绕过技巧，AI 可能不完全掌握，且具有通用性。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何 URL 校验逻辑）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'URL 前缀匹配绕过'。",
+   "skill_framework": {
+    "name": "URL 前缀匹配绕过",
+    "适用场景": [
+     "OAuth",
+     "回调 URL 校验",
+     "SSRF 防护"
+    ],
+    "核心原理": [
+     "校验只检查前缀，导致可注入任意后缀域名"
+    ],
+    "决策树": [
+     "IF 存在 URL 白名单 AND 使用前缀匹配 → 尝试在合法域名后追加恶意域名"
+    ],
+    "示例": [
+     "OAuth redirect_uri 窃取授权码"
+    ],
+    "迁移场景": [
+     "开放重定向",
+     "SSRF"
+    ]
+   }
+  },
+  {
+   "id": 220385,
+   "knowledge_point": "用户名 `.` 导致路径遍历删除数据",
+   "is_ai_likely_known": true,
+   "reason": "利用特殊文件名导致路径遍历是通用知识，AI 已知，且此案例依赖具体实现。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（依赖特定文件操作逻辑）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 112863,
+   "knowledge_point": "32位 PHP 整数溢出导致堆溢出",
+   "is_ai_likely_known": true,
+   "reason": "与 180582 类似，通用知识，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他 32 位环境）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 129001,
+   "knowledge_point": "CSRF 设置恶意 cookie 导致客户端 DoS",
+   "is_ai_likely_known": true,
+   "reason": "CSRF 设置 cookie 是通用知识，AI 已知，且此案例依赖特定业务逻辑。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他 cookie 设置场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 164224,
+   "knowledge_point": "Smarty 模板引擎 {php} 标签导致 SSTI",
+   "is_ai_likely_known": false,
+   "reason": "模板引擎危险标签导致 SSTI 是具体框架行为，AI 可能不完全掌握，且具有通用性。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他模板引擎如 Twig、Jinja2）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'模板引擎危险标签检测'。",
+   "skill_framework": {
+    "name": "模板引擎危险标签检测",
+    "适用场景": [
+     "SSTI 漏洞挖掘",
+     "模板引擎安全配置"
+    ],
+    "核心原理": [
+     "模板引擎启用危险标签（如 {php}）导致任意代码执行"
+    ],
+    "决策树": [
+     "IF 使用模板引擎 AND 用户输入进入模板 → 尝试注入危险标签"
+    ],
+    "示例": [
+     "Smarty {php} 标签 RCE"
+    ],
+    "迁移场景": [
+     "RCE",
+     "代码注入"
+    ]
+   }
+  },
+  {
+   "id": 1379656,
+   "knowledge_point": "DNS rebinding 绕过 SSRF 防护",
+   "is_ai_likely_known": false,
+   "reason": "DNS rebinding 是高级 SSRF 绕过技术，AI 可能不完全掌握，且具有通用性。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何基于 IP 的访问控制）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'DNS rebinding 绕过'。",
+   "skill_framework": {
+    "name": "DNS rebinding 绕过",
+    "适用场景": [
+     "SSRF 防护",
+     "IP 白名单/黑名单"
+    ],
+    "核心原理": [
+     "利用 DNS 解析两次结果不同，绕过 IP 校验"
+    ],
+    "决策树": [
+     "IF 存在 SSRF 防护 AND 基于 IP 校验 → 尝试 DNS rebinding"
+    ],
+    "示例": [
+     "webhook 端点访问内网资源"
+    ],
+    "迁移场景": [
+     "内网渗透",
+     "云环境安全"
+    ]
+   }
+  },
+  {
+   "id": 97510,
+   "knowledge_point": "Twitter Intent 参数注入导致关注错误用户",
+   "is_ai_likely_known": true,
+   "reason": "参数注入是通用知识，AI 已知，且此案例依赖特定业务逻辑。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（依赖特定应用）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 85488,
+   "knowledge_point": "Unicode 转义序列解析差异绕过 XSS 过滤",
+   "is_ai_likely_known": false,
+   "reason": "浏览器对 Unicode 转义序列的解析差异是特定行为，AI 可能不完全掌握，且具有通用性。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他 XSS 过滤绕过）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'Unicode 解析差异绕过'。",
+   "skill_framework": {
+    "name": "Unicode 解析差异绕过",
+    "适用场景": [
+     "XSS 过滤",
+     "WAF 绕过"
+    ],
+    "核心原理": [
+     "浏览器对 Unicode 转义序列的解析与服务器不同，导致过滤被绕过"
+    ],
+    "决策树": [
+     "IF 存在 XSS 过滤 AND 过滤基于字符串匹配 → 尝试 Unicode 变体"
+    ],
+    "示例": [
+     "Vimeo 播放器存储型 XSS"
+    ],
+    "迁移场景": [
+     "存储型 XSS",
+     "DOM XSS"
+    ]
+   }
+  }
+ ]
+}

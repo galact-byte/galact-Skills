@@ -1,0 +1,360 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 8,
+  "not_worth": 7,
+  "top_ids": [
+   186766,
+   322935,
+   1132378,
+   980649,
+   1819668,
+   1285226,
+   1892200,
+   841947
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 186766,
+   "knowledge_point": "子域名接管：悬空DNS记录与云资源注册",
+   "is_ai_likely_known": true,
+   "reason": "子域名接管是常见漏洞，AI训练数据充足，但具体到S3 bucket接管和证书签发链的完整利用，AI可能不系统。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何云服务商，如Azure、GCP，以及CDN配置）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，系统化子域名接管检测与利用流程，包括DNS记录检查、云资源注册、证书签发。",
+   "skill_framework": {
+    "name": "子域名接管检测与利用",
+    "适用场景": [
+     "子域名枚举",
+     "云资源配置审计",
+     "证书透明度日志分析"
+    ],
+    "核心原理": [
+     "悬空DNS记录指向未注册的云资源",
+     "攻击者注册该资源获得子域名控制权"
+    ],
+    "决策树": [
+     "IF 子域名CNAME指向云服务且资源不存在 → 尝试注册该资源",
+     "IF 注册成功 → 上传内容并签发证书"
+    ],
+    "示例": [
+     "CNAME到不存在的S3 bucket → 注册bucket → 托管恶意内容"
+    ],
+    "迁移场景": [
+     "S3",
+     "Azure Blob",
+     "GCP Storage",
+     "CDN"
+    ]
+   }
+  },
+  {
+   "id": 322935,
+   "knowledge_point": "Off-by-one漏洞利用链：从内存破坏到预认证RCE",
+   "is_ai_likely_known": false,
+   "reason": "off-by-one本身是经典，但具体到Exim的利用链和堆布局技术，AI可能不深入。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他邮件服务器或网络服务的内存破坏利用）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化off-by-one到RCE的利用方法论，包括堆布局和利用技巧。",
+   "skill_framework": {
+    "name": "Off-by-One到RCE利用链",
+    "适用场景": [
+     "邮件服务器",
+     "网络服务",
+     "任何C/C++应用"
+    ],
+    "核心原理": [
+     "off-by-one覆盖相邻堆块元数据",
+     "通过堆布局控制执行流"
+    ],
+    "决策树": [
+     "IF 存在off-by-one漏洞 → 分析堆布局 → 构造利用链"
+    ],
+    "示例": [
+     "Exim off-by-one → 堆溢出 → 预认证RCE"
+    ],
+    "迁移场景": [
+     "SMTP",
+     "HTTP",
+     "任何网络协议"
+    ]
+   }
+  },
+  {
+   "id": 1132378,
+   "knowledge_point": "open-uri误用导致任意文件读取和SSRF",
+   "is_ai_likely_known": false,
+   "reason": "open-uri的URL处理特性是Ruby特有，AI可能不熟悉，且结合json schema validator的误用是具体场景。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何使用open-uri或类似库的语言，如Python的urllib）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化open-uri误用检测和利用，包括协议限制绕过。",
+   "skill_framework": {
+    "name": "open-uri误用检测与利用",
+    "适用场景": [
+     "Ruby应用",
+     "文件导入功能",
+     "URL处理"
+    ],
+    "核心原理": [
+     "open-uri支持多种协议，可读取本地文件",
+     "未限制协议和路径导致任意文件读取"
+    ],
+    "决策树": [
+     "IF 应用使用open-uri处理用户输入 → 尝试file://协议",
+     "IF 可读取文件 → 尝试读取敏感文件"
+    ],
+    "示例": [
+     "导入项目时通过open-uri读取/etc/passwd"
+    ],
+    "迁移场景": [
+     "Ruby",
+     "Python",
+     "其他语言类似库"
+    ]
+   }
+  },
+  {
+   "id": 471739,
+   "knowledge_point": "macOS安装程序参数解析歧义导致权限提升",
+   "is_ai_likely_known": false,
+   "reason": "具体到macOS安装程序的参数解析歧义，AI可能不熟悉，且是特定平台行为。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（特定于macOS安装程序，迁移性差）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1965156,
+   "knowledge_point": "功能组合绕过权限控制：文本文件引用图片绕过下载权限",
+   "is_ai_likely_known": true,
+   "reason": "权限绕过是常见思路，AI可能知道，但具体到文本文件引用图片的绕过方式可能不系统。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他文件类型和引用场景）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：权限控制绕过检测。",
+   "skill_framework": null
+  },
+  {
+   "id": 1814333,
+   "knowledge_point": "curl并行请求导致HSTS缓存覆盖",
+   "is_ai_likely_known": false,
+   "reason": "curl的并行处理与HSTS交互是具体实现细节，AI可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他支持并行请求的HTTP客户端）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 168538,
+   "knowledge_point": "移动应用未验证TLS证书导致中间人攻击",
+   "is_ai_likely_known": true,
+   "reason": "证书验证缺失是常见问题，AI训练数据充足。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何移动应用或客户端）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 980649,
+   "knowledge_point": "JSON Merge Patch原型污染",
+   "is_ai_likely_known": false,
+   "reason": "JSON Merge Patch标准未考虑原型链，AI可能不熟悉，且具体到json8-merge-patch库是特定场景。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何JavaScript对象合并操作）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化原型污染检测和利用，包括__proto__键过滤。",
+   "skill_framework": {
+    "name": "JavaScript原型污染检测与利用",
+    "适用场景": [
+     "JSON合并",
+     "对象克隆",
+     "配置合并"
+    ],
+    "核心原理": [
+     "__proto__键可修改原型链",
+     "未过滤危险键导致全局污染"
+    ],
+    "决策树": [
+     "IF 存在对象合并操作 → 尝试__proto__键",
+     "IF 污染成功 → 尝试RCE或DoS"
+    ],
+    "示例": [
+     "json8-merge-patch的apply函数未过滤__proto__"
+    ],
+    "迁移场景": [
+     "Node.js",
+     "浏览器",
+     "任何JavaScript环境"
+    ]
+   }
+  },
+  {
+   "id": 841947,
+   "knowledge_point": "扩展名绕过与日志注入实现RCE",
+   "is_ai_likely_known": true,
+   "reason": "日志注入和扩展名绕过是常见攻击，AI可能知道，但具体到参数修改绕过检查可能不系统。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他日志功能或文件上传场景）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：文件上传与日志注入检测。",
+   "skill_framework": null
+  },
+  {
+   "id": 712979,
+   "knowledge_point": "URL显示与解析不一致导致钓鱼",
+   "is_ai_likely_known": true,
+   "reason": "URL混淆是常见攻击，AI训练数据充足。",
+   "scene_frequency": "高频",
+   "migration_potential": "中（可迁移到其他URL显示场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 1819668,
+   "knowledge_point": "RSS源链接打开chrome: URL绕过SOP",
+   "is_ai_likely_known": false,
+   "reason": "浏览器内部协议利用是具体实现细节，AI可能不熟悉，且是Brave特定行为。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他浏览器或RSS阅读器）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化浏览器内部协议访问控制检测。",
+   "skill_framework": {
+    "name": "浏览器内部协议访问控制检测",
+    "适用场景": [
+     "RSS阅读器",
+     "浏览器扩展",
+     "任何处理外部链接的应用"
+    ],
+    "核心原理": [
+     "chrome: URL具有特权访问",
+     "未过滤协议导致绕过SOP"
+    ],
+    "决策树": [
+     "IF 应用处理外部链接 → 检查协议白名单",
+     "IF 允许chrome: → 尝试访问敏感页面"
+    ],
+    "示例": [
+     "Brave News RSS源打开chrome://settings"
+    ],
+    "迁移场景": [
+     "Chrome",
+     "Firefox",
+     "Safari"
+    ]
+   }
+  },
+  {
+   "id": 207266,
+   "knowledge_point": "CSV内容构造JavaScript窃取数据",
+   "is_ai_likely_known": true,
+   "reason": "CSV注入是常见攻击，AI可能知道，但具体到构造合法JavaScript可能不系统。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他文件格式如PDF）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统Skill：文件注入与XSS检测。",
+   "skill_framework": null
+  },
+  {
+   "id": 1285226,
+   "knowledge_point": "密码过期状态与token认证不一致导致授权绕过",
+   "is_ai_likely_known": false,
+   "reason": "状态管理不一致是具体实现缺陷，AI可能不熟悉，且是修复回归导致。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何多认证机制的系统）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化认证状态一致性检查。",
+   "skill_framework": {
+    "name": "认证状态一致性检查",
+    "适用场景": [
+     "多认证机制",
+     "密码过期",
+     "token管理"
+    ],
+    "核心原理": [
+     "密码过期状态未在所有认证方式中一致执行",
+     "修复可能引入新漏洞"
+    ],
+    "决策树": [
+     "IF 存在多种认证方式 → 检查状态同步",
+     "IF 密码过期 → 验证token是否仍有效"
+    ],
+    "示例": [
+     "GitLab密码过期后token仍可访问API"
+    ],
+    "迁移场景": [
+     "Web应用",
+     "API",
+     "Git服务"
+    ]
+   }
+  },
+  {
+   "id": 917875,
+   "knowledge_point": "GraphQL API未校验权限导致信息泄露",
+   "is_ai_likely_known": true,
+   "reason": "API权限校验缺失是常见问题，AI训练数据充足。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何GraphQL或REST API）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 1892200,
+   "knowledge_point": "IDOR：未验证关联对象权限导致跨组关联",
+   "is_ai_likely_known": false,
+   "reason": "IDOR是常见，但具体到关联对象权限校验缺失可能不系统，且是业务逻辑结合。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何对象关联场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化IDOR检测和利用，特别是关联对象权限校验。",
+   "skill_framework": {
+    "name": "IDOR检测与利用：关联对象权限校验",
+    "适用场景": [
+     "对象关联",
+     "多租户应用",
+     "API设计"
+    ],
+    "核心原理": [
+     "服务端未验证关联对象是否属于当前用户",
+     "修改参数可跨组关联"
+    ],
+    "决策树": [
+     "IF 存在对象关联 → 尝试修改关联ID",
+     "IF 未校验权限 → 跨组访问"
+    ],
+    "示例": [
+     "GitLab epic关联到其他组的epic"
+    ],
+    "迁移场景": [
+     "Web应用",
+     "API",
+     "数据库"
+    ]
+   }
+  }
+ ]
+}

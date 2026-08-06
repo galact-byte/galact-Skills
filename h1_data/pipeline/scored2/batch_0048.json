@@ -1,0 +1,458 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 10,
+  "not_worth": 5,
+  "top_ids": [
+   389108,
+   1710652,
+   921288,
+   334709,
+   218088,
+   1104349,
+   217745,
+   390881,
+   1741430,
+   386807
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 389108,
+   "knowledge_point": "浏览器扩展 postMessage 处理不当导致任意请求带 cookie",
+   "is_ai_likely_known": false,
+   "reason": "扩展消息传递漏洞的具体利用方式（调用内部 fetch）在训练数据中不常见，需要结合扩展架构知识。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到所有浏览器扩展、Electron 应用的消息通信）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化扩展消息验证、方法白名单、fetch 安全封装等通用模式。",
+   "skill_framework": {
+    "name": "浏览器扩展消息传递漏洞利用与防御",
+    "适用场景": [
+     "浏览器扩展安全测试",
+     "Electron 应用安全",
+     "跨组件消息通信"
+    ],
+    "核心原理": [
+     "postMessage 未验证来源",
+     "扩展内部方法暴露",
+     "fetch 携带 cookie 的跨域请求"
+    ],
+    "决策树": [
+     "IF 扩展使用 postMessage 接收消息 AND 未验证 sender → 尝试调用内部方法"
+    ],
+    "示例": [
+     "恶意页面发送 tracking 命令 → 扩展调用 _fetch 发起带 cookie 请求"
+    ],
+    "迁移场景": [
+     "扩展安全",
+     "Electron 安全",
+     "跨域请求"
+    ]
+   }
+  },
+  {
+   "id": 1710652,
+   "knowledge_point": "无效八进制 IP 解析差异导致 DNS rebinding 绕过",
+   "is_ai_likely_known": false,
+   "reason": "浏览器对无效八进制 IP 的解析差异属于具体实现细节，训练数据稀少。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到所有依赖 IP 解析的防护机制）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 IP 解析差异绕过模式。",
+   "skill_framework": {
+    "name": "IP 解析差异绕过（八进制/十六进制/映射）",
+    "适用场景": [
+     "SSRF 防护",
+     "DNS rebinding 防护",
+     "IP 黑名单"
+    ],
+    "核心原理": [
+     "不同组件对 IP 字面量解析不一致",
+     "无效格式被浏览器宽容处理"
+    ],
+    "决策树": [
+     "IF 存在 IP 校验 AND 校验与请求由不同组件执行 → 尝试八进制/十六进制变体"
+    ],
+    "示例": [
+     "http://0177.0.0.1/ → 127.0.0.1"
+    ],
+    "迁移场景": [
+     "SSRF",
+     "WAF 绕过",
+     "DNS rebinding"
+    ]
+   }
+  },
+  {
+   "id": 921288,
+   "knowledge_point": "PHAR 反序列化触发任意文件删除",
+   "is_ai_likely_known": false,
+   "reason": "PHAR 反序列化利用 is_dir() 等文件系统函数的具体技巧在训练数据中不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到所有 PHP 文件系统函数）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 PHAR 反序列化触发点与防御。",
+   "skill_framework": {
+    "name": "PHAR 反序列化利用与防御",
+    "适用场景": [
+     "PHP 应用安全测试",
+     "文件上传功能",
+     "文件系统操作"
+    ],
+    "核心原理": [
+     "phar:// 协议触发反序列化",
+     "文件系统函数如 is_dir() 可触发"
+    ],
+    "决策树": [
+     "IF 用户输入可影响文件路径 AND 使用文件系统函数 → 尝试 phar:// 协议"
+    ],
+    "示例": [
+     "上传 PHAR 文件 → 调用 is_dir('phar://...') → 反序列化"
+    ],
+    "迁移场景": [
+     "PHP 反序列化",
+     "文件操作安全"
+    ]
+   }
+  },
+  {
+   "id": 790786,
+   "knowledge_point": "GitLab 子组转移后权限继承未清理",
+   "is_ai_likely_known": true,
+   "reason": "这是特定应用的具体逻辑缺陷，AI 可能知道一般权限继承问题，但具体细节需搜索。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（仅适用于 GitLab 类似系统）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 334709,
+   "knowledge_point": "NULL 字节和超长 URL 导致缓存投毒",
+   "is_ai_likely_known": false,
+   "reason": "NULL 字节截断与缓存键规范化结合的具体利用方式在训练数据中不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到所有缓存系统）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化缓存投毒模式。",
+   "skill_framework": {
+    "name": "缓存投毒（NULL 字节与超长 URL）",
+    "适用场景": [
+     "CDN 缓存",
+     "Web 缓存",
+     "代理缓存"
+    ],
+    "核心原理": [
+     "NULL 字节截断导致缓存键不一致",
+     "超长 URL 触发连接关闭"
+    ],
+    "决策树": [
+     "IF 缓存键未规范化 AND 输入可含 NULL 字节 → 尝试注入"
+    ],
+    "示例": [
+     "构造含 NULL 字节的 URL → 污染缓存 → 用户访问时连接关闭"
+    ],
+    "迁移场景": [
+     "缓存安全",
+     "DoS 攻击"
+    ]
+   }
+  },
+  {
+   "id": 218088,
+   "knowledge_point": "DNS SRV 记录验证缺陷导致请求劫持",
+   "is_ai_likely_known": false,
+   "reason": "针对 DNS SRV 记录验证的具体绕过在训练数据中不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到所有依赖 DNS 发现服务的客户端）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 DNS 信任模型利用。",
+   "skill_framework": {
+    "name": "DNS 信任模型利用（SRV 记录劫持）",
+    "适用场景": [
+     "包管理器",
+     "服务发现",
+     "客户端更新机制"
+    ],
+    "核心原理": [
+     "DNS 响应验证不严格",
+     "SRV 记录可指向任意主机"
+    ],
+    "决策树": [
+     "IF 客户端使用 DNS 发现服务 AND 未验证响应域名 → 尝试恶意 SRV"
+    ],
+    "示例": [
+     "DNS 投毒 → 恶意 SRV → 下载恶意 gem"
+    ],
+    "迁移场景": [
+     "供应链攻击",
+     "DNS 安全"
+    ]
+   }
+  },
+  {
+   "id": 1104349,
+   "knowledge_point": "用户输入进入模板上下文导致 SSTI",
+   "is_ai_likely_known": true,
+   "reason": "SSTI 是通用知识，AI 已知，但此案例展示了邮件模板渲染场景。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有模板渲染场景）",
+   "source_quality": "中",
+   "worth_skill": true,
+   "suggested_handling": "合并到上层系统 Skill：模板注入检测与防御。",
+   "skill_framework": {
+    "name": "模板注入检测与防御",
+    "适用场景": [
+     "Web 应用",
+     "邮件模板",
+     "报告生成"
+    ],
+    "核心原理": [
+     "用户输入未过滤直接嵌入模板",
+     "模板引擎执行表达式"
+    ],
+    "决策树": [
+     "IF 用户输入进入模板上下文 → 尝试注入 {{7*7}}"
+    ],
+    "示例": [
+     "注册时姓名注入 {{7*7}} → 邮件主题显示 49"
+    ],
+    "迁移场景": [
+     "SSTI",
+     "邮件安全"
+    ]
+   }
+  },
+  {
+   "id": 217745,
+   "knowledge_point": "window.open javascript: URL 导致 XSS",
+   "is_ai_likely_known": false,
+   "reason": "利用 window.open 的 javascript: URL 和 document.domain 共享的具体技巧在训练数据中不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到所有浏览器窗口交互）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化浏览器 API 滥用模式。",
+   "skill_framework": {
+    "name": "浏览器 API 滥用（window.open javascript:）",
+    "适用场景": [
+     "XSS 防护",
+     "浏览器扩展",
+     "Web 应用"
+    ],
+    "核心原理": [
+     "window.open 接受 javascript: URL",
+     "document.domain 共享允许跨窗口脚本"
+    ],
+    "决策树": [
+     "IF 用户可控制 window.open 的 URL → 尝试 javascript: 协议"
+    ],
+    "示例": [
+     "点击按钮 → window.open('javascript:...') → 执行脚本"
+    ],
+    "迁移场景": [
+     "XSS",
+     "浏览器安全"
+    ]
+   }
+  },
+  {
+   "id": 363714,
+   "knowledge_point": "TCP RST 包导致服务停止监听",
+   "is_ai_likely_known": true,
+   "reason": "TCP RST 攻击是通用知识，但具体到 accept 错误处理未重新注册的细节可能不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到所有异步服务器）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 390881,
+   "knowledge_point": "原型污染触发 morgan 代码注入",
+   "is_ai_likely_known": false,
+   "reason": "原型污染与 Function() 组合利用的具体链在训练数据中不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到所有使用 Function() 的库）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化原型污染到代码执行的链式利用。",
+   "skill_framework": {
+    "name": "原型污染到代码执行链",
+    "适用场景": [
+     "Node.js 应用",
+     "npm 包",
+     "JSON 解析"
+    ],
+    "核心原理": [
+     "原型污染可控制对象属性",
+     "Function() 动态执行字符串"
+    ],
+    "决策树": [
+     "IF 应用使用 Function() 且存在原型污染 → 尝试污染 format 键"
+    ],
+    "示例": [
+     "污染 Object.prototype.format → morgan 调用 Function() → RCE"
+    ],
+    "迁移场景": [
+     "原型污染",
+     "代码注入"
+    ]
+   }
+  },
+  {
+   "id": 1741430,
+   "knowledge_point": "深链接参数未编码导致 CSRF 和路径穿越",
+   "is_ai_likely_known": false,
+   "reason": "桌面客户端深链接处理的具体漏洞在训练数据中不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到所有深链接处理）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化深链接安全模式。",
+   "skill_framework": {
+    "name": "深链接安全（参数编码与路径验证）",
+    "适用场景": [
+     "桌面客户端",
+     "移动应用",
+     "URL scheme"
+    ],
+    "核心原理": [
+     "深链接参数未编码",
+     "路径穿越改变请求目标",
+     "参数注入构造请求体"
+    ],
+    "决策树": [
+     "IF 应用处理深链接 AND 参数未编码 → 尝试路径穿越和参数注入"
+    ],
+    "示例": [
+     "恶意深链接 → 客户端解析 token → 路径穿越到内部 API → 创建管理员"
+    ],
+    "迁移场景": [
+     "CSRF",
+     "路径穿越",
+     "客户端安全"
+    ]
+   }
+  },
+  {
+   "id": 386807,
+   "knowledge_point": "MongoDB 盲注提取密码重置令牌",
+   "is_ai_likely_known": false,
+   "reason": "NoSQL 操作符注入进行盲注的具体技巧在训练数据中不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到所有 NoSQL 数据库）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 NoSQL 注入利用与防御。",
+   "skill_framework": {
+    "name": "NoSQL 注入（MongoDB 操作符盲注）",
+    "适用场景": [
+     "MongoDB 应用",
+     "Node.js 应用",
+     "密码重置流程"
+    ],
+    "核心原理": [
+     "用户输入未类型强制转换",
+     "$regex 操作符可盲注"
+    ],
+    "决策树": [
+     "IF 应用使用 Mongoose 且未验证参数类型 → 尝试 $regex 盲注"
+    ],
+    "示例": [
+     "密码重置表单注入 $regex → 提取令牌 → 账户接管"
+    ],
+    "迁移场景": [
+     "NoSQL 注入",
+     "认证绕过"
+    ]
+   }
+  },
+  {
+   "id": 129873,
+   "knowledge_point": "String.search() 隐式正则导致 origin 校验绕过",
+   "is_ai_likely_known": false,
+   "reason": "JavaScript 方法隐式类型转换的具体利用在训练数据中不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到所有使用 String.search() 的校验）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 JavaScript 隐式转换绕过模式。",
+   "skill_framework": {
+    "name": "JavaScript 隐式转换绕过（String.search）",
+    "适用场景": [
+     "origin 校验",
+     "URL 验证",
+     "输入过滤"
+    ],
+    "核心原理": [
+     "String.search() 将字符串转为正则",
+     "点号作为通配符"
+    ],
+    "决策树": [
+     "IF 使用 String.search() 做校验 → 尝试构造相似域名"
+    ],
+    "示例": [
+     "www.d.gits.co 绕过 www.digits.co 校验"
+    ],
+    "迁移场景": [
+     "认证绕过",
+     "输入验证"
+    ]
+   }
+  },
+  {
+   "id": 1954658,
+   "knowledge_point": "libcurl 选项状态未重置导致 POST 变 PUT",
+   "is_ai_likely_known": false,
+   "reason": "libcurl 具体选项交互的细节在训练数据中不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到所有使用 libcurl 的应用）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 943725,
+   "knowledge_point": "Electron window.open 注入 preload 导致 RCE",
+   "is_ai_likely_known": false,
+   "reason": "Electron 特定功能滥用导致 RCE 的具体技巧在训练数据中不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到所有 Electron 应用）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化 Electron 安全配置与利用。",
+   "skill_framework": {
+    "name": "Electron 安全配置与利用",
+    "适用场景": [
+     "Electron 应用",
+     "桌面客户端",
+     "跨平台应用"
+    ],
+    "核心原理": [
+     "window.open 可注入 preload",
+     "contextIsolation 和 sandbox 未启用"
+    ],
+    "决策树": [
+     "IF Electron 应用未启用 contextIsolation → 尝试注入 preload"
+    ],
+    "示例": [
+     "恶意服务器 → window.open 带 preload → RCE"
+    ],
+    "迁移场景": [
+     "Electron 安全",
+     "RCE"
+    ]
+   }
+  }
+ ]
+}

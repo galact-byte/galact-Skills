@@ -1,0 +1,389 @@
+{
+ "summary": {
+  "total": 14,
+  "worth_skill": 8,
+  "not_worth": 6,
+  "top_ids": [
+   1736317,
+   146416,
+   1145454,
+   878181,
+   255991,
+   30008,
+   1011767,
+   1363672
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 1736317,
+   "knowledge_point": "客户端模板注入（CSTI）导致XSS，结合编码绕过",
+   "is_ai_likely_known": false,
+   "reason": "CSTI虽已知，但结合编码绕过和具体模板引擎的利用细节，AI可能不全面。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何模板引擎的CSTI检测与利用）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化CSTI检测与利用的通用方法，包括编码绕过。",
+   "skill_framework": {
+    "name": "客户端模板注入（CSTI）检测与利用",
+    "适用场景": [
+     "Web应用使用客户端模板引擎",
+     "XSS测试"
+    ],
+    "核心原理": [
+     "模板引擎将用户输入作为模板执行",
+     "通过{{...}}等语法注入表达式"
+    ],
+    "决策树": [
+     "IF 输入被反射且未过滤模板语法 → 尝试{{7*7}}等探测",
+     "IF 存在黑名单 → 尝试编码绕过如base64"
+    ],
+    "示例": [
+     "{{constructor.constructor('alert(1)')()}}"
+    ],
+    "迁移场景": [
+     "Angular",
+     "Vue",
+     "Handlebars等"
+    ]
+   }
+  },
+  {
+   "id": 146416,
+   "knowledge_point": "Ruby net/http CRLF注入导致HTTP头注入",
+   "is_ai_likely_known": false,
+   "reason": "具体库的缺陷，AI可能不知道net/http未过滤CRLF。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他语言HTTP库的CRLF注入检测）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化HTTP库CRLF注入的检测与利用。",
+   "skill_framework": {
+    "name": "HTTP库CRLF注入检测与利用",
+    "适用场景": [
+     "使用HTTP库处理用户输入路径",
+     "头注入测试"
+    ],
+    "核心原理": [
+     "库未过滤CRLF字符",
+     "注入额外头或请求"
+    ],
+    "决策树": [
+     "IF 用户输入进入请求路径 → 尝试%0d%0a注入"
+    ],
+    "示例": [
+     "/path%0d%0aX-Injected: true"
+    ],
+    "迁移场景": [
+     "Ruby net/http",
+     "Python requests",
+     "Node.js http"
+    ]
+   }
+  },
+  {
+   "id": 1145454,
+   "knowledge_point": "FTP PASV响应欺骗导致SSRF",
+   "is_ai_likely_known": false,
+   "reason": "协议设计缺陷，AI可能不熟悉PASV响应可指向任意IP。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他协议如HTTP代理的响应欺骗）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化FTP PASV响应欺骗的检测与利用。",
+   "skill_framework": {
+    "name": "FTP PASV响应欺骗检测与利用",
+    "适用场景": [
+     "FTP客户端",
+     "SSRF测试"
+    ],
+    "核心原理": [
+     "PASV响应中的IP地址可被恶意服务器控制",
+     "客户端连接任意目标"
+    ],
+    "决策树": [
+     "IF 使用FTP客户端且可连接外部服务器 → 尝试恶意PASV响应"
+    ],
+    "示例": [
+     "恶意FTP服务器返回PASV 127.0.0.1:22"
+    ],
+    "迁移场景": [
+     "SSRF",
+     "内网扫描"
+    ]
+   }
+  },
+  {
+   "id": 73248,
+   "knowledge_point": "Python tokenizer崩溃",
+   "is_ai_likely_known": false,
+   "reason": "具体解析器缺陷，AI可能不知道。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（仅影响Python解析器，不可迁移）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1168765,
+   "knowledge_point": "Chromium --no-sandbox RCE",
+   "is_ai_likely_known": true,
+   "reason": "已知的配置错误，AI普遍知道。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（依赖具体组件配置）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 878181,
+   "knowledge_point": "原型污染注入NODE_OPTIONS导致RCE",
+   "is_ai_likely_known": false,
+   "reason": "具体利用链，AI可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到其他环境变量注入）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化原型污染到环境变量注入的利用链。",
+   "skill_framework": {
+    "name": "原型污染到环境变量注入",
+    "适用场景": [
+     "Node.js应用",
+     "原型污染漏洞利用"
+    ],
+    "核心原理": [
+     "通过__proto__污染对象",
+     "设置NODE_OPTIONS等环境变量影响子进程"
+    ],
+    "决策树": [
+     "IF 存在原型污染 → 尝试设置NODE_OPTIONS为--require /tmp/payload.js"
+    ],
+    "示例": [
+     "Object.prototype.NODE_OPTIONS = '--require /tmp/payload.js'"
+    ],
+    "迁移场景": [
+     "Node.js子进程",
+     "其他环境变量如NODE_DEBUG"
+    ]
+   }
+  },
+  {
+   "id": 1448218,
+   "knowledge_point": "多个子域名暴露敏感信息",
+   "is_ai_likely_known": true,
+   "reason": "常见的配置错误，AI普遍知道。",
+   "scene_frequency": "高频",
+   "migration_potential": "低（依赖具体配置）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 255991,
+   "knowledge_point": "URL解析器差异导致安全绕过",
+   "is_ai_likely_known": false,
+   "reason": "具体差异，AI可能不全面。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何URL解析场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化URL解析差异的检测与利用。",
+   "skill_framework": {
+    "name": "URL解析差异检测与利用",
+    "适用场景": [
+     "URL验证",
+     "SSRF防护",
+     "开放重定向"
+    ],
+    "核心原理": [
+     "不同解析器对特殊字符处理不一致",
+     "导致安全判断错误"
+    ],
+    "决策树": [
+     "IF 存在URL验证 → 尝试特殊字符如反引号、@等"
+    ],
+    "示例": [
+     "http://example.com@evil.com"
+    ],
+    "迁移场景": [
+     "浏览器",
+     "Node.js",
+     "Python"
+    ]
+   }
+  },
+  {
+   "id": 30008,
+   "knowledge_point": "cgi.fix_pathinfo配置错误导致代码执行",
+   "is_ai_likely_known": true,
+   "reason": "已知的PHP配置问题，AI普遍知道。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（依赖PHP配置）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "通用Prompt直接提问即可。",
+   "skill_framework": null
+  },
+  {
+   "id": 193719,
+   "knowledge_point": "mruby双重释放",
+   "is_ai_likely_known": false,
+   "reason": "具体解释器缺陷，AI可能不知道。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（仅影响mruby）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1011767,
+   "knowledge_point": "X-Forwarded-For头伪造绕过访问控制",
+   "is_ai_likely_known": true,
+   "reason": "已知的信任边界问题，AI普遍知道。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何IP信任场景）",
+   "source_quality": "通用",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化信任客户端头的检测与防御。",
+   "skill_framework": {
+    "name": "信任客户端头绕过访问控制",
+    "适用场景": [
+     "IP限制",
+     "访问控制"
+    ],
+    "核心原理": [
+     "服务器信任X-Forwarded-For等头",
+     "未验证来源"
+    ],
+    "决策树": [
+     "IF 存在IP限制 → 尝试添加X-Forwarded-For: 127.0.0.1"
+    ],
+    "示例": [
+     "X-Forwarded-For: 127.0.0.1"
+    ],
+    "迁移场景": [
+     "X-Real-IP",
+     "X-Originating-IP"
+    ]
+   }
+  },
+  {
+   "id": 1363672,
+   "knowledge_point": "输入规范化不完整绕过限流",
+   "is_ai_likely_known": false,
+   "reason": "具体绕过方法，AI可能不全面。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到任何输入规范化场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化输入规范化绕过检测。",
+   "skill_framework": {
+    "name": "输入规范化绕过检测",
+    "适用场景": [
+     "限流",
+     "黑名单",
+     "输入验证"
+    ],
+    "核心原理": [
+     "服务端未对输入进行完整规范化",
+     "如trim、Unicode空白"
+    ],
+    "决策树": [
+     "IF 存在输入验证 → 尝试添加空格、Unicode空白等"
+    ],
+    "示例": [
+     "email+空格绕过限流"
+    ],
+    "迁移场景": [
+     "登录",
+     "搜索",
+     "过滤"
+    ]
+   }
+  },
+  {
+   "id": 213261,
+   "knowledge_point": "mruby UAF",
+   "is_ai_likely_known": false,
+   "reason": "具体解释器缺陷，AI可能不知道。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（仅影响mruby）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1283484,
+   "knowledge_point": "ReDoS在语法高亮中",
+   "is_ai_likely_known": true,
+   "reason": "ReDoS是已知概念，但具体库的缺陷可能不为人知。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何正则使用场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化ReDoS检测与利用。",
+   "skill_framework": {
+    "name": "ReDoS检测与利用",
+    "适用场景": [
+     "正则表达式处理用户输入",
+     "DoS测试"
+    ],
+    "核心原理": [
+     "正则表达式存在灾难性回溯",
+     "特定输入导致CPU耗尽"
+    ],
+    "决策树": [
+     "IF 存在正则表达式 → 使用工具扫描",
+     "IF 输入可控 → 尝试构造重叠匹配"
+    ],
+    "示例": [
+     "大量空格触发回溯"
+    ],
+    "迁移场景": [
+     "语法高亮",
+     "输入验证",
+     "日志解析"
+    ]
+   }
+  },
+  {
+   "id": 698708,
+   "knowledge_point": "签名URL刷新绕过权限撤销",
+   "is_ai_likely_known": false,
+   "reason": "具体机制，AI可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到任何签名机制）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成Skill，固化签名URL安全检测。",
+   "skill_framework": {
+    "name": "签名URL安全检测",
+    "适用场景": [
+     "签名URL",
+     "授权机制"
+    ],
+    "核心原理": [
+     "签名URL可刷新timestamp",
+     "权限撤销后仍有效"
+    ],
+    "决策树": [
+     "IF 存在签名URL → 尝试刷新timestamp",
+     "IF 权限变更 → 检查URL是否失效"
+    ],
+    "示例": [
+     "刷新timestamp保持访问"
+    ],
+    "迁移场景": [
+     "AWS S3预签名URL",
+     "JWT"
+    ]
+   }
+  }
+ ]
+}

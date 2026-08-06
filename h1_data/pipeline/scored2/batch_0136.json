@@ -1,0 +1,326 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 6,
+  "not_worth": 9,
+  "top_ids": [
+   415967,
+   918946,
+   35287,
+   1889161,
+   885031,
+   915940
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 415967,
+   "knowledge_point": "利用 noopener 弹窗绕过浏览器对特权页面的导航限制",
+   "is_ai_likely_known": false,
+   "reason": "该技术点涉及浏览器对 noopener 弹窗的导航限制绕过，属于较新的攻击手法，AI 训练数据中可能不常见。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他浏览器特权页面导航限制绕过）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化浏览器导航限制绕过技术。",
+   "skill_framework": {
+    "name": "浏览器特权页面导航限制绕过",
+    "适用场景": [
+     "浏览器安全测试",
+     "SOP 绕过",
+     "特权页面访问"
+    ],
+    "核心原理": [
+     "浏览器对从 Web 内容导航到特权页面的限制可被 noopener 弹窗绕过",
+     "noopener 属性使新窗口不继承 opener 上下文，可能绕过导航检查"
+    ],
+    "决策树": [
+     "IF 目标浏览器存在特权页面导航限制 AND 用户可交互 → 尝试使用 noopener 弹窗导航"
+    ],
+    "示例": [
+     "window.open('chrome://brave', '_blank', 'noopener')"
+    ],
+    "迁移场景": [
+     "Chrome 内部页面",
+     "Firefox 特权页面",
+     "其他浏览器"
+    ]
+   }
+  },
+  {
+   "id": 918946,
+   "knowledge_point": "未认领的云资源导致子域名接管",
+   "is_ai_likely_known": true,
+   "reason": "子域名接管是常见漏洞，AI 可能已知基本概念，但具体利用细节可能不全面。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到其他云服务商和 DNS 配置）",
+   "source_quality": "通用",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，系统化子域名接管检测和利用流程。",
+   "skill_framework": {
+    "name": "子域名接管检测与利用",
+    "适用场景": [
+     "子域名枚举",
+     "云资源所有权验证",
+     "DNS 配置审计"
+    ],
+    "核心原理": [
+     "DNS CNAME 指向未认领的云资源，攻击者可创建同名资源接管子域名"
+    ],
+    "决策树": [
+     "IF 子域名解析到云服务 AND 资源不存在 → 尝试注册同名资源"
+    ],
+    "示例": [
+     "CNAME 指向未存在的 S3 bucket，创建同名 bucket 并上传内容"
+    ],
+    "迁移场景": [
+     "Azure",
+     "Google Cloud",
+     "Heroku"
+    ]
+   }
+  },
+  {
+   "id": 35287,
+   "knowledge_point": "利用令牌不失效和概率提升进行信息泄露",
+   "is_ai_likely_known": false,
+   "reason": "该攻击链涉及概率提升和令牌生命周期缺陷，属于较复杂的业务逻辑漏洞，AI 可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他令牌验证场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化令牌生命周期和概率攻击模式。",
+   "skill_framework": {
+    "name": "令牌生命周期缺陷与概率攻击",
+    "适用场景": [
+     "令牌验证",
+     "业务逻辑测试",
+     "信息泄露"
+    ],
+    "核心原理": [
+     "令牌不失效且可猜测，通过大量请求提高命中概率",
+     "邮箱未脱敏导致信息泄露"
+    ],
+    "决策树": [
+     "IF 令牌长期有效 AND 可枚举 → 尝试批量请求提高概率"
+    ],
+    "示例": [
+     "发送大量通知邮件，收集唯一码，暴力猜测"
+    ],
+    "迁移场景": [
+     "密码重置",
+     "邀请码",
+     "验证码"
+    ]
+   }
+  },
+  {
+   "id": 1889161,
+   "knowledge_point": "JWT audience claim 未验证导致授权绕过",
+   "is_ai_likely_known": true,
+   "reason": "JWT 安全是常见知识，但 audience 验证缺失的具体案例可能不常见。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有 JWT 验证场景）",
+   "source_quality": "通用",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，系统化 JWT 验证检查清单。",
+   "skill_framework": {
+    "name": "JWT 验证缺陷利用",
+    "适用场景": [
+     "JWT 认证",
+     "OIDC 实现",
+     "授权绕过"
+    ],
+    "核心原理": [
+     "未验证 audience claim，接受非预期受众的 token"
+    ],
+    "决策树": [
+     "IF JWT 验证缺少 audience 检查 → 尝试使用其他服务的 token"
+    ],
+    "示例": [
+     "获取其他服务的 token 用于 Argo CD"
+    ],
+    "迁移场景": [
+     "OAuth",
+     "OIDC",
+     "微服务认证"
+    ]
+   }
+  },
+  {
+   "id": 885031,
+   "knowledge_point": "命令注入通过管道符",
+   "is_ai_likely_known": true,
+   "reason": "命令注入是经典漏洞，AI 已知基本利用方式。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有命令执行场景）",
+   "source_quality": "通用",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，系统化命令注入检测和利用。",
+   "skill_framework": {
+    "name": "命令注入检测与利用",
+    "适用场景": [
+     "命令执行",
+     "输入验证",
+     "RCE"
+    ],
+    "核心原理": [
+     "用户输入未过滤直接拼接到命令中，通过管道符注入额外命令"
+    ],
+    "决策树": [
+     "IF 用户输入进入命令执行函数 → 尝试注入管道符等特殊字符"
+    ],
+    "示例": [
+     "输入 '; cat /etc/passwd' 执行任意命令"
+    ],
+    "迁移场景": [
+     "系统命令",
+     "数据库查询",
+     "模板引擎"
+    ]
+   }
+  },
+  {
+   "id": 915940,
+   "knowledge_point": "预览令牌生命周期未与应用状态绑定",
+   "is_ai_likely_known": false,
+   "reason": "该案例涉及令牌生命周期与资源状态脱钩，以及零宽字符绕过，属于非典型业务逻辑漏洞，AI 可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他资源生命周期管理场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化资源生命周期与授权状态脱钩的检测模式。",
+   "skill_framework": {
+    "name": "资源生命周期与授权状态脱钩检测",
+    "适用场景": [
+     "令牌管理",
+     "资源状态",
+     "业务逻辑测试"
+    ],
+    "核心原理": [
+     "预览令牌未绑定应用安装状态，卸载后仍有效",
+     "零宽字符绕过脚本名显示"
+    ],
+    "决策树": [
+     "IF 令牌未绑定资源状态 AND 资源可删除 → 尝试删除后使用令牌"
+    ],
+    "示例": [
+     "创建未发布脚本，获取预览令牌，卸载应用后令牌仍有效"
+    ],
+    "迁移场景": [
+     "API 密钥",
+     "会话令牌",
+     "下载链接"
+    ]
+   }
+  },
+  {
+   "id": 164152,
+   "knowledge_point": "利用 IE 对 URL 编码的解析差异绕过 XSS 过滤",
+   "is_ai_likely_known": false,
+   "reason": "该技术点涉及特定浏览器的解析差异，AI 可能不熟悉。",
+   "scene_frequency": "低频",
+   "migration_potential": "低（依赖特定浏览器，迁移性差）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "Prompt 引导即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1394910,
+   "knowledge_point": "利用 EAR 漏洞绕过重定向访问管理面板",
+   "is_ai_likely_known": true,
+   "reason": "EAR 漏洞是已知的 Web 安全知识，AI 可能已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他重定向场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：Web 应用安全测试。",
+   "skill_framework": null
+  },
+  {
+   "id": 888176,
+   "knowledge_point": "HTTP Host 头注入影响 redirect_to 导致密码重置投毒",
+   "is_ai_likely_known": true,
+   "reason": "Host 头注入是常见漏洞，AI 可能已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有重定向场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：Web 应用安全测试。",
+   "skill_framework": null
+  },
+  {
+   "id": 321249,
+   "knowledge_point": "通过枚举可预测 ID 实现批量信息泄露",
+   "is_ai_likely_known": true,
+   "reason": "IDOR 和枚举是常见漏洞，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有 IDOR 场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：IDOR 检测与利用。",
+   "skill_framework": null
+  },
+  {
+   "id": 214044,
+   "knowledge_point": "通过 cookie 注入实现存储型 XSS",
+   "is_ai_likely_known": true,
+   "reason": "cookie 注入和 XSS 是常见漏洞，AI 已知。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有 XSS 场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：XSS 检测与利用。",
+   "skill_framework": null
+  },
+  {
+   "id": 148609,
+   "knowledge_point": "利用竞争条件绕过邀请码限制",
+   "is_ai_likely_known": true,
+   "reason": "竞争条件是常见漏洞，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他业务逻辑场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：业务逻辑安全测试。",
+   "skill_framework": null
+  },
+  {
+   "id": 322661,
+   "knowledge_point": "利用可预测文件名和 S3 公共写权限覆盖他人文件",
+   "is_ai_likely_known": true,
+   "reason": "云存储配置错误是常见漏洞，AI 已知。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他云存储场景）",
+   "source_quality": "通用",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：云安全配置审计。",
+   "skill_framework": null
+  },
+  {
+   "id": 615672,
+   "knowledge_point": "通过 WebSocket 消息注入实现存储型 XSS",
+   "is_ai_likely_known": false,
+   "reason": "WebSocket 消息注入相对较新，AI 可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他 WebSocket 场景）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：WebSocket 安全测试。",
+   "skill_framework": null
+  },
+  {
+   "id": 59665,
+   "knowledge_point": "利用框架对 X-Original-URL 头部的信任绕过路径校验",
+   "is_ai_likely_known": false,
+   "reason": "该技术点涉及特定框架行为，AI 可能不熟悉。",
+   "scene_frequency": "中频",
+   "migration_potential": "中（可迁移到其他框架）",
+   "source_quality": "高",
+   "worth_skill": false,
+   "suggested_handling": "合并到上层系统 Skill：框架行为安全测试。",
+   "skill_framework": null
+  }
+ ]
+}

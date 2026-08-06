@@ -1,0 +1,397 @@
+{
+ "summary": {
+  "total": 15,
+  "worth_skill": 8,
+  "not_worth": 7,
+  "top_ids": [
+   170310,
+   460928,
+   381192,
+   1172205,
+   244612,
+   319467,
+   541502,
+   430463
+  ]
+ },
+ "detailed_evaluations": [
+  {
+   "id": 192318,
+   "knowledge_point": "格式化字符串未检查参数数字导致堆溢出",
+   "is_ai_likely_known": true,
+   "reason": "格式化字符串漏洞是通用知识，AI 已知，且此案例依赖具体实现，迁移性低。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（依赖具体库实现，难以通用）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 112632,
+   "knowledge_point": "DNS 压缩指针循环跳转导致越界读取",
+   "is_ai_likely_known": true,
+   "reason": "DNS 解析漏洞是通用知识，AI 已知，且此案例依赖具体实现，迁移性低。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（依赖具体协议实现，难以通用）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 481164,
+   "knowledge_point": "未初始化内存泄露",
+   "is_ai_likely_known": true,
+   "reason": "未初始化内存泄露是通用知识，AI 已知，且此案例依赖具体代码，迁移性低。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（依赖具体代码，难以通用）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 1172205,
+   "knowledge_point": "注销请求参数缺失导致 token 未撤销",
+   "is_ai_likely_known": false,
+   "reason": "注销流程的 token 撤销缺陷是具体业务逻辑，AI 可能不熟悉，且可迁移到其他认证场景。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有注销/失效场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'注销流程 token 撤销'的检查点。",
+   "skill_framework": {
+    "name": "注销流程 token 撤销检查",
+    "适用场景": [
+     "Web 应用注销",
+     "移动应用注销",
+     "API 会话管理"
+    ],
+    "核心原理": [
+     "注销请求必须携带有效 token 提示",
+     "服务端应验证注销参数并撤销 token"
+    ],
+    "决策树": [
+     "IF 存在注销功能 AND 注销请求缺少参数 → 检查 token 是否被撤销"
+    ],
+    "示例": [
+     "DELETE /logout 缺少 Logout Token Hint 参数 → token 未失效"
+    ],
+    "迁移场景": [
+     "认证绕过",
+     "会话固定",
+     "账户接管"
+    ]
+   }
+  },
+  {
+   "id": 244612,
+   "knowledge_point": "密码重置链接未随邮箱变更失效",
+   "is_ai_likely_known": false,
+   "reason": "业务逻辑中状态变更未联动失效是具体缺陷，AI 可能不熟悉，且可迁移到其他敏感操作。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有敏感操作后的凭证失效）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'敏感操作后旧凭证失效'的检查点。",
+   "skill_framework": {
+    "name": "敏感操作后旧凭证失效检查",
+    "适用场景": [
+     "密码重置",
+     "邮箱变更",
+     "手机号变更"
+    ],
+    "核心原理": [
+     "敏感操作后应使旧凭证失效",
+     "状态变更应联动失效"
+    ],
+    "决策树": [
+     "IF 用户执行敏感操作 AND 存在旧凭证 → 检查旧凭证是否失效"
+    ],
+    "示例": [
+     "用户更改邮箱后，旧密码重置链接仍可用 → 账户接管"
+    ],
+    "迁移场景": [
+     "认证绕过",
+     "账户接管",
+     "业务逻辑漏洞"
+    ]
+   }
+  },
+  {
+   "id": 170310,
+   "knowledge_point": "空字节截断绕过速率限制",
+   "is_ai_likely_known": false,
+   "reason": "空字节在 URL 编码中的特殊处理是具体技术，AI 可能不熟悉，且可迁移到其他输入校验场景。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有输入校验和速率限制）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'空字节截断绕过'的原理和检测方法。",
+   "skill_framework": {
+    "name": "空字节截断绕过",
+    "适用场景": [
+     "速率限制",
+     "输入校验",
+     "WAF 绕过"
+    ],
+    "核心原理": [
+     "空字节在 URL 编码中可能被忽略或截断",
+     "校验层与请求层处理不一致"
+    ],
+    "决策树": [
+     "IF 存在输入校验 AND 允许 URL 编码 → 尝试添加 %00 绕过"
+    ],
+    "示例": [
+     "邮箱末尾添加 %00 → 绕过速率限制"
+    ],
+    "迁移场景": [
+     "SSRF",
+     "命令注入",
+     "路径遍历"
+    ]
+   }
+  },
+  {
+   "id": 1636566,
+   "knowledge_point": "DLL 搜索顺序劫持",
+   "is_ai_likely_known": true,
+   "reason": "DLL 劫持是通用知识，AI 已知，且此案例依赖具体环境，迁移性低。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（依赖 Windows 环境，难以通用）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 381192,
+   "knowledge_point": "postMessage origin 验证不严导致 DOM XSS",
+   "is_ai_likely_known": false,
+   "reason": "indexOf 模糊匹配 origin 是具体缺陷，AI 可能不熟悉，且可迁移到其他消息验证场景。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有 postMessage 验证）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'postMessage origin 验证'的检查点。",
+   "skill_framework": {
+    "name": "postMessage origin 验证检查",
+    "适用场景": [
+     "Web 消息通信",
+     "跨域通信",
+     "DOM XSS 防护"
+    ],
+    "核心原理": [
+     "origin 验证应使用精确比较",
+     "避免使用 indexOf 等模糊匹配"
+    ],
+    "决策树": [
+     "IF 存在 postMessage 监听 AND 使用 indexOf 验证 origin → 尝试构造相似域名绕过"
+    ],
+    "示例": [
+     "恶意域名 https://evil.com 匹配 https://example.com 的 indexOf 检查"
+    ],
+    "迁移场景": [
+     "XSS",
+     "CSRF",
+     "点击劫持"
+    ]
+   }
+  },
+  {
+   "id": 319467,
+   "knowledge_point": "npm 库命令注入（macaddress）",
+   "is_ai_likely_known": false,
+   "reason": "特定库的命令注入是具体供应链漏洞，AI 可能不熟悉，且可迁移到其他库审计。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有库输入校验）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'库命令注入审计'的检查点。",
+   "skill_framework": {
+    "name": "库命令注入审计",
+    "适用场景": [
+     "npm 库审计",
+     "供应链安全",
+     "代码审计"
+    ],
+    "核心原理": [
+     "库函数可能将用户输入直接拼接到命令",
+     "应使用 execFile 或 spawn 避免 shell 解释"
+    ],
+    "决策树": [
+     "IF 使用库函数 AND 参数可被外部影响 → 检查是否拼接命令"
+    ],
+    "示例": [
+     "macaddress 库 iface 参数拼接 exec() → 命令注入"
+    ],
+    "迁移场景": [
+     "命令注入",
+     "供应链攻击",
+     "RCE"
+    ]
+   }
+  },
+  {
+   "id": 541502,
+   "knowledge_point": "代理 CONNECT 响应非 200 时未 TLS 升级导致明文传输",
+   "is_ai_likely_known": false,
+   "reason": "代理客户端对 CONNECT 响应的错误处理是具体协议行为，AI 可能不熟悉，且可迁移到其他代理实现。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到所有代理客户端）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'代理 CONNECT 响应处理'的检查点。",
+   "skill_framework": {
+    "name": "代理 CONNECT 响应处理检查",
+    "适用场景": [
+     "代理客户端",
+     "HTTPS 代理",
+     "中间人攻击防护"
+    ],
+    "核心原理": [
+     "代理客户端应确保 TLS 升级成功后才发送数据",
+     "非 200 响应不应继续发送请求"
+    ],
+    "决策树": [
+     "IF 使用代理 AND 代理返回非 200 → 检查是否进行 TLS 升级"
+    ],
+    "示例": [
+     "https-proxy-agent 非 200 响应未 TLS 升级 → 明文发送数据"
+    ],
+    "迁移场景": [
+     "中间人攻击",
+     "信息泄露",
+     "协议漏洞"
+    ]
+   }
+  },
+  {
+   "id": 430463,
+   "knowledge_point": "macOS quarantine 属性缺失导致 Gatekeeper 绕过",
+   "is_ai_likely_known": false,
+   "reason": "quarantine 属性是 macOS 特有机制，AI 可能不熟悉，且可迁移到其他下载场景。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到所有 macOS 下载场景）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'quarantine 属性检查'的检查点。",
+   "skill_framework": {
+    "name": "macOS quarantine 属性检查",
+    "适用场景": [
+     "macOS 应用",
+     "文件下载",
+     "安全机制绕过"
+    ],
+    "核心原理": [
+     "下载文件应设置 quarantine 属性",
+     "缺少属性导致 Gatekeeper 不检查"
+    ],
+    "决策树": [
+     "IF 应用下载文件 AND 未设置 quarantine → 检查是否可执行"
+    ],
+    "示例": [
+     "Keybase 下载的 .terminal 文件缺少 quarantine → 直接执行"
+    ],
+    "迁移场景": [
+     "恶意文件执行",
+     "供应链攻击",
+     "本地提权"
+    ]
+   }
+  },
+  {
+   "id": 915127,
+   "knowledge_point": "IDOR 结合团队账户功能实现内容接管",
+   "is_ai_likely_known": true,
+   "reason": "IDOR 是通用知识，AI 已知，且此案例依赖具体业务逻辑，迁移性低。",
+   "scene_frequency": "高频",
+   "migration_potential": "低（依赖具体业务逻辑，难以通用）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 460928,
+   "knowledge_point": "换行符绕过路径规范化导致 S3 桶信息泄露",
+   "is_ai_likely_known": false,
+   "reason": "控制字符在 URL 处理中的意外行为是具体技术，AI 可能不熟悉，且可迁移到其他云存储场景。",
+   "scene_frequency": "高频",
+   "migration_potential": "高（可迁移到所有 URL 解析和云存储）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'控制字符绕过路径规范化'的原理和检测方法。",
+   "skill_framework": {
+    "name": "控制字符绕过路径规范化",
+    "适用场景": [
+     "URL 解析",
+     "云存储",
+     "路径遍历"
+    ],
+    "核心原理": [
+     "控制字符如 %0A 可能被忽略或截断",
+     "校验层与请求层处理不一致"
+    ],
+    "决策树": [
+     "IF 存在路径校验 AND 允许 URL 编码 → 尝试添加 %0A 绕过"
+    ],
+    "示例": [
+     "URL 末尾添加 %0A → 访问 S3 桶列表"
+    ],
+    "迁移场景": [
+     "SSRF",
+     "路径遍历",
+     "信息泄露"
+    ]
+   }
+  },
+  {
+   "id": 327512,
+   "knowledge_point": "Ruby 反射机制导致命令注入",
+   "is_ai_likely_known": true,
+   "reason": "Ruby 反射是通用知识，AI 已知，且此案例依赖具体库，迁移性低。",
+   "scene_frequency": "中频",
+   "migration_potential": "低（依赖具体语言特性，难以通用）",
+   "source_quality": "中",
+   "worth_skill": false,
+   "suggested_handling": "通用 Prompt 直接提问即可，不单独固化。",
+   "skill_framework": null
+  },
+  {
+   "id": 378805,
+   "knowledge_point": "ftp 协议绕过 chrome-extension 导航限制",
+   "is_ai_likely_known": false,
+   "reason": "协议检查缺失是具体缺陷，AI 可能不熟悉，且可迁移到其他浏览器扩展场景。",
+   "scene_frequency": "中频",
+   "migration_potential": "高（可迁移到所有浏览器扩展导航限制）",
+   "source_quality": "高",
+   "worth_skill": true,
+   "suggested_handling": "写成 Skill，固化'浏览器扩展导航限制检查'的检查点。",
+   "skill_framework": {
+    "name": "浏览器扩展导航限制检查",
+    "适用场景": [
+     "浏览器扩展",
+     "协议处理",
+     "安全机制绕过"
+    ],
+    "核心原理": [
+     "所有协议都应进行导航限制",
+     "缺失检查可能导致访问内部页面"
+    ],
+    "决策树": [
+     "IF 存在导航限制 AND 未覆盖所有协议 → 尝试使用未检查的协议"
+    ],
+    "示例": [
+     "ftp 页面点击链接 → 导航到 chrome-extension://"
+    ],
+    "迁移场景": [
+     "扩展攻击",
+     "信息泄露",
+     "权限提升"
+    ]
+   }
+  }
+ ]
+}
