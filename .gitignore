@@ -16,9 +16,10 @@ AGENTS.md
 # 原始数据集（可从 HuggingFace 重新下载）
 h1_data/raw/
 
-# 清洗输出（clean.py 可再生成；保留 out/report.md）
+# 清洗输出（clean.py 可再生成；不提交包含报告正文的派生数据）
 h1_data/out/*.parquet
 h1_data/out/*.jsonl
+h1_data/out/*.json
 
 # LLM 输入批次（build_batches.py 可再生成）
 h1_data/pipeline/batches/
