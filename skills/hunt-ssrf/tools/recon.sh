@@ -6,6 +6,7 @@
 #   evidence/scope.txt      （scope 记录，--scope-only 只做这步）
 #   recon/endpoints.json    （候选 SSRF 入口清单）
 set -euo pipefail
+PYBIN="$(command -v python3 || command -v python || true)"; [[ -z "$PYBIN" ]] && { echo "需要 python3/python" >&2; exit 3; }
 
 TARGET="${1:-}"
 MODE="${2:-full}"
@@ -46,7 +47,7 @@ touch "$PAGE"
 # 常见 SSRF 参数名（合并页面里出现的 name=/query key 命中）
 KEYWORDS='url|uri|link|src|source|target|dest|redirect|redirect_uri|callback|webhook|image|img|imageUrl|fetch|feed|proxy|remote|remote_url|remote_attachment_url|host|domain|site|page|path|next|data|reference|open|continue'
 
-python3 - "$TARGET" "$PAGE" "$KEYWORDS" "$ROOT/recon/endpoints.json" <<'PY'
+"$PYBIN" - "$TARGET" "$PAGE" "$KEYWORDS" "$ROOT/recon/endpoints.json" <<'PY'
 import re, sys, json
 target, page_path, kw, out = sys.argv[1:5]
 try:
