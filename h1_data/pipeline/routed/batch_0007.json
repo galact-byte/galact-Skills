@@ -1,0 +1,144 @@
+{
+ "detailed": [
+  {
+   "id": 2279346,
+   "theme": "CSP绕过",
+   "action": "fold",
+   "target": "hunt-xss",
+   "reason": "CSP绕过是XSS攻击的变体，利用Angular库和nonce窃取属于XSS绕过技术"
+  },
+  {
+   "id": 1039821,
+   "theme": "SQL注入",
+   "action": "fold",
+   "target": "hunt-sqli",
+   "reason": "二阶SOQL注入是SQL注入的变体，通过异步查询执行属于SQL注入绕过"
+  },
+  {
+   "id": 826361,
+   "theme": "SSRF",
+   "action": "fold",
+   "target": "hunt-ssrf",
+   "reason": "CarrierWave属性导致的SSRF是SSRF攻击的具体实现"
+  },
+  {
+   "id": 115748,
+   "theme": "SSRF",
+   "action": "fold",
+   "target": "hunt-ssrf",
+   "reason": "协议混淆绕过过滤是SSRF的常见绕过技术"
+  },
+  {
+   "id": 287245,
+   "theme": "SSRF",
+   "action": "fold",
+   "target": "hunt-ssrf",
+   "reason": "畸形IP解析导致SSRF绕过属于SSRF的绕过变体"
+  },
+  {
+   "id": 392859,
+   "theme": "SSRF",
+   "action": "fold",
+   "target": "hunt-ssrf",
+   "reason": "gopher协议和302重定向绕过黑名单是SSRF的绕过技术"
+  },
+  {
+   "id": 429617,
+   "theme": "SSRF",
+   "action": "fold",
+   "target": "hunt-ssrf",
+   "reason": "反向代理Host头信任导致敏感头泄露属于SSRF相关的攻击"
+  },
+  {
+   "id": 390344,
+   "theme": "XSS",
+   "action": "fold",
+   "target": "hunt-xss",
+   "reason": "移动应用内浏览器共享会话导致XSS是XSS攻击的变体"
+  },
+  {
+   "id": 982291,
+   "theme": "XSS",
+   "action": "fold",
+   "target": "hunt-xss",
+   "reason": "CSS url(cid://)绕过HTML过滤器是XSS的绕过技术"
+  },
+  {
+   "id": 724153,
+   "theme": "XSS",
+   "action": "fold",
+   "target": "hunt-xss",
+   "reason": "事件处理器绕过script标签过滤实现存储XSS是XSS的绕过变体"
+  },
+  {
+   "id": 259100,
+   "theme": "XSS",
+   "action": "fold",
+   "target": "hunt-xss",
+   "reason": "JSONP/频道消息通道投递未转义反射导致XSS是XSS的变体"
+  },
+  {
+   "id": 1212067,
+   "theme": "XSS",
+   "action": "fold",
+   "target": "hunt-xss",
+   "reason": "上传文件名引号逃逸和JSONP绕过CSP导致存储XSS是XSS的绕过技术"
+  },
+  {
+   "id": 1087061,
+   "theme": "XSS",
+   "action": "fold",
+   "target": "hunt-xss",
+   "reason": "git配置email注入HTML属性导致存储XSS是XSS的变体"
+  },
+  {
+   "id": 1758132,
+   "theme": "XSS",
+   "action": "fold",
+   "target": "hunt-xss",
+   "reason": "autolink正则缺陷导致DOM XSS是XSS的变体"
+  },
+  {
+   "id": 429298,
+   "theme": "XSS",
+   "action": "fold",
+   "target": "hunt-xss",
+   "reason": "表情解析URL未校验结合jQuery自动执行导致存储XSS是XSS的变体"
+  },
+  {
+   "id": 1404804,
+   "theme": "XSS",
+   "action": "fold",
+   "target": "hunt-xss",
+   "reason": "js-xss解析差异和HMAC绕过是XSS的绕过技术"
+  },
+  {
+   "id": 463915,
+   "theme": "XSS",
+   "action": "fold",
+   "target": "hunt-xss",
+   "reason": "postMessage导致的Universal XSS是XSS的变体"
+  },
+  {
+   "id": 785243,
+   "theme": "业务逻辑",
+   "action": "fold",
+   "target": "recognize-attack-surface",
+   "reason": "Unicode不可见字符绕过唯一性校验属于业务逻辑漏洞，归入方法论总线"
+  },
+  {
+   "id": 205000,
+   "theme": "业务逻辑",
+   "action": "fold",
+   "target": "recognize-attack-surface",
+   "reason": "OTP重发无速率限制绕过尝试次数限制属于业务逻辑漏洞，归入方法论总线"
+  },
+  {
+   "id": 882258,
+   "theme": "业务逻辑",
+   "action": "fold",
+   "target": "recognize-attack-surface",
+   "reason": "用户名复用导致数据隔离失效属于业务逻辑漏洞，归入方法论总线"
+  }
+ ]
+}

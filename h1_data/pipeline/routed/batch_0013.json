@@ -1,0 +1,144 @@
+{
+ "detailed": [
+  {
+   "id": 209949,
+   "theme": "内存泄露",
+   "action": "drop",
+   "target": "",
+   "reason": "堆内存泄露属内存破坏类，非web渗透库范围"
+  },
+  {
+   "id": 2140,
+   "theme": "沙箱绕过",
+   "action": "fold",
+   "target": "recognize-attack-surface",
+   "reason": "Flash沙箱绕过属客户端环境特定攻击面，归入横切类"
+  },
+  {
+   "id": 946728,
+   "theme": "开放重定向",
+   "action": "fold",
+   "target": "hunt-open-redirect",
+   "reason": "Rails参数过滤不完整导致开放重定向和XSS，属开放重定向变体"
+  },
+  {
+   "id": 170548,
+   "theme": "加密缺陷",
+   "action": "drop",
+   "target": "",
+   "reason": "IV重用属密码学实现缺陷，非web渗透库直接覆盖"
+  },
+  {
+   "id": 409395,
+   "theme": "路径遍历",
+   "action": "fold",
+   "target": "hunt-path-traversal",
+   "reason": "环境变量展开绕过YAML校验实现路径遍历，属路径遍历绕过变体"
+  },
+  {
+   "id": 1966499,
+   "theme": "权限绕过",
+   "action": "fold",
+   "target": "hunt-nodejs-permission-bypass",
+   "reason": "Node.js权限系统未覆盖文件监视，属Node.js权限绕过变体"
+  },
+  {
+   "id": 784186,
+   "theme": "内存破坏",
+   "action": "drop",
+   "target": "",
+   "reason": "整数下溢导致内存破坏，属内存破坏类非web渗透库范围"
+  },
+  {
+   "id": 183425,
+   "theme": "类型混淆",
+   "action": "drop",
+   "target": "",
+   "reason": "C扩展类型混淆属内存破坏类，非web渗透库范围"
+  },
+  {
+   "id": 1575014,
+   "theme": "路径规范化",
+   "action": "fold",
+   "target": "hunt-path-traversal",
+   "reason": "路径规范化差异导致接口绕过，属路径遍历变体"
+  },
+  {
+   "id": 1025575,
+   "theme": "缓存投毒",
+   "action": "fold",
+   "target": "hunt-cache-poisoning",
+   "reason": "Fastify版本路由默认行为导致缓存投毒，属缓存投毒变体"
+  },
+  {
+   "id": 217745,
+   "theme": "XSS",
+   "action": "fold",
+   "target": "hunt-xss",
+   "reason": "window.open javascript: URL导致XSS，属XSS变体"
+  },
+  {
+   "id": 106548,
+   "theme": "格式字符串",
+   "action": "drop",
+   "target": "",
+   "reason": "PHP格式字符串漏洞属内存破坏类，非web渗透库范围"
+  },
+  {
+   "id": 1620702,
+   "theme": "配置注入",
+   "action": "fold",
+   "target": "recognize-attack-surface",
+   "reason": "Ingress-nginx配置注入+文件写入实现RCE，属配置错误类横切主题"
+  },
+  {
+   "id": 843171,
+   "theme": "原型污染",
+   "action": "fold",
+   "target": "hunt-prototype-pollution",
+   "reason": "Electron原型污染绕过链接验证实现RCE，属原型污染变体"
+  },
+  {
+   "id": 1865991,
+   "theme": "开放重定向",
+   "action": "fold",
+   "target": "hunt-open-redirect",
+   "reason": "Rails URL解析差异绕过开放重定向，属开放重定向变体"
+  },
+  {
+   "id": 1082847,
+   "theme": "配置注入",
+   "action": "fold",
+   "target": "recognize-attack-surface",
+   "reason": "Partial schema宽松性导致配置注入，属配置错误类横切主题"
+  },
+  {
+   "id": 1647287,
+   "theme": "沙箱绕过",
+   "action": "fold",
+   "target": "recognize-attack-surface",
+   "reason": "Electron安全边界绕过（context isolation禁用）属客户端框架配置错误，归入横切类"
+  },
+  {
+   "id": 292797,
+   "theme": "参数处理",
+   "action": "fold",
+   "target": "recognize-attack-surface",
+   "reason": "Rails参数each方法返回不安全哈希，属框架行为利用横切类"
+  },
+  {
+   "id": 809012,
+   "theme": "沙箱逃逸",
+   "action": "fold",
+   "target": "hunt-prototype-pollution",
+   "reason": "沙箱逃逸通过原型链和bind方法，属原型污染变体"
+  },
+  {
+   "id": 1520931,
+   "theme": "竞争条件",
+   "action": "fold",
+   "target": "recognize-attack-surface",
+   "reason": "Rust标准库TOCTOU漏洞属竞争条件类，归入横切类"
+  }
+ ]
+}

@@ -68,3 +68,41 @@ chunked 结束后的 trailer 段放一条**无冒号**的行，宽容解析器�
 | pause-desync | 1667974 | Apache |
 
 hunt 阶段建议顺序：先 C（畸形 TE 最常见且低破坏）→ A/B 时序差分 → E 无冒号 trailer → 确认 desync 后再评估是否授权做 socket 毒化。
+
+## 更多真实案例（第三轮单例补充）
+
+（来自第二轮单例、第三轮语义路由归入本类；仅列此前未收录的报告，作案例索引）
+
+- **请求走私**
+  - #1630336 利用obs-fold头部绕过Transfer-Encoding校验实现请求走私
+  - #409943 Node.js HTTP 解析器对特殊字符处理不当导致请求拆分
+  - #1675191 HTTP 请求走私（llhttp 解析器对不完整 CLRF 的宽松处理）
+  - #2280391 超长trailer header触发IOException导致请求走私
+  - #453513 keep-alive连接绕过headersTimeout
+  - #227344 chunked 编码整数符号错误
+- **响应头注入**
+  - #145392 利用RFC1945头折叠和IE浏览器差异实现响应头注入
+- **响应注入**
+  - #806577 Set-Cookie 注入 via 分号未编码
+- **HTTP 响应拆分**
+  - #1204977 CGI::Cookie属性未过滤导致HTTP响应拆分
+- **协议时序攻击**
+  - #493176 HTTP/2并发流响应顺序差异实现时序攻击
+- **协议注入**
+  - #1334763 STARTTLS协议注入绕过加密
+- **HTTP头解析绕过**
+  - #1267677 双 Content-Type 头绕过内容类型检查
+- **HTTP头注入**
+  - #97292 HTTP头注入绕过域限制设置cookie
+- **编码绕过**
+  - #52042 UTF-8 编码绕过 CRLF 过滤
+- **代理TLS降级**
+  - #541502 代理 CONNECT 响应非 200 时未 TLS 升级导致明文传输
+- **协议行为利用**
+  - #1002188 重复 TE 头导致 HTTP 请求走私
+- **框架行为利用**
+  - #1047447 正则未锚定导致Host头注入
+- **解析器不一致**
+  - #536954 解析器与消费者对字符串视图不一致（c_str vs getStringView）导致绕过
+- **解析差异**
+  - #771596 Node.js遗留API url.parse()与WHATWG URL解析差异导致CRLF注入绕过

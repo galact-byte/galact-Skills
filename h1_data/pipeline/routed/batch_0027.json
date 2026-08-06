@@ -1,0 +1,144 @@
+{
+ "detailed": [
+  {
+   "id": 116286,
+   "theme": "类型混淆",
+   "action": "drop",
+   "target": "",
+   "reason": "Python partial对象类型混淆导致内存破坏，属于内存破坏类，非web渗透库范围"
+  },
+  {
+   "id": 1444539,
+   "theme": "类型混淆",
+   "action": "drop",
+   "target": "",
+   "reason": "libcurl整数截断导致内存泄露，属于内存破坏类，非web渗透库范围"
+  },
+  {
+   "id": 181321,
+   "theme": "类型混淆",
+   "action": "drop",
+   "target": "",
+   "reason": "mruby Array#to_h回调导致UAF，属于内存破坏类，非web渗透库范围"
+  },
+  {
+   "id": 319532,
+   "theme": "类型混淆",
+   "action": "fold",
+   "target": "hunt-nodejs-permission-bypass",
+   "reason": "Node.js Buffer构造函数隐式转换导致DoS，属于Node.js特定绕过变体"
+  },
+  {
+   "id": 340053,
+   "theme": "类型混淆",
+   "action": "fold",
+   "target": "hunt-prototype-pollution",
+   "reason": "原型链getter导致类型混淆和UAF，属于原型链污染相关绕过"
+  },
+  {
+   "id": 591302,
+   "theme": "缓存投毒",
+   "action": "fold",
+   "target": "hunt-cache-poisoning",
+   "reason": "缓存投毒针对CORS头导致DoS，属于缓存投毒变体"
+  },
+  {
+   "id": 490946,
+   "theme": "认证绕过",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "暴露的intent绕过锁保护，属于认证绕过变体"
+  },
+  {
+   "id": 1020371,
+   "theme": "认证绕过",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "账户关闭后预签名URL未失效导致文件上传，属于认证绕过变体"
+  },
+  {
+   "id": 2104566,
+   "theme": "认证绕过",
+   "action": "fold",
+   "target": "hunt-nodejs-permission-bypass",
+   "reason": "Node.js权限策略绕过module.constructor.createRequire()，属于Node.js权限绕过变体"
+  },
+  {
+   "id": 2233,
+   "theme": "认证绕过",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "MySQL字符集截断绕过邮箱域名验证，属于认证绕过变体"
+  },
+  {
+   "id": 461308,
+   "theme": "认证绕过",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "ActivityPub协议keyId未校验来源导致身份冒充，属于认证绕过变体"
+  },
+  {
+   "id": 587910,
+   "theme": "认证绕过",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "禁用2FA时未验证密码，属于认证绕过变体"
+  },
+  {
+   "id": 218230,
+   "theme": "认证绕过",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "利用邮件别名功能接收第三方验证信实现身份绕过，属于认证绕过变体"
+  },
+  {
+   "id": 1817214,
+   "theme": "认证绕过",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "token可预测性导致账户接管，属于认证绕过变体"
+  },
+  {
+   "id": 722748,
+   "theme": "认证绕过",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "2FA绕过：登录时设置新提供者，属于认证绕过变体"
+  },
+  {
+   "id": 141239,
+   "theme": "认证绕过",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "Nginx auth_basic密码截断绕过，属于认证绕过变体"
+  },
+  {
+   "id": 204802,
+   "theme": "认证绕过",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "环境变量覆盖socket路径绕过文件权限，属于认证绕过变体"
+  },
+  {
+   "id": 103787,
+   "theme": "认证绕过",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "CSRF token未绑定操作+_method覆盖+浏览器不发送Origin头的组合绕过，属于认证绕过变体"
+  },
+  {
+   "id": 1552110,
+   "theme": "认证绕过",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "连接复用未验证认证凭据导致认证绕过，属于认证绕过变体"
+  },
+  {
+   "id": 747726,
+   "theme": "认证绕过",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "Android Activity启动模式绕过锁屏，属于认证绕过变体"
+  }
+ ]
+}

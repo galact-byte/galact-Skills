@@ -1,0 +1,144 @@
+{
+ "detailed": [
+  {
+   "id": 1521336,
+   "theme": "未文档化端点",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "未文档化内部端点绕过权限属于授权绕过变体"
+  },
+  {
+   "id": 608656,
+   "theme": "状态同步",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "禁用账户后状态未同步导致授权绕过"
+  },
+  {
+   "id": 1193321,
+   "theme": "token权限",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "受限token可修改自身权限属于权限提升"
+  },
+  {
+   "id": 403039,
+   "theme": "角色提升",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "黑名单角色通过中间角色绕过属于授权绕过"
+  },
+  {
+   "id": 667408,
+   "theme": "权限模型",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "新功能未继承权限模型导致信息泄露"
+  },
+  {
+   "id": 1767771,
+   "theme": "域名所有权",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "未验证域名所有权导致子域名接管属于授权绕过"
+  },
+  {
+   "id": 1990443,
+   "theme": "联邦权限",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "伪造通知提升联邦分享权限属于授权绕过"
+  },
+  {
+   "id": 343626,
+   "theme": "信任头",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "信任Referer头进行权限校验导致提权"
+  },
+  {
+   "id": 1088159,
+   "theme": "状态一致性",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "权限传播状态不一致导致提权"
+  },
+  {
+   "id": 809816,
+   "theme": "跨组织token",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "跨组织token未校验资源归属导致提权"
+  },
+  {
+   "id": 397478,
+   "theme": "XPC服务",
+   "action": "drop",
+   "target": "",
+   "reason": "XPC服务未授权属于本地提权，非web库范围"
+  },
+  {
+   "id": 55670,
+   "theme": "权限残留",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "删除用户后权限残留导致越权"
+  },
+  {
+   "id": 134299,
+   "theme": "IDOR",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "多态关联IDOR跨项目引用属于授权绕过"
+  },
+  {
+   "id": 1596663,
+   "theme": "权限残留",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "角色变更后权限残留导致越权"
+  },
+  {
+   "id": 243943,
+   "theme": "IDOR",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "低权限用户通过IDOR获取敏感信息"
+  },
+  {
+   "id": 1043480,
+   "theme": "时间窗口",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "授权检查时间窗口绕过属于授权绕过"
+  },
+  {
+   "id": 1806387,
+   "theme": "响应状态码",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "修改HTTP响应状态码绕过访问控制"
+  },
+  {
+   "id": 416983,
+   "theme": "HMAC",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "静态HMAC不绑定用户身份导致权限重用"
+  },
+  {
+   "id": 1285226,
+   "theme": "状态一致性",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "密码过期状态与token认证不一致导致授权绕过"
+  },
+  {
+   "id": 1892200,
+   "theme": "IDOR",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "未验证关联对象权限导致跨组关联"
+  }
+ ]
+}

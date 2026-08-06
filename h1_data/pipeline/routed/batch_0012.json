@@ -1,0 +1,144 @@
+{
+ "detailed": [
+  {
+   "id": 1785378,
+   "theme": "命令注入绕过",
+   "action": "fold",
+   "target": "hunt-command-injection",
+   "reason": "bash PS1二次求值属于命令注入的变体"
+  },
+  {
+   "id": 390881,
+   "theme": "原型污染到命令注入",
+   "action": "fold",
+   "target": "hunt-prototype-pollution",
+   "reason": "原型污染触发代码注入，属于原型污染利用链"
+  },
+  {
+   "id": 851807,
+   "theme": "命令注入绕过",
+   "action": "fold",
+   "target": "hunt-command-injection",
+   "reason": "bash子命令替换绕过过滤实现RCE，是命令注入绕过变体"
+  },
+  {
+   "id": 1401444,
+   "theme": "沙箱逃逸",
+   "action": "fold",
+   "target": "hunt-command-injection",
+   "reason": "Lua沙箱逃逸通过loadstring实现RCE，属于命令注入范畴"
+  },
+  {
+   "id": 260005,
+   "theme": "命令注入绕过",
+   "action": "fold",
+   "target": "hunt-command-injection",
+   "reason": "ssh URI解析差异导致RCE，是命令注入的变体"
+  },
+  {
+   "id": 236599,
+   "theme": "开放重定向绕过",
+   "action": "fold",
+   "target": "hunt-open-redirect",
+   "reason": "stristr子串匹配绕过开放重定向保护，属于开放重定向绕过"
+  },
+  {
+   "id": 518669,
+   "theme": "SQL注入绕过",
+   "action": "fold",
+   "target": "hunt-sqli",
+   "reason": "ContentProvider投影映射限制绕过导致SQL注入，是SQL注入变体"
+  },
+  {
+   "id": 358339,
+   "theme": "授权绕过",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "WebDAV搜索和预览API绕过文件访问控制，属于授权绕过"
+  },
+  {
+   "id": 1026146,
+   "theme": "认证绕过",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "SOAP Header认证绕过，属于认证绕过变体"
+  },
+  {
+   "id": 1501611,
+   "theme": "IDOR",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "GraphQL IDOR可预测对象ID与缺失对象级授权，属于授权绕过"
+  },
+  {
+   "id": 827816,
+   "theme": "权限提升",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "客户端信任权限标志导致权限提升，属于授权绕过"
+  },
+  {
+   "id": 835005,
+   "theme": "IDOR",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "GraphQL泄露内部ID结合IDOR实现组织接管，属于授权绕过"
+  },
+  {
+   "id": 1751258,
+   "theme": "授权绕过",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "篡改noteable_type参数绕过项目权限检查，属于授权绕过"
+  },
+  {
+   "id": 497047,
+   "theme": "认证绕过",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "CI/CD token绕过用户封禁，属于认证绕过"
+  },
+  {
+   "id": 312647,
+   "theme": "授权绕过",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "Onebox preview通过用户控制参数绕过访问控制，属于授权绕过"
+  },
+  {
+   "id": 1034346,
+   "theme": "授权绕过",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "对象关联劫持绕过授权，属于授权绕过"
+  },
+  {
+   "id": 1327196,
+   "theme": "XSS绕过",
+   "action": "fold",
+   "target": "hunt-xss",
+   "reason": "CSP对image/svg+xml不生效导致XSS，是XSS绕过变体"
+  },
+  {
+   "id": 2138080,
+   "theme": "框架行为利用",
+   "action": "fold",
+   "target": "hunt-xss",
+   "reason": "Electron contextBridge序列化异常绕过上下文隔离，属于XSS相关绕过"
+  },
+  {
+   "id": 302338,
+   "theme": "路径遍历",
+   "action": "fold",
+   "target": "hunt-path-traversal",
+   "reason": "Ruby Dir类NULL字符截断路径绕过，属于路径遍历变体"
+  },
+  {
+   "id": 44513,
+   "theme": "IP解析差异",
+   "action": "fold",
+   "target": "hunt-ssrf",
+   "reason": "IP解析差异绕过（IPv6变体），属于SSRF绕过"
+  }
+ ]
+}

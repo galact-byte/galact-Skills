@@ -1,0 +1,144 @@
+{
+ "detailed": [
+  {
+   "id": 423022,
+   "theme": "OAuth CSRF",
+   "action": "fold",
+   "target": "hunt-csrf",
+   "reason": "OAuth回调CSRF是CSRF的变体，导致账户接管"
+  },
+  {
+   "id": 102376,
+   "theme": "CSRF绕过",
+   "action": "fold",
+   "target": "hunt-csrf",
+   "reason": "利用重定向参数绕过CSRF防护是CSRF绕过变体"
+  },
+  {
+   "id": 386334,
+   "theme": "CSS注入",
+   "action": "fold",
+   "target": "hunt-xss",
+   "reason": "CSS注入枚举CSRF token并组合XSS，属于XSS攻击链"
+  },
+  {
+   "id": 630903,
+   "theme": "DLL劫持",
+   "action": "drop",
+   "target": "",
+   "reason": "DLL劫持属本地二进制攻击，非web渗透范围"
+  },
+  {
+   "id": 110578,
+   "theme": "HTML注入",
+   "action": "fold",
+   "target": "hunt-xss",
+   "reason": "HTML注入绕过CSP窃取数据是XSS变体"
+  },
+  {
+   "id": 2372363,
+   "theme": "提示注入",
+   "action": "fold",
+   "target": "recognize-attack-surface",
+   "reason": "LLM提示注入属新兴攻击面，无专用skill，归入方法论总线"
+  },
+  {
+   "id": 632101,
+   "theme": "SSRF绕过",
+   "action": "fold",
+   "target": "hunt-ssrf",
+   "reason": "DNS重绑定绕过SSRF防护是SSRF绕过变体"
+  },
+  {
+   "id": 326040,
+   "theme": "SSRF",
+   "action": "fold",
+   "target": "hunt-ssrf",
+   "reason": "插件功能滥用导致SSRF访问云元数据是SSRF变体"
+  },
+  {
+   "id": 925527,
+   "theme": "SSRF绕过",
+   "action": "fold",
+   "target": "hunt-ssrf",
+   "reason": "DNS rebinding和未检查IP范围是SSRF绕过变体"
+  },
+  {
+   "id": 369451,
+   "theme": "SSRF绕过",
+   "action": "fold",
+   "target": "hunt-ssrf",
+   "reason": "CI运行状态差异导致SSRF防护绕过是SSRF变体"
+  },
+  {
+   "id": 187520,
+   "theme": "SSRF绕过",
+   "action": "fold",
+   "target": "hunt-ssrf",
+   "reason": "利用重定向绕过SSRF过滤是SSRF绕过变体"
+  },
+  {
+   "id": 1608039,
+   "theme": "SSRF",
+   "action": "fold",
+   "target": "hunt-ssrf",
+   "reason": "云元数据服务地址遗漏是SSRF变体"
+  },
+  {
+   "id": 809248,
+   "theme": "SSRF",
+   "action": "fold",
+   "target": "hunt-ssrf",
+   "reason": "信任边界内组件不可信导致SSRF是SSRF变体"
+  },
+  {
+   "id": 333419,
+   "theme": "SSRF",
+   "action": "fold",
+   "target": "hunt-ssrf",
+   "reason": "TURN服务器代理到内网导致SSRF是SSRF变体"
+  },
+  {
+   "id": 716761,
+   "theme": "WAF绕过",
+   "action": "fold",
+   "target": "recognize-attack-surface",
+   "reason": "WAF绕过属配置错误/防护绕过，无专用skill，归入方法论总线"
+  },
+  {
+   "id": 85488,
+   "theme": "XSS绕过",
+   "action": "fold",
+   "target": "hunt-xss",
+   "reason": "Unicode转义序列解析差异绕过XSS过滤是XSS变体"
+  },
+  {
+   "id": 84601,
+   "theme": "XSS",
+   "action": "fold",
+   "target": "hunt-xss",
+   "reason": "文件上传结合浏览器嗅探和AppCache缓存投毒导致XSS是XSS变体"
+  },
+  {
+   "id": 473950,
+   "theme": "XSS",
+   "action": "fold",
+   "target": "hunt-xss",
+   "reason": "模板字符串拼接导致WebView XSS是XSS变体"
+  },
+  {
+   "id": 171670,
+   "theme": "XSS绕过",
+   "action": "fold",
+   "target": "hunt-xss",
+   "reason": "HTML5实体绕过xss_clean()过滤是XSS绕过变体"
+  },
+  {
+   "id": 394016,
+   "theme": "缓存XSS",
+   "action": "fold",
+   "target": "hunt-cache-poisoning",
+   "reason": "X-Forwarded-Host头注入导致缓存XSS是缓存投毒变体"
+  }
+ ]
+}

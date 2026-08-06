@@ -1,0 +1,144 @@
+{
+ "detailed": [
+  {
+   "id": 1580493,
+   "theme": "认证绕过",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "AWS IAM 参数大小写绕过属于认证绕过变体"
+  },
+  {
+   "id": 1357948,
+   "theme": "认证绕过",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "路径编码绕过外部认证属于认证绕过变体"
+  },
+  {
+   "id": 617896,
+   "theme": "认证绕过",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "第三方 IdP 集成导致邮箱验证绕过属于认证绕过变体"
+  },
+  {
+   "id": 770504,
+   "theme": "认证绕过",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "客户端篡改服务器响应绕过密码验证属于认证绕过变体"
+  },
+  {
+   "id": 921780,
+   "theme": "认证绕过",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "IDOR 导致 OTP token 泄露属于认证绕过变体"
+  },
+  {
+   "id": 855618,
+   "theme": "认证绕过",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "移动端 deeplink 拦截导致账户接管属于认证绕过变体"
+  },
+  {
+   "id": 534450,
+   "theme": "跨组件攻击链",
+   "action": "fold",
+   "target": "recognize-attack-surface",
+   "reason": "cookie 操作端点与 XSS 结合绕过 HttpOnly 和 CORS 属于跨组件攻击链"
+  },
+  {
+   "id": 966494,
+   "theme": "跨组件攻击链",
+   "action": "drop",
+   "target": "",
+   "reason": "LPE via XPC service 属于本地权限提升，非 web 库范围"
+  },
+  {
+   "id": 694181,
+   "theme": "跨组件攻击链",
+   "action": "fold",
+   "target": "recognize-attack-surface",
+   "reason": "容器内符号链接替换导致宿主机任意文件读取属于跨组件攻击链"
+  },
+  {
+   "id": 1842829,
+   "theme": "跨组件攻击链",
+   "action": "fold",
+   "target": "recognize-attack-surface",
+   "reason": "kOps 配置错误导致集群接管属于配置错误类攻击面"
+  },
+  {
+   "id": 403602,
+   "theme": "跨组件攻击链",
+   "action": "fold",
+   "target": "recognize-attack-surface",
+   "reason": "AppCache FALLBACK 与 Cookie 轰炸结合劫持附件属于跨组件攻击链"
+  },
+  {
+   "id": 1458236,
+   "theme": "跨组件攻击链",
+   "action": "fold",
+   "target": "recognize-attack-surface",
+   "reason": "SameSite=Lax cookie 在跨站请求中仍可发送结合 SSRF 实现 CSRF 属于跨组件攻击链"
+  },
+  {
+   "id": 1160407,
+   "theme": "跨组件攻击链",
+   "action": "fold",
+   "target": "hunt-cache-poisoning",
+   "reason": "x-http-method-override 头与缓存键不一致导致缓存投毒 DoS 属于缓存投毒变体"
+  },
+  {
+   "id": 399166,
+   "theme": "跨组件攻击链",
+   "action": "fold",
+   "target": "recognize-attack-surface",
+   "reason": "未认领云存储桶劫持导致供应链攻击属于配置错误类攻击面"
+  },
+  {
+   "id": 676581,
+   "theme": "跨组件攻击链",
+   "action": "fold",
+   "target": "recognize-attack-surface",
+   "reason": "未认证 gRPC 端点导致跨组件授权绕过属于跨组件攻击链"
+  },
+  {
+   "id": 1066914,
+   "theme": "跨组件攻击链",
+   "action": "fold",
+   "target": "recognize-attack-surface",
+   "reason": "多种绕过技术组合属于跨组件攻击链"
+  },
+  {
+   "id": 265943,
+   "theme": "跨组件攻击链",
+   "action": "fold",
+   "target": "recognize-attack-surface",
+   "reason": "SSO token 窃取链（CSRF+重定向+SVG XSS）属于跨组件攻击链"
+  },
+  {
+   "id": 1066206,
+   "theme": "跨组件攻击链",
+   "action": "fold",
+   "target": "recognize-attack-surface",
+   "reason": "PHP 类型混淆和 DNS rebinding 组合利用属于跨组件攻击链"
+  },
+  {
+   "id": 1442118,
+   "theme": "跨组件攻击链",
+   "action": "drop",
+   "target": "",
+   "reason": "容器逃逸利用 cgroup release_agent 属于本地权限提升，非 web 库范围"
+  },
+  {
+   "id": 1547877,
+   "theme": "跨组件攻击链",
+   "action": "fold",
+   "target": "recognize-attack-surface",
+   "reason": "JDBC 上传文件 + SSRF 到 Jolokia 实现 RCE 属于跨组件攻击链"
+  }
+ ]
+}

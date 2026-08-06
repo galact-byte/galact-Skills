@@ -1,0 +1,144 @@
+{
+ "detailed": [
+  {
+   "id": 489102,
+   "theme": "内存破坏",
+   "action": "drop",
+   "target": "",
+   "reason": "栈溢出属内存破坏，非web渗透库范围"
+  },
+  {
+   "id": 493176,
+   "theme": "协议时序攻击",
+   "action": "fold",
+   "target": "hunt-request-smuggling",
+   "reason": "HTTP/2并发流时序差异可用于请求走私检测绕过"
+  },
+  {
+   "id": 1667974,
+   "theme": "请求走私",
+   "action": "fold",
+   "target": "hunt-request-smuggling",
+   "reason": "Apache HTTPD pause-based desync是请求走私变体"
+  },
+  {
+   "id": 726117,
+   "theme": "URL解析绕过",
+   "action": "fold",
+   "target": "hunt-ssrf",
+   "reason": "curl URL解析器fragment混淆可绕过SSRF防护"
+  },
+  {
+   "id": 500,
+   "theme": "内存破坏",
+   "action": "drop",
+   "target": "",
+   "reason": "AES-GCM内存破坏属内存安全，非web库范围"
+  },
+  {
+   "id": 2384833,
+   "theme": "协议参数解析",
+   "action": "fold",
+   "target": "hunt-ssrf",
+   "reason": "curl协议参数解析缺陷可导致SSRF防护绕过"
+  },
+  {
+   "id": 2280391,
+   "theme": "请求走私",
+   "action": "fold",
+   "target": "hunt-request-smuggling",
+   "reason": "超长trailer header触发IOException导致请求走私"
+  },
+  {
+   "id": 855276,
+   "theme": "SSRF",
+   "action": "fold",
+   "target": "hunt-ssrf",
+   "reason": "git config URL注入实现SSRF"
+  },
+  {
+   "id": 1464396,
+   "theme": "认证绕过",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "Cookie前缀欺骗通过URL编码绕过认证"
+  },
+  {
+   "id": 453513,
+   "theme": "请求走私",
+   "action": "fold",
+   "target": "hunt-request-smuggling",
+   "reason": "keep-alive连接绕过headersTimeout可导致请求走私"
+  },
+  {
+   "id": 2298922,
+   "theme": "TLS绕过",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "TLS会话重用绕过OCSP验证属认证绕过"
+  },
+  {
+   "id": 423467,
+   "theme": "协议混淆",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "WebSocket消息类型混淆覆盖公钥属认证绕过"
+  },
+  {
+   "id": 227344,
+   "theme": "请求走私",
+   "action": "fold",
+   "target": "hunt-request-smuggling",
+   "reason": "chunked编码整数符号错误导致请求走私"
+  },
+  {
+   "id": 1710652,
+   "theme": "DNS重绑定",
+   "action": "fold",
+   "target": "hunt-ssrf",
+   "reason": "无效八进制IP解析差异导致DNS rebinding绕过SSRF"
+  },
+  {
+   "id": 218088,
+   "theme": "DNS劫持",
+   "action": "fold",
+   "target": "hunt-ssrf",
+   "reason": "DNS SRV记录验证缺陷导致请求劫持，属SSRF变体"
+  },
+  {
+   "id": 790634,
+   "theme": "供应链投毒",
+   "action": "fold",
+   "target": "recognize-attack-surface",
+   "reason": "Git分支名与哈希解析差异导致供应链投毒，属业务逻辑/配置错误"
+  },
+  {
+   "id": 295339,
+   "theme": "邮件协议绕过",
+   "action": "fold",
+   "target": "recognize-attack-surface",
+   "reason": "邮件客户端RFC2047编码解析差异绕过DMARC，属协议配置错误"
+  },
+  {
+   "id": 742588,
+   "theme": "加密降级",
+   "action": "fold",
+   "target": "recognize-attack-surface",
+   "reason": "加密模式降级与密钥流重用破坏完整性，属配置错误"
+  },
+  {
+   "id": 1334763,
+   "theme": "协议注入",
+   "action": "fold",
+   "target": "hunt-request-smuggling",
+   "reason": "STARTTLS协议注入绕过加密，属协议注入变体"
+  },
+  {
+   "id": 1553301,
+   "theme": "Cookie绕过",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "curl cookie尾点绕过TLD限制属认证绕过"
+  }
+ ]
+}

@@ -1,0 +1,144 @@
+{
+ "detailed": [
+  {
+   "id": 1027873,
+   "theme": "内部重定向",
+   "action": "fold",
+   "target": "hunt-ssrf",
+   "reason": "X-Accel-Redirect头用于内部重定向，是SSRF的变体"
+  },
+  {
+   "id": 329645,
+   "theme": "证书验证绕过",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "证书主机名验证被静默忽略，属于认证绕过"
+  },
+  {
+   "id": 1180252,
+   "theme": "内存破坏",
+   "action": "drop",
+   "target": "",
+   "reason": "栈溢出属内存破坏，非web库范围"
+  },
+  {
+   "id": 1583680,
+   "theme": "证书验证绕过",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "代理未使用CONNECT隧道导致证书验证失效，属认证绕过"
+  },
+  {
+   "id": 402671,
+   "theme": "协议oracle",
+   "action": "drop",
+   "target": "",
+   "reason": "TLS padding oracle属密码学攻击，非web库范围"
+  },
+  {
+   "id": 458842,
+   "theme": "路径绕过",
+   "action": "fold",
+   "target": "hunt-path-traversal",
+   "reason": "文件扩展名检查绕过是路径遍历变体"
+  },
+  {
+   "id": 1630336,
+   "theme": "请求走私",
+   "action": "fold",
+   "target": "hunt-request-smuggling",
+   "reason": "利用obs-fold绕过Transfer-Encoding校验实现请求走私"
+  },
+  {
+   "id": 1892780,
+   "theme": "认证绕过",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "FTP连接重用忽略账户参数导致认证绕过"
+  },
+  {
+   "id": 1566462,
+   "theme": "URL过滤绕过",
+   "action": "fold",
+   "target": "hunt-ssrf",
+   "reason": "curl globbing绕过URL过滤，可导致SSRF"
+  },
+  {
+   "id": 1429694,
+   "theme": "证书验证绕过",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "SAN注入绕过证书验证，属认证绕过"
+  },
+  {
+   "id": 824203,
+   "theme": "URL解码绕过",
+   "action": "fold",
+   "target": "hunt-path-traversal",
+   "reason": "双重URL解码导致ACL绕过，属路径遍历变体"
+  },
+  {
+   "id": 501,
+   "theme": "虚拟主机混淆",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "TLS虚拟主机混淆导致跨域冒充，属认证绕过"
+  },
+  {
+   "id": 1170024,
+   "theme": "协议认证缺失",
+   "action": "fold",
+   "target": "recognize-attack-surface",
+   "reason": "OCM协议未认证端点导致权限提升，属配置错误"
+  },
+  {
+   "id": 304378,
+   "theme": "协议挑战缺陷",
+   "action": "fold",
+   "target": "recognize-attack-surface",
+   "reason": "ACME TLS-SNI挑战缺陷属协议设计问题，无专用skill"
+  },
+  {
+   "id": 470520,
+   "theme": "内存破坏",
+   "action": "drop",
+   "target": "",
+   "reason": "缓冲区溢出和ROP链属内存破坏，非web库范围"
+  },
+  {
+   "id": 1565624,
+   "theme": "连接复用",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "curl连接复用忽略安全选项，可导致认证绕过"
+  },
+  {
+   "id": 407319,
+   "theme": "签名URL劫持",
+   "action": "fold",
+   "target": "recognize-attack-surface",
+   "reason": "ActiveStorage签名URL参数未签名导致URL劫持，属业务逻辑"
+  },
+  {
+   "id": 1238470,
+   "theme": "协议设计缺陷",
+   "action": "drop",
+   "target": "",
+   "reason": "Wi-Fi协议缺陷属网络层，非web库范围"
+  },
+  {
+   "id": 1542881,
+   "theme": "配置错误",
+   "action": "fold",
+   "target": "recognize-attack-surface",
+   "reason": "curl配置文件读取失败导致安全选项失效，属配置错误"
+  },
+  {
+   "id": 1916285,
+   "theme": "命令注入",
+   "action": "fold",
+   "target": "hunt-command-injection",
+   "reason": "终端转义序列注入导致任意命令执行，属命令注入变体"
+  }
+ ]
+}

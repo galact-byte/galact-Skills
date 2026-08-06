@@ -1,0 +1,5922 @@
+[
+ {
+  "id": 842625,
+  "theme": "IDOR账户接管",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "IDOR结合密码重置实现账户接管，属于认证绕过变体",
+  "knowledge_point": "IDOR 获取敏感信息结合密码重置实现账户接管",
+  "report_url": "https://hackerone.com/reports/842625",
+  "category": "IDOR"
+ },
+ {
+  "id": 447930,
+  "theme": "IDOR信息泄露",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "GraphQL暴露内部主键导致IDOR，属于认证绕过变体",
+  "knowledge_point": "GraphQL node 接口暴露内部主键导致 IDOR",
+  "report_url": "https://hackerone.com/reports/447930",
+  "category": "IDOR"
+ },
+ {
+  "id": 31756,
+  "theme": "SQL注入RCE",
+  "action": "fold",
+  "target": "hunt-sqli",
+  "reason": "Drupal数组键SQL注入导致RCE，属于SQL注入变体",
+  "knowledge_point": "Drupal 数组键 SQL 注入导致 RCE",
+  "report_url": "https://hackerone.com/reports/31756",
+  "category": "SQL注入"
+ },
+ {
+  "id": 1663299,
+  "theme": "SQL注入RCE",
+  "action": "fold",
+  "target": "hunt-sqli",
+  "reason": "SQL注入逃逸事务结合反序列化实现RCE，属于SQL注入变体",
+  "knowledge_point": "SQL注入逃逸事务结合反序列化实现RCE",
+  "report_url": "https://hackerone.com/reports/1663299",
+  "category": "SQL注入"
+ },
+ {
+  "id": 713900,
+  "theme": "SSRF到RCE",
+  "action": "fold",
+  "target": "hunt-ssrf",
+  "reason": "SSRF绕过白名单结合模板注入实现RCE，属于SSRF变体",
+  "knowledge_point": "SSRF绕过白名单结合模板注入实现RCE",
+  "report_url": "https://hackerone.com/reports/713900",
+  "category": "SSRF"
+ },
+ {
+  "id": 341876,
+  "theme": "SSRF到RCE",
+  "action": "fold",
+  "target": "hunt-ssrf",
+  "reason": "SSRF到Kubernetes RCE攻击链，属于SSRF变体",
+  "knowledge_point": "SSRF 到 Kubernetes RCE 的完整攻击链",
+  "report_url": "https://hackerone.com/reports/341876",
+  "category": "SSRF"
+ },
+ {
+  "id": 237381,
+  "theme": "SSRF绕过",
+  "action": "fold",
+  "target": "hunt-ssrf",
+  "reason": "FFmpeg HLS处理SSRF，属于SSRF变体",
+  "knowledge_point": "FFmpeg HLS 处理 SSRF",
+  "report_url": "https://hackerone.com/reports/237381",
+  "category": "SSRF"
+ },
+ {
+  "id": 1354335,
+  "theme": "SSRF到RCE",
+  "action": "fold",
+  "target": "hunt-ssrf",
+  "reason": "SSRF结合Gopher攻击FastCGI，属于SSRF变体",
+  "knowledge_point": "SSRF 结合 Gopher 攻击 FastCGI",
+  "report_url": "https://hackerone.com/reports/1354335",
+  "category": "SSRF"
+ },
+ {
+  "id": 1398305,
+  "theme": "XSS过滤器绕过",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "XSS过滤器绕过，属于XSS变体",
+  "knowledge_point": "XSS 过滤器绕过：服务端 SyntaxHighlightFilter 与前端 gl-emoji 自定义元素属性注入",
+  "report_url": "https://hackerone.com/reports/1398305",
+  "category": "XSS"
+ },
+ {
+  "id": 227486,
+  "theme": "XSS WAF绕过",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "WAF绕过编码注入，属于XSS变体",
+  "knowledge_point": "WAF 绕过：使用 %u0022 编码注入 onclick 属性并利用现有事件绑定",
+  "report_url": "https://hackerone.com/reports/227486",
+  "category": "XSS"
+ },
+ {
+  "id": 232174,
+  "theme": "XSS白名单绕过",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "SVG白名单绕过，属于XSS变体",
+  "knowledge_point": "SVG 白名单绕过：使用 XML 实体注入 onload 事件",
+  "report_url": "https://hackerone.com/reports/232174",
+  "category": "XSS"
+ },
+ {
+  "id": 921635,
+  "theme": "DOM XSS",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "DOM XSS利用存储和eval，属于XSS变体",
+  "knowledge_point": "DOM XSS：利用 Cloud Save 存储 payload 结合 eval 和 URL 片段绕过长度限制",
+  "report_url": "https://hackerone.com/reports/921635",
+  "category": "XSS"
+ },
+ {
+  "id": 2010530,
+  "theme": "XSS账户接管",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "Cookie走私结合XSS，属于XSS变体",
+  "knowledge_point": "Cookie 解析差异（空格分隔）导致 Cookie 走私，结合 XSS 实现账户接管",
+  "report_url": "https://hackerone.com/reports/2010530",
+  "category": "XSS"
+ },
+ {
+  "id": 662083,
+  "theme": "DOM XSS",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "pushState路径遍历绕过实现DOM XSS，属于XSS变体",
+  "knowledge_point": "pushState 路径遍历绕过 admin 前缀实现 DOM XSS",
+  "report_url": "https://hackerone.com/reports/662083",
+  "category": "XSS"
+ },
+ {
+  "id": 1760213,
+  "theme": "XSS WAF绕过",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "WAF与服务器解析差异绕过，属于XSS变体",
+  "knowledge_point": "WAF 与服务器解析差异绕过（双引号插入）",
+  "report_url": "https://hackerone.com/reports/1760213",
+  "category": "XSS"
+ },
+ {
+  "id": 134546,
+  "theme": "Flash XSS",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "Flash XSS利用解析差异，属于XSS变体",
+  "knowledge_point": "Flash XSS 利用 URL 解析差异、ES6 模板字符串和浏览器行为绕过多层过滤",
+  "report_url": "https://hackerone.com/reports/134546",
+  "category": "XSS"
+ },
+ {
+  "id": 1444682,
+  "theme": "XSS配置错误",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "Swagger-UI configUrl加载data协议导致XSS，属于XSS变体",
+  "knowledge_point": "Swagger-UI configUrl 加载 data: 协议导致 XSS",
+  "report_url": "https://hackerone.com/reports/1444682",
+  "category": "XSS"
+ },
+ {
+  "id": 743953,
+  "theme": "IDOR业务逻辑",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "导入功能未过滤关联属性导致IDOR，属于认证绕过变体",
+  "knowledge_point": "导入功能未过滤关联属性导致IDOR",
+  "report_url": "https://hackerone.com/reports/743953",
+  "category": "业务逻辑"
+ },
+ {
+  "id": 1330529,
+  "theme": "业务逻辑认证",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "OTP验证流程参数篡改导致未授权认领，属于认证绕过变体",
+  "knowledge_point": "OTP 验证流程参数篡改导致未授权认领",
+  "report_url": "https://hackerone.com/reports/1330529",
+  "category": "业务逻辑"
+ },
+ {
+  "id": 1295844,
+  "theme": "业务逻辑支付",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "签名拼接漏洞导致支付金额篡改，属于业务逻辑横切类",
+  "knowledge_point": "签名拼接漏洞导致支付金额篡改",
+  "report_url": "https://hackerone.com/reports/1295844",
+  "category": "业务逻辑"
+ },
+ {
+  "id": 258084,
+  "theme": "目录遍历",
+  "action": "fold",
+  "target": "hunt-path-traversal",
+  "reason": "WebDAV 文件名冲突导致目录遍历，属于路径遍历的变体",
+  "knowledge_point": "WebDAV 复制操作中文件名冲突导致目录遍历和信息泄露",
+  "report_url": "https://hackerone.com/reports/258084",
+  "category": "业务逻辑"
+ },
+ {
+  "id": 684092,
+  "theme": "智能合约攻击",
+  "action": "drop",
+  "target": "",
+  "reason": "智能合约跨合约攻击属区块链领域，非 web 渗透库范围",
+  "knowledge_point": "智能合约跨合约攻击：flip.kick 缺乏验证导致清算窃取",
+  "report_url": "https://hackerone.com/reports/684092",
+  "category": "业务逻辑"
+ },
+ {
+  "id": 307670,
+  "theme": "参数解析差异",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "跨组件参数解析差异导致业务逻辑错误，属横切类攻击面识别",
+  "knowledge_point": "跨组件参数解析差异导致业务逻辑错误",
+  "report_url": "https://hackerone.com/reports/307670",
+  "category": "业务逻辑"
+ },
+ {
+  "id": 364904,
+  "theme": "加密货币逻辑",
+  "action": "drop",
+  "target": "",
+  "reason": "Monero 交易逻辑漏洞属加密货币领域，非 web 渗透库范围",
+  "knowledge_point": "Monero 交易 tx pubkey 重复导致金额虚报",
+  "report_url": "https://hackerone.com/reports/364904",
+  "category": "业务逻辑"
+ },
+ {
+  "id": 665798,
+  "theme": "DeFi 逻辑",
+  "action": "drop",
+  "target": "",
+  "reason": "DeFi 利率同步漏洞属区块链金融领域，非 web 渗透库范围",
+  "knowledge_point": "DeFi 利率同步漏洞导致无风险套利",
+  "report_url": "https://hackerone.com/reports/665798",
+  "category": "业务逻辑"
+ },
+ {
+  "id": 390929,
+  "theme": "原型污染",
+  "action": "fold",
+  "target": "hunt-prototype-pollution",
+  "reason": "原型污染控制模板引擎配置导致 RCE，是原型污染的利用变体",
+  "knowledge_point": "原型污染控制模板引擎配置导致 RCE",
+  "report_url": "https://hackerone.com/reports/390929",
+  "category": "代码注入"
+ },
+ {
+  "id": 1636382,
+  "theme": "代码注入",
+  "action": "fold",
+  "target": "hunt-command-injection",
+  "reason": "代码生成中的注释逃逸注入，属代码注入类，可归入命令注入变体",
+  "knowledge_point": "代码生成中的注释逃逸注入",
+  "report_url": "https://hackerone.com/reports/1636382",
+  "category": "代码注入"
+ },
+ {
+  "id": 2039464,
+  "theme": "注解注入",
+  "action": "fold",
+  "target": "hunt-command-injection",
+  "reason": "nginx-ingress 注解注入绕过限制导致代码执行，属代码注入变体",
+  "knowledge_point": "nginx-ingress 注解注入绕过 snippet 禁用导致代码执行",
+  "report_url": "https://hackerone.com/reports/2039464",
+  "category": "代码注入"
+ },
+ {
+  "id": 491473,
+  "theme": "侧信道",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "URL 重定向差异作为侧信道提取数据，属信息泄露横切类",
+  "knowledge_point": "URL重定向差异作为侧信道提取数据",
+  "report_url": "https://hackerone.com/reports/491473",
+  "category": "信息泄露"
+ },
+ {
+  "id": 520903,
+  "theme": "内存破坏",
+  "action": "drop",
+  "target": "",
+  "reason": "Apache 本地提权共享内存越界属内存破坏，非 web 库范围",
+  "knowledge_point": "Apache HTTP 本地提权：共享内存越界访问控制函数指针",
+  "report_url": "https://hackerone.com/reports/520903",
+  "category": "内存破坏"
+ },
+ {
+  "id": 824802,
+  "theme": "协议绕过",
+  "action": "fold",
+  "target": "hunt-ssrf",
+  "reason": "URN 请求绕过 ACL 检查，属 SSRF 绕过变体",
+  "knowledge_point": "URN 请求绕过 ACL 检查",
+  "report_url": "https://hackerone.com/reports/824802",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 1054382,
+  "theme": "客户端 SSRF",
+  "action": "fold",
+  "target": "hunt-ssrf",
+  "reason": "客户端 SSRF 泄露 NetNTLM 哈希，属 SSRF 变体",
+  "knowledge_point": "客户端 SSRF：Burp Suite 自动解析 HTML 导致隐藏请求泄露 NetNTLM 哈希",
+  "report_url": "https://hackerone.com/reports/1054382",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 441090,
+  "theme": "协议注入",
+  "action": "fold",
+  "target": "hunt-ssrf",
+  "reason": "CRLF 注入与 git:// 协议绕过实现 RCE，属 SSRF 变体",
+  "knowledge_point": "CRLF 注入与 SSRF：git:// 协议绕过防护并注入 Redis 实现 RCE",
+  "report_url": "https://hackerone.com/reports/441090",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 275269,
+  "theme": "签名伪造",
+  "action": "drop",
+  "target": "",
+  "reason": "Gem 签名伪造属供应链安全，非 web 渗透库范围",
+  "knowledge_point": "Gem 签名伪造：tar 重复条目处理不一致",
+  "report_url": "https://hackerone.com/reports/275269",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 1531958,
+  "theme": "ReDoS",
+  "action": "fold",
+  "target": "hunt-command-injection",
+  "reason": "ReDoS 属正则表达式注入，可归入代码注入类",
+  "knowledge_point": "ReDoS via regex without anchor in net/http",
+  "report_url": "https://hackerone.com/reports/1531958",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 78158,
+  "theme": "内容类型注入",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "Flash Content-Type 注入绕过，属 XSS 变体",
+  "knowledge_point": "Flash Content-Type injection bypass",
+  "report_url": "https://hackerone.com/reports/78158",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 1613943,
+  "theme": "协议 DoS",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "curl 未过滤控制字符导致 DoS，属协议行为利用横切类",
+  "knowledge_point": "curl未过滤控制字符导致DoS",
+  "report_url": "https://hackerone.com/reports/1613943",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 843256,
+  "theme": "SSRF",
+  "action": "fold",
+  "target": "hunt-ssrf",
+  "reason": "TURN 协议 peer 访问控制缺失导致 SSRF，属 SSRF 变体",
+  "knowledge_point": "TURN 协议 peer 访问控制缺失导致 SSRF",
+  "report_url": "https://hackerone.com/reports/843256",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 806577,
+  "theme": "响应注入",
+  "action": "fold",
+  "target": "hunt-request-smuggling",
+  "reason": "Set-Cookie 注入 via 分号未编码，属响应拆分/走私变体",
+  "knowledge_point": "Set-Cookie 注入 via 分号未编码",
+  "report_url": "https://hackerone.com/reports/806577",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 737140,
+  "theme": "请求走私",
+  "action": "fold",
+  "target": "hunt-request-smuggling",
+  "reason": "CLTE 请求走私 + 绝对 URI 反射 cookie 实现 ATO，属请求走私变体",
+  "knowledge_point": "CLTE 请求走私 + 绝对 URI 反射 cookie 实现批量 ATO",
+  "report_url": "https://hackerone.com/reports/737140",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 1027873,
+  "theme": "内部重定向",
+  "action": "fold",
+  "target": "hunt-ssrf",
+  "reason": "X-Accel-Redirect头用于内部重定向，是SSRF的变体",
+  "knowledge_point": "利用X-Accel-Redirect头进行内部重定向",
+  "report_url": "https://hackerone.com/reports/1027873",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 329645,
+  "theme": "证书验证绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "证书主机名验证被静默忽略，属于认证绕过",
+  "knowledge_point": "LibreSSL和BoringSSL静默忽略证书主机名验证",
+  "report_url": "https://hackerone.com/reports/329645",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 1180252,
+  "theme": "内存破坏",
+  "action": "drop",
+  "target": "",
+  "reason": "栈溢出属内存破坏，非web库范围",
+  "knowledge_point": "SILK 解码器循环中边界检查缺失导致栈溢出",
+  "report_url": "https://hackerone.com/reports/1180252",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 1583680,
+  "theme": "证书验证绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "代理未使用CONNECT隧道导致证书验证失效，属认证绕过",
+  "knowledge_point": "Undici ProxyAgent 未使用 CONNECT 隧道导致证书验证失效",
+  "report_url": "https://hackerone.com/reports/1583680",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 402671,
+  "theme": "协议oracle",
+  "action": "drop",
+  "target": "",
+  "reason": "TLS padding oracle属密码学攻击，非web库范围",
+  "knowledge_point": "TLS 实现中 padding 错误与 MAC 错误响应差异导致 oracle 解密",
+  "report_url": "https://hackerone.com/reports/402671",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 458842,
+  "theme": "路径绕过",
+  "action": "fold",
+  "target": "hunt-path-traversal",
+  "reason": "文件扩展名检查绕过是路径遍历变体",
+  "knowledge_point": "文件扩展名检查绕过（路径中间插入）",
+  "report_url": "https://hackerone.com/reports/458842",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 1630336,
+  "theme": "请求走私",
+  "action": "fold",
+  "target": "hunt-request-smuggling",
+  "reason": "利用obs-fold绕过Transfer-Encoding校验实现请求走私",
+  "knowledge_point": "利用obs-fold头部绕过Transfer-Encoding校验实现请求走私",
+  "report_url": "https://hackerone.com/reports/1630336",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 1892780,
+  "theme": "认证绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "FTP连接重用忽略账户参数导致认证绕过",
+  "knowledge_point": "libcurl FTP连接重用未考虑账户参数导致认证绕过",
+  "report_url": "https://hackerone.com/reports/1892780",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 1566462,
+  "theme": "URL过滤绕过",
+  "action": "fold",
+  "target": "hunt-ssrf",
+  "reason": "curl globbing绕过URL过滤，可导致SSRF",
+  "knowledge_point": "curl globbing 功能绕过 URL 过滤",
+  "report_url": "https://hackerone.com/reports/1566462",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 1429694,
+  "theme": "证书验证绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "SAN注入绕过证书验证，属认证绕过",
+  "knowledge_point": "Node.js 证书验证绕过：解析 OpenSSL 打印函数输出导致 SAN 注入",
+  "report_url": "https://hackerone.com/reports/1429694",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 824203,
+  "theme": "URL解码绕过",
+  "action": "fold",
+  "target": "hunt-path-traversal",
+  "reason": "双重URL解码导致ACL绕过，属路径遍历变体",
+  "knowledge_point": "Squid 双重 URL 解码导致 ACL 绕过",
+  "report_url": "https://hackerone.com/reports/824203",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 501,
+  "theme": "虚拟主机混淆",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "TLS虚拟主机混淆导致跨域冒充，属认证绕过",
+  "knowledge_point": "TLS 虚拟主机混淆导致跨域冒充",
+  "report_url": "https://hackerone.com/reports/501",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 1170024,
+  "theme": "协议认证缺失",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "OCM协议未认证端点导致权限提升，属配置错误",
+  "knowledge_point": "OCM 协议未认证端点导致权限提升",
+  "report_url": "https://hackerone.com/reports/1170024",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 304378,
+  "theme": "协议挑战缺陷",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "ACME TLS-SNI挑战缺陷属协议设计问题，无专用skill",
+  "knowledge_point": "ACME TLS-SNI挑战在共享主机环境中的缺陷",
+  "report_url": "https://hackerone.com/reports/304378",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 470520,
+  "theme": "内存破坏",
+  "action": "drop",
+  "target": "",
+  "reason": "缓冲区溢出和ROP链属内存破坏，非web库范围",
+  "knowledge_point": "Steam协议缓冲区溢出：unicode转换和ROP链绕过ASLR",
+  "report_url": "https://hackerone.com/reports/470520",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 1565624,
+  "theme": "连接复用",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "curl连接复用忽略安全选项，可导致认证绕过",
+  "knowledge_point": "curl 连接复用忽略安全选项",
+  "report_url": "https://hackerone.com/reports/1565624",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 407319,
+  "theme": "签名URL劫持",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "ActiveStorage签名URL参数未签名导致URL劫持，属业务逻辑",
+  "knowledge_point": "ActiveStorage签名URL参数未签名导致URL劫持",
+  "report_url": "https://hackerone.com/reports/407319",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 1238470,
+  "theme": "协议设计缺陷",
+  "action": "drop",
+  "target": "",
+  "reason": "Wi-Fi协议缺陷属网络层，非web库范围",
+  "knowledge_point": "Wi-Fi协议设计缺陷导致流量注入和劫持",
+  "report_url": "https://hackerone.com/reports/1238470",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 1542881,
+  "theme": "配置错误",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "curl配置文件读取失败导致安全选项失效，属配置错误",
+  "knowledge_point": "curl配置文件读取失败导致安全选项失效",
+  "report_url": "https://hackerone.com/reports/1542881",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 1916285,
+  "theme": "命令注入",
+  "action": "fold",
+  "target": "hunt-command-injection",
+  "reason": "终端转义序列注入导致任意命令执行，属命令注入变体",
+  "knowledge_point": "终端转义序列注入导致任意命令执行",
+  "report_url": "https://hackerone.com/reports/1916285",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 895727,
+  "theme": "协议行为利用",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "编码cookie名称绕过安全前缀属于认证绕过变体",
+  "knowledge_point": "编码cookie名称绕过安全前缀",
+  "report_url": "https://hackerone.com/reports/895727",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 79348,
+  "theme": "协议行为利用",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "协议处理器JavaScript注入属于XSS变体",
+  "knowledge_point": "协议处理器JavaScript注入",
+  "report_url": "https://hackerone.com/reports/79348",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 731878,
+  "theme": "协议行为利用",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "DKIM签名绕过通过From头解析差异属于认证绕过",
+  "knowledge_point": "DKIM签名绕过通过From头解析差异",
+  "report_url": "https://hackerone.com/reports/731878",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 425314,
+  "theme": "协议行为利用",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "API签名重放与payload修改属于认证绕过",
+  "knowledge_point": "API 签名重放与 payload 修改",
+  "report_url": "https://hackerone.com/reports/425314",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 622170,
+  "theme": "协议行为利用",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "OpenSSL默认配置路径劫持属于配置错误类横切主题",
+  "knowledge_point": "OpenSSL 默认配置路径劫持",
+  "report_url": "https://hackerone.com/reports/622170",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 869574,
+  "theme": "原型污染",
+  "action": "fold",
+  "target": "hunt-prototype-pollution",
+  "reason": "原型污染导致SQL注入或DoS属于原型污染变体",
+  "knowledge_point": "原型污染导致 SQL 注入或 DoS（TypeORM mergeDeep）",
+  "report_url": "https://hackerone.com/reports/869574",
+  "category": "原型污染"
+ },
+ {
+  "id": 968355,
+  "theme": "原型污染",
+  "action": "fold",
+  "target": "hunt-prototype-pollution",
+  "reason": "使用constructor.prototype绕过黑名单属于原型污染绕过",
+  "knowledge_point": "使用constructor.prototype绕过__proto__黑名单实现原型污染",
+  "report_url": "https://hackerone.com/reports/968355",
+  "category": "原型污染"
+ },
+ {
+  "id": 55029,
+  "theme": "反序列化",
+  "action": "fold",
+  "target": "hunt-deserialization",
+  "reason": "PHP反序列化中DateTimeZone对象use-after-free属于反序列化漏洞",
+  "knowledge_point": "PHP unserialize 中 DateTimeZone 对象的 use-after-free 漏洞",
+  "report_url": "https://hackerone.com/reports/55029",
+  "category": "反序列化"
+ },
+ {
+  "id": 1679624,
+  "theme": "反序列化",
+  "action": "fold",
+  "target": "hunt-deserialization",
+  "reason": "Ruby对象方法覆盖结合Redis协议注入实现RCE属于反序列化变体",
+  "knowledge_point": "Ruby对象方法覆盖结合Redis协议注入实现RCE",
+  "report_url": "https://hackerone.com/reports/1679624",
+  "category": "反序列化"
+ },
+ {
+  "id": 2471956,
+  "theme": "命令注入",
+  "action": "fold",
+  "target": "hunt-command-injection",
+  "reason": "GitHub Actions命令注入通过未加引号变量属于命令注入变体",
+  "knowledge_point": "GitHub Actions 命令注入：通过 PR 标题利用未加引号变量窃取 token",
+  "report_url": "https://hackerone.com/reports/2471956",
+  "category": "命令注入"
+ },
+ {
+  "id": 104465,
+  "theme": "命令注入",
+  "action": "fold",
+  "target": "hunt-command-injection",
+  "reason": "git子模块ext协议命令执行属于命令注入变体",
+  "knowledge_point": "git 子模块 ext 协议命令执行",
+  "report_url": "https://hackerone.com/reports/104465",
+  "category": "命令注入"
+ },
+ {
+  "id": 1439355,
+  "theme": "子域名接管",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "利用GitHub用户名重命名接管Action仓库属于配置错误/信息泄露横切主题",
+  "knowledge_point": "利用GitHub用户名重命名后旧名称可注册接管Action仓库",
+  "report_url": "https://hackerone.com/reports/1439355",
+  "category": "子域名接管"
+ },
+ {
+  "id": 1485500,
+  "theme": "授权绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "S3签名URL路径解析绕过属于授权绕过变体",
+  "knowledge_point": "S3 签名 URL 路径解析绕过：使用 `/.` 和 `?` 注释掉后续路径",
+  "report_url": "https://hackerone.com/reports/1485500",
+  "category": "授权绕过"
+ },
+ {
+  "id": 703058,
+  "theme": "授权绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "ASP.NET路径解析绕过重定向规则属于授权绕过变体",
+  "knowledge_point": "ASP.NET path parsing bypass of redirect rules",
+  "report_url": "https://hackerone.com/reports/703058",
+  "category": "授权绕过"
+ },
+ {
+  "id": 674195,
+  "theme": "授权绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "账户关联未验证所有权导致数据泄露属于授权绕过",
+  "knowledge_point": "账户关联未验证所有权导致数据泄露",
+  "report_url": "https://hackerone.com/reports/674195",
+  "category": "授权绕过"
+ },
+ {
+  "id": 1327742,
+  "theme": "授权绕过",
+  "action": "fold",
+  "target": "hunt-open-redirect",
+  "reason": "开放重定向结合历史域名注册窃取token属于开放重定向变体",
+  "knowledge_point": "开放重定向结合历史域名注册窃取access_token",
+  "report_url": "https://hackerone.com/reports/1327742",
+  "category": "授权绕过"
+ },
+ {
+  "id": 1023669,
+  "theme": "授权绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "WebSocket事件订阅未授权导致信息泄露属于授权绕过",
+  "knowledge_point": "WebSocket事件订阅未授权导致信息泄露",
+  "report_url": "https://hackerone.com/reports/1023669",
+  "category": "授权绕过"
+ },
+ {
+  "id": 178152,
+  "theme": "框架行为利用",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "JSON.parse错误消息泄露文件内容属于信息泄露横切主题",
+  "knowledge_point": "JSON.parse 错误消息泄露文件内容",
+  "report_url": "https://hackerone.com/reports/178152",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 730239,
+  "theme": "框架行为利用",
+  "action": "fold",
+  "target": "hunt-path-traversal",
+  "reason": "yarn install任意文件写入通过符号链接和tar transform属于路径遍历变体",
+  "knowledge_point": "yarn install 任意文件写入：符号链接和 tar transform",
+  "report_url": "https://hackerone.com/reports/730239",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 861744,
+  "theme": "框架行为利用",
+  "action": "fold",
+  "target": "hunt-prototype-pollution",
+  "reason": "原型污染结合sourceURL导致RCE属于原型污染变体",
+  "knowledge_point": "原型污染结合 sourceURL 导致 RCE（Kibana）",
+  "report_url": "https://hackerone.com/reports/861744",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 236552,
+  "theme": "弱类型比较绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "openssl_verify返回值弱类型比较绕过属于认证绕过变体",
+  "knowledge_point": "openssl_verify 返回值弱类型比较绕过",
+  "report_url": "https://hackerone.com/reports/236552",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 800231,
+  "theme": "参数注入",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "GraphQL到REST参数注入属于跨组件攻击链，归入方法论总线",
+  "knowledge_point": "GraphQL 到 REST 参数注入（ActiveResource 未编码）",
+  "report_url": "https://hackerone.com/reports/800231",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 850447,
+  "theme": "解析差异绕过",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "Rack解析差异绕过签名属于配置错误/解析差异，归入方法论总线",
+  "knowledge_point": "Rack 解析差异绕过 workhorse 签名",
+  "report_url": "https://hackerone.com/reports/850447",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 2208860,
+  "theme": "Node.js权限绕过",
+  "action": "fold",
+  "target": "hunt-nodejs-permission-bypass",
+  "reason": "Node.js policy完整性检查绕过属于Node.js权限绕过变体",
+  "knowledge_point": "Node.js policy 完整性检查绕过（篡改内部绑定）",
+  "report_url": "https://hackerone.com/reports/2208860",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 1073202,
+  "theme": "环境变量利用",
+  "action": "drop",
+  "target": "",
+  "reason": "LD_LIBRARY_PATH空条目导致任意库加载属于本地环境依赖，非web库范围",
+  "knowledge_point": "LD_LIBRARY_PATH空条目导致任意库加载",
+  "report_url": "https://hackerone.com/reports/1073202",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 1955370,
+  "theme": "XSS",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "Rails redirect_to控制字符导致XSS属于XSS变体",
+  "knowledge_point": "Rails redirect_to控制字符导致XSS",
+  "report_url": "https://hackerone.com/reports/1955370",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 1728174,
+  "theme": "配置注入",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "ingress-nginx配置注入Lua代码属于配置错误，归入方法论总线",
+  "knowledge_point": "ingress-nginx configuration-snippet 注入 Lua 代码绕过黑名单",
+  "report_url": "https://hackerone.com/reports/1728174",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 1154542,
+  "theme": "文件类型混淆",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "ExifTool基于内容识别文件类型绕过白名单属于配置错误/文件上传，归入方法论总线",
+  "knowledge_point": "ExifTool 基于内容识别文件类型绕过扩展名白名单导致 RCE",
+  "report_url": "https://hackerone.com/reports/1154542",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 300305,
+  "theme": "竞争条件",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "TOCTOU竞争条件在邮箱验证中属于业务逻辑漏洞，归入方法论总线",
+  "knowledge_point": "TOCTOU race condition in email verification",
+  "report_url": "https://hackerone.com/reports/300305",
+  "category": "竞争条件"
+ },
+ {
+  "id": 768110,
+  "theme": "竞争条件",
+  "action": "drop",
+  "target": "",
+  "reason": "NTFS机会锁文件替换属于本地权限提升，非web库范围",
+  "knowledge_point": "利用TOCTOU竞争条件和NTFS机会锁进行文件替换实现本地权限提升",
+  "report_url": "https://hackerone.com/reports/768110",
+  "category": "竞争条件"
+ },
+ {
+  "id": 1251464,
+  "theme": "竞争条件",
+  "action": "drop",
+  "target": "",
+  "reason": "SUID二进制竞态条件提权属于本地权限提升，非web库范围",
+  "knowledge_point": "SUID 二进制竞态条件提权",
+  "report_url": "https://hackerone.com/reports/1251464",
+  "category": "竞争条件"
+ },
+ {
+  "id": 1595299,
+  "theme": "类型混淆",
+  "action": "drop",
+  "target": "",
+  "reason": "C语言隐式类型转换越界读取属于内存破坏，非web库范围",
+  "knowledge_point": "C语言隐式类型转换导致越界读取",
+  "report_url": "https://hackerone.com/reports/1595299",
+  "category": "类型混淆"
+ },
+ {
+  "id": 2256167,
+  "theme": "Node.js权限绕过",
+  "action": "fold",
+  "target": "hunt-nodejs-permission-bypass",
+  "reason": "Node.js权限模型绕过Uint8Array类型路径属于Node.js权限绕过变体",
+  "knowledge_point": "Node.js权限模型绕过：Uint8Array类型路径",
+  "report_url": "https://hackerone.com/reports/2256167",
+  "category": "类型混淆"
+ },
+ {
+  "id": 1567186,
+  "theme": "OAuth认证绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "OAuth响应类型切换与XSS结合实现账户劫持属于认证绕过变体",
+  "knowledge_point": "OAuth 响应类型切换与 XSS 结合实现账户劫持",
+  "report_url": "https://hackerone.com/reports/1567186",
+  "category": "认证绕过"
+ },
+ {
+  "id": 976603,
+  "theme": "SAML认证绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "SAML entityId尾随空格绕过属于认证绕过变体",
+  "knowledge_point": "SAML entityId 尾随空格绕过导致 SSO DOS 和账户接管",
+  "report_url": "https://hackerone.com/reports/976603",
+  "category": "认证绕过"
+ },
+ {
+  "id": 1040786,
+  "theme": "路径遍历",
+  "action": "fold",
+  "target": "hunt-path-traversal",
+  "reason": "Workhorse JWT暴露和Geo header spoofing涉及路径遍历，归入路径遍历skill",
+  "knowledge_point": "Path traversal in Workhorse JWT exposure and Geo header spoofing",
+  "report_url": "https://hackerone.com/reports/1040786",
+  "category": "认证绕过"
+ },
+ {
+  "id": 1342088,
+  "theme": "API认证绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "直接调用后端API绕过UI限制进行账户接管属于认证绕过变体",
+  "knowledge_point": "通过直接调用后端API绕过UI限制进行账户接管",
+  "report_url": "https://hackerone.com/reports/1342088",
+  "category": "认证绕过"
+ },
+ {
+  "id": 565883,
+  "theme": "信任关系绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "利用SCIM API信任关系绕过邮箱验证属于认证绕过变体",
+  "knowledge_point": "利用SCIM API信任关系绕过邮箱验证",
+  "report_url": "https://hackerone.com/reports/565883",
+  "category": "认证绕过"
+ },
+ {
+  "id": 1380121,
+  "theme": "会话伪造",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "弱密钥伪造会话结合密码重置接管管理员属于认证绕过变体",
+  "knowledge_point": "弱密钥伪造会话结合密码重置接管管理员",
+  "report_url": "https://hackerone.com/reports/1380121",
+  "category": "认证绕过"
+ },
+ {
+  "id": 241244,
+  "theme": "线程局部变量",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "线程局部变量残留导致认证绕过属于认证绕过变体",
+  "knowledge_point": "线程局部变量残留导致认证绕过",
+  "report_url": "https://hackerone.com/reports/241244",
+  "category": "认证绕过"
+ },
+ {
+  "id": 1580493,
+  "theme": "认证绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "AWS IAM 参数大小写绕过属于认证绕过变体",
+  "knowledge_point": "AWS IAM Authenticator 参数大小写绕过",
+  "report_url": "https://hackerone.com/reports/1580493",
+  "category": "认证绕过"
+ },
+ {
+  "id": 1357948,
+  "theme": "认证绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "路径编码绕过外部认证属于认证绕过变体",
+  "knowledge_point": "路径编码绕过 ingress 外部认证",
+  "report_url": "https://hackerone.com/reports/1357948",
+  "category": "认证绕过"
+ },
+ {
+  "id": 617896,
+  "theme": "认证绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "第三方 IdP 集成导致邮箱验证绕过属于认证绕过变体",
+  "knowledge_point": "第三方 IdP 集成导致邮箱验证绕过",
+  "report_url": "https://hackerone.com/reports/617896",
+  "category": "认证绕过"
+ },
+ {
+  "id": 770504,
+  "theme": "认证绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "客户端篡改服务器响应绕过密码验证属于认证绕过变体",
+  "knowledge_point": "客户端篡改服务器响应绕过密码验证",
+  "report_url": "https://hackerone.com/reports/770504",
+  "category": "认证绕过"
+ },
+ {
+  "id": 921780,
+  "theme": "认证绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "IDOR 导致 OTP token 泄露属于认证绕过变体",
+  "knowledge_point": "IDOR导致OTP token泄露",
+  "report_url": "https://hackerone.com/reports/921780",
+  "category": "认证绕过"
+ },
+ {
+  "id": 855618,
+  "theme": "认证绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "移动端 deeplink 拦截导致账户接管属于认证绕过变体",
+  "knowledge_point": "移动端deeplink拦截导致账户接管",
+  "report_url": "https://hackerone.com/reports/855618",
+  "category": "认证绕过"
+ },
+ {
+  "id": 534450,
+  "theme": "跨组件攻击链",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "cookie 操作端点与 XSS 结合绕过 HttpOnly 和 CORS 属于跨组件攻击链",
+  "knowledge_point": "账户接管：cookie 操作端点与 XSS 结合绕过 HttpOnly 和 CORS",
+  "report_url": "https://hackerone.com/reports/534450",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 966494,
+  "theme": "跨组件攻击链",
+  "action": "drop",
+  "target": "",
+  "reason": "LPE via XPC service 属于本地权限提升，非 web 库范围",
+  "knowledge_point": "LPE via XPC service version validation bypass",
+  "report_url": "https://hackerone.com/reports/966494",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 694181,
+  "theme": "跨组件攻击链",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "容器内符号链接替换导致宿主机任意文件读取属于跨组件攻击链",
+  "knowledge_point": "容器内符号链接替换导致宿主机任意文件读取",
+  "report_url": "https://hackerone.com/reports/694181",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 1842829,
+  "theme": "跨组件攻击链",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "kOps 配置错误导致集群接管属于配置错误类攻击面",
+  "knowledge_point": "kOps 配置错误导致集群接管",
+  "report_url": "https://hackerone.com/reports/1842829",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 403602,
+  "theme": "跨组件攻击链",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "AppCache FALLBACK 与 Cookie 轰炸结合劫持附件属于跨组件攻击链",
+  "knowledge_point": "AppCache FALLBACK 与 Cookie 轰炸结合劫持附件",
+  "report_url": "https://hackerone.com/reports/403602",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 1458236,
+  "theme": "跨组件攻击链",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "SameSite=Lax cookie 在跨站请求中仍可发送结合 SSRF 实现 CSRF 属于跨组件攻击链",
+  "knowledge_point": "SameSite=Lax cookie 在跨站请求中仍可发送，结合 SSRF 实现 CSRF",
+  "report_url": "https://hackerone.com/reports/1458236",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 1160407,
+  "theme": "跨组件攻击链",
+  "action": "fold",
+  "target": "hunt-cache-poisoning",
+  "reason": "x-http-method-override 头与缓存键不一致导致缓存投毒 DoS 属于缓存投毒变体",
+  "knowledge_point": "x-http-method-override 头与缓存键不一致导致缓存投毒 DoS",
+  "report_url": "https://hackerone.com/reports/1160407",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 399166,
+  "theme": "跨组件攻击链",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "未认领云存储桶劫持导致供应链攻击属于配置错误类攻击面",
+  "knowledge_point": "未认领云存储桶劫持导致供应链攻击",
+  "report_url": "https://hackerone.com/reports/399166",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 676581,
+  "theme": "跨组件攻击链",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "未认证 gRPC 端点导致跨组件授权绕过属于跨组件攻击链",
+  "knowledge_point": "未认证 gRPC 端点导致跨组件授权绕过",
+  "report_url": "https://hackerone.com/reports/676581",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 1066914,
+  "theme": "跨组件攻击链",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "多种绕过技术组合属于跨组件攻击链",
+  "knowledge_point": "多种绕过技术组合（intval 科学计数法、str_replace 递归、DNS rebinding、二次注入）",
+  "report_url": "https://hackerone.com/reports/1066914",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 265943,
+  "theme": "跨组件攻击链",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "SSO token 窃取链（CSRF+重定向+SVG XSS）属于跨组件攻击链",
+  "knowledge_point": "SSO token 窃取链（CSRF+重定向+SVG XSS）",
+  "report_url": "https://hackerone.com/reports/265943",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 1066206,
+  "theme": "跨组件攻击链",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "PHP 类型混淆和 DNS rebinding 组合利用属于跨组件攻击链",
+  "knowledge_point": "PHP 类型混淆（is_numeric 与 intval 差异）和 DNS rebinding 组合利用",
+  "report_url": "https://hackerone.com/reports/1066206",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 1442118,
+  "theme": "跨组件攻击链",
+  "action": "drop",
+  "target": "",
+  "reason": "容器逃逸利用 cgroup release_agent 属于本地权限提升，非 web 库范围",
+  "knowledge_point": "容器逃逸：利用 cgroup release_agent",
+  "report_url": "https://hackerone.com/reports/1442118",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 1547877,
+  "theme": "跨组件攻击链",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "JDBC 上传文件 + SSRF 到 Jolokia 实现 RCE 属于跨组件攻击链",
+  "knowledge_point": "JDBC 上传文件 + SSRF 到 Jolokia 实现 RCE",
+  "report_url": "https://hackerone.com/reports/1547877",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 329957,
+  "theme": "跨站追踪",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "跨站追踪属于业务逻辑/信息泄露类，无专用skill，归入方法论总线",
+  "knowledge_point": "利用图片加载和cookie认证实现跨站追踪",
+  "report_url": "https://hackerone.com/reports/329957",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 1353103,
+  "theme": "CSRF+路径遍历",
+  "action": "fold",
+  "target": "hunt-path-traversal",
+  "reason": "核心是路径遍历实现任意文件删除，CSRF只是触发方式",
+  "knowledge_point": "CSRF 与路径遍历结合实现任意文件删除",
+  "report_url": "https://hackerone.com/reports/1353103",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 299473,
+  "theme": "Webhook注入",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "Webhook注入Redis命令属于配置错误/命令注入变体，但无专用skill，归入总线",
+  "knowledge_point": "Webhook 注入 Redis 命令实现 RCE",
+  "report_url": "https://hackerone.com/reports/299473",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 894949,
+  "theme": "多漏洞链",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "多漏洞链组合利用属于方法论，归入总线",
+  "knowledge_point": "多漏洞链组合利用（CTF 式）",
+  "report_url": "https://hackerone.com/reports/894949",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 1065885,
+  "theme": "PHP弱类型+DNS重绑定",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "PHP弱类型和DNS重绑定属于跨组件攻击链，无专用skill，归入总线",
+  "knowledge_point": "PHP 弱类型与 DNS 重绑定绕过",
+  "report_url": "https://hackerone.com/reports/1065885",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 416123,
+  "theme": "反序列化+XXE",
+  "action": "fold",
+  "target": "hunt-deserialization",
+  "reason": "核心是PHP反序列化触发XXE，归入反序列化skill",
+  "knowledge_point": "PHP反序列化触发XXE读取文件并泄露API令牌",
+  "report_url": "https://hackerone.com/reports/416123",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 783877,
+  "theme": "Electron RCE",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "Electron HTML注入+CSP绕过属于客户端攻击链，无专用skill，归入总线",
+  "knowledge_point": "Electron应用中HTML注入结合CSP绕过实现RCE",
+  "report_url": "https://hackerone.com/reports/783877",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 1436558,
+  "theme": "WebView UXSS",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "WebView JS桥接导致UXSS，核心是XSS变体",
+  "knowledge_point": "WebView JS桥接和字符串拼接导致UXSS",
+  "report_url": "https://hackerone.com/reports/1436558",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 781281,
+  "theme": "多漏洞链",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "多漏洞组合攻击链属于方法论，归入总线",
+  "knowledge_point": "多漏洞组合攻击链：从账户接管到内网渗透",
+  "report_url": "https://hackerone.com/reports/781281",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 1249583,
+  "theme": "配置注入提权",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "ingress-nginx配置片段注入属于配置错误，归入总线",
+  "knowledge_point": "ingress-nginx配置片段注入导致集群提权",
+  "report_url": "https://hackerone.com/reports/1249583",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 777241,
+  "theme": "多漏洞链",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "多漏洞链组合实现信息泄露属于方法论，归入总线",
+  "knowledge_point": "多漏洞链组合实现敏感信息泄露",
+  "report_url": "https://hackerone.com/reports/777241",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 534794,
+  "theme": "路径遍历",
+  "action": "fold",
+  "target": "hunt-path-traversal",
+  "reason": "导入功能路径遍历覆盖文件，直接归入路径遍历skill",
+  "knowledge_point": "导入功能路径遍历覆盖其他用户文件",
+  "report_url": "https://hackerone.com/reports/534794",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 1073780,
+  "theme": "ESI注入+XSS",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "ESI注入链式利用窃取Cookie，核心是XSS变体",
+  "knowledge_point": "ESI 注入与 XSS 链式利用窃取 HttpOnly Cookie",
+  "report_url": "https://hackerone.com/reports/1073780",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 1089914,
+  "theme": "XS-Leak",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "HTML标签fallback实现XS-Leak，属于XSS侧信道变体",
+  "knowledge_point": "HTML video/audio 标签 fallback 行为实现 XS-Leak",
+  "report_url": "https://hackerone.com/reports/1089914",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 288955,
+  "theme": "路径遍历",
+  "action": "fold",
+  "target": "hunt-path-traversal",
+  "reason": "Android URI解码差异与符号链接实现任意文件读写，属于路径遍历变体",
+  "knowledge_point": "Android 导出组件 URI 解码差异与符号链接实现任意文件读写",
+  "report_url": "https://hackerone.com/reports/288955",
+  "category": "路径遍历"
+ },
+ {
+  "id": 822262,
+  "theme": "路径遍历",
+  "action": "fold",
+  "target": "hunt-path-traversal",
+  "reason": "Nuget包上传路径遍历结合竞态条件，核心是路径遍历",
+  "knowledge_point": "Nuget 包上传路径遍历结合竞态条件实现任意文件读取",
+  "report_url": "https://hackerone.com/reports/822262",
+  "category": "路径遍历"
+ },
+ {
+  "id": 301432,
+  "theme": "路径遍历",
+  "action": "fold",
+  "target": "hunt-path-traversal",
+  "reason": "CI缓存key路径遍历导致缓存投毒，属于路径遍历变体",
+  "knowledge_point": "CI 缓存 key 路径遍历导致跨项目缓存投毒",
+  "report_url": "https://hackerone.com/reports/301432",
+  "category": "路径遍历"
+ },
+ {
+  "id": 413193,
+  "theme": "路径遍历",
+  "action": "fold",
+  "target": "hunt-path-traversal",
+  "reason": "HTTP参数污染截断后缀实现路径遍历，直接归入路径遍历skill",
+  "knowledge_point": "HTTP 参数污染截断后缀实现路径遍历",
+  "report_url": "https://hackerone.com/reports/413193",
+  "category": "路径遍历"
+ },
+ {
+  "id": 682774,
+  "theme": "路径遍历",
+  "action": "fold",
+  "target": "hunt-path-traversal",
+  "reason": "Windows路径规范化与符号链接导致任意文件创建，属于路径遍历变体",
+  "knowledge_point": "Windows 路径规范化与符号链接导致任意文件创建",
+  "report_url": "https://hackerone.com/reports/682774",
+  "category": "路径遍历"
+ },
+ {
+  "id": 1200647,
+  "theme": "CRLF注入",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "CRLF注入配置项导致RCE，属于配置错误类，无专用skill，归入总线",
+  "knowledge_point": "配置注入导致 RCE（CRLF 注入配置项）",
+  "report_url": "https://hackerone.com/reports/1200647",
+  "category": "CRLF注入"
+ },
+ {
+  "id": 2279346,
+  "theme": "CSP绕过",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "CSP绕过是XSS攻击的变体，利用Angular库和nonce窃取属于XSS绕过技术",
+  "knowledge_point": "CSP绕过利用Angular库和nonce窃取",
+  "report_url": "https://hackerone.com/reports/2279346",
+  "category": "CSP绕过"
+ },
+ {
+  "id": 1039821,
+  "theme": "SQL注入",
+  "action": "fold",
+  "target": "hunt-sqli",
+  "reason": "二阶SOQL注入是SQL注入的变体，通过异步查询执行属于SQL注入绕过",
+  "knowledge_point": "二阶SOQL注入通过异步查询执行",
+  "report_url": "https://hackerone.com/reports/1039821",
+  "category": "SQL注入"
+ },
+ {
+  "id": 826361,
+  "theme": "SSRF",
+  "action": "fold",
+  "target": "hunt-ssrf",
+  "reason": "CarrierWave属性导致的SSRF是SSRF攻击的具体实现",
+  "knowledge_point": "CarrierWave remote_attachment_url 属性导致 SSRF",
+  "report_url": "https://hackerone.com/reports/826361",
+  "category": "SSRF"
+ },
+ {
+  "id": 115748,
+  "theme": "SSRF",
+  "action": "fold",
+  "target": "hunt-ssrf",
+  "reason": "协议混淆绕过过滤是SSRF的常见绕过技术",
+  "knowledge_point": "SSRF 协议混淆绕过过滤",
+  "report_url": "https://hackerone.com/reports/115748",
+  "category": "SSRF"
+ },
+ {
+  "id": 287245,
+  "theme": "SSRF",
+  "action": "fold",
+  "target": "hunt-ssrf",
+  "reason": "畸形IP解析导致SSRF绕过属于SSRF的绕过变体",
+  "knowledge_point": "Ruby Resolv解析畸形IP返回空导致SSRF绕过",
+  "report_url": "https://hackerone.com/reports/287245",
+  "category": "SSRF"
+ },
+ {
+  "id": 392859,
+  "theme": "SSRF",
+  "action": "fold",
+  "target": "hunt-ssrf",
+  "reason": "gopher协议和302重定向绕过黑名单是SSRF的绕过技术",
+  "knowledge_point": "gopher 协议 + 302 重定向绕过 SSRF 黑名单",
+  "report_url": "https://hackerone.com/reports/392859",
+  "category": "SSRF"
+ },
+ {
+  "id": 429617,
+  "theme": "SSRF",
+  "action": "fold",
+  "target": "hunt-ssrf",
+  "reason": "反向代理Host头信任导致敏感头泄露属于SSRF相关的攻击",
+  "knowledge_point": "反向代理 Host 头信任导致敏感头泄露",
+  "report_url": "https://hackerone.com/reports/429617",
+  "category": "SSRF"
+ },
+ {
+  "id": 390344,
+  "theme": "XSS",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "移动应用内浏览器共享会话导致XSS是XSS攻击的变体",
+  "knowledge_point": "移动应用内浏览器渲染附件时共享会话导致 XSS",
+  "report_url": "https://hackerone.com/reports/390344",
+  "category": "XSS"
+ },
+ {
+  "id": 982291,
+  "theme": "XSS",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "CSS url(cid://)绕过HTML过滤器是XSS的绕过技术",
+  "knowledge_point": "CSS url(cid://) 绕过 HTML 过滤器",
+  "report_url": "https://hackerone.com/reports/982291",
+  "category": "XSS"
+ },
+ {
+  "id": 724153,
+  "theme": "XSS",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "事件处理器绕过script标签过滤实现存储XSS是XSS的绕过变体",
+  "knowledge_point": "事件处理器绕过script标签过滤实现存储XSS并读取本地文件",
+  "report_url": "https://hackerone.com/reports/724153",
+  "category": "XSS"
+ },
+ {
+  "id": 259100,
+  "theme": "XSS",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "JSONP/频道消息通道投递未转义反射导致XSS是XSS的变体",
+  "knowledge_point": "JSONP/频道消息通道投递未转义反射导致XSS",
+  "report_url": "https://hackerone.com/reports/259100",
+  "category": "XSS"
+ },
+ {
+  "id": 1212067,
+  "theme": "XSS",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "上传文件名引号逃逸和JSONP绕过CSP导致存储XSS是XSS的绕过技术",
+  "knowledge_point": "上传文件名引号逃逸+JSONP绕过CSP导致存储XSS",
+  "report_url": "https://hackerone.com/reports/1212067",
+  "category": "XSS"
+ },
+ {
+  "id": 1087061,
+  "theme": "XSS",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "git配置email注入HTML属性导致存储XSS是XSS的变体",
+  "knowledge_point": "git配置email注入HTML属性导致存储XSS",
+  "report_url": "https://hackerone.com/reports/1087061",
+  "category": "XSS"
+ },
+ {
+  "id": 1758132,
+  "theme": "XSS",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "autolink正则缺陷导致DOM XSS是XSS的变体",
+  "knowledge_point": "autolink 正则缺陷导致 DOM XSS",
+  "report_url": "https://hackerone.com/reports/1758132",
+  "category": "XSS"
+ },
+ {
+  "id": 429298,
+  "theme": "XSS",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "表情解析URL未校验结合jQuery自动执行导致存储XSS是XSS的变体",
+  "knowledge_point": "表情解析中 URL 未校验结合 jQuery 自动执行导致存储型 XSS",
+  "report_url": "https://hackerone.com/reports/429298",
+  "category": "XSS"
+ },
+ {
+  "id": 1404804,
+  "theme": "XSS",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "js-xss解析差异和HMAC绕过是XSS的绕过技术",
+  "knowledge_point": "XSS filter bypass via js-xss parsing difference combined with HMAC and clickjacking",
+  "report_url": "https://hackerone.com/reports/1404804",
+  "category": "XSS"
+ },
+ {
+  "id": 463915,
+  "theme": "XSS",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "postMessage导致的Universal XSS是XSS的变体",
+  "knowledge_point": "Universal XSS via postMessage in browser extension",
+  "report_url": "https://hackerone.com/reports/463915",
+  "category": "XSS"
+ },
+ {
+  "id": 785243,
+  "theme": "业务逻辑",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "Unicode不可见字符绕过唯一性校验属于业务逻辑漏洞，归入方法论总线",
+  "knowledge_point": "Unicode 不可见字符绕过应用名称唯一性校验",
+  "report_url": "https://hackerone.com/reports/785243",
+  "category": "业务逻辑"
+ },
+ {
+  "id": 205000,
+  "theme": "业务逻辑",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "OTP重发无速率限制绕过尝试次数限制属于业务逻辑漏洞，归入方法论总线",
+  "knowledge_point": "OTP重发接口无速率限制绕过尝试次数限制",
+  "report_url": "https://hackerone.com/reports/205000",
+  "category": "业务逻辑"
+ },
+ {
+  "id": 882258,
+  "theme": "业务逻辑",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "用户名复用导致数据隔离失效属于业务逻辑漏洞，归入方法论总线",
+  "knowledge_point": "用户名复用导致数据隔离失效",
+  "report_url": "https://hackerone.com/reports/882258",
+  "category": "业务逻辑"
+ },
+ {
+  "id": 218872,
+  "theme": "供应链注入",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "git submodule URL注入XSS属于XSS变体，通过URL参数注入脚本",
+  "knowledge_point": "git submodule URL注入XSS",
+  "report_url": "https://hackerone.com/reports/218872",
+  "category": "业务逻辑"
+ },
+ {
+  "id": 1357013,
+  "theme": "认证绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "邀请链接token与邮箱解耦导致账户接管是认证逻辑缺陷",
+  "knowledge_point": "邀请链接 token 与邮箱解耦导致账户接管",
+  "report_url": "https://hackerone.com/reports/1357013",
+  "category": "业务逻辑"
+ },
+ {
+  "id": 1350444,
+  "theme": "命令注入",
+  "action": "fold",
+  "target": "hunt-command-injection",
+  "reason": "利用执行超时和临时目录绕过清理实现RCE属于命令注入变体",
+  "knowledge_point": "利用执行超时和可预测临时目录名绕过清理实现RCE",
+  "report_url": "https://hackerone.com/reports/1350444",
+  "category": "业务逻辑"
+ },
+ {
+  "id": 703138,
+  "theme": "缓存投毒",
+  "action": "fold",
+  "target": "hunt-cache-poisoning",
+  "reason": "Yarn cache poisoning via lock file hash bypass是缓存投毒变体",
+  "knowledge_point": "Yarn cache poisoning via lock file hash/integrity check bypass",
+  "report_url": "https://hackerone.com/reports/703138",
+  "category": "业务逻辑"
+ },
+ {
+  "id": 321511,
+  "theme": "业务逻辑",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "交易原子性导致订单簿状态不一致是业务逻辑错误，无专用skill",
+  "knowledge_point": "交易原子性导致订单簿状态不一致（crossing offers）",
+  "report_url": "https://hackerone.com/reports/321511",
+  "category": "业务逻辑"
+ },
+ {
+  "id": 346516,
+  "theme": "供应链注入",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "依赖包测试代码后门导致RCE属于供应链攻击，横切类",
+  "knowledge_point": "依赖包中测试代码后门导致RCE",
+  "report_url": "https://hackerone.com/reports/346516",
+  "category": "代码注入"
+ },
+ {
+  "id": 2244229,
+  "theme": "信息泄露",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "跨域导入动态JS文件窃取用户信息是信息泄露，无专用skill",
+  "knowledge_point": "跨域导入动态JS文件窃取用户信息",
+  "report_url": "https://hackerone.com/reports/2244229",
+  "category": "信息泄露"
+ },
+ {
+  "id": 181319,
+  "theme": "内存破坏",
+  "action": "drop",
+  "target": "",
+  "reason": "mruby悬垂指针属内存破坏，非web库范围",
+  "knowledge_point": "mruby String#lines 迭代器修改导致悬垂指针",
+  "report_url": "https://hackerone.com/reports/181319",
+  "category": "其他"
+ },
+ {
+  "id": 2255968,
+  "theme": "协议行为",
+  "action": "drop",
+  "target": "",
+  "reason": "哈希不绑定数据边界导致共识分叉属区块链共识问题，非web渗透",
+  "knowledge_point": "哈希不绑定数据边界导致共识分叉",
+  "report_url": "https://hackerone.com/reports/2255968",
+  "category": "其他"
+ },
+ {
+  "id": 409943,
+  "theme": "请求走私",
+  "action": "fold",
+  "target": "hunt-request-smuggling",
+  "reason": "Node.js HTTP解析器特殊字符处理不当导致请求拆分是请求走私变体",
+  "knowledge_point": "Node.js HTTP 解析器对特殊字符处理不当导致请求拆分",
+  "report_url": "https://hackerone.com/reports/409943",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 53843,
+  "theme": "响应头注入",
+  "action": "fold",
+  "target": "hunt-request-smuggling",
+  "reason": "响应头溢出导致CRLF注入属于HTTP响应拆分，与请求走私相关",
+  "knowledge_point": "响应头溢出导致 CRLF 注入",
+  "report_url": "https://hackerone.com/reports/53843",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 28500,
+  "theme": "协议行为",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "iOS URL Scheme在iframe中自动启动属客户端协议行为，横切类",
+  "knowledge_point": "iOS URL Scheme 在 iframe 中自动启动导致未授权操作",
+  "report_url": "https://hackerone.com/reports/28500",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 1590102,
+  "theme": "认证绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "安全机制失败时静默降级导致认证绕过是认证绕过变体",
+  "knowledge_point": "安全机制失败时静默降级导致认证绕过",
+  "report_url": "https://hackerone.com/reports/1590102",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 302997,
+  "theme": "路径遍历",
+  "action": "fold",
+  "target": "hunt-path-traversal",
+  "reason": "空字符截断路径导致连接非预期socket是路径遍历变体",
+  "knowledge_point": "空字符截断路径导致连接非预期socket",
+  "report_url": "https://hackerone.com/reports/302997",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 99435,
+  "theme": "开放重定向",
+  "action": "fold",
+  "target": "hunt-open-redirect",
+  "reason": "浏览器与服务器URL解析差异绕过OAuth重定向校验是开放重定向变体",
+  "knowledge_point": "浏览器与服务器URL解析差异绕过OAuth重定向校验",
+  "report_url": "https://hackerone.com/reports/99435",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 931197,
+  "theme": "CSRF",
+  "action": "fold",
+  "target": "hunt-csrf",
+  "reason": "跨站WebSocket劫持（Origin检查绕过）是CSRF变体",
+  "knowledge_point": "跨站 WebSocket 劫持（Origin 检查绕过）",
+  "report_url": "https://hackerone.com/reports/931197",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 85624,
+  "theme": "点击劫持",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "点击劫持绕过（嵌套iframe与CSP2兼容性）与XSS防护绕过相关",
+  "knowledge_point": "点击劫持绕过（嵌套 iframe 与 CSP2 兼容性）",
+  "report_url": "https://hackerone.com/reports/85624",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 126203,
+  "theme": "加密攻击",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "CBC cut-and-paste攻击构造任意明文属密码学攻击，横切类",
+  "knowledge_point": "CBC cut-and-paste 攻击构造任意明文",
+  "report_url": "https://hackerone.com/reports/126203",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 1178337,
+  "theme": "协议行为",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "DNS响应特殊字符注入属协议行为利用，横切类",
+  "knowledge_point": "DNS 响应特殊字符注入",
+  "report_url": "https://hackerone.com/reports/1178337",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 816637,
+  "theme": "内存破坏",
+  "action": "drop",
+  "target": "",
+  "reason": "有符号整数溢出导致堆越界写属内存破坏，非web库范围",
+  "knowledge_point": "有符号整数溢出绕过边界检查导致堆越界写",
+  "report_url": "https://hackerone.com/reports/816637",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 2148242,
+  "theme": "curl 行为利用",
+  "action": "fold",
+  "target": "hunt-ssrf",
+  "reason": "curl 的 cookie 注入可被用于 SSRF 场景中的会话操纵，属于 SSRF 绕过变体。",
+  "knowledge_point": "curl duphandle 隐式加载 'none' 文件导致 cookie 注入",
+  "report_url": "https://hackerone.com/reports/2148242",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 1226891,
+  "theme": "DNS 接管",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "DNS 托管区域删除后 NS 残留导致域名接管，属于配置错误类攻击面。",
+  "knowledge_point": "DNS托管区域删除后NS记录残留导致域名接管",
+  "report_url": "https://hackerone.com/reports/1226891",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 1204977,
+  "theme": "HTTP 响应拆分",
+  "action": "fold",
+  "target": "hunt-request-smuggling",
+  "reason": "CGI::Cookie 属性未过滤导致 HTTP 响应拆分，与请求走私同属协议解析差异利用。",
+  "knowledge_point": "CGI::Cookie属性未过滤导致HTTP响应拆分",
+  "report_url": "https://hackerone.com/reports/1204977",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 2187833,
+  "theme": "内存破坏",
+  "action": "drop",
+  "target": "",
+  "reason": "SOCKS5 状态机缺陷导致堆溢出，属内存破坏，非 web 库范围。",
+  "knowledge_point": "SOCKS5状态机缺陷导致堆溢出",
+  "report_url": "https://hackerone.com/reports/2187833",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 824163,
+  "theme": "协议解析差异",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "FTP 列表解析差异导致信息泄露，属协议行为利用，无专用 skill，归入横切类。",
+  "knowledge_point": "FTP列表解析中strtok与strstr分隔符假设差异导致信息泄露",
+  "report_url": "https://hackerone.com/reports/824163",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 121863,
+  "theme": "内存破坏",
+  "action": "drop",
+  "target": "",
+  "reason": "HTTP URL 解析缓冲区溢出覆盖函数指针，属内存破坏，非 web 库范围。",
+  "knowledge_point": "HTTP URL解析缓冲区溢出覆盖函数指针",
+  "report_url": "https://hackerone.com/reports/121863",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 674540,
+  "theme": "协议解析缺陷",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "mod_remoteip PROXY 协议解析缺陷，属配置错误或协议行为，无专用 skill。",
+  "knowledge_point": "mod_remoteip PROXY协议解析缺陷",
+  "report_url": "https://hackerone.com/reports/674540",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 126522,
+  "theme": "参数解析差异",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "分号分隔参数解析差异绕过认证，是认证绕过的变体。",
+  "knowledge_point": "参数解析差异（分号分隔）绕过认证",
+  "report_url": "https://hackerone.com/reports/126522",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 156615,
+  "theme": "开放重定向",
+  "action": "fold",
+  "target": "hunt-open-redirect",
+  "reason": "URI 解析器空主机名宽容导致开放重定向，直接属于开放重定向 skill。",
+  "knowledge_point": "URI解析器空主机名宽容导致开放重定向",
+  "report_url": "https://hackerone.com/reports/156615",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 1054282,
+  "theme": "协议走私",
+  "action": "fold",
+  "target": "hunt-request-smuggling",
+  "reason": "LDAP CRLF 注入实现协议走私，与请求走私同属协议走私类。",
+  "knowledge_point": "LDAP 密码字段 CRLF 注入实现协议走私与内部服务交互",
+  "report_url": "https://hackerone.com/reports/1054282",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 1675191,
+  "theme": "请求走私",
+  "action": "fold",
+  "target": "hunt-request-smuggling",
+  "reason": "HTTP 请求走私（llhttp 解析器宽松处理），直接属于请求走私 skill。",
+  "knowledge_point": "HTTP 请求走私（llhttp 解析器对不完整 CLRF 的宽松处理）",
+  "report_url": "https://hackerone.com/reports/1675191",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 258578,
+  "theme": "信息泄露",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "浏览器拖放操作泄露内部对象，属信息泄露，无专用 skill。",
+  "knowledge_point": "浏览器拖放操作泄露内部对象",
+  "report_url": "https://hackerone.com/reports/258578",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 287835,
+  "theme": "SSRF 绕过",
+  "action": "fold",
+  "target": "hunt-ssrf",
+  "reason": "Resolv::getaddresses 解析差异绕过 SSRF，是 SSRF 绕过变体。",
+  "knowledge_point": "Resolv::getaddresses 对特殊 IP 格式解析差异绕过 SSRF",
+  "report_url": "https://hackerone.com/reports/287835",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 1526328,
+  "theme": "curl 行为利用",
+  "action": "fold",
+  "target": "hunt-ssrf",
+  "reason": "curl 连接复用不检查 SASL 参数导致 OAUTH2 绕过，可被用于 SSRF 场景。",
+  "knowledge_point": "curl 连接复用时不检查 SASL 参数导致 OAUTH2 绕过",
+  "report_url": "https://hackerone.com/reports/1526328",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 490960,
+  "theme": "路径劫持",
+  "action": "fold",
+  "target": "hunt-path-traversal",
+  "reason": "路径分隔符注入绕过路径校验实现 PATH 劫持，属路径遍历绕过变体。",
+  "knowledge_point": "路径分隔符注入绕过路径校验实现 PATH 劫持",
+  "report_url": "https://hackerone.com/reports/490960",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 1560324,
+  "theme": "curl 行为利用",
+  "action": "fold",
+  "target": "hunt-ssrf",
+  "reason": "curl cookie 覆盖规则缺陷导致会话固定，可被用于 SSRF 场景中的会话操纵。",
+  "knowledge_point": "curl cookie 覆盖规则缺陷导致会话固定",
+  "report_url": "https://hackerone.com/reports/1560324",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 854726,
+  "theme": "时间侧信道",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "共识规则依赖本地时钟导致时间侧信道，属业务逻辑或配置错误，无专用 skill。",
+  "knowledge_point": "共识规则依赖本地时钟导致时间侧信道",
+  "report_url": "https://hackerone.com/reports/854726",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 16910,
+  "theme": "信息泄露",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "CSP report-uri 作为跨源信息泄露信道，属信息泄露，无专用 skill。",
+  "knowledge_point": "CSP report-uri作为跨源信息泄露信道",
+  "report_url": "https://hackerone.com/reports/16910",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 295740,
+  "theme": "内存破坏",
+  "action": "drop",
+  "target": "",
+  "reason": "协议长度字段未校验导致堆内存泄露（heartbleed 式），属内存破坏，非 web 库范围。",
+  "knowledge_point": "协议长度字段未校验导致堆内存泄露（heartbleed 式）",
+  "report_url": "https://hackerone.com/reports/295740",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 882923,
+  "theme": "拒绝服务",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "jsonpath 递归下降导致 DoS，属业务逻辑或配置错误，无专用 skill。",
+  "knowledge_point": "jsonpath递归下降导致DoS",
+  "report_url": "https://hackerone.com/reports/882923",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 489102,
+  "theme": "内存破坏",
+  "action": "drop",
+  "target": "",
+  "reason": "栈溢出属内存破坏，非web渗透库范围",
+  "knowledge_point": "协议字段直接控制内存拷贝长度导致栈溢出（SEH覆盖）",
+  "report_url": "https://hackerone.com/reports/489102",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 493176,
+  "theme": "协议时序攻击",
+  "action": "fold",
+  "target": "hunt-request-smuggling",
+  "reason": "HTTP/2并发流时序差异可用于请求走私检测绕过",
+  "knowledge_point": "HTTP/2并发流响应顺序差异实现时序攻击",
+  "report_url": "https://hackerone.com/reports/493176",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 1667974,
+  "theme": "请求走私",
+  "action": "fold",
+  "target": "hunt-request-smuggling",
+  "reason": "Apache HTTPD pause-based desync是请求走私变体",
+  "knowledge_point": "Pause-based desync in Apache HTTPD",
+  "report_url": "https://hackerone.com/reports/1667974",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 726117,
+  "theme": "URL解析绕过",
+  "action": "fold",
+  "target": "hunt-ssrf",
+  "reason": "curl URL解析器fragment混淆可绕过SSRF防护",
+  "knowledge_point": "curl URL解析器fragment混淆导致路径绕过",
+  "report_url": "https://hackerone.com/reports/726117",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 500,
+  "theme": "内存破坏",
+  "action": "drop",
+  "target": "",
+  "reason": "AES-GCM内存破坏属内存安全，非web库范围",
+  "knowledge_point": "AES-GCM 模式下 MAC 上下文未初始化导致内存破坏",
+  "report_url": "https://hackerone.com/reports/500",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 2384833,
+  "theme": "协议参数解析",
+  "action": "fold",
+  "target": "hunt-ssrf",
+  "reason": "curl协议参数解析缺陷可导致SSRF防护绕过",
+  "knowledge_point": "curl --proto -all 参数解析缺陷导致协议未禁用",
+  "report_url": "https://hackerone.com/reports/2384833",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 2280391,
+  "theme": "请求走私",
+  "action": "fold",
+  "target": "hunt-request-smuggling",
+  "reason": "超长trailer header触发IOException导致请求走私",
+  "knowledge_point": "超长trailer header触发IOException导致请求走私",
+  "report_url": "https://hackerone.com/reports/2280391",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 855276,
+  "theme": "SSRF",
+  "action": "fold",
+  "target": "hunt-ssrf",
+  "reason": "git config URL注入实现SSRF",
+  "knowledge_point": "git config URL注入实现SSRF",
+  "report_url": "https://hackerone.com/reports/855276",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 1464396,
+  "theme": "认证绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "Cookie前缀欺骗通过URL编码绕过认证",
+  "knowledge_point": "Cookie前缀欺骗通过URL编码",
+  "report_url": "https://hackerone.com/reports/1464396",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 453513,
+  "theme": "请求走私",
+  "action": "fold",
+  "target": "hunt-request-smuggling",
+  "reason": "keep-alive连接绕过headersTimeout可导致请求走私",
+  "knowledge_point": "keep-alive连接绕过headersTimeout",
+  "report_url": "https://hackerone.com/reports/453513",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 2298922,
+  "theme": "TLS绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "TLS会话重用绕过OCSP验证属认证绕过",
+  "knowledge_point": "TLS 会话重用绕过 OCSP 验证",
+  "report_url": "https://hackerone.com/reports/2298922",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 423467,
+  "theme": "协议混淆",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "WebSocket消息类型混淆覆盖公钥属认证绕过",
+  "knowledge_point": "WebSocket消息类型混淆覆盖公钥",
+  "report_url": "https://hackerone.com/reports/423467",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 227344,
+  "theme": "请求走私",
+  "action": "fold",
+  "target": "hunt-request-smuggling",
+  "reason": "chunked编码整数符号错误导致请求走私",
+  "knowledge_point": "chunked 编码整数符号错误",
+  "report_url": "https://hackerone.com/reports/227344",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 1710652,
+  "theme": "DNS重绑定",
+  "action": "fold",
+  "target": "hunt-ssrf",
+  "reason": "无效八进制IP解析差异导致DNS rebinding绕过SSRF",
+  "knowledge_point": "无效八进制 IP 解析差异导致 DNS rebinding 绕过",
+  "report_url": "https://hackerone.com/reports/1710652",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 218088,
+  "theme": "DNS劫持",
+  "action": "fold",
+  "target": "hunt-ssrf",
+  "reason": "DNS SRV记录验证缺陷导致请求劫持，属SSRF变体",
+  "knowledge_point": "DNS SRV 记录验证缺陷导致请求劫持",
+  "report_url": "https://hackerone.com/reports/218088",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 790634,
+  "theme": "供应链投毒",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "Git分支名与哈希解析差异导致供应链投毒，属业务逻辑/配置错误",
+  "knowledge_point": "Git分支名与哈希解析优先级差异导致供应链投毒",
+  "report_url": "https://hackerone.com/reports/790634",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 295339,
+  "theme": "邮件协议绕过",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "邮件客户端RFC2047编码解析差异绕过DMARC，属协议配置错误",
+  "knowledge_point": "邮件客户端RFC2047编码解析差异绕过DMARC",
+  "report_url": "https://hackerone.com/reports/295339",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 742588,
+  "theme": "加密降级",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "加密模式降级与密钥流重用破坏完整性，属配置错误",
+  "knowledge_point": "加密模式降级与密钥流重用破坏完整性",
+  "report_url": "https://hackerone.com/reports/742588",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 1334763,
+  "theme": "协议注入",
+  "action": "fold",
+  "target": "hunt-request-smuggling",
+  "reason": "STARTTLS协议注入绕过加密，属协议注入变体",
+  "knowledge_point": "STARTTLS协议注入绕过加密",
+  "report_url": "https://hackerone.com/reports/1334763",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 1553301,
+  "theme": "Cookie绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "curl cookie尾点绕过TLD限制属认证绕过",
+  "knowledge_point": "curl cookie 尾点绕过 TLD 限制",
+  "report_url": "https://hackerone.com/reports/1553301",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 1267677,
+  "theme": "HTTP头解析绕过",
+  "action": "fold",
+  "target": "hunt-request-smuggling",
+  "reason": "双Content-Type头绕过属于HTTP解析差异，可归入请求走私的变体",
+  "knowledge_point": "双 Content-Type 头绕过内容类型检查",
+  "report_url": "https://hackerone.com/reports/1267677",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 1223565,
+  "theme": "TLS协议缺陷",
+  "action": "drop",
+  "target": "",
+  "reason": "libcurl连接复用缺陷属客户端库特定问题，非通用web攻击面",
+  "knowledge_point": "libcurl 连接复用检查缺陷导致 TLS 中间人攻击",
+  "report_url": "https://hackerone.com/reports/1223565",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 919175,
+  "theme": "缓存投毒",
+  "action": "fold",
+  "target": "hunt-cache-poisoning",
+  "reason": "请求走私配合X-Forwarded-Host实现缓存投毒，是缓存投毒的攻击链变体",
+  "knowledge_point": "HTTP 请求走私配合 X-Forwarded-Host 实现缓存投毒",
+  "report_url": "https://hackerone.com/reports/919175",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 893922,
+  "theme": "网络协议滥用",
+  "action": "drop",
+  "target": "",
+  "reason": "IP-in-IP协议默认路由属网络层配置问题，非web应用层漏洞",
+  "knowledge_point": "IP-in-IP协议默认路由任意流量",
+  "report_url": "https://hackerone.com/reports/893922",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 722327,
+  "theme": "编码绕过",
+  "action": "fold",
+  "target": "hunt-command-injection",
+  "reason": "编码换行符绕过Nginx配置触发php-fpm下溢，属于命令注入的绕过变体",
+  "knowledge_point": "编码换行符绕过Nginx配置触发php-fpm下溢",
+  "report_url": "https://hackerone.com/reports/722327",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 1651429,
+  "theme": "区块链解析绕过",
+  "action": "drop",
+  "target": "",
+  "reason": "区块链交易解析绕过属特定区块链应用，非通用web渗透范围",
+  "knowledge_point": "Blockchain transaction parsing bypass leading to silent token transfer",
+  "report_url": "https://hackerone.com/reports/1651429",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 391611,
+  "theme": "算法DoS",
+  "action": "drop",
+  "target": "",
+  "reason": "随机数三角分布构造无限循环DoS属算法缺陷，非web协议层漏洞",
+  "knowledge_point": "利用随机数三角分布特性构造无限循环DoS",
+  "report_url": "https://hackerone.com/reports/391611",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 97292,
+  "theme": "HTTP头注入",
+  "action": "fold",
+  "target": "hunt-request-smuggling",
+  "reason": "HTTP头注入绕过域限制设置cookie，属于请求头解析绕过变体",
+  "knowledge_point": "HTTP头注入绕过域限制设置cookie",
+  "report_url": "https://hackerone.com/reports/97292",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 396954,
+  "theme": "协议解析缺陷",
+  "action": "drop",
+  "target": "",
+  "reason": "RLP解析器未检查数据末尾属区块链协议解析问题，非web通用",
+  "knowledge_point": "RLP 解析器未检查数据末尾导致数据注入",
+  "report_url": "https://hackerone.com/reports/396954",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 531032,
+  "theme": "加密协议滥用",
+  "action": "drop",
+  "target": "",
+  "reason": "WebRTC/DTLS硬编码密钥属特定通信协议，非web应用层漏洞",
+  "knowledge_point": "硬编码密钥在WebRTC/DTLS中的滥用导致SRTP流劫持",
+  "report_url": "https://hackerone.com/reports/531032",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 1431042,
+  "theme": "原型污染",
+  "action": "fold",
+  "target": "hunt-prototype-pollution",
+  "reason": "console.table原型污染是原型污染的具体触发点",
+  "knowledge_point": "console.table 原型污染",
+  "report_url": "https://hackerone.com/reports/1431042",
+  "category": "原型污染"
+ },
+ {
+  "id": 407552,
+  "theme": "反序列化RCE",
+  "action": "fold",
+  "target": "hunt-deserialization",
+  "reason": "反序列化gadget链构造RCE是反序列化攻击的典型变体",
+  "knowledge_point": "反序列化 gadget 链构造实现 RCE",
+  "report_url": "https://hackerone.com/reports/407552",
+  "category": "反序列化"
+ },
+ {
+  "id": 410882,
+  "theme": "反序列化RCE",
+  "action": "fold",
+  "target": "hunt-deserialization",
+  "reason": "phar反序列化通过getimagesize触发RCE是反序列化触发变体",
+  "knowledge_point": "phar 反序列化通过 getimagesize 触发实现未认证 RCE",
+  "report_url": "https://hackerone.com/reports/410882",
+  "category": "反序列化"
+ },
+ {
+  "id": 159946,
+  "theme": "会话注入",
+  "action": "fold",
+  "target": "hunt-deserialization",
+  "reason": "PHP会话数据注入属于反序列化攻击的变体",
+  "knowledge_point": "PHP 会话数据注入",
+  "report_url": "https://hackerone.com/reports/159946",
+  "category": "反序列化"
+ },
+ {
+  "id": 921288,
+  "theme": "反序列化文件操作",
+  "action": "fold",
+  "target": "hunt-deserialization",
+  "reason": "PHAR反序列化触发任意文件删除是反序列化利用变体",
+  "knowledge_point": "PHAR 反序列化触发任意文件删除",
+  "report_url": "https://hackerone.com/reports/921288",
+  "category": "反序列化"
+ },
+ {
+  "id": 212696,
+  "theme": "命令注入绕过",
+  "action": "fold",
+  "target": "hunt-command-injection",
+  "reason": "escapeshellcmd不转义空格导致参数注入是命令注入绕过变体",
+  "knowledge_point": "escapeshellcmd 不转义空格导致命令参数注入（GraphicsMagick）",
+  "report_url": "https://hackerone.com/reports/212696",
+  "category": "命令注入"
+ },
+ {
+  "id": 214022,
+  "theme": "命令注入绕过",
+  "action": "fold",
+  "target": "hunt-command-injection",
+  "reason": "备份恢复功能绕过输入限制实现命令注入是命令注入变体",
+  "knowledge_point": "通过备份恢复功能绕过输入限制实现命令注入",
+  "report_url": "https://hackerone.com/reports/214022",
+  "category": "命令注入"
+ },
+ {
+  "id": 1838674,
+  "theme": "命令注入RCE",
+  "action": "fold",
+  "target": "hunt-command-injection",
+  "reason": "ImageMagick MSL滥用导致RCE是命令注入的变体",
+  "knowledge_point": "ImageMagick MSL 功能滥用导致 RCE",
+  "report_url": "https://hackerone.com/reports/1838674",
+  "category": "命令注入"
+ },
+ {
+  "id": 955016,
+  "theme": "命令注入绕过",
+  "action": "fold",
+  "target": "hunt-command-injection",
+  "reason": "Windows路径规范化绕过命令注入防护是命令注入绕过变体",
+  "knowledge_point": "Windows路径规范化绕过命令注入防护",
+  "report_url": "https://hackerone.com/reports/955016",
+  "category": "命令注入"
+ },
+ {
+  "id": 973386,
+  "theme": "命令注入绕过",
+  "action": "fold",
+  "target": "hunt-command-injection",
+  "reason": "黑名单过滤不完整导致参数注入是命令注入绕过变体",
+  "knowledge_point": "黑名单过滤不完整导致参数注入",
+  "report_url": "https://hackerone.com/reports/973386",
+  "category": "命令注入"
+ },
+ {
+  "id": 1785378,
+  "theme": "命令注入绕过",
+  "action": "fold",
+  "target": "hunt-command-injection",
+  "reason": "bash PS1二次求值属于命令注入的变体",
+  "knowledge_point": "bash PS1 二次求值命令注入",
+  "report_url": "https://hackerone.com/reports/1785378",
+  "category": "命令注入"
+ },
+ {
+  "id": 390881,
+  "theme": "原型污染到命令注入",
+  "action": "fold",
+  "target": "hunt-prototype-pollution",
+  "reason": "原型污染触发代码注入，属于原型污染利用链",
+  "knowledge_point": "原型污染触发 morgan 代码注入",
+  "report_url": "https://hackerone.com/reports/390881",
+  "category": "命令注入"
+ },
+ {
+  "id": 851807,
+  "theme": "命令注入绕过",
+  "action": "fold",
+  "target": "hunt-command-injection",
+  "reason": "bash子命令替换绕过过滤实现RCE，是命令注入绕过变体",
+  "knowledge_point": "bash 子命令替换绕过参数过滤实现 RCE",
+  "report_url": "https://hackerone.com/reports/851807",
+  "category": "命令注入"
+ },
+ {
+  "id": 1401444,
+  "theme": "沙箱逃逸",
+  "action": "fold",
+  "target": "hunt-command-injection",
+  "reason": "Lua沙箱逃逸通过loadstring实现RCE，属于命令注入范畴",
+  "knowledge_point": "Lua沙箱逃逸通过loadstring",
+  "report_url": "https://hackerone.com/reports/1401444",
+  "category": "命令注入"
+ },
+ {
+  "id": 260005,
+  "theme": "命令注入绕过",
+  "action": "fold",
+  "target": "hunt-command-injection",
+  "reason": "ssh URI解析差异导致RCE，是命令注入的变体",
+  "knowledge_point": "ssh:// URI 解析差异导致RCE",
+  "report_url": "https://hackerone.com/reports/260005",
+  "category": "命令注入"
+ },
+ {
+  "id": 236599,
+  "theme": "开放重定向绕过",
+  "action": "fold",
+  "target": "hunt-open-redirect",
+  "reason": "stristr子串匹配绕过开放重定向保护，属于开放重定向绕过",
+  "knowledge_point": "stristr子串匹配绕过开放重定向保护",
+  "report_url": "https://hackerone.com/reports/236599",
+  "category": "开放重定向"
+ },
+ {
+  "id": 518669,
+  "theme": "SQL注入绕过",
+  "action": "fold",
+  "target": "hunt-sqli",
+  "reason": "ContentProvider投影映射限制绕过导致SQL注入，是SQL注入变体",
+  "knowledge_point": "ContentProvider投影映射限制绕过导致SQL注入",
+  "report_url": "https://hackerone.com/reports/518669",
+  "category": "授权绕过"
+ },
+ {
+  "id": 358339,
+  "theme": "授权绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "WebDAV搜索和预览API绕过文件访问控制，属于授权绕过",
+  "knowledge_point": "WebDAV搜索和预览API绕过文件访问控制",
+  "report_url": "https://hackerone.com/reports/358339",
+  "category": "授权绕过"
+ },
+ {
+  "id": 1026146,
+  "theme": "认证绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "SOAP Header认证绕过，属于认证绕过变体",
+  "knowledge_point": "SOAP Header认证绕过",
+  "report_url": "https://hackerone.com/reports/1026146",
+  "category": "授权绕过"
+ },
+ {
+  "id": 1501611,
+  "theme": "IDOR",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "GraphQL IDOR可预测对象ID与缺失对象级授权，属于授权绕过",
+  "knowledge_point": "GraphQL IDOR：可预测对象ID与缺失对象级授权",
+  "report_url": "https://hackerone.com/reports/1501611",
+  "category": "授权绕过"
+ },
+ {
+  "id": 827816,
+  "theme": "权限提升",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "客户端信任权限标志导致权限提升，属于授权绕过",
+  "knowledge_point": "客户端信任权限标志导致权限提升",
+  "report_url": "https://hackerone.com/reports/827816",
+  "category": "授权绕过"
+ },
+ {
+  "id": 835005,
+  "theme": "IDOR",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "GraphQL泄露内部ID结合IDOR实现组织接管，属于授权绕过",
+  "knowledge_point": "GraphQL泄露内部ID结合IDOR实现组织接管",
+  "report_url": "https://hackerone.com/reports/835005",
+  "category": "授权绕过"
+ },
+ {
+  "id": 1751258,
+  "theme": "授权绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "篡改noteable_type参数绕过项目权限检查，属于授权绕过",
+  "knowledge_point": "通过篡改 noteable_type 参数绕过项目权限检查，访问私有 personal_snippet",
+  "report_url": "https://hackerone.com/reports/1751258",
+  "category": "授权绕过"
+ },
+ {
+  "id": 497047,
+  "theme": "认证绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "CI/CD token绕过用户封禁，属于认证绕过",
+  "knowledge_point": "CI/CD token绕过用户封禁",
+  "report_url": "https://hackerone.com/reports/497047",
+  "category": "授权绕过"
+ },
+ {
+  "id": 312647,
+  "theme": "授权绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "Onebox preview通过用户控制参数绕过访问控制，属于授权绕过",
+  "knowledge_point": "Onebox preview bypassing access control via user-controlled parameter",
+  "report_url": "https://hackerone.com/reports/312647",
+  "category": "授权绕过"
+ },
+ {
+  "id": 1034346,
+  "theme": "授权绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "对象关联劫持绕过授权，属于授权绕过",
+  "knowledge_point": "对象关联劫持：孤儿附件与多态关联绕过授权",
+  "report_url": "https://hackerone.com/reports/1034346",
+  "category": "授权绕过"
+ },
+ {
+  "id": 1327196,
+  "theme": "XSS绕过",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "CSP对image/svg+xml不生效导致XSS，是XSS绕过变体",
+  "knowledge_point": "CSP 仅对 HTML 生效，对 image/svg+xml 不生效导致 XSS",
+  "report_url": "https://hackerone.com/reports/1327196",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 2138080,
+  "theme": "框架行为利用",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "Electron contextBridge序列化异常绕过上下文隔离，属于XSS相关绕过",
+  "knowledge_point": "Electron contextBridge序列化异常绕过上下文隔离",
+  "report_url": "https://hackerone.com/reports/2138080",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 302338,
+  "theme": "路径遍历",
+  "action": "fold",
+  "target": "hunt-path-traversal",
+  "reason": "Ruby Dir类NULL字符截断路径绕过，属于路径遍历变体",
+  "knowledge_point": "Ruby Dir类NULL字符截断路径绕过",
+  "report_url": "https://hackerone.com/reports/302338",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 44513,
+  "theme": "IP解析差异",
+  "action": "fold",
+  "target": "hunt-ssrf",
+  "reason": "IP解析差异绕过（IPv6变体），属于SSRF绕过",
+  "knowledge_point": "IP解析差异绕过（IPv6变体）",
+  "report_url": "https://hackerone.com/reports/44513",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 209949,
+  "theme": "内存泄露",
+  "action": "drop",
+  "target": "",
+  "reason": "堆内存泄露属内存破坏类，非web渗透库范围",
+  "knowledge_point": "strdup/memccpy NULL字节截断导致堆内存泄露",
+  "report_url": "https://hackerone.com/reports/209949",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 2140,
+  "theme": "沙箱绕过",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "Flash沙箱绕过属客户端环境特定攻击面，归入横切类",
+  "knowledge_point": "Flash local-with-fileaccess 沙箱绕过",
+  "report_url": "https://hackerone.com/reports/2140",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 946728,
+  "theme": "开放重定向",
+  "action": "fold",
+  "target": "hunt-open-redirect",
+  "reason": "Rails参数过滤不完整导致开放重定向和XSS，属开放重定向变体",
+  "knowledge_point": "Rails 保留参数过滤不完整导致开放重定向和 XSS",
+  "report_url": "https://hackerone.com/reports/946728",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 170548,
+  "theme": "加密缺陷",
+  "action": "drop",
+  "target": "",
+  "reason": "IV重用属密码学实现缺陷，非web渗透库直接覆盖",
+  "knowledge_point": "加密库 API 设计缺陷导致 IV 重用",
+  "report_url": "https://hackerone.com/reports/170548",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 409395,
+  "theme": "路径遍历",
+  "action": "fold",
+  "target": "hunt-path-traversal",
+  "reason": "环境变量展开绕过YAML校验实现路径遍历，属路径遍历绕过变体",
+  "knowledge_point": "环境变量展开绕过 YAML 校验实现路径遍历",
+  "report_url": "https://hackerone.com/reports/409395",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 1966499,
+  "theme": "权限绕过",
+  "action": "fold",
+  "target": "hunt-nodejs-permission-bypass",
+  "reason": "Node.js权限系统未覆盖文件监视，属Node.js权限绕过变体",
+  "knowledge_point": "Node.js 权限系统未覆盖文件监视",
+  "report_url": "https://hackerone.com/reports/1966499",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 784186,
+  "theme": "内存破坏",
+  "action": "drop",
+  "target": "",
+  "reason": "整数下溢导致内存破坏，属内存破坏类非web渗透库范围",
+  "knowledge_point": "N-API bufsize=0整数下溢导致内存破坏",
+  "report_url": "https://hackerone.com/reports/784186",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 183425,
+  "theme": "类型混淆",
+  "action": "drop",
+  "target": "",
+  "reason": "C扩展类型混淆属内存破坏类，非web渗透库范围",
+  "knowledge_point": "Ruby alias_method 导致 C 扩展类型混淆",
+  "report_url": "https://hackerone.com/reports/183425",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 1575014,
+  "theme": "路径规范化",
+  "action": "fold",
+  "target": "hunt-path-traversal",
+  "reason": "路径规范化差异导致接口绕过，属路径遍历变体",
+  "knowledge_point": "路径规范化差异：Node.js SDK将`.`规范化为列表接口",
+  "report_url": "https://hackerone.com/reports/1575014",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 1025575,
+  "theme": "缓存投毒",
+  "action": "fold",
+  "target": "hunt-cache-poisoning",
+  "reason": "Fastify版本路由默认行为导致缓存投毒，属缓存投毒变体",
+  "knowledge_point": "Fastify 版本路由默认行为导致缓存投毒",
+  "report_url": "https://hackerone.com/reports/1025575",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 217745,
+  "theme": "XSS",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "window.open javascript: URL导致XSS，属XSS变体",
+  "knowledge_point": "window.open javascript: URL 导致 XSS",
+  "report_url": "https://hackerone.com/reports/217745",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 106548,
+  "theme": "格式字符串",
+  "action": "drop",
+  "target": "",
+  "reason": "PHP格式字符串漏洞属内存破坏类，非web渗透库范围",
+  "knowledge_point": "PHP错误处理中格式字符串漏洞",
+  "report_url": "https://hackerone.com/reports/106548",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 1620702,
+  "theme": "配置注入",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "Ingress-nginx配置注入+文件写入实现RCE，属配置错误类横切主题",
+  "knowledge_point": "Ingress-nginx 配置注入 + 文件写入 + include 实现 RCE",
+  "report_url": "https://hackerone.com/reports/1620702",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 843171,
+  "theme": "原型污染",
+  "action": "fold",
+  "target": "hunt-prototype-pollution",
+  "reason": "Electron原型污染绕过链接验证实现RCE，属原型污染变体",
+  "knowledge_point": "Electron 框架原型污染绕过链接验证实现 RCE",
+  "report_url": "https://hackerone.com/reports/843171",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 1865991,
+  "theme": "开放重定向",
+  "action": "fold",
+  "target": "hunt-open-redirect",
+  "reason": "Rails URL解析差异绕过开放重定向，属开放重定向变体",
+  "knowledge_point": "Rails open redirect bypass via URL parsing differences",
+  "report_url": "https://hackerone.com/reports/1865991",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 1082847,
+  "theme": "配置注入",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "Partial schema宽松性导致配置注入，属配置错误类横切主题",
+  "knowledge_point": "Partial schema 宽松性导致配置注入",
+  "report_url": "https://hackerone.com/reports/1082847",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 1647287,
+  "theme": "沙箱绕过",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "Electron安全边界绕过（context isolation禁用）属客户端框架配置错误，归入横切类",
+  "knowledge_point": "Electron框架安全边界绕过（context isolation禁用）",
+  "report_url": "https://hackerone.com/reports/1647287",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 292797,
+  "theme": "参数处理",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "Rails参数each方法返回不安全哈希，属框架行为利用横切类",
+  "knowledge_point": "Rails ActionController::Parameters的each方法返回不安全哈希",
+  "report_url": "https://hackerone.com/reports/292797",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 809012,
+  "theme": "沙箱逃逸",
+  "action": "fold",
+  "target": "hunt-prototype-pollution",
+  "reason": "沙箱逃逸通过原型链和bind方法，属原型污染变体",
+  "knowledge_point": "沙箱逃逸通过原型链和 bind 方法",
+  "report_url": "https://hackerone.com/reports/809012",
+  "category": "沙箱逃逸"
+ },
+ {
+  "id": 1520931,
+  "theme": "竞争条件",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "Rust标准库TOCTOU漏洞属竞争条件类，归入横切类",
+  "knowledge_point": "Rust标准库remove_dir_all的TOCTOU漏洞",
+  "report_url": "https://hackerone.com/reports/1520931",
+  "category": "竞争条件"
+ },
+ {
+  "id": 2078571,
+  "theme": "TOCTOU竞态",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "文件系统符号链接跟随的TOCTOU竞态属于配置错误/逻辑缺陷，无专用skill，归入方法论总线",
+  "knowledge_point": "curl fopen TOCTOU竞态导致符号链接跟随",
+  "report_url": "https://hackerone.com/reports/2078571",
+  "category": "竞争条件"
+ },
+ {
+  "id": 859962,
+  "theme": "TOCTOU竞态",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "DNS解析TOCTOU绕过代理过滤属于逻辑缺陷，无专用skill，归入方法论总线",
+  "knowledge_point": "DNS解析TOCTOU绕过apiserver代理过滤",
+  "report_url": "https://hackerone.com/reports/859962",
+  "category": "竞争条件"
+ },
+ {
+  "id": 2039870,
+  "theme": "TOCTOU竞态",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "原子交换制造TOCTOU竞态属于逻辑缺陷，无专用skill，归入方法论总线",
+  "knowledge_point": "renameat2原子交换制造TOCTOU竞态",
+  "report_url": "https://hackerone.com/reports/2039870",
+  "category": "竞争条件"
+ },
+ {
+  "id": 1897203,
+  "theme": "内存破坏",
+  "action": "drop",
+  "target": "",
+  "reason": "多线程竞争导致double-free属内存破坏，非web应用层漏洞，超出本库范围",
+  "knowledge_point": "多线程竞争导致HSTS double-free",
+  "report_url": "https://hackerone.com/reports/1897203",
+  "category": "竞争条件"
+ },
+ {
+  "id": 858603,
+  "theme": "竞争条件DoS",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "硬链接与日志文件竞争条件DoS属于逻辑缺陷，无专用skill，归入方法论总线",
+  "knowledge_point": "硬链接与日志文件竞争条件 DoS",
+  "report_url": "https://hackerone.com/reports/858603",
+  "category": "竞争条件"
+ },
+ {
+  "id": 1455248,
+  "theme": "内存破坏",
+  "action": "drop",
+  "target": "",
+  "reason": "整数溢出导致堆溢出属内存破坏，非web应用层漏洞，超出本库范围",
+  "knowledge_point": "整数溢出导致缓冲区分配不足进而堆溢出",
+  "report_url": "https://hackerone.com/reports/1455248",
+  "category": "类型混淆"
+ },
+ {
+  "id": 321692,
+  "theme": "类型混淆",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "JavaScript弱类型导致未初始化Buffer属逻辑缺陷，无专用skill，归入方法论总线",
+  "knowledge_point": "JavaScript弱类型导致未初始化Buffer",
+  "report_url": "https://hackerone.com/reports/321692",
+  "category": "类型混淆"
+ },
+ {
+  "id": 298246,
+  "theme": "内存破坏",
+  "action": "drop",
+  "target": "",
+  "reason": "Ruby pack/unpack负长度导致缓冲区下读属内存破坏，非web应用层漏洞，超出本库范围",
+  "knowledge_point": "Ruby pack/unpack 负长度导致缓冲区下读",
+  "report_url": "https://hackerone.com/reports/298246",
+  "category": "类型混淆"
+ },
+ {
+  "id": 182169,
+  "theme": "类型混淆",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "异常状态注入导致类型混淆属逻辑缺陷，无专用skill，归入方法论总线",
+  "knowledge_point": "异常状态注入导致类型混淆",
+  "report_url": "https://hackerone.com/reports/182169",
+  "category": "类型混淆"
+ },
+ {
+  "id": 175315,
+  "theme": "内存破坏",
+  "action": "drop",
+  "target": "",
+  "reason": "整数溢出导致内存破坏属内存破坏，非web应用层漏洞，超出本库范围",
+  "knowledge_point": "整数溢出导致内存破坏（Locale方法）",
+  "report_url": "https://hackerone.com/reports/175315",
+  "category": "类型混淆"
+ },
+ {
+  "id": 419896,
+  "theme": "类型混淆",
+  "action": "fold",
+  "target": "hunt-sqli",
+  "reason": "数组null字节绕过触发IS NULL查询是SQL注入变体，归入SQL注入skill",
+  "knowledge_point": "数组null字节绕过present?触发IS NULL查询",
+  "report_url": "https://hackerone.com/reports/419896",
+  "category": "类型混淆"
+ },
+ {
+  "id": 49652,
+  "theme": "类型混淆",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "React children类型混淆导致XSS是XSS变体，归入XSS skill",
+  "knowledge_point": "React children 类型混淆导致 XSS",
+  "report_url": "https://hackerone.com/reports/49652",
+  "category": "类型混淆"
+ },
+ {
+  "id": 386807,
+  "theme": "类型混淆",
+  "action": "fold",
+  "target": "hunt-sqli",
+  "reason": "MongoDB盲注提取令牌是NoSQL注入变体，归入SQL注入skill（广义注入）",
+  "knowledge_point": "MongoDB 盲注提取密码重置令牌",
+  "report_url": "https://hackerone.com/reports/386807",
+  "category": "类型混淆"
+ },
+ {
+  "id": 449356,
+  "theme": "类型混淆",
+  "action": "fold",
+  "target": "hunt-sqli",
+  "reason": "类型混淆导致SQL查询变为IN子句是SQL注入变体，归入SQL注入skill",
+  "knowledge_point": "类型混淆导致 SQL 查询变为 IN 子句，提高暴力破解效率",
+  "report_url": "https://hackerone.com/reports/449356",
+  "category": "类型混淆"
+ },
+ {
+  "id": 358570,
+  "theme": "类型混淆",
+  "action": "fold",
+  "target": "hunt-sqli",
+  "reason": "PHP数组参数类型混淆导致SQL注入是SQL注入变体，归入SQL注入skill",
+  "knowledge_point": "PHP数组参数类型混淆导致SQL注入",
+  "report_url": "https://hackerone.com/reports/358570",
+  "category": "类型混淆"
+ },
+ {
+  "id": 728664,
+  "theme": "缓存投毒",
+  "action": "fold",
+  "target": "hunt-cache-poisoning",
+  "reason": "利用调试头污染CDN缓存是缓存投毒变体，归入缓存投毒skill",
+  "knowledge_point": "利用平台调试头污染CDN缓存实现DoS",
+  "report_url": "https://hackerone.com/reports/728664",
+  "category": "缓存投毒"
+ },
+ {
+  "id": 334709,
+  "theme": "缓存投毒",
+  "action": "fold",
+  "target": "hunt-cache-poisoning",
+  "reason": "NULL字节和超长URL导致缓存投毒是缓存投毒变体，归入缓存投毒skill",
+  "knowledge_point": "NULL 字节和超长 URL 导致缓存投毒",
+  "report_url": "https://hackerone.com/reports/334709",
+  "category": "缓存投毒"
+ },
+ {
+  "id": 1923672,
+  "theme": "认证绕过",
+  "action": "fold",
+  "target": "hunt-open-redirect",
+  "reason": "SAML RelayState开放重定向结合OAuth窃取令牌是开放重定向变体，归入开放重定向skill",
+  "knowledge_point": "SAML RelayState开放重定向结合OAuth隐式授权窃取令牌",
+  "report_url": "https://hackerone.com/reports/1923672",
+  "category": "认证绕过"
+ },
+ {
+  "id": 975983,
+  "theme": "认证绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "Safari URL特殊字符解析绕过Referer校验是认证绕过变体，归入认证绕过skill",
+  "knowledge_point": "Safari URL特殊字符解析绕过Referer校验",
+  "report_url": "https://hackerone.com/reports/975983",
+  "category": "认证绕过"
+ },
+ {
+  "id": 922456,
+  "theme": "认证绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "OAuth邮箱验证缺失导致账户接管是认证绕过变体，归入认证绕过skill",
+  "knowledge_point": "OAuth授权流程中邮箱验证缺失导致账户接管",
+  "report_url": "https://hackerone.com/reports/922456",
+  "category": "认证绕过"
+ },
+ {
+  "id": 736522,
+  "theme": "JWT验证缺陷",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "JWT验证逻辑不完整属于认证绕过变体",
+  "knowledge_point": "JWT验证逻辑不完整导致身份伪造",
+  "report_url": "https://hackerone.com/reports/736522",
+  "category": "认证绕过"
+ },
+ {
+  "id": 732415,
+  "theme": "CSRF token缺陷",
+  "action": "fold",
+  "target": "hunt-csrf",
+  "reason": "CSRF token可逆性属于CSRF绕过变体",
+  "knowledge_point": "CSRF token可逆性导致伪造（Rails per_form_csrf_tokens）",
+  "report_url": "https://hackerone.com/reports/732415",
+  "category": "认证绕过"
+ },
+ {
+  "id": 128085,
+  "theme": "2FA绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "参数优先级导致2FA绕过属于认证绕过",
+  "knowledge_point": "参数优先级导致 2FA 绕过",
+  "report_url": "https://hackerone.com/reports/128085",
+  "category": "认证绕过"
+ },
+ {
+  "id": 110293,
+  "theme": "OAuth回调绕过",
+  "action": "fold",
+  "target": "hunt-open-redirect",
+  "reason": "OAuth回调验证绕过结合开放重定向，归入开放重定向",
+  "knowledge_point": "OAuth回调验证绕过（路径遍历+开放重定向）",
+  "report_url": "https://hackerone.com/reports/110293",
+  "category": "认证绕过"
+ },
+ {
+  "id": 1018489,
+  "theme": "账户绑定缺陷",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "未验证邮箱添加外部登录属于认证绕过",
+  "knowledge_point": "未验证邮箱账户添加外部登录",
+  "report_url": "https://hackerone.com/reports/1018489",
+  "category": "认证绕过"
+ },
+ {
+  "id": 129873,
+  "theme": "origin校验绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "隐式正则导致origin校验绕过属于认证绕过",
+  "knowledge_point": "String.search() 隐式正则导致 origin 校验绕过",
+  "report_url": "https://hackerone.com/reports/129873",
+  "category": "认证绕过"
+ },
+ {
+  "id": 124845,
+  "theme": "token重用",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "跨账户token重用绕过密码验证属于认证绕过",
+  "knowledge_point": "跨账户 token 重用绕过密码验证",
+  "report_url": "https://hackerone.com/reports/124845",
+  "category": "认证绕过"
+ },
+ {
+  "id": 148151,
+  "theme": "SMB认证绕过",
+  "action": "drop",
+  "target": "",
+  "reason": "SMB map to guest属特定环境，非web库范围",
+  "knowledge_point": "SMB map to guest认证绕过",
+  "report_url": "https://hackerone.com/reports/148151",
+  "category": "认证绕过"
+ },
+ {
+  "id": 1040471,
+  "theme": "速率限制绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "换行符绕过速率限制属于认证绕过变体",
+  "knowledge_point": "利用换行符绕过速率限制",
+  "report_url": "https://hackerone.com/reports/1040471",
+  "category": "认证绕过"
+ },
+ {
+  "id": 430854,
+  "theme": "浏览器扩展攻击",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "浏览器扩展UI注入属跨组件攻击链，归入方法论总线",
+  "knowledge_point": "浏览器扩展 UI 注入导致信息泄露",
+  "report_url": "https://hackerone.com/reports/430854",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 6017,
+  "theme": "OAuth重定向窃取",
+  "action": "fold",
+  "target": "hunt-open-redirect",
+  "reason": "OAuth redirect_uri宽松校验结合开放重定向窃取token",
+  "knowledge_point": "OAuth redirect_uri 宽松校验结合开放重定向窃取token",
+  "report_url": "https://hackerone.com/reports/6017",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 263718,
+  "theme": "XSS到RCE",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "同源iframe脚本导致权限提升，XSS变体",
+  "knowledge_point": "同源iframe脚本导致权限提升（XSS到RCE）",
+  "report_url": "https://hackerone.com/reports/263718",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 1378175,
+  "theme": "K8s注解注入",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "Ingress-nginx注解注入属配置错误，归入方法论总线",
+  "knowledge_point": "Ingress-nginx注解注入获取service account token",
+  "report_url": "https://hackerone.com/reports/1378175",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 221432,
+  "theme": "CSRF token泄露",
+  "action": "fold",
+  "target": "hunt-csrf",
+  "reason": "CSRF token泄露通过双斜杠绝对URL属CSRF变体",
+  "knowledge_point": "CSRF token泄露通过双斜杠绝对URL",
+  "report_url": "https://hackerone.com/reports/221432",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 761726,
+  "theme": "SOP绕过",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "SOP绕过利用浏览器缓存属跨组件攻击链，归入方法论总线",
+  "knowledge_point": "SOP绕过利用浏览器缓存",
+  "report_url": "https://hackerone.com/reports/761726",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 858598,
+  "theme": "文件写入滥用",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "硬链接滥用导致特权文件写入属配置错误，归入方法论总线",
+  "knowledge_point": "硬链接滥用导致特权文件写入",
+  "report_url": "https://hackerone.com/reports/858598",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 446585,
+  "theme": "模板投毒",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "导入数据字段级权限校验缺失属业务逻辑，归入方法论总线",
+  "knowledge_point": "导入数据字段级权限校验缺失导致模板投毒",
+  "report_url": "https://hackerone.com/reports/446585",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 2371019,
+  "theme": "DOM XSS",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "postMessage监听器未编码avatar_url导致DOM XSS",
+  "knowledge_point": "postMessage监听器未编码avatar_url导致DOM XSS",
+  "report_url": "https://hackerone.com/reports/2371019",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 1245165,
+  "theme": "CSS数据窃取",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "CSS加载跟随重定向导致数据窃取属跨组件攻击链，归入方法论总线",
+  "knowledge_point": "CSS加载跟随重定向导致数据窃取",
+  "report_url": "https://hackerone.com/reports/1245165",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 378148,
+  "theme": "正则缺陷文件写入",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "正则表达式对换行符匹配缺陷导致任意文件写入属配置错误，归入方法论总线",
+  "knowledge_point": "正则表达式对换行符匹配缺陷导致任意文件写入",
+  "report_url": "https://hackerone.com/reports/378148",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 867699,
+  "theme": "容器逃逸与资源耗尽",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "容器内写/etc/hosts导致宿主机磁盘耗尽属于配置错误和资源滥用，无专用skill，归入方法论总线",
+  "knowledge_point": "容器内写/etc/hosts导致宿主机磁盘耗尽",
+  "report_url": "https://hackerone.com/reports/867699",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 1533976,
+  "theme": "XSS与缓存利用",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "HTML注入结合DOMPurify gadget和浏览器缓存实现任意POST请求是XSS的绕过变体",
+  "knowledge_point": "HTML注入结合DOMPurify gadget和浏览器缓存实现任意POST请求",
+  "report_url": "https://hackerone.com/reports/1533976",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 224198,
+  "theme": "内部组件信任",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "通过消息队列注入恶意任务实现RCE属于跨组件攻击链，无专用skill，归入方法论总线",
+  "knowledge_point": "内部组件信任：通过消息队列注入恶意任务实现RCE",
+  "report_url": "https://hackerone.com/reports/224198",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 415202,
+  "theme": "多阶段攻击链",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "多阶段攻击链组合多种漏洞，属于跨组件攻击链，归入方法论总线",
+  "knowledge_point": "多阶段攻击链：路径遍历→对象注入→XXE→SSRF→反序列化RCE",
+  "report_url": "https://hackerone.com/reports/415202",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 899103,
+  "theme": "容器网络配置",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "容器默认能力与hostNetwork组合导致中间人攻击属于配置错误，归入方法论总线",
+  "knowledge_point": "容器默认能力 CAP_NET_RAW 与 hostNetwork 组合导致中间人攻击",
+  "report_url": "https://hackerone.com/reports/899103",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 2107680,
+  "theme": "内存泄露",
+  "action": "drop",
+  "target": "",
+  "reason": "librsvg未初始化内存泄露属于内存破坏类，非web渗透库范围",
+  "knowledge_point": "librsvg 未初始化内存泄露导致敏感信息泄露",
+  "report_url": "https://hackerone.com/reports/2107680",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 389108,
+  "theme": "浏览器扩展安全",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "浏览器扩展postMessage处理不当导致任意请求带cookie是XSS或消息传递漏洞的变体",
+  "knowledge_point": "浏览器扩展 postMessage 处理不当导致任意请求带 cookie",
+  "report_url": "https://hackerone.com/reports/389108",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 1741430,
+  "theme": "深链接与CSRF",
+  "action": "fold",
+  "target": "hunt-csrf",
+  "reason": "深链接参数未编码导致CSRF和路径穿越，CSRF部分归入hunt-csrf，路径穿越部分归入hunt-path-traversal，但整体以CSRF为主",
+  "knowledge_point": "深链接参数未编码导致 CSRF 和路径穿越",
+  "report_url": "https://hackerone.com/reports/1741430",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 1439552,
+  "theme": "Service Worker与OAuth",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "Service Worker拦截OAuth响应窃取令牌属于认证绕过变体",
+  "knowledge_point": "Service Worker 拦截 OAuth 响应窃取令牌",
+  "report_url": "https://hackerone.com/reports/1439552",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 892337,
+  "theme": "JWT与2FA绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "JWT路径遍历和CSS数据外泄绕过2FA属于认证绕过变体",
+  "knowledge_point": "JWT 路径遍历 + CSS 数据外泄绕过 2FA",
+  "report_url": "https://hackerone.com/reports/892337",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 863979,
+  "theme": "重定向与认证头",
+  "action": "fold",
+  "target": "hunt-open-redirect",
+  "reason": "kubectl 301重定向重放Authorization头属于开放重定向的变体",
+  "knowledge_point": "kubectl 301重定向重放Authorization头",
+  "report_url": "https://hackerone.com/reports/863979",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 943737,
+  "theme": "Electron安全",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "Electron WebView权限配置不当导致任意文件读取属于配置错误，归入方法论总线",
+  "knowledge_point": "Electron WebView 权限配置不当导致任意文件读取",
+  "report_url": "https://hackerone.com/reports/943737",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 1274695,
+  "theme": "远程调试与RCE",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "Chrome远程调试端口滥用导致RCE属于配置错误和攻击面识别，归入方法论总线",
+  "knowledge_point": "Chrome 远程调试端口滥用导致RCE",
+  "report_url": "https://hackerone.com/reports/1274695",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 317321,
+  "theme": "符号链接与路径遍历",
+  "action": "fold",
+  "target": "hunt-path-traversal",
+  "reason": "利用符号链接在解压时删除任意目录是路径遍历的变体",
+  "knowledge_point": "利用符号链接在解压时删除任意目录",
+  "report_url": "https://hackerone.com/reports/317321",
+  "category": "路径遍历"
+ },
+ {
+  "id": 1404731,
+  "theme": "编码绕过",
+  "action": "fold",
+  "target": "hunt-path-traversal",
+  "reason": "URL编码二次解码绕过路径遍历补丁是路径遍历的绕过变体",
+  "knowledge_point": "URL编码二次解码绕过路径遍历补丁",
+  "report_url": "https://hackerone.com/reports/1404731",
+  "category": "路径遍历"
+ },
+ {
+  "id": 344595,
+  "theme": "硬链接与路径遍历",
+  "action": "fold",
+  "target": "hunt-path-traversal",
+  "reason": "tar硬链接任意文件覆盖是路径遍历的变体",
+  "knowledge_point": "tar 硬链接任意文件覆盖",
+  "report_url": "https://hackerone.com/reports/344595",
+  "category": "路径遍历"
+ },
+ {
+  "id": 637840,
+  "theme": "客户端信任与路径遍历",
+  "action": "fold",
+  "target": "hunt-path-traversal",
+  "reason": "客户端信任服务器路径导致dlopen任意文件是路径遍历的变体",
+  "knowledge_point": "客户端信任服务器路径导致dlopen任意文件",
+  "report_url": "https://hackerone.com/reports/637840",
+  "category": "路径遍历"
+ },
+ {
+  "id": 270072,
+  "theme": "符号链接与路径遍历",
+  "action": "fold",
+  "target": "hunt-path-traversal",
+  "reason": "symlink绕过realpath检查实现任意文件写入是路径遍历的变体",
+  "knowledge_point": "symlink 绕过 realpath 检查实现任意文件写入",
+  "report_url": "https://hackerone.com/reports/270072",
+  "category": "路径遍历"
+ },
+ {
+  "id": 2262939,
+  "theme": "CDN配置错误",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "CDN配置指向未认领S3桶导致供应链攻击属于配置错误，归入方法论总线",
+  "knowledge_point": "CDN配置指向未认领S3桶导致供应链攻击",
+  "report_url": "https://hackerone.com/reports/2262939",
+  "category": "配置错误"
+ },
+ {
+  "id": 1238482,
+  "theme": "云配置错误",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "AWS Load Balancer Controller标签伪造安全组归属属于配置错误，归入方法论总线",
+  "knowledge_point": "AWS Load Balancer Controller 标签伪造安全组归属",
+  "report_url": "https://hackerone.com/reports/1238482",
+  "category": "配置错误"
+ },
+ {
+  "id": 423022,
+  "theme": "OAuth CSRF",
+  "action": "fold",
+  "target": "hunt-csrf",
+  "reason": "OAuth回调CSRF是CSRF的变体，导致账户接管",
+  "knowledge_point": "OAuth回调CSRF导致账户接管",
+  "report_url": "https://hackerone.com/reports/423022",
+  "category": "CSRF"
+ },
+ {
+  "id": 102376,
+  "theme": "CSRF绕过",
+  "action": "fold",
+  "target": "hunt-csrf",
+  "reason": "利用重定向参数绕过CSRF防护是CSRF绕过变体",
+  "knowledge_point": "利用重定向参数绕过 CSRF 防护",
+  "report_url": "https://hackerone.com/reports/102376",
+  "category": "CSRF"
+ },
+ {
+  "id": 386334,
+  "theme": "CSS注入",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "CSS注入枚举CSRF token并组合XSS，属于XSS攻击链",
+  "knowledge_point": "CSS 注入枚举 CSRF token 并组合 XSS",
+  "report_url": "https://hackerone.com/reports/386334",
+  "category": "CSS注入"
+ },
+ {
+  "id": 630903,
+  "theme": "DLL劫持",
+  "action": "drop",
+  "target": "",
+  "reason": "DLL劫持属本地二进制攻击，非web渗透范围",
+  "knowledge_point": "OpenSSL 配置文件搜索路径导致 DLL 劫持",
+  "report_url": "https://hackerone.com/reports/630903",
+  "category": "DLL 劫持"
+ },
+ {
+  "id": 110578,
+  "theme": "HTML注入",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "HTML注入绕过CSP窃取数据是XSS变体",
+  "knowledge_point": "HTML 注入利用 meta refresh 和单引号未转义绕过 CSP 窃取数据",
+  "report_url": "https://hackerone.com/reports/110578",
+  "category": "HTML注入"
+ },
+ {
+  "id": 2372363,
+  "theme": "提示注入",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "LLM提示注入属新兴攻击面，无专用skill，归入方法论总线",
+  "knowledge_point": "Unicode 标签字符隐藏提示注入",
+  "report_url": "https://hackerone.com/reports/2372363",
+  "category": "LLM"
+ },
+ {
+  "id": 632101,
+  "theme": "SSRF绕过",
+  "action": "fold",
+  "target": "hunt-ssrf",
+  "reason": "DNS重绑定绕过SSRF防护是SSRF绕过变体",
+  "knowledge_point": "DNS 重绑定绕过 SSRF 防护（DNS 解析失败时跳过 IP 检查）",
+  "report_url": "https://hackerone.com/reports/632101",
+  "category": "SSRF"
+ },
+ {
+  "id": 326040,
+  "theme": "SSRF",
+  "action": "fold",
+  "target": "hunt-ssrf",
+  "reason": "插件功能滥用导致SSRF访问云元数据是SSRF变体",
+  "knowledge_point": "插件功能滥用导致 SSRF 访问云元数据",
+  "report_url": "https://hackerone.com/reports/326040",
+  "category": "SSRF"
+ },
+ {
+  "id": 925527,
+  "theme": "SSRF绕过",
+  "action": "fold",
+  "target": "hunt-ssrf",
+  "reason": "DNS rebinding和未检查IP范围是SSRF绕过变体",
+  "knowledge_point": "SSRF 绕过：DNS rebinding 和未检查 IP 范围（0.0.0.0, 169.254.0.0/16）",
+  "report_url": "https://hackerone.com/reports/925527",
+  "category": "SSRF"
+ },
+ {
+  "id": 369451,
+  "theme": "SSRF绕过",
+  "action": "fold",
+  "target": "hunt-ssrf",
+  "reason": "CI运行状态差异导致SSRF防护绕过是SSRF变体",
+  "knowledge_point": "CI 运行状态差异导致 SSRF 防护绕过",
+  "report_url": "https://hackerone.com/reports/369451",
+  "category": "SSRF"
+ },
+ {
+  "id": 187520,
+  "theme": "SSRF绕过",
+  "action": "fold",
+  "target": "hunt-ssrf",
+  "reason": "利用重定向绕过SSRF过滤是SSRF绕过变体",
+  "knowledge_point": "利用重定向绕过SSRF的IP/端口过滤并支持basic-auth",
+  "report_url": "https://hackerone.com/reports/187520",
+  "category": "SSRF"
+ },
+ {
+  "id": 1608039,
+  "theme": "SSRF",
+  "action": "fold",
+  "target": "hunt-ssrf",
+  "reason": "云元数据服务地址遗漏是SSRF变体",
+  "knowledge_point": "云元数据服务地址遗漏",
+  "report_url": "https://hackerone.com/reports/1608039",
+  "category": "SSRF"
+ },
+ {
+  "id": 809248,
+  "theme": "SSRF",
+  "action": "fold",
+  "target": "hunt-ssrf",
+  "reason": "信任边界内组件不可信导致SSRF是SSRF变体",
+  "knowledge_point": "信任边界内组件不可信导致 SSRF",
+  "report_url": "https://hackerone.com/reports/809248",
+  "category": "SSRF"
+ },
+ {
+  "id": 333419,
+  "theme": "SSRF",
+  "action": "fold",
+  "target": "hunt-ssrf",
+  "reason": "TURN服务器代理到内网导致SSRF是SSRF变体",
+  "knowledge_point": "TURN 服务器允许代理到内网导致 SSRF",
+  "report_url": "https://hackerone.com/reports/333419",
+  "category": "SSRF"
+ },
+ {
+  "id": 716761,
+  "theme": "WAF绕过",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "WAF绕过属配置错误/防护绕过，无专用skill，归入方法论总线",
+  "knowledge_point": "WAF字符范围过滤不完整绕过",
+  "report_url": "https://hackerone.com/reports/716761",
+  "category": "WAF绕过"
+ },
+ {
+  "id": 85488,
+  "theme": "XSS绕过",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "Unicode转义序列解析差异绕过XSS过滤是XSS变体",
+  "knowledge_point": "Unicode 转义序列解析差异绕过 XSS 过滤",
+  "report_url": "https://hackerone.com/reports/85488",
+  "category": "XSS"
+ },
+ {
+  "id": 84601,
+  "theme": "XSS",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "文件上传结合浏览器嗅探和AppCache缓存投毒导致XSS是XSS变体",
+  "knowledge_point": "未知文件类型上传结合浏览器嗅探和AppCache缓存投毒",
+  "report_url": "https://hackerone.com/reports/84601",
+  "category": "XSS"
+ },
+ {
+  "id": 473950,
+  "theme": "XSS",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "模板字符串拼接导致WebView XSS是XSS变体",
+  "knowledge_point": "模板字符串拼接导致 WebView XSS",
+  "report_url": "https://hackerone.com/reports/473950",
+  "category": "XSS"
+ },
+ {
+  "id": 171670,
+  "theme": "XSS绕过",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "HTML5实体绕过xss_clean()过滤是XSS绕过变体",
+  "knowledge_point": "HTML5 实体绕过 xss_clean() 正则过滤",
+  "report_url": "https://hackerone.com/reports/171670",
+  "category": "XSS"
+ },
+ {
+  "id": 394016,
+  "theme": "缓存XSS",
+  "action": "fold",
+  "target": "hunt-cache-poisoning",
+  "reason": "X-Forwarded-Host头注入导致缓存XSS是缓存投毒变体",
+  "knowledge_point": "X-Forwarded-Host 头注入导致缓存 XSS",
+  "report_url": "https://hackerone.com/reports/394016",
+  "category": "XSS"
+ },
+ {
+  "id": 132104,
+  "theme": "XSS过滤绕过",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "编辑与预览模式安全检查不一致属于XSS过滤绕过变体",
+  "knowledge_point": "编辑模式与预览模式安全检查不一致导致 XSS",
+  "report_url": "https://hackerone.com/reports/132104",
+  "category": "XSS"
+ },
+ {
+  "id": 1731349,
+  "theme": "XSS过滤绕过",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "选择器与取值对象不一致导致XSS注入，属于XSS上下文混淆",
+  "knowledge_point": "选择器与取值对象不一致导致XSS注入",
+  "report_url": "https://hackerone.com/reports/1731349",
+  "category": "XSS"
+ },
+ {
+  "id": 293689,
+  "theme": "参数解析差异",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "HTTP参数重复解析差异绕过签名，属于XSS或认证绕过，但主要导致XSS",
+  "knowledge_point": "HTTP 参数重复解析差异绕过签名",
+  "report_url": "https://hackerone.com/reports/293689",
+  "category": "XSS"
+ },
+ {
+  "id": 526325,
+  "theme": "XSS过滤绕过",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "Wiki层级链接语法转换绕过XSS过滤，属于XSS编码绕过",
+  "knowledge_point": "Wiki 层级链接语法转换绕过 XSS 过滤",
+  "report_url": "https://hackerone.com/reports/526325",
+  "category": "XSS"
+ },
+ {
+  "id": 229735,
+  "theme": "XSS过滤绕过",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "模板占位符二次注入绕过过滤，属于XSS注入变体",
+  "knowledge_point": "模板占位符二次注入绕过过滤",
+  "report_url": "https://hackerone.com/reports/229735",
+  "category": "XSS"
+ },
+ {
+  "id": 1518343,
+  "theme": "XSS过滤绕过",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "利用javascript伪协议和注释符绕过URL白名单，属于XSS过滤绕过",
+  "knowledge_point": "利用javascript:伪协议和注释符绕过URL白名单",
+  "report_url": "https://hackerone.com/reports/1518343",
+  "category": "XSS"
+ },
+ {
+  "id": 991713,
+  "theme": "模板注入",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "阅读器模式模板注入导致数据窃取，属于客户端模板注入导致XSS",
+  "knowledge_point": "阅读器模式模板注入导致数据窃取",
+  "report_url": "https://hackerone.com/reports/991713",
+  "category": "XSS"
+ },
+ {
+  "id": 425007,
+  "theme": "XSS注入",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "Open Graph标签注入导致持久性XSS，属于XSS注入变体",
+  "knowledge_point": "Open Graph 标签注入导致持久性 XSS",
+  "report_url": "https://hackerone.com/reports/425007",
+  "category": "XSS"
+ },
+ {
+  "id": 633231,
+  "theme": "XSS注入",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "WordPress shortcode函数副作用导致XSS，属于XSS注入变体",
+  "knowledge_point": "WordPress shortcode 函数副作用导致 XSS",
+  "report_url": "https://hackerone.com/reports/633231",
+  "category": "XSS"
+ },
+ {
+  "id": 1167034,
+  "theme": "XSS过滤绕过",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "八进制编码绕过大小写转换过滤实现XSS，属于XSS编码绕过",
+  "knowledge_point": "八进制编码绕过大小写转换过滤实现 XSS",
+  "report_url": "https://hackerone.com/reports/1167034",
+  "category": "XSS"
+ },
+ {
+  "id": 246794,
+  "theme": "XSS过滤绕过",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "安全处理状态标记由输入数据控制导致转义禁用，属于XSS过滤绕过",
+  "knowledge_point": "安全处理的状态标记由输入数据控制导致转义禁用",
+  "report_url": "https://hackerone.com/reports/246794",
+  "category": "XSS"
+ },
+ {
+  "id": 1736317,
+  "theme": "模板注入",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "客户端模板注入导致XSS结合编码绕过，属于CSTI变体",
+  "knowledge_point": "客户端模板注入（CSTI）导致XSS，结合编码绕过",
+  "report_url": "https://hackerone.com/reports/1736317",
+  "category": "XSS"
+ },
+ {
+  "id": 632017,
+  "theme": "XSS组合链",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "存储XSS与CSRF组合链实现ATO，属于XSS利用链",
+  "knowledge_point": "存储XSS与登录/登出CSRF组合链实现ATO",
+  "report_url": "https://hackerone.com/reports/632017",
+  "category": "XSS"
+ },
+ {
+  "id": 1095645,
+  "theme": "XXE配置错误",
+  "action": "fold",
+  "target": "hunt-xxe",
+  "reason": "LIBXML_NOENT标志导致XXE，属于XXE配置错误变体",
+  "knowledge_point": "LIBXML_NOENT 标志导致 XXE（框架行为变化）",
+  "report_url": "https://hackerone.com/reports/1095645",
+  "category": "XXE"
+ },
+ {
+  "id": 845832,
+  "theme": "XXE利用",
+  "action": "fold",
+  "target": "hunt-xxe",
+  "reason": "SVG上传触发XXE进而SSRF/LFI，属于XXE利用变体",
+  "knowledge_point": "SVG 上传触发 XXE 进而 SSRF/LFI",
+  "report_url": "https://hackerone.com/reports/845832",
+  "category": "XXE"
+ },
+ {
+  "id": 905816,
+  "theme": "认证绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "通过cookie中的MD5密码绕过速率限制暴力破解，属于认证绕过变体",
+  "knowledge_point": "通过 cookie 中的 MD5 密码绕过速率限制暴力破解",
+  "report_url": "https://hackerone.com/reports/905816",
+  "category": "业务逻辑"
+ },
+ {
+  "id": 1040047,
+  "theme": "认证绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "敏感令牌泄露给非预期角色导致邮箱验证绕过，属于认证绕过变体",
+  "knowledge_point": "敏感令牌泄露给非预期角色导致邮箱验证绕过",
+  "report_url": "https://hackerone.com/reports/1040047",
+  "category": "业务逻辑"
+ },
+ {
+  "id": 785833,
+  "theme": "账户接管",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "邮箱重复注册结合密码重置导致账户接管，属于认证绕过变体",
+  "knowledge_point": "邮箱重复注册结合密码重置导致账户接管",
+  "report_url": "https://hackerone.com/reports/785833",
+  "category": "业务逻辑"
+ },
+ {
+  "id": 423136,
+  "theme": "会话固定",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "会话固定结合XSS实现跨应用身份冒充，属于认证绕过变体",
+  "knowledge_point": "会话固定结合XSS实现跨应用身份冒充",
+  "report_url": "https://hackerone.com/reports/423136",
+  "category": "业务逻辑"
+ },
+ {
+  "id": 195058,
+  "theme": "信息泄露",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "命名空间重命名后旧链接未失效导致旧导出文件泄露，属于信息泄露横切类",
+  "knowledge_point": "命名空间重命名后旧链接未失效导致旧导出文件泄露",
+  "report_url": "https://hackerone.com/reports/195058",
+  "category": "业务逻辑"
+ },
+ {
+  "id": 1018336,
+  "theme": "业务逻辑-数据最小化",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "客户端可控布尔标志破坏数据最小化策略属于业务逻辑配置错误，无专用skill，归入方法论总线",
+  "knowledge_point": "客户端可控布尔标志破坏数据最小化策略",
+  "report_url": "https://hackerone.com/reports/1018336",
+  "category": "业务逻辑"
+ },
+ {
+  "id": 422279,
+  "theme": "URL解析差异",
+  "action": "fold",
+  "target": "hunt-open-redirect",
+  "reason": "URL解析差异导致钓鱼是开放重定向的变体，归入hunt-open-redirect",
+  "knowledge_point": "URL 解析差异导致钓鱼（反斜杠和 @ 符号）",
+  "report_url": "https://hackerone.com/reports/422279",
+  "category": "业务逻辑"
+ },
+ {
+  "id": 410015,
+  "theme": "侧信道信息泄露",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "利用报告计数差异侧信道探测私有程序存在性属于信息泄露横切类，无专用skill",
+  "knowledge_point": "利用报告计数差异侧信道探测私有程序存在性",
+  "report_url": "https://hackerone.com/reports/410015",
+  "category": "业务逻辑"
+ },
+ {
+  "id": 330105,
+  "theme": "业务逻辑-算术错误",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "交易舍入误差套利属于业务逻辑算术错误，无专用skill，归入方法论总线",
+  "knowledge_point": "利用交易舍入误差和最小交易单位进行套利",
+  "report_url": "https://hackerone.com/reports/330105",
+  "category": "业务逻辑"
+ },
+ {
+  "id": 307675,
+  "theme": "信任链验证",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "平台间信任链验证缺陷属于跨组件攻击链，归入方法论总线",
+  "knowledge_point": "平台间信任链验证缺陷：fork 的 gist 被误认为所有权证明",
+  "report_url": "https://hackerone.com/reports/307675",
+  "category": "业务逻辑"
+ },
+ {
+  "id": 1446090,
+  "theme": "业务逻辑-算术错误",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "服务端取整函数不一致导致业务逻辑漏洞，属于算术错误类，无专用skill",
+  "knowledge_point": "服务端对同一数值使用不同取整函数（ceil/floor）导致业务逻辑漏洞",
+  "report_url": "https://hackerone.com/reports/1446090",
+  "category": "业务逻辑"
+ },
+ {
+  "id": 481518,
+  "theme": "速率限制绕过",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "GraphQL负值参数绕过速率限制属于配置错误/业务逻辑，无专用skill",
+  "knowledge_point": "GraphQL 负值参数绕过速率限制",
+  "report_url": "https://hackerone.com/reports/481518",
+  "category": "业务逻辑"
+ },
+ {
+  "id": 1615790,
+  "theme": "状态混淆",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "过期令牌仍被接受属于认证状态混淆，归入hunt-auth-bypass",
+  "knowledge_point": "过期令牌仍被服务端接受（状态混淆）",
+  "report_url": "https://hackerone.com/reports/1615790",
+  "category": "业务逻辑"
+ },
+ {
+  "id": 968165,
+  "theme": "邮箱验证缺陷",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "邮箱验证仅检查域名部分导致信息泄露，属于认证绕过变体",
+  "knowledge_point": "邮箱验证仅检查域名部分导致信息泄露",
+  "report_url": "https://hackerone.com/reports/968165",
+  "category": "业务逻辑"
+ },
+ {
+  "id": 1350401,
+  "theme": "状态混淆",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "密码重置流程状态混淆绕过邮箱验证，属于认证绕过",
+  "knowledge_point": "密码重置流程状态混淆绕过邮箱验证",
+  "report_url": "https://hackerone.com/reports/1350401",
+  "category": "业务逻辑"
+ },
+ {
+  "id": 244612,
+  "theme": "密码重置缺陷",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "密码重置链接未随邮箱变更失效，属于认证绕过变体",
+  "knowledge_point": "密码重置链接未随邮箱变更失效",
+  "report_url": "https://hackerone.com/reports/244612",
+  "category": "业务逻辑"
+ },
+ {
+  "id": 170310,
+  "theme": "速率限制绕过",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "空字节截断绕过速率限制属于配置错误/业务逻辑，无专用skill",
+  "knowledge_point": "空字节截断绕过速率限制",
+  "report_url": "https://hackerone.com/reports/170310",
+  "category": "业务逻辑"
+ },
+ {
+  "id": 219215,
+  "theme": "支付篡改",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "支付接收方参数可篡改导致支付不一致，属于业务逻辑漏洞，无专用skill",
+  "knowledge_point": "支付接收方参数可篡改导致支付不一致",
+  "report_url": "https://hackerone.com/reports/219215",
+  "category": "业务逻辑"
+ },
+ {
+  "id": 2106708,
+  "theme": "TOCTOU",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "HEAD/GET请求差异绕过MIME校验属于TOCTOU竞态，归入方法论总线",
+  "knowledge_point": "HEAD/GET 请求差异绕过 MIME 校验（TOCTOU）",
+  "report_url": "https://hackerone.com/reports/2106708",
+  "category": "业务逻辑"
+ },
+ {
+  "id": 1849626,
+  "theme": "业务逻辑-幂等性",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "业务逻辑幂等性缺失导致无限折扣，属于业务逻辑漏洞，无专用skill",
+  "knowledge_point": "业务逻辑幂等性缺失导致无限折扣",
+  "report_url": "https://hackerone.com/reports/1849626",
+  "category": "业务逻辑"
+ },
+ {
+  "id": 808975,
+  "theme": "业务逻辑-算术错误",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "浮点数舍入误差绕过佣金，属于算术错误类，无专用skill",
+  "knowledge_point": "浮点数舍入误差绕过佣金",
+  "report_url": "https://hackerone.com/reports/808975",
+  "category": "业务逻辑"
+ },
+ {
+  "id": 1089978,
+  "theme": "支付篡改",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "支付金额字段篡改导致超收或退款，属于业务逻辑漏洞，无专用skill",
+  "knowledge_point": "支付金额字段篡改导致超收或退款",
+  "report_url": "https://hackerone.com/reports/1089978",
+  "category": "业务逻辑"
+ },
+ {
+  "id": 889795,
+  "theme": "路径归一化",
+  "action": "fold",
+  "target": "hunt-path-traversal",
+  "reason": "路径归一化差异导致授权绕过，属于路径遍历变体",
+  "knowledge_point": "路径归一化差异导致授权绕过（path=\".\" 共享根目录）",
+  "report_url": "https://hackerone.com/reports/889795",
+  "category": "业务逻辑"
+ },
+ {
+  "id": 894308,
+  "theme": "代码注入",
+  "action": "fold",
+  "target": "hunt-command-injection",
+  "reason": "JSON Schema验证器代码生成注入导致RCE，属于代码注入类，归入命令注入",
+  "knowledge_point": "JSON Schema验证器代码生成注入导致RCE",
+  "report_url": "https://hackerone.com/reports/894308",
+  "category": "代码注入"
+ },
+ {
+  "id": 2209665,
+  "theme": "URL编码差异",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "URL编码差异绕过敏感信息掩码，属于信息泄露横切类，无专用skill",
+  "knowledge_point": "利用URL编码差异绕过敏感信息掩码",
+  "report_url": "https://hackerone.com/reports/2209665",
+  "category": "信息泄露"
+ },
+ {
+  "id": 1173436,
+  "theme": "信息泄露",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "默认配置导致隐私数据泄露属于配置错误类信息泄露，归入方法论总线。",
+  "knowledge_point": "默认配置导致隐私数据泄露（联邦云 ID 发送到查找服务器）",
+  "report_url": "https://hackerone.com/reports/1173436",
+  "category": "信息泄露"
+ },
+ {
+  "id": 1262434,
+  "theme": "信息泄露",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "会话参数经Referer泄露属于信息泄露，归入方法论总线。",
+  "knowledge_point": "会话参数经Referer泄露导致店铺密码绕过",
+  "report_url": "https://hackerone.com/reports/1262434",
+  "category": "信息泄露"
+ },
+ {
+  "id": 2382120,
+  "theme": "信息泄露",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "API与GraphQL权限不一致属于跨组件权限配置错误，归入方法论总线。",
+  "knowledge_point": "API与GraphQL权限不一致导致信息泄露",
+  "report_url": "https://hackerone.com/reports/2382120",
+  "category": "信息泄露"
+ },
+ {
+  "id": 1269242,
+  "theme": "内存破坏",
+  "action": "drop",
+  "target": "",
+  "reason": "libcurl MQTT UAF和double-free属于内存破坏，非web渗透库范围。",
+  "knowledge_point": "libcurl MQTT实现中UAF和double-free",
+  "report_url": "https://hackerone.com/reports/1269242",
+  "category": "内存破坏"
+ },
+ {
+  "id": 1154003,
+  "theme": "协议行为利用",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "IPv6子网绕过速率限制属于业务逻辑/配置错误，归入方法论总线。",
+  "knowledge_point": "IPv6子网绕过速率限制",
+  "report_url": "https://hackerone.com/reports/1154003",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 317931,
+  "theme": "协议行为利用",
+  "action": "fold",
+  "target": "hunt-open-redirect",
+  "reason": "URL解析器对@分隔符处理差异绕过同形字攻击防护，属于URL解析绕过变体。",
+  "knowledge_point": "URL 解析器对 @ 分隔符处理差异绕过同形字攻击防护",
+  "report_url": "https://hackerone.com/reports/317931",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 1019891,
+  "theme": "协议行为利用",
+  "action": "drop",
+  "target": "",
+  "reason": "Windows命名管道中间人攻击依赖特定环境，非通用web漏洞。",
+  "knowledge_point": "Windows命名管道中间人攻击",
+  "report_url": "https://hackerone.com/reports/1019891",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 723175,
+  "theme": "协议行为利用",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "跨站事件泄漏（xsleaks）属于浏览器侧信息泄露，与XSS相关。",
+  "knowledge_point": "跨站事件泄漏（xsleaks）实现去匿名化",
+  "report_url": "https://hackerone.com/reports/723175",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 1213181,
+  "theme": "协议行为利用",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "curl Metalink下载凭据泄露属于协议行为导致的信息泄露，归入方法论总线。",
+  "knowledge_point": "curl Metalink下载凭据泄露",
+  "report_url": "https://hackerone.com/reports/1213181",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 363680,
+  "theme": "协议行为利用",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "非恒定时间比较导致时序侧信道属于配置/实现缺陷，归入方法论总线。",
+  "knowledge_point": "非恒定时间比较导致时序侧信道",
+  "report_url": "https://hackerone.com/reports/363680",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 678487,
+  "theme": "协议行为利用",
+  "action": "fold",
+  "target": "hunt-open-redirect",
+  "reason": "Node.js url.parse() Unicode主机名欺骗属于URL解析绕过变体。",
+  "knowledge_point": "Node.js url.parse() Unicode主机名欺骗",
+  "report_url": "https://hackerone.com/reports/678487",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 589739,
+  "theme": "协议行为利用",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "HTTP/2协议特性导致的DoS属于协议滥用，归入方法论总线。",
+  "knowledge_point": "HTTP/2 协议特性导致的多种 DoS 攻击（窗口、优先级、帧序列）",
+  "report_url": "https://hackerone.com/reports/589739",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 2402853,
+  "theme": "协议行为利用",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "HTTP/2 PUSH_PROMISE畸形帧导致内存泄漏属于协议实现缺陷，归入方法论总线。",
+  "knowledge_point": "HTTP/2 PUSH_PROMISE 畸形帧触发错误路径导致内存泄漏",
+  "report_url": "https://hackerone.com/reports/2402853",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 1176461,
+  "theme": "协议行为利用",
+  "action": "drop",
+  "target": "",
+  "reason": "TELNET子选项解析未初始化内存泄露依赖特定协议实现，非web库范围。",
+  "knowledge_point": "TELNET 子选项解析中 sscanf 返回值检查不严导致未初始化内存泄露",
+  "report_url": "https://hackerone.com/reports/1176461",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 281336,
+  "theme": "协议行为利用",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "String#oct解析tar头字段接受负数导致无限循环属于解析器缺陷，归入方法论总线。",
+  "knowledge_point": "利用 String#oct 解析 tar 头字段时接受负数导致无限循环",
+  "report_url": "https://hackerone.com/reports/281336",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 276105,
+  "theme": "协议行为利用",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "IE内容嗅探绕过nosniff头实现XSS属于XSS绕过变体。",
+  "knowledge_point": "利用 IE 内容嗅探绕过 nosniff 头实现 XSS",
+  "report_url": "https://hackerone.com/reports/276105",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 416040,
+  "theme": "协议行为利用",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "浏览器协议权限模型缺陷url:前缀嵌套绕过属于配置/协议滥用，归入方法论总线。",
+  "knowledge_point": "浏览器协议权限模型缺陷：url: 前缀嵌套绕过",
+  "report_url": "https://hackerone.com/reports/416040",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 507525,
+  "theme": "协议行为利用",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "代理服务器滥用导致DoS属于配置错误/协议滥用，归入方法论总线。",
+  "knowledge_point": "代理服务器滥用导致 DoS（慢速响应、分块传输、CDN 缓存绕过）",
+  "report_url": "https://hackerone.com/reports/507525",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 5928,
+  "theme": "协议行为利用",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "应用层压缩解压炸弹导致DoS属于资源耗尽攻击，归入方法论总线。",
+  "knowledge_point": "利用应用层压缩（zlib）构造解压炸弹导致DoS",
+  "report_url": "https://hackerone.com/reports/5928",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 108082,
+  "theme": "协议行为利用",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "CFB模式可延展性篡改密文属于加密协议滥用，归入方法论总线。",
+  "knowledge_point": "利用CFB模式可延展性篡改密文，结合已知明文注入恶意代码",
+  "report_url": "https://hackerone.com/reports/108082",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 358005,
+  "theme": "SOP绕过",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "data: URI iframe 继承父 origin 绕过 SOP，属于 XSS 相关绕过变体",
+  "knowledge_point": "data: URI iframe 继承父 origin 绕过 SOP",
+  "report_url": "https://hackerone.com/reports/358005",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 268984,
+  "theme": "URL验证绕过",
+  "action": "fold",
+  "target": "hunt-open-redirect",
+  "reason": "同形异义词攻击绕过 URL 验证，属于开放重定向的绕过变体",
+  "knowledge_point": "同形异义词攻击绕过 URL 验证",
+  "report_url": "https://hackerone.com/reports/268984",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 26962,
+  "theme": "OAuth重定向",
+  "action": "fold",
+  "target": "hunt-open-redirect",
+  "reason": "OAuth 规范错误处理导致开放重定向，属于开放重定向的绕过变体",
+  "knowledge_point": "OAuth规范错误处理不明确导致开放重定向",
+  "report_url": "https://hackerone.com/reports/26962",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 563268,
+  "theme": "域名显示欺骗",
+  "action": "fold",
+  "target": "hunt-open-redirect",
+  "reason": "Unicode 双向算法绕过域名显示，属于 URL 验证绕过，可归入开放重定向",
+  "knowledge_point": "Unicode 双向算法绕过域名显示",
+  "report_url": "https://hackerone.com/reports/563268",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 2352957,
+  "theme": "重定向敏感头",
+  "action": "fold",
+  "target": "hunt-open-redirect",
+  "reason": "HTTP 重定向时敏感头未清除，属于开放重定向的变体",
+  "knowledge_point": "HTTP 重定向时敏感头未清除",
+  "report_url": "https://hackerone.com/reports/2352957",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 369218,
+  "theme": "协议处理绕过",
+  "action": "fold",
+  "target": "hunt-open-redirect",
+  "reason": "浏览器自定义协议处理绕过安全限制，属于 URL 处理绕过，可归入开放重定向",
+  "knowledge_point": "浏览器自定义协议处理绕过安全限制",
+  "report_url": "https://hackerone.com/reports/369218",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 145392,
+  "theme": "响应头注入",
+  "action": "fold",
+  "target": "hunt-request-smuggling",
+  "reason": "利用 RFC1945 头折叠和 IE 差异实现响应头注入，属于请求走私相关变体",
+  "knowledge_point": "利用RFC1945头折叠和IE浏览器差异实现响应头注入",
+  "report_url": "https://hackerone.com/reports/145392",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 1455411,
+  "theme": "TLS证书验证",
+  "action": "drop",
+  "target": "",
+  "reason": "OpenSSL 内部错误处理不当，属底层库缺陷，非 web 渗透库范围",
+  "knowledge_point": "OpenSSL X509_verify_cert()内部错误处理不当",
+  "report_url": "https://hackerone.com/reports/1455411",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 1096907,
+  "theme": "DoS资源耗尽",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "Kubernetes Validating Webhook 资源耗尽导致 DoS，属配置错误/资源管理问题，归入方法论总线",
+  "knowledge_point": "Kubernetes Validating Webhook 资源耗尽导致 DoS",
+  "report_url": "https://hackerone.com/reports/1096907",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 890747,
+  "theme": "协议篡改",
+  "action": "drop",
+  "target": "",
+  "reason": "EMV 协议 DDA 模式 CVM 列表篡改，属支付协议攻击，非 web 渗透库范围",
+  "knowledge_point": "EMV 协议 DDA 模式下 CVM 列表篡改绕过 PIN 验证",
+  "report_url": "https://hackerone.com/reports/890747",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 1874716,
+  "theme": "HSTS绕过",
+  "action": "fold",
+  "target": "hunt-cache-poisoning",
+  "reason": "并行传输导致 HSTS 缓存覆盖绕过，属于缓存投毒相关变体",
+  "knowledge_point": "并行传输导致 HSTS 缓存覆盖绕过",
+  "report_url": "https://hackerone.com/reports/1874716",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 1086108,
+  "theme": "域名验证绕过",
+  "action": "fold",
+  "target": "hunt-open-redirect",
+  "reason": "DNS 尾随点绕过域名所有权验证，属于 URL 验证绕过，可归入开放重定向",
+  "knowledge_point": "DNS 尾随点绕过域名所有权验证",
+  "report_url": "https://hackerone.com/reports/1086108",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 52042,
+  "theme": "编码绕过",
+  "action": "fold",
+  "target": "hunt-request-smuggling",
+  "reason": "UTF-8 编码绕过 CRLF 过滤，属于请求走私相关变体",
+  "knowledge_point": "UTF-8 编码绕过 CRLF 过滤",
+  "report_url": "https://hackerone.com/reports/52042",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 462442,
+  "theme": "RPC冒充",
+  "action": "drop",
+  "target": "",
+  "reason": "端口抢占冒充 RPC 服务器，属本地服务攻击，非 web 渗透库范围",
+  "knowledge_point": "端口抢占冒充 RPC 服务器",
+  "report_url": "https://hackerone.com/reports/462442",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 278095,
+  "theme": "URL验证绕过",
+  "action": "fold",
+  "target": "hunt-open-redirect",
+  "reason": "URL 空白字符绕过主机名检测，属于开放重定向的绕过变体",
+  "knowledge_point": "URL 空白字符绕过主机名检测",
+  "report_url": "https://hackerone.com/reports/278095",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 688048,
+  "theme": "URL解析缺陷",
+  "action": "fold",
+  "target": "hunt-open-redirect",
+  "reason": "curl IPv6 字面量解析缺陷导致连接意外主机，属于 URL 解析绕过，可归入开放重定向",
+  "knowledge_point": "curl IPv6字面量解析缺陷导致连接意外主机",
+  "report_url": "https://hackerone.com/reports/688048",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 187305,
+  "theme": "内存安全",
+  "action": "drop",
+  "target": "",
+  "reason": "strncmp 零长度比较导致无限循环，属内存/逻辑缺陷，非 web 渗透库范围",
+  "knowledge_point": "strncmp零长度比较导致无限循环",
+  "report_url": "https://hackerone.com/reports/187305",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 541502,
+  "theme": "代理TLS降级",
+  "action": "fold",
+  "target": "hunt-request-smuggling",
+  "reason": "代理 CONNECT 响应非 200 时未 TLS 升级导致明文传输，属于请求走私相关变体",
+  "knowledge_point": "代理 CONNECT 响应非 200 时未 TLS 升级导致明文传输",
+  "report_url": "https://hackerone.com/reports/541502",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 430463,
+  "theme": "系统安全绕过",
+  "action": "drop",
+  "target": "",
+  "reason": "macOS quarantine 属性缺失导致 Gatekeeper 绕过，属操作系统安全，非 web 渗透库范围",
+  "knowledge_point": "macOS quarantine 属性缺失导致 Gatekeeper 绕过",
+  "report_url": "https://hackerone.com/reports/430463",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 460928,
+  "theme": "路径规范化绕过",
+  "action": "fold",
+  "target": "hunt-path-traversal",
+  "reason": "换行符绕过路径规范化导致 S3 桶信息泄露，属于路径遍历的绕过变体",
+  "knowledge_point": "换行符绕过路径规范化导致 S3 桶信息泄露",
+  "report_url": "https://hackerone.com/reports/460928",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 378805,
+  "theme": "协议行为利用",
+  "action": "fold",
+  "target": "hunt-open-redirect",
+  "reason": "ftp协议绕过导航限制属于URL协议处理绕过，可归入开放重定向的变体",
+  "knowledge_point": "ftp 协议绕过 chrome-extension 导航限制",
+  "report_url": "https://hackerone.com/reports/378805",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 1002188,
+  "theme": "协议行为利用",
+  "action": "fold",
+  "target": "hunt-request-smuggling",
+  "reason": "重复TE头是典型的HTTP请求走私变体",
+  "knowledge_point": "重复 TE 头导致 HTTP 请求走私",
+  "report_url": "https://hackerone.com/reports/1002188",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 639473,
+  "theme": "协议行为利用",
+  "action": "drop",
+  "target": "",
+  "reason": "PGP密钥服务器短ID碰撞属于特定加密生态问题，非通用web渗透主题",
+  "knowledge_point": "PGP 密钥服务器短 ID 碰撞与投毒",
+  "report_url": "https://hackerone.com/reports/639473",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 322935,
+  "theme": "协议行为利用",
+  "action": "drop",
+  "target": "",
+  "reason": "Off-by-one内存破坏链属内存破坏范畴，不在web漏洞库范围",
+  "knowledge_point": "Off-by-one漏洞利用链：从内存破坏到预认证RCE",
+  "report_url": "https://hackerone.com/reports/322935",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 302651,
+  "theme": "协议行为利用",
+  "action": "fold",
+  "target": "hunt-open-redirect",
+  "reason": "重定向跟随导致凭据泄露是开放重定向的利用变体",
+  "knowledge_point": "重定向跟随导致凭据泄露",
+  "report_url": "https://hackerone.com/reports/302651",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 2429894,
+  "theme": "协议行为利用",
+  "action": "fold",
+  "target": "hunt-ssrf",
+  "reason": "域名解析漏洞导致SSRF，属于SSRF的触发变体",
+  "knowledge_point": "libuv域名解析漏洞导致SSRF",
+  "report_url": "https://hackerone.com/reports/2429894",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 2243710,
+  "theme": "协议行为利用",
+  "action": "fold",
+  "target": "hunt-open-redirect",
+  "reason": "跨域重定向时Cookie未清除是重定向处理不当的变体",
+  "knowledge_point": "跨域重定向时 Cookie 未清除（undici-fetch）",
+  "report_url": "https://hackerone.com/reports/2243710",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 39658,
+  "theme": "协议行为利用",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "反射文件下载本质是内容处置不当导致的XSS变体",
+  "knowledge_point": "反射文件下载（Reflected File Download）",
+  "report_url": "https://hackerone.com/reports/39658",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 213437,
+  "theme": "协议行为利用",
+  "action": "drop",
+  "target": "",
+  "reason": "JWE Invalid Curve攻击属密码学实现缺陷，非通用web渗透主题",
+  "knowledge_point": "JWE Invalid Curve 攻击",
+  "report_url": "https://hackerone.com/reports/213437",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 1721098,
+  "theme": "协议行为利用",
+  "action": "drop",
+  "target": "",
+  "reason": "curl .netrc解析器越界读写属内存破坏，不在web漏洞库范围",
+  "knowledge_point": "curl .netrc 解析器对空格字符假设导致的越界读写",
+  "report_url": "https://hackerone.com/reports/1721098",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 384569,
+  "theme": "协议行为利用",
+  "action": "fold",
+  "target": "hunt-open-redirect",
+  "reason": "Unicode RTL覆盖字符绕过可信链接警告是URL显示欺骗变体",
+  "knowledge_point": "Unicode RTL 覆盖字符绕过可信链接警告",
+  "report_url": "https://hackerone.com/reports/384569",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 1102764,
+  "theme": "协议行为利用",
+  "action": "fold",
+  "target": "hunt-open-redirect",
+  "reason": "URL规范化缺失绕过预览限制属于URL处理绕过变体",
+  "knowledge_point": "URL 规范化缺失绕过 Slack Blocked Previews",
+  "report_url": "https://hackerone.com/reports/1102764",
+  "category": "协议行为利用"
+ },
+ {
+  "id": 712065,
+  "theme": "原型污染",
+  "action": "fold",
+  "target": "hunt-prototype-pollution",
+  "reason": "lodash原型污染是原型污染库特定变体",
+  "knowledge_point": "lodash 原型污染：zipObjectDeep 函数",
+  "report_url": "https://hackerone.com/reports/712065",
+  "category": "原型污染"
+ },
+ {
+  "id": 998398,
+  "theme": "原型污染",
+  "action": "fold",
+  "target": "hunt-prototype-pollution",
+  "reason": "原型污染结合eval gadget实现XSS是原型污染利用链",
+  "knowledge_point": "原型污染 + eval gadget 实现 XSS",
+  "report_url": "https://hackerone.com/reports/998398",
+  "category": "原型污染"
+ },
+ {
+  "id": 878181,
+  "theme": "原型污染",
+  "action": "fold",
+  "target": "hunt-prototype-pollution",
+  "reason": "原型污染注入NODE_OPTIONS导致RCE是原型污染利用变体",
+  "knowledge_point": "原型污染注入NODE_OPTIONS导致RCE",
+  "report_url": "https://hackerone.com/reports/878181",
+  "category": "原型污染"
+ },
+ {
+  "id": 1280002,
+  "theme": "原型污染",
+  "action": "fold",
+  "target": "hunt-prototype-pollution",
+  "reason": "Mermaid原型污染导致存储XSS是原型污染在特定库的变体",
+  "knowledge_point": "Mermaid 原型污染导致存储 XSS",
+  "report_url": "https://hackerone.com/reports/1280002",
+  "category": "原型污染"
+ },
+ {
+  "id": 73257,
+  "theme": "反序列化",
+  "action": "fold",
+  "target": "hunt-deserialization",
+  "reason": "YAML !php/object标签触发反序列化是反序列化利用变体",
+  "knowledge_point": "YAML解析器中的!php/object标签触发反序列化",
+  "report_url": "https://hackerone.com/reports/73257",
+  "category": "反序列化"
+ },
+ {
+  "id": 2334460,
+  "theme": "反序列化",
+  "action": "fold",
+  "target": "hunt-deserialization",
+  "reason": "绕过反序列化保护配置实现RCE是反序列化绕过变体",
+  "knowledge_point": "绕过反序列化保护配置（enable_xcom_pickling=False）实现RCE",
+  "report_url": "https://hackerone.com/reports/2334460",
+  "category": "反序列化"
+ },
+ {
+  "id": 146233,
+  "theme": "反序列化",
+  "action": "fold",
+  "target": "hunt-deserialization",
+  "reason": "PHP GC算法UAF导致反序列化RCE是反序列化利用变体",
+  "knowledge_point": "PHP GC算法UAF导致反序列化RCE",
+  "report_url": "https://hackerone.com/reports/146233",
+  "category": "反序列化"
+ },
+ {
+  "id": 350401,
+  "theme": "反序列化",
+  "action": "fold",
+  "target": "hunt-deserialization",
+  "reason": "Node.js反序列化利用IIFE执行代码是反序列化利用变体",
+  "knowledge_point": "Node.js 反序列化中利用 IIFE 和全局对象访问执行任意代码",
+  "report_url": "https://hackerone.com/reports/350401",
+  "category": "反序列化"
+ },
+ {
+  "id": 1702859,
+  "theme": "反序列化",
+  "action": "fold",
+  "target": "hunt-deserialization",
+  "reason": "Ruby JSON.load 反序列化导致 ReDoS 或意外对象，属于反序列化漏洞的变体",
+  "knowledge_point": "Ruby JSON.load 反序列化导致 ReDoS 或意外对象",
+  "report_url": "https://hackerone.com/reports/1702859",
+  "category": "反序列化"
+ },
+ {
+  "id": 274990,
+  "theme": "反序列化",
+  "action": "fold",
+  "target": "hunt-deserialization",
+  "reason": "绕过 Psych.safe_load 通过 YAML 到 Marshal 转换实现 RCE，是反序列化绕过变体",
+  "knowledge_point": "绕过Psych.safe_load通过YAML到Marshal转换实现RCE",
+  "report_url": "https://hackerone.com/reports/274990",
+  "category": "反序列化"
+ },
+ {
+  "id": 1529790,
+  "theme": "反序列化",
+  "action": "fold",
+  "target": "hunt-deserialization",
+  "reason": "Kafka Connect 的 JAAS 配置触发 JNDI 注入，属于反序列化相关攻击",
+  "knowledge_point": "通过Kafka Connect的JAAS配置触发JNDI注入实现RCE",
+  "report_url": "https://hackerone.com/reports/1529790",
+  "category": "反序列化"
+ },
+ {
+  "id": 164224,
+  "theme": "命令注入",
+  "action": "fold",
+  "target": "hunt-command-injection",
+  "reason": "Smarty 模板引擎 {php} 标签导致 SSTI，可导致命令执行，归入命令注入",
+  "knowledge_point": "Smarty 模板引擎 {php} 标签导致 SSTI",
+  "report_url": "https://hackerone.com/reports/164224",
+  "category": "命令注入"
+ },
+ {
+  "id": 730111,
+  "theme": "命令注入",
+  "action": "fold",
+  "target": "hunt-command-injection",
+  "reason": "Node.js 子进程命令拼接导致命令注入，典型命令注入变体",
+  "knowledge_point": "Node.js子进程命令拼接导致命令注入",
+  "report_url": "https://hackerone.com/reports/730111",
+  "category": "命令注入"
+ },
+ {
+  "id": 682442,
+  "theme": "命令注入",
+  "action": "fold",
+  "target": "hunt-command-injection",
+  "reason": "Git 命令选项注入导致任意文件读取，属于命令注入变体",
+  "knowledge_point": "Git 命令选项注入导致任意文件读取",
+  "report_url": "https://hackerone.com/reports/682442",
+  "category": "命令注入"
+ },
+ {
+  "id": 1161691,
+  "theme": "命令注入",
+  "action": "fold",
+  "target": "hunt-command-injection",
+  "reason": "open() 函数处理用户可控文件名导致命令注入，命令注入变体",
+  "knowledge_point": "open()函数处理用户可控文件名导致命令注入",
+  "report_url": "https://hackerone.com/reports/1161691",
+  "category": "命令注入"
+ },
+ {
+  "id": 288704,
+  "theme": "命令注入",
+  "action": "fold",
+  "target": "hunt-command-injection",
+  "reason": "用户输入注入命令行参数（分支名注入--config），命令注入变体",
+  "knowledge_point": "用户输入注入命令行参数（分支名注入--config）",
+  "report_url": "https://hackerone.com/reports/288704",
+  "category": "命令注入"
+ },
+ {
+  "id": 319467,
+  "theme": "命令注入",
+  "action": "fold",
+  "target": "hunt-command-injection",
+  "reason": "npm 库命令注入（macaddress），命令注入变体",
+  "knowledge_point": "npm 库命令注入（macaddress）",
+  "report_url": "https://hackerone.com/reports/319467",
+  "category": "命令注入"
+ },
+ {
+  "id": 692603,
+  "theme": "命令注入",
+  "action": "fold",
+  "target": "hunt-command-injection",
+  "reason": "恶意 .deb 包利用 postinst 脚本提权，属于命令注入变体",
+  "knowledge_point": "恶意 .deb 包利用 postinst 脚本提权",
+  "report_url": "https://hackerone.com/reports/692603",
+  "category": "命令注入"
+ },
+ {
+  "id": 449482,
+  "theme": "命令注入",
+  "action": "fold",
+  "target": "hunt-command-injection",
+  "reason": "Pathname 管道符命令注入，命令注入变体",
+  "knowledge_point": "Pathname管道符命令注入",
+  "report_url": "https://hackerone.com/reports/449482",
+  "category": "命令注入"
+ },
+ {
+  "id": 716677,
+  "theme": "子域名接管",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "CDN 域名分配机制滥用导致子域名接管，属于配置错误/信息泄露类横切主题",
+  "knowledge_point": "CDN 域名分配机制滥用导致子域名接管",
+  "report_url": "https://hackerone.com/reports/716677",
+  "category": "子域名接管"
+ },
+ {
+  "id": 1297689,
+  "theme": "子域名接管",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "S3 bucket 删除后 DNS 记录未清理导致子域名接管，配置错误类",
+  "knowledge_point": "S3 bucket 删除后 DNS 记录未清理导致子域名接管",
+  "report_url": "https://hackerone.com/reports/1297689",
+  "category": "子域名接管"
+ },
+ {
+  "id": 901775,
+  "theme": "授权绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "利用 apps 权限提取 analytics token 绕过权限限制，授权绕过变体",
+  "knowledge_point": "利用apps权限提取analytics token绕过权限限制",
+  "report_url": "https://hackerone.com/reports/901775",
+  "category": "授权绕过"
+ },
+ {
+  "id": 1424291,
+  "theme": "授权绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "内容协商绕过授权检查（Accept: application/json），授权绕过变体",
+  "knowledge_point": "内容协商绕过授权检查（Accept: application/json）",
+  "report_url": "https://hackerone.com/reports/1424291",
+  "category": "授权绕过"
+ },
+ {
+  "id": 423496,
+  "theme": "授权绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "邀请 token 未绑定商店 ID 导致跨商店注册绕过，授权绕过变体",
+  "knowledge_point": "邀请token未绑定商店ID导致跨商店注册绕过",
+  "report_url": "https://hackerone.com/reports/423496",
+  "category": "授权绕过"
+ },
+ {
+  "id": 2746,
+  "theme": "授权绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "S3 URL 可预测性结合信息泄露实现数据抓取，授权绕过变体",
+  "knowledge_point": "S3 URL可预测性结合信息泄露实现数据抓取",
+  "report_url": "https://hackerone.com/reports/2746",
+  "category": "授权绕过"
+ },
+ {
+  "id": 429000,
+  "theme": "授权绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "IDOR 结合 CAC 认证绕过，授权绕过变体",
+  "knowledge_point": "IDOR结合CAC认证绕过",
+  "report_url": "https://hackerone.com/reports/429000",
+  "category": "授权绕过"
+ },
+ {
+  "id": 1193062,
+  "theme": "授权绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "外部用户通过项目令牌提升权限，授权绕过变体",
+  "knowledge_point": "外部用户通过项目令牌提升权限",
+  "report_url": "https://hackerone.com/reports/1193062",
+  "category": "授权绕过"
+ },
+ {
+  "id": 1519099,
+  "theme": "授权绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "Electron 默认配置下 renderer 进程可访问蓝牙设备，属于权限绕过变体",
+  "knowledge_point": "Electron 默认配置下 renderer 进程可访问蓝牙设备（Web Bluetooth API）",
+  "report_url": "https://hackerone.com/reports/1519099",
+  "category": "授权绕过"
+ },
+ {
+  "id": 1521336,
+  "theme": "未文档化端点",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "未文档化内部端点绕过权限属于授权绕过变体",
+  "knowledge_point": "未文档化内部端点绕过权限",
+  "report_url": "https://hackerone.com/reports/1521336",
+  "category": "授权绕过"
+ },
+ {
+  "id": 608656,
+  "theme": "状态同步",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "禁用账户后状态未同步导致授权绕过",
+  "knowledge_point": "禁用账户后 GraphQL 端点未同步状态检查导致授权绕过",
+  "report_url": "https://hackerone.com/reports/608656",
+  "category": "授权绕过"
+ },
+ {
+  "id": 1193321,
+  "theme": "token权限",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "受限token可修改自身权限属于权限提升",
+  "knowledge_point": "受限 token 可修改自身权限导致权限提升",
+  "report_url": "https://hackerone.com/reports/1193321",
+  "category": "授权绕过"
+ },
+ {
+  "id": 403039,
+  "theme": "角色提升",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "黑名单角色通过中间角色绕过属于授权绕过",
+  "knowledge_point": "黑名单角色提升绕过（通过中间角色）",
+  "report_url": "https://hackerone.com/reports/403039",
+  "category": "授权绕过"
+ },
+ {
+  "id": 667408,
+  "theme": "权限模型",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "新功能未继承权限模型导致信息泄露",
+  "knowledge_point": "新功能未继承现有权限模型导致信息泄露",
+  "report_url": "https://hackerone.com/reports/667408",
+  "category": "授权绕过"
+ },
+ {
+  "id": 1767771,
+  "theme": "域名所有权",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "未验证域名所有权导致子域名接管属于授权绕过",
+  "knowledge_point": "API 端点未验证域名所有权导致子域名接管",
+  "report_url": "https://hackerone.com/reports/1767771",
+  "category": "授权绕过"
+ },
+ {
+  "id": 1990443,
+  "theme": "联邦权限",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "伪造通知提升联邦分享权限属于授权绕过",
+  "knowledge_point": "联邦分享权限提升通过伪造通知",
+  "report_url": "https://hackerone.com/reports/1990443",
+  "category": "授权绕过"
+ },
+ {
+  "id": 343626,
+  "theme": "信任头",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "信任Referer头进行权限校验导致提权",
+  "knowledge_point": "信任Referer头进行权限校验导致提权",
+  "report_url": "https://hackerone.com/reports/343626",
+  "category": "授权绕过"
+ },
+ {
+  "id": 1088159,
+  "theme": "状态一致性",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "权限传播状态不一致导致提权",
+  "knowledge_point": "权限传播状态不一致导致提权",
+  "report_url": "https://hackerone.com/reports/1088159",
+  "category": "授权绕过"
+ },
+ {
+  "id": 809816,
+  "theme": "跨组织token",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "跨组织token未校验资源归属导致提权",
+  "knowledge_point": "跨组织token未校验资源归属导致提权",
+  "report_url": "https://hackerone.com/reports/809816",
+  "category": "授权绕过"
+ },
+ {
+  "id": 397478,
+  "theme": "XPC服务",
+  "action": "drop",
+  "target": "",
+  "reason": "XPC服务未授权属于本地提权，非web库范围",
+  "knowledge_point": "XPC服务未授权导致提权",
+  "report_url": "https://hackerone.com/reports/397478",
+  "category": "授权绕过"
+ },
+ {
+  "id": 55670,
+  "theme": "权限残留",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "删除用户后权限残留导致越权",
+  "knowledge_point": "删除用户后权限残留导致越权",
+  "report_url": "https://hackerone.com/reports/55670",
+  "category": "授权绕过"
+ },
+ {
+  "id": 134299,
+  "theme": "IDOR",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "多态关联IDOR跨项目引用属于授权绕过",
+  "knowledge_point": "多态关联 IDOR（noteable_id 跨项目引用）",
+  "report_url": "https://hackerone.com/reports/134299",
+  "category": "授权绕过"
+ },
+ {
+  "id": 1596663,
+  "theme": "权限残留",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "角色变更后权限残留导致越权",
+  "knowledge_point": "角色变更后权限残留",
+  "report_url": "https://hackerone.com/reports/1596663",
+  "category": "授权绕过"
+ },
+ {
+  "id": 243943,
+  "theme": "IDOR",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "低权限用户通过IDOR获取敏感信息",
+  "knowledge_point": "低权限用户通过IDOR获取商店敏感信息",
+  "report_url": "https://hackerone.com/reports/243943",
+  "category": "授权绕过"
+ },
+ {
+  "id": 1043480,
+  "theme": "时间窗口",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "授权检查时间窗口绕过属于授权绕过",
+  "knowledge_point": "授权检查时间窗口绕过",
+  "report_url": "https://hackerone.com/reports/1043480",
+  "category": "授权绕过"
+ },
+ {
+  "id": 1806387,
+  "theme": "响应状态码",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "修改HTTP响应状态码绕过访问控制",
+  "knowledge_point": "修改HTTP响应状态码绕过基于重定向的访问控制",
+  "report_url": "https://hackerone.com/reports/1806387",
+  "category": "授权绕过"
+ },
+ {
+  "id": 416983,
+  "theme": "HMAC",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "静态HMAC不绑定用户身份导致权限重用",
+  "knowledge_point": "静态HMAC不绑定用户身份导致权限撤销后仍可重用",
+  "report_url": "https://hackerone.com/reports/416983",
+  "category": "授权绕过"
+ },
+ {
+  "id": 1285226,
+  "theme": "状态一致性",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "密码过期状态与token认证不一致导致授权绕过",
+  "knowledge_point": "密码过期状态与token认证不一致导致授权绕过",
+  "report_url": "https://hackerone.com/reports/1285226",
+  "category": "授权绕过"
+ },
+ {
+  "id": 1892200,
+  "theme": "IDOR",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "未验证关联对象权限导致跨组关联",
+  "knowledge_point": "IDOR：未验证关联对象权限导致跨组关联",
+  "report_url": "https://hackerone.com/reports/1892200",
+  "category": "授权绕过"
+ },
+ {
+  "id": 700831,
+  "theme": "授权绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "第三方应用泄露Access Token导致权限撤销失效，属于授权绕过变体",
+  "knowledge_point": "第三方应用泄露Access Token导致权限撤销失效",
+  "report_url": "https://hackerone.com/reports/700831",
+  "category": "授权绕过"
+ },
+ {
+  "id": 213942,
+  "theme": "授权绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "文件生成机制与策略继承脱节导致IDOR，属于授权绕过变体",
+  "knowledge_point": "文件生成机制与策略继承脱节导致 IDOR",
+  "report_url": "https://hackerone.com/reports/213942",
+  "category": "授权绕过"
+ },
+ {
+  "id": 698708,
+  "theme": "授权绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "签名URL刷新绕过权限撤销，属于授权绕过变体",
+  "knowledge_point": "签名URL刷新绕过权限撤销",
+  "report_url": "https://hackerone.com/reports/698708",
+  "category": "授权绕过"
+ },
+ {
+  "id": 781150,
+  "theme": "授权绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "GraphQL node接口绕过基于角色的授权检查，属于授权绕过变体",
+  "knowledge_point": "GraphQL node接口绕过基于角色的授权检查",
+  "report_url": "https://hackerone.com/reports/781150",
+  "category": "授权绕过"
+ },
+ {
+  "id": 871749,
+  "theme": "授权绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "GraphQL嵌套查询泄露空引用关联数据，属于授权绕过变体",
+  "knowledge_point": "GraphQL嵌套查询泄露空引用关联数据",
+  "report_url": "https://hackerone.com/reports/871749",
+  "category": "授权绕过"
+ },
+ {
+  "id": 1257428,
+  "theme": "授权绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "第三方应用代理绕过内部API权限检查，属于授权绕过变体",
+  "knowledge_point": "第三方应用代理绕过内部API权限检查",
+  "report_url": "https://hackerone.com/reports/1257428",
+  "category": "授权绕过"
+ },
+ {
+  "id": 2271054,
+  "theme": "框架行为利用",
+  "action": "drop",
+  "target": "",
+  "reason": "BigDecimal#sqrt循环次数计算错误导致DoS，属特定语言库的算法缺陷，非通用web漏洞",
+  "knowledge_point": "BigDecimal#sqrt循环次数计算错误导致DoS",
+  "report_url": "https://hackerone.com/reports/2271054",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 1805899,
+  "theme": "框架行为利用",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "HTML Sanitizer嵌套标签绕过导致XSS，属于XSS绕过变体",
+  "knowledge_point": "HTML Sanitizer 嵌套标签绕过（svg+style）",
+  "report_url": "https://hackerone.com/reports/1805899",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 189878,
+  "theme": "框架行为利用",
+  "action": "fold",
+  "target": "hunt-csrf",
+  "reason": "Rails data-remote表单CSRF令牌泄露，属于CSRF绕过变体",
+  "knowledge_point": "Rails data-remote表单CSRF令牌泄露",
+  "report_url": "https://hackerone.com/reports/189878",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 1805893,
+  "theme": "框架行为利用",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "不完整修复导致XSS绕过，属于XSS绕过变体",
+  "knowledge_point": "不完整修复导致XSS绕过（CVE-2022-23520）",
+  "report_url": "https://hackerone.com/reports/1805893",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 1095612,
+  "theme": "框架行为利用",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "Kubernetes验证准入webhook的oldObject字段未正确传递导致绕过，属于授权绕过变体",
+  "knowledge_point": "Kubernetes 验证准入 webhook 的 oldObject 字段未正确传递导致绕过",
+  "report_url": "https://hackerone.com/reports/1095612",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 2408074,
+  "theme": "框架行为利用",
+  "action": "fold",
+  "target": "hunt-ssrf",
+  "reason": "undici跨域重定向未清除Proxy-Authorization头，属于SSRF变体",
+  "knowledge_point": "undici 跨域重定向未清除 Proxy-Authorization 头",
+  "report_url": "https://hackerone.com/reports/2408074",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 1047447,
+  "theme": "框架行为利用",
+  "action": "fold",
+  "target": "hunt-request-smuggling",
+  "reason": "正则未锚定导致Host头注入，属于请求走私变体",
+  "knowledge_point": "正则未锚定导致Host头注入",
+  "report_url": "https://hackerone.com/reports/1047447",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 1141623,
+  "theme": "框架行为利用",
+  "action": "fold",
+  "target": "hunt-ssrf",
+  "reason": "V8引擎对非法八进制字面量的宽容处理导致SSRF/LFI，属于SSRF变体",
+  "knowledge_point": "V8引擎对非法八进制字面量的宽容处理导致SSRF/LFI",
+  "report_url": "https://hackerone.com/reports/1141623",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 1715536,
+  "theme": "框架行为利用",
+  "action": "fold",
+  "target": "hunt-prototype-pollution",
+  "reason": "JavaScript原型链污染导致框架崩溃，属于原型链污染变体",
+  "knowledge_point": "JavaScript 原型链污染导致框架崩溃",
+  "report_url": "https://hackerone.com/reports/1715536",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 470637,
+  "theme": "框架行为利用",
+  "action": "drop",
+  "target": "",
+  "reason": "macOS quarantine属性缺失导致Gatekeeper绕过，属操作系统安全机制，非web应用漏洞",
+  "knowledge_point": "macOS quarantine 属性缺失导致 Gatekeeper 绕过",
+  "report_url": "https://hackerone.com/reports/470637",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 629879,
+  "theme": "框架行为利用",
+  "action": "fold",
+  "target": "hunt-command-injection",
+  "reason": "Node.js模块搜索路径滥用导致代码执行，属于命令注入变体",
+  "knowledge_point": "Node.js 模块搜索路径滥用导致代码执行",
+  "report_url": "https://hackerone.com/reports/629879",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 180977,
+  "theme": "框架行为利用",
+  "action": "drop",
+  "target": "",
+  "reason": "mruby异常处理中to_s重写导致SIGABRT，属特定语言运行时崩溃，非web漏洞",
+  "knowledge_point": "mruby 异常处理中 to_s 重写导致 SIGABRT",
+  "report_url": "https://hackerone.com/reports/180977",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 949513,
+  "theme": "框架行为利用",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "Active Storage Proxying允许inline导致XSS，属于XSS变体",
+  "knowledge_point": "Active Storage Proxying 允许 inline 导致 XSS",
+  "report_url": "https://hackerone.com/reports/949513",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 1884159,
+  "theme": "框架行为利用",
+  "action": "drop",
+  "target": "",
+  "reason": "Node.js解析畸形X509证书导致崩溃，属解析器崩溃，非web漏洞",
+  "knowledge_point": "Node.js 解析畸形 X509 证书导致崩溃",
+  "report_url": "https://hackerone.com/reports/1884159",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 536954,
+  "theme": "解析器不一致",
+  "action": "fold",
+  "target": "hunt-request-smuggling",
+  "reason": "解析器与消费者字符串视图不一致导致绕过，属于请求走私类变体",
+  "knowledge_point": "解析器与消费者对字符串视图不一致（c_str vs getStringView）导致绕过",
+  "report_url": "https://hackerone.com/reports/536954",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 789579,
+  "theme": "签名绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "AWS SDK预签名URL未签名content-length导致上传大小限制绕过，属于认证绕过变体",
+  "knowledge_point": "AWS SDK预签名URL未签名content-length导致上传大小限制绕过",
+  "report_url": "https://hackerone.com/reports/789579",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 532667,
+  "theme": "注入",
+  "action": "fold",
+  "target": "hunt-command-injection",
+  "reason": "通过控制schema属性名注入JavaScript代码实现RCE，属于命令注入变体",
+  "knowledge_point": "通过控制schema属性名注入JavaScript代码实现RCE",
+  "report_url": "https://hackerone.com/reports/532667",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 1115139,
+  "theme": "过滤器绕过",
+  "action": "fold",
+  "target": "hunt-ssrf",
+  "reason": "HTML过滤器绕过导致SSRF，属于SSRF绕过变体",
+  "knowledge_point": "HTML过滤器绕过（<svg><style><h1/>前缀）导致SSRF",
+  "report_url": "https://hackerone.com/reports/1115139",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 1695596,
+  "theme": "配置读取",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "Node.js读取硬编码路径的openssl.cnf，属于配置错误类横切知识点",
+  "knowledge_point": "Node.js 在 MacOS 上读取硬编码路径的 openssl.cnf",
+  "report_url": "https://hackerone.com/reports/1695596",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 633266,
+  "theme": "环境注入",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "macOS DYLD_INSERT_LIBRARIES注入绕过应用完整性，属于配置错误类横切知识点",
+  "knowledge_point": "macOS DYLD_INSERT_LIBRARIES 注入绕过应用完整性",
+  "report_url": "https://hackerone.com/reports/633266",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 49935,
+  "theme": "解析差异",
+  "action": "fold",
+  "target": "hunt-csrf",
+  "reason": "rails-ujs和jQuery的URL解析差异导致CSRF令牌泄露，属于CSRF绕过变体",
+  "knowledge_point": "rails-ujs和jQuery的URL解析差异导致CSRF令牌泄露",
+  "report_url": "https://hackerone.com/reports/49935",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 1668815,
+  "theme": "隐私绕过",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "利用window.caches绕过隐私保护，属于浏览器端绕过变体",
+  "knowledge_point": "利用window.caches绕过隐私保护",
+  "report_url": "https://hackerone.com/reports/1668815",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 1819668,
+  "theme": "协议绕过",
+  "action": "fold",
+  "target": "hunt-open-redirect",
+  "reason": "RSS源链接打开chrome: URL绕过SOP，属于开放重定向变体",
+  "knowledge_point": "RSS源链接打开chrome: URL绕过SOP",
+  "report_url": "https://hackerone.com/reports/1819668",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 1559262,
+  "theme": "参数解析",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "Rails数组参数解析导致批量token验证绕过速率限制，属于认证绕过变体",
+  "knowledge_point": "Rails数组参数解析导致批量token验证绕过速率限制",
+  "report_url": "https://hackerone.com/reports/1559262",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 474262,
+  "theme": "注入",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "模板字符串未转义导致XSS，属于XSS变体",
+  "knowledge_point": "模板字符串未转义导致 XSS",
+  "report_url": "https://hackerone.com/reports/474262",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 1278254,
+  "theme": "TLS配置",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "Node.js TLS模块将undefined视为false禁用证书验证，属于配置错误类横切知识点",
+  "knowledge_point": "Node.js TLS 模块将 undefined 视为 false 禁用证书验证",
+  "report_url": "https://hackerone.com/reports/1278254",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 2038484,
+  "theme": "密码学",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "OpenSSL惰性生成导致DiffieHellman密钥重用，属于配置错误类横切知识点",
+  "knowledge_point": "OpenSSL 惰性生成导致 DiffieHellman 密钥重用",
+  "report_url": "https://hackerone.com/reports/2038484",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 903521,
+  "theme": "DoS",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "Fastify默认allErrors:true导致DoS，属于配置错误类横切知识点",
+  "knowledge_point": "Fastify 默认 allErrors:true 导致 DoS",
+  "report_url": "https://hackerone.com/reports/903521",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 222020,
+  "theme": "参数注入",
+  "action": "fold",
+  "target": "hunt-command-injection",
+  "reason": "命令行工具参数注入导致任意代码执行，属于命令注入变体",
+  "knowledge_point": "命令行工具参数注入（--debugger）导致任意代码执行",
+  "report_url": "https://hackerone.com/reports/222020",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 771596,
+  "theme": "解析差异",
+  "action": "fold",
+  "target": "hunt-request-smuggling",
+  "reason": "Node.js遗留API与WHATWG URL解析差异导致CRLF注入绕过，属于请求走私变体",
+  "knowledge_point": "Node.js遗留API url.parse()与WHATWG URL解析差异导致CRLF注入绕过",
+  "report_url": "https://hackerone.com/reports/771596",
+  "category": "框架行为利用"
+ },
+ {
+  "id": 55140,
+  "theme": "竞争条件",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "OAuth2实现中的竞争条件导致token撤销绕过，属于认证绕过变体",
+  "knowledge_point": "OAuth2 实现中的竞争条件导致 token 撤销绕过",
+  "report_url": "https://hackerone.com/reports/55140",
+  "category": "竞争条件"
+ },
+ {
+  "id": 578119,
+  "theme": "竞争条件",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "logrotate竞争条件导致权限提升，属于配置错误类横切知识点",
+  "knowledge_point": "logrotate 竞争条件导致权限提升",
+  "report_url": "https://hackerone.com/reports/578119",
+  "category": "竞争条件"
+ },
+ {
+  "id": 381356,
+  "theme": "竞争条件",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "客户端竞争条件+postMessage无源检查+data:URL钓鱼，属于XSS变体",
+  "knowledge_point": "客户端竞争条件+postMessage无源检查+data:URL钓鱼",
+  "report_url": "https://hackerone.com/reports/381356",
+  "category": "竞争条件"
+ },
+ {
+  "id": 1183335,
+  "theme": "类型混淆",
+  "action": "fold",
+  "target": "hunt-sqli",
+  "reason": "对象注入导致SQL语义改变实现认证绕过，属于SQL注入变体",
+  "knowledge_point": "对象注入导致SQL语义改变实现认证绕过",
+  "report_url": "https://hackerone.com/reports/1183335",
+  "category": "类型混淆"
+ },
+ {
+  "id": 116286,
+  "theme": "类型混淆",
+  "action": "drop",
+  "target": "",
+  "reason": "Python partial对象类型混淆导致内存破坏，属于内存破坏类，非web渗透库范围",
+  "knowledge_point": "Python partial对象类型混淆导致内存破坏",
+  "report_url": "https://hackerone.com/reports/116286",
+  "category": "类型混淆"
+ },
+ {
+  "id": 1444539,
+  "theme": "类型混淆",
+  "action": "drop",
+  "target": "",
+  "reason": "libcurl整数截断导致内存泄露，属于内存破坏类，非web渗透库范围",
+  "knowledge_point": "libcurl 在 64 位 Windows 上的整数截断导致内存泄露",
+  "report_url": "https://hackerone.com/reports/1444539",
+  "category": "类型混淆"
+ },
+ {
+  "id": 181321,
+  "theme": "类型混淆",
+  "action": "drop",
+  "target": "",
+  "reason": "mruby Array#to_h回调导致UAF，属于内存破坏类，非web渗透库范围",
+  "knowledge_point": "mruby Array#to_h 回调导致 UAF",
+  "report_url": "https://hackerone.com/reports/181321",
+  "category": "类型混淆"
+ },
+ {
+  "id": 319532,
+  "theme": "类型混淆",
+  "action": "fold",
+  "target": "hunt-nodejs-permission-bypass",
+  "reason": "Node.js Buffer构造函数隐式转换导致DoS，属于Node.js特定绕过变体",
+  "knowledge_point": "Node.js Buffer构造函数对非字符串类型的隐式转换导致DoS",
+  "report_url": "https://hackerone.com/reports/319532",
+  "category": "类型混淆"
+ },
+ {
+  "id": 340053,
+  "theme": "类型混淆",
+  "action": "fold",
+  "target": "hunt-prototype-pollution",
+  "reason": "原型链getter导致类型混淆和UAF，属于原型链污染相关绕过",
+  "knowledge_point": "原型链 getter 导致类型混淆和 UAF",
+  "report_url": "https://hackerone.com/reports/340053",
+  "category": "类型混淆"
+ },
+ {
+  "id": 591302,
+  "theme": "缓存投毒",
+  "action": "fold",
+  "target": "hunt-cache-poisoning",
+  "reason": "缓存投毒针对CORS头导致DoS，属于缓存投毒变体",
+  "knowledge_point": "缓存投毒针对 CORS 头导致 DoS",
+  "report_url": "https://hackerone.com/reports/591302",
+  "category": "缓存投毒"
+ },
+ {
+  "id": 490946,
+  "theme": "认证绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "暴露的intent绕过锁保护，属于认证绕过变体",
+  "knowledge_point": "暴露的intent绕过锁保护",
+  "report_url": "https://hackerone.com/reports/490946",
+  "category": "认证绕过"
+ },
+ {
+  "id": 1020371,
+  "theme": "认证绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "账户关闭后预签名URL未失效导致文件上传，属于认证绕过变体",
+  "knowledge_point": "账户关闭后预签名 URL 未失效导致文件上传",
+  "report_url": "https://hackerone.com/reports/1020371",
+  "category": "认证绕过"
+ },
+ {
+  "id": 2104566,
+  "theme": "认证绕过",
+  "action": "fold",
+  "target": "hunt-nodejs-permission-bypass",
+  "reason": "Node.js权限策略绕过module.constructor.createRequire()，属于Node.js权限绕过变体",
+  "knowledge_point": "Node.js 权限策略绕过：module.constructor.createRequire()",
+  "report_url": "https://hackerone.com/reports/2104566",
+  "category": "认证绕过"
+ },
+ {
+  "id": 2233,
+  "theme": "认证绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "MySQL字符集截断绕过邮箱域名验证，属于认证绕过变体",
+  "knowledge_point": "利用MySQL字符集截断绕过邮箱域名验证",
+  "report_url": "https://hackerone.com/reports/2233",
+  "category": "认证绕过"
+ },
+ {
+  "id": 461308,
+  "theme": "认证绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "ActivityPub协议keyId未校验来源导致身份冒充，属于认证绕过变体",
+  "knowledge_point": "ActivityPub 协议中 keyId 未校验来源导致身份冒充",
+  "report_url": "https://hackerone.com/reports/461308",
+  "category": "认证绕过"
+ },
+ {
+  "id": 587910,
+  "theme": "认证绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "禁用2FA时未验证密码，属于认证绕过变体",
+  "knowledge_point": "禁用 2FA 时未验证密码",
+  "report_url": "https://hackerone.com/reports/587910",
+  "category": "认证绕过"
+ },
+ {
+  "id": 218230,
+  "theme": "认证绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "利用邮件别名功能接收第三方验证信实现身份绕过，属于认证绕过变体",
+  "knowledge_point": "利用邮件别名功能接收第三方验证信实现身份绕过",
+  "report_url": "https://hackerone.com/reports/218230",
+  "category": "认证绕过"
+ },
+ {
+  "id": 1817214,
+  "theme": "认证绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "token可预测性导致账户接管，属于认证绕过变体",
+  "knowledge_point": "token可预测性导致账户接管",
+  "report_url": "https://hackerone.com/reports/1817214",
+  "category": "认证绕过"
+ },
+ {
+  "id": 722748,
+  "theme": "认证绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "2FA绕过：登录时设置新提供者，属于认证绕过变体",
+  "knowledge_point": "2FA绕过：登录时设置新提供者",
+  "report_url": "https://hackerone.com/reports/722748",
+  "category": "认证绕过"
+ },
+ {
+  "id": 141239,
+  "theme": "认证绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "Nginx auth_basic密码截断绕过，属于认证绕过变体",
+  "knowledge_point": "Nginx auth_basic密码截断绕过",
+  "report_url": "https://hackerone.com/reports/141239",
+  "category": "认证绕过"
+ },
+ {
+  "id": 204802,
+  "theme": "认证绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "环境变量覆盖socket路径绕过文件权限，属于认证绕过变体",
+  "knowledge_point": "环境变量覆盖 socket 路径绕过文件权限",
+  "report_url": "https://hackerone.com/reports/204802",
+  "category": "认证绕过"
+ },
+ {
+  "id": 103787,
+  "theme": "认证绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "CSRF token未绑定操作+_method覆盖+浏览器不发送Origin头的组合绕过，属于认证绕过变体",
+  "knowledge_point": "CSRF token 未绑定操作 + _method 覆盖 + 浏览器不发送 Origin 头的组合绕过",
+  "report_url": "https://hackerone.com/reports/103787",
+  "category": "认证绕过"
+ },
+ {
+  "id": 1552110,
+  "theme": "认证绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "连接复用未验证认证凭据导致认证绕过，属于认证绕过变体",
+  "knowledge_point": "连接复用未验证认证凭据导致认证绕过",
+  "report_url": "https://hackerone.com/reports/1552110",
+  "category": "认证绕过"
+ },
+ {
+  "id": 747726,
+  "theme": "认证绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "Android Activity启动模式绕过锁屏，属于认证绕过变体",
+  "knowledge_point": "Android Activity 启动模式绕过锁屏",
+  "report_url": "https://hackerone.com/reports/747726",
+  "category": "认证绕过"
+ },
+ {
+  "id": 532225,
+  "theme": "认证绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "deeplink参数绕过host校验属于认证绕过变体",
+  "knowledge_point": "Android deeplink 中 navigation_bar_type 参数绕过 host 校验",
+  "report_url": "https://hackerone.com/reports/532225",
+  "category": "认证绕过"
+ },
+ {
+  "id": 1172205,
+  "theme": "认证绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "token未撤销属于会话管理缺陷，归入认证绕过",
+  "knowledge_point": "注销请求参数缺失导致 token 未撤销",
+  "report_url": "https://hackerone.com/reports/1172205",
+  "category": "认证绕过"
+ },
+ {
+  "id": 168116,
+  "theme": "认证绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "空Referer绕过验证是认证绕过常见变体",
+  "knowledge_point": "空Referer绕过验证",
+  "report_url": "https://hackerone.com/reports/168116",
+  "category": "认证绕过"
+ },
+ {
+  "id": 1108874,
+  "theme": "认证绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "Host头注入污染密码重置链接导致账户接管，属认证绕过",
+  "knowledge_point": "Host头注入污染密码重置链接导致账户接管",
+  "report_url": "https://hackerone.com/reports/1108874",
+  "category": "认证绕过"
+ },
+ {
+  "id": 205908,
+  "theme": "认证绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "LDAP过滤器缺失导致任意账户登录，属认证绕过",
+  "knowledge_point": "LDAP认证时未强制应用用户过滤器导致任意有效账户登录",
+  "report_url": "https://hackerone.com/reports/205908",
+  "category": "认证绕过"
+ },
+ {
+  "id": 161408,
+  "theme": "认证绕过",
+  "action": "fold",
+  "target": "hunt-csrf",
+  "reason": "CSRF token置空或固定值绕过双重防护，直接针对CSRF防护",
+  "knowledge_point": "CSRF token置空或固定值绕过双重防护",
+  "report_url": "https://hackerone.com/reports/161408",
+  "category": "认证绕过"
+ },
+ {
+  "id": 1363672,
+  "theme": "认证绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "输入规范化不完整绕过限流，属认证绕过中的限流绕过",
+  "knowledge_point": "输入规范化不完整绕过限流",
+  "report_url": "https://hackerone.com/reports/1363672",
+  "category": "认证绕过"
+ },
+ {
+  "id": 2410774,
+  "theme": "认证绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "QUIC证书验证绕过属于认证绕过变体",
+  "knowledge_point": "QUIC 证书验证绕过",
+  "report_url": "https://hackerone.com/reports/2410774",
+  "category": "认证绕过"
+ },
+ {
+  "id": 796956,
+  "theme": "认证绕过",
+  "action": "fold",
+  "target": "hunt-auth-bypass",
+  "reason": "多步流程无状态机校验导致认证绕过，属认证绕过",
+  "knowledge_point": "多步流程依赖URL路径且无服务端状态机校验导致认证绕过",
+  "report_url": "https://hackerone.com/reports/796956",
+  "category": "认证绕过"
+ },
+ {
+  "id": 774896,
+  "theme": "资源消耗",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "未认证请求导致资源耗尽，属配置错误或资源管理问题，无专用skill",
+  "knowledge_point": "未认证请求导致指标基数爆炸引发资源耗尽",
+  "report_url": "https://hackerone.com/reports/774896",
+  "category": "资源消耗"
+ },
+ {
+  "id": 899964,
+  "theme": "跨组件攻击链",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "Electron中XSS升级为RCE，核心是XSS利用，归入XSS skill",
+  "knowledge_point": "Electron 中 XSS 升级为 RCE（覆盖 RegExp.prototype.test）",
+  "report_url": "https://hackerone.com/reports/899964",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 1668258,
+  "theme": "跨组件攻击链",
+  "action": "drop",
+  "target": "",
+  "reason": "智能合约重入攻击属区块链领域，非web渗透库范围",
+  "knowledge_point": "智能合约重入攻击（以太坊）",
+  "report_url": "https://hackerone.com/reports/1668258",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 1261413,
+  "theme": "跨组件攻击链",
+  "action": "fold",
+  "target": "hunt-path-traversal",
+  "reason": "HEIC预览调用Imagick导致任意文件读取，核心是文件读取，归入路径遍历",
+  "knowledge_point": "HEIC 预览调用 Imagick 导致任意文件读取",
+  "report_url": "https://hackerone.com/reports/1261413",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 17390,
+  "theme": "跨组件攻击链",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "Flash内容类型嗅探绕过上传限制并跨域读取，属跨组件攻击链，无专用skill",
+  "knowledge_point": "Flash 内容类型嗅探绕过上传限制并跨域读取",
+  "report_url": "https://hackerone.com/reports/17390",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 1893186,
+  "theme": "跨组件攻击链",
+  "action": "fold",
+  "target": "hunt-xss",
+  "reason": "跨组件CSP绕过实现XSS，核心是XSS，归入XSS skill",
+  "knowledge_point": "跨组件CSP绕过实现XSS",
+  "report_url": "https://hackerone.com/reports/1893186",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 99708,
+  "theme": "跨组件攻击链",
+  "action": "fold",
+  "target": "hunt-path-traversal",
+  "reason": "路径遍历绕过CSRF保护，核心是路径遍历，归入路径遍历",
+  "knowledge_point": "路径遍历绕过 CSRF 保护",
+  "report_url": "https://hackerone.com/reports/99708",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 1036886,
+  "theme": "跨组件攻击链",
+  "action": "fold",
+  "target": "hunt-path-traversal",
+  "reason": "kubelet /logs端点符号链接跟随导致权限提升，属路径遍历变体",
+  "knowledge_point": "kubelet /logs 端点符号链接跟随导致权限提升",
+  "report_url": "https://hackerone.com/reports/1036886",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 697055,
+  "theme": "跨组件攻击链",
+  "action": "fold",
+  "target": "hunt-path-traversal",
+  "reason": "符号链接绕过容器隔离读取宿主机文件，属路径遍历变体",
+  "knowledge_point": "符号链接绕过容器隔离读取宿主机文件",
+  "report_url": "https://hackerone.com/reports/697055",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 395729,
+  "theme": "跨组件攻击链",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "WebSocket无CORS限制导致扩展任意连接，属配置错误，无专用skill",
+  "knowledge_point": "WebSocket 无 CORS 限制导致扩展任意连接",
+  "report_url": "https://hackerone.com/reports/395729",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 1544133,
+  "theme": "跨组件攻击链",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "Kubernetes聚合API重定向导致凭据泄露，属跨组件攻击链，无专用skill",
+  "knowledge_point": "Kubernetes 聚合 API 重定向导致凭据泄露",
+  "report_url": "https://hackerone.com/reports/1544133",
+  "category": "跨组件攻击链"
+ },
+ {
+  "id": 1115864,
+  "theme": "路径遍历",
+  "action": "fold",
+  "target": "hunt-path-traversal",
+  "reason": "Android ContentProvider 路径遍历属于路径遍历的变体，归入现有 skill。",
+  "knowledge_point": "Android ContentProvider 路径遍历导致持久化代码执行",
+  "report_url": "https://hackerone.com/reports/1115864",
+  "category": "路径遍历"
+ },
+ {
+  "id": 1952978,
+  "theme": "路径遍历",
+  "action": "fold",
+  "target": "hunt-nodejs-permission-bypass",
+  "reason": "Node.js 权限策略绕过路径遍历，属于 Node.js 权限绕过主题。",
+  "knowledge_point": "Node.js 权限策略未处理路径遍历",
+  "report_url": "https://hackerone.com/reports/1952978",
+  "category": "路径遍历"
+ },
+ {
+  "id": 1004007,
+  "theme": "路径遍历",
+  "action": "fold",
+  "target": "hunt-path-traversal",
+  "reason": "路径解析差异绕过代理，是路径遍历的绕过变体。",
+  "knowledge_point": "路径解析差异（..;）绕过代理",
+  "report_url": "https://hackerone.com/reports/1004007",
+  "category": "路径遍历"
+ },
+ {
+  "id": 1415820,
+  "theme": "路径遍历",
+  "action": "fold",
+  "target": "hunt-path-traversal",
+  "reason": "URL 编码的路径遍历绕过过滤，属于路径遍历绕过。",
+  "knowledge_point": "URL 编码的路径遍历绕过静态文件服务过滤",
+  "report_url": "https://hackerone.com/reports/1415820",
+  "category": "路径遍历"
+ },
+ {
+  "id": 1132378,
+  "theme": "路径遍历",
+  "action": "fold",
+  "target": "hunt-ssrf",
+  "reason": "open-uri 误用导致任意文件读取和 SSRF，主要涉及 SSRF。",
+  "knowledge_point": "open-uri误用导致任意文件读取和SSRF",
+  "report_url": "https://hackerone.com/reports/1132378",
+  "category": "路径遍历"
+ },
+ {
+  "id": 2302558,
+  "theme": "路径遍历",
+  "action": "fold",
+  "target": "hunt-path-traversal",
+  "reason": "路径遍历创建后门，属于路径遍历的利用变体。",
+  "knowledge_point": "路径遍历（..）创建无法管理的资源导致持久后门",
+  "report_url": "https://hackerone.com/reports/2302558",
+  "category": "路径遍历"
+ },
+ {
+  "id": 2168002,
+  "theme": "路径遍历",
+  "action": "fold",
+  "target": "hunt-path-traversal",
+  "reason": "/proc/self/fd 竞速导致 XSS 和 DoS，涉及路径遍历和竞速，归入路径遍历。",
+  "knowledge_point": "导入流程中 /proc/self/fd 竞速导致 XSS 和 DoS",
+  "report_url": "https://hackerone.com/reports/2168002",
+  "category": "路径遍历"
+ },
+ {
+  "id": 1765631,
+  "theme": "路径遍历",
+  "action": "fold",
+  "target": "hunt-path-traversal",
+  "reason": "反斜杠与正斜杠转换差异绕过路径验证，是路径遍历绕过。",
+  "knowledge_point": "反斜杠与正斜杠转换差异绕过路径验证",
+  "report_url": "https://hackerone.com/reports/1765631",
+  "category": "路径遍历"
+ },
+ {
+  "id": 310690,
+  "theme": "路径遍历",
+  "action": "fold",
+  "target": "hunt-path-traversal",
+  "reason": "indexOf 返回 -1 导致过滤失效，是路径遍历过滤绕过。",
+  "knowledge_point": "indexOf返回-1导致路径遍历过滤失效",
+  "report_url": "https://hackerone.com/reports/310690",
+  "category": "路径遍历"
+ },
+ {
+  "id": 347296,
+  "theme": "配置错误",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "构建沙箱反向 SSH 隧道访问内部 Docker Registry，属于配置错误和攻击面。",
+  "knowledge_point": "构建沙箱反向SSH隧道访问内部Docker Registry",
+  "report_url": "https://hackerone.com/reports/347296",
+  "category": "配置错误"
+ },
+ {
+  "id": 714215,
+  "theme": "配置错误",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "OpenSSL 环境变量覆盖默认配置路径导致代码执行，属于配置错误。",
+  "knowledge_point": "OpenSSL环境变量覆盖默认配置路径导致代码执行",
+  "report_url": "https://hackerone.com/reports/714215",
+  "category": "配置错误"
+ },
+ {
+  "id": 783360,
+  "theme": "配置错误",
+  "action": "fold",
+  "target": "recognize-attack-surface",
+  "reason": "Spring Boot Actuator heapdump 泄露，属于配置错误和信息泄露。",
+  "knowledge_point": "Spring Boot Actuator heapdump 泄露",
+  "report_url": "https://hackerone.com/reports/783360",
+  "category": "配置错误"
+ }
+]
