@@ -45,3 +45,15 @@ X-Original-URL / X-Rewrite-URL: ...
 | 扩展名欺骗静态缓存 | 1698316 |
 
 hunt 顺序：先确认缓存指纹 → 逐个 unkeyed header 探反射 → 命中就走"两步法"证明被缓存 → 私有页试缓存欺骗。全程带唯一 buster。
+
+## 更多真实案例（第三轮单例补充）
+
+（来自第二轮单例、第三轮语义路由归入本类；仅列此前未收录的报告，作案例索引）
+
+- **缓存投毒**
+  - #703138 Yarn cache poisoning via lock file hash/integrity check bypass
+  - #591302 缓存投毒针对 CORS 头导致 DoS
+- **缓存XSS**
+  - #394016 X-Forwarded-Host 头注入导致缓存 XSS
+- **HSTS绕过**
+  - #1874716 并行传输导致 HSTS 缓存覆盖绕过

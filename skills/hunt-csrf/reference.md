@@ -49,3 +49,26 @@
 | Login CSRF | 229528 / 384962 |
 
 hunt 顺序：先删 token 重放（最快证伪防护）→ 看 SameSite 决定向量 → JSON API 试 text/plain → Strict 时找子域/Flash 等旁路。
+
+## 更多真实案例（第三轮单例补充）
+
+（来自第二轮单例、第三轮语义路由归入本类；仅列此前未收录的报告，作案例索引）
+
+- **CSRF**
+  - #931197 跨站 WebSocket 劫持（Origin 检查绕过）
+- **CSRF token缺陷**
+  - #732415 CSRF token可逆性导致伪造（Rails per_form_csrf_tokens）
+- **CSRF token泄露**
+  - #221432 CSRF token泄露通过双斜杠绝对URL
+- **深链接与CSRF**
+  - #1741430 深链接参数未编码导致 CSRF 和路径穿越
+- **OAuth CSRF**
+  - #423022 OAuth回调CSRF导致账户接管
+- **CSRF绕过**
+  - #102376 利用重定向参数绕过 CSRF 防护
+- **框架行为利用**
+  - #189878 Rails data-remote表单CSRF令牌泄露
+- **解析差异**
+  - #49935 rails-ujs和jQuery的URL解析差异导致CSRF令牌泄露
+- **认证绕过**
+  - #161408 CSRF token置空或固定值绕过双重防护

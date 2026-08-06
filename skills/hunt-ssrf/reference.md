@@ -87,3 +87,55 @@ http://[::]:25/                    # IPv6 未指定地址 → 内部 SMTP
 | Full-Read | 878779 | URL 解码+开放重定向回显 |
 
 在 hunt 阶段：先 A/B 快速探黑名单强度，命中内网后立刻走 F 打元数据；入口是"抓媒体/生成截图"优先 G；入口跟随重定向优先 D。
+
+## 更多真实案例（第三轮单例补充）
+
+（来自第二轮单例、第三轮语义路由归入本类；仅列此前未收录的报告，作案例索引）
+
+- **SSRF**
+  - #843256 TURN 协议 peer 访问控制缺失导致 SSRF
+  - #826361 CarrierWave remote_attachment_url 属性导致 SSRF
+  - #392859 gopher 协议 + 302 重定向绕过 SSRF 黑名单
+  - #855276 git config URL注入实现SSRF
+  - #326040 插件功能滥用导致 SSRF 访问云元数据
+  - #1608039 云元数据服务地址遗漏
+  - #809248 信任边界内组件不可信导致 SSRF
+  - #333419 TURN 服务器允许代理到内网导致 SSRF
+- **SSRF绕过**
+  - #632101 DNS 重绑定绕过 SSRF 防护（DNS 解析失败时跳过 IP 检查）
+  - #925527 SSRF 绕过：DNS rebinding 和未检查 IP 范围（0.0.0.0, 169.254.0.0/16）
+  - #369451 CI 运行状态差异导致 SSRF 防护绕过
+  - #187520 利用重定向绕过SSRF的IP/端口过滤并支持basic-auth
+- **curl 行为利用**
+  - #2148242 curl duphandle 隐式加载 'none' 文件导致 cookie 注入
+  - #1526328 curl 连接复用时不检查 SASL 参数导致 OAUTH2 绕过
+  - #1560324 curl cookie 覆盖规则缺陷导致会话固定
+- **框架行为利用**
+  - #2408074 undici 跨域重定向未清除 Proxy-Authorization 头
+  - #1141623 V8引擎对非法八进制字面量的宽容处理导致SSRF/LFI
+- **协议绕过**
+  - #824802 URN 请求绕过 ACL 检查
+- **客户端 SSRF**
+  - #1054382 客户端 SSRF：Burp Suite 自动解析 HTML 导致隐藏请求泄露 NetNTLM 哈希
+- **协议注入**
+  - #441090 CRLF 注入与 SSRF：git:// 协议绕过防护并注入 Redis 实现 RCE
+- **内部重定向**
+  - #1027873 利用X-Accel-Redirect头进行内部重定向
+- **URL过滤绕过**
+  - #1566462 curl globbing 功能绕过 URL 过滤
+- **URL解析绕过**
+  - #726117 curl URL解析器fragment混淆导致路径绕过
+- **协议参数解析**
+  - #2384833 curl --proto -all 参数解析缺陷导致协议未禁用
+- **DNS重绑定**
+  - #1710652 无效八进制 IP 解析差异导致 DNS rebinding 绕过
+- **DNS劫持**
+  - #218088 DNS SRV 记录验证缺陷导致请求劫持
+- **IP解析差异**
+  - #44513 IP解析差异绕过（IPv6变体）
+- **协议行为利用**
+  - #2429894 libuv域名解析漏洞导致SSRF
+- **过滤器绕过**
+  - #1115139 HTML过滤器绕过（<svg><style><h1/>前缀）导致SSRF
+- **路径遍历**
+  - #1132378 open-uri误用导致任意文件读取和SSRF

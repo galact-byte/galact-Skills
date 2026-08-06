@@ -1,0 +1,144 @@
+{
+ "detailed": [
+  {
+   "id": 258084,
+   "theme": "目录遍历",
+   "action": "fold",
+   "target": "hunt-path-traversal",
+   "reason": "WebDAV 文件名冲突导致目录遍历，属于路径遍历的变体"
+  },
+  {
+   "id": 684092,
+   "theme": "智能合约攻击",
+   "action": "drop",
+   "target": "",
+   "reason": "智能合约跨合约攻击属区块链领域，非 web 渗透库范围"
+  },
+  {
+   "id": 307670,
+   "theme": "参数解析差异",
+   "action": "fold",
+   "target": "recognize-attack-surface",
+   "reason": "跨组件参数解析差异导致业务逻辑错误，属横切类攻击面识别"
+  },
+  {
+   "id": 364904,
+   "theme": "加密货币逻辑",
+   "action": "drop",
+   "target": "",
+   "reason": "Monero 交易逻辑漏洞属加密货币领域，非 web 渗透库范围"
+  },
+  {
+   "id": 665798,
+   "theme": "DeFi 逻辑",
+   "action": "drop",
+   "target": "",
+   "reason": "DeFi 利率同步漏洞属区块链金融领域，非 web 渗透库范围"
+  },
+  {
+   "id": 390929,
+   "theme": "原型污染",
+   "action": "fold",
+   "target": "hunt-prototype-pollution",
+   "reason": "原型污染控制模板引擎配置导致 RCE，是原型污染的利用变体"
+  },
+  {
+   "id": 1636382,
+   "theme": "代码注入",
+   "action": "fold",
+   "target": "hunt-command-injection",
+   "reason": "代码生成中的注释逃逸注入，属代码注入类，可归入命令注入变体"
+  },
+  {
+   "id": 2039464,
+   "theme": "注解注入",
+   "action": "fold",
+   "target": "hunt-command-injection",
+   "reason": "nginx-ingress 注解注入绕过限制导致代码执行，属代码注入变体"
+  },
+  {
+   "id": 491473,
+   "theme": "侧信道",
+   "action": "fold",
+   "target": "recognize-attack-surface",
+   "reason": "URL 重定向差异作为侧信道提取数据，属信息泄露横切类"
+  },
+  {
+   "id": 520903,
+   "theme": "内存破坏",
+   "action": "drop",
+   "target": "",
+   "reason": "Apache 本地提权共享内存越界属内存破坏，非 web 库范围"
+  },
+  {
+   "id": 824802,
+   "theme": "协议绕过",
+   "action": "fold",
+   "target": "hunt-ssrf",
+   "reason": "URN 请求绕过 ACL 检查，属 SSRF 绕过变体"
+  },
+  {
+   "id": 1054382,
+   "theme": "客户端 SSRF",
+   "action": "fold",
+   "target": "hunt-ssrf",
+   "reason": "客户端 SSRF 泄露 NetNTLM 哈希，属 SSRF 变体"
+  },
+  {
+   "id": 441090,
+   "theme": "协议注入",
+   "action": "fold",
+   "target": "hunt-ssrf",
+   "reason": "CRLF 注入与 git:// 协议绕过实现 RCE，属 SSRF 变体"
+  },
+  {
+   "id": 275269,
+   "theme": "签名伪造",
+   "action": "drop",
+   "target": "",
+   "reason": "Gem 签名伪造属供应链安全，非 web 渗透库范围"
+  },
+  {
+   "id": 1531958,
+   "theme": "ReDoS",
+   "action": "fold",
+   "target": "hunt-command-injection",
+   "reason": "ReDoS 属正则表达式注入，可归入代码注入类"
+  },
+  {
+   "id": 78158,
+   "theme": "内容类型注入",
+   "action": "fold",
+   "target": "hunt-xss",
+   "reason": "Flash Content-Type 注入绕过，属 XSS 变体"
+  },
+  {
+   "id": 1613943,
+   "theme": "协议 DoS",
+   "action": "fold",
+   "target": "recognize-attack-surface",
+   "reason": "curl 未过滤控制字符导致 DoS，属协议行为利用横切类"
+  },
+  {
+   "id": 843256,
+   "theme": "SSRF",
+   "action": "fold",
+   "target": "hunt-ssrf",
+   "reason": "TURN 协议 peer 访问控制缺失导致 SSRF，属 SSRF 变体"
+  },
+  {
+   "id": 806577,
+   "theme": "响应注入",
+   "action": "fold",
+   "target": "hunt-request-smuggling",
+   "reason": "Set-Cookie 注入 via 分号未编码，属响应拆分/走私变体"
+  },
+  {
+   "id": 737140,
+   "theme": "请求走私",
+   "action": "fold",
+   "target": "hunt-request-smuggling",
+   "reason": "CLTE 请求走私 + 绝对 URI 反射 cookie 实现 ATO，属请求走私变体"
+  }
+ ]
+}

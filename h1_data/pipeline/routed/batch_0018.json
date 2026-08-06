@@ -1,0 +1,144 @@
+{
+ "detailed": [
+  {
+   "id": 132104,
+   "theme": "XSS过滤绕过",
+   "action": "fold",
+   "target": "hunt-xss",
+   "reason": "编辑与预览模式安全检查不一致属于XSS过滤绕过变体"
+  },
+  {
+   "id": 1731349,
+   "theme": "XSS过滤绕过",
+   "action": "fold",
+   "target": "hunt-xss",
+   "reason": "选择器与取值对象不一致导致XSS注入，属于XSS上下文混淆"
+  },
+  {
+   "id": 293689,
+   "theme": "参数解析差异",
+   "action": "fold",
+   "target": "hunt-xss",
+   "reason": "HTTP参数重复解析差异绕过签名，属于XSS或认证绕过，但主要导致XSS"
+  },
+  {
+   "id": 526325,
+   "theme": "XSS过滤绕过",
+   "action": "fold",
+   "target": "hunt-xss",
+   "reason": "Wiki层级链接语法转换绕过XSS过滤，属于XSS编码绕过"
+  },
+  {
+   "id": 229735,
+   "theme": "XSS过滤绕过",
+   "action": "fold",
+   "target": "hunt-xss",
+   "reason": "模板占位符二次注入绕过过滤，属于XSS注入变体"
+  },
+  {
+   "id": 1518343,
+   "theme": "XSS过滤绕过",
+   "action": "fold",
+   "target": "hunt-xss",
+   "reason": "利用javascript伪协议和注释符绕过URL白名单，属于XSS过滤绕过"
+  },
+  {
+   "id": 991713,
+   "theme": "模板注入",
+   "action": "fold",
+   "target": "hunt-xss",
+   "reason": "阅读器模式模板注入导致数据窃取，属于客户端模板注入导致XSS"
+  },
+  {
+   "id": 425007,
+   "theme": "XSS注入",
+   "action": "fold",
+   "target": "hunt-xss",
+   "reason": "Open Graph标签注入导致持久性XSS，属于XSS注入变体"
+  },
+  {
+   "id": 633231,
+   "theme": "XSS注入",
+   "action": "fold",
+   "target": "hunt-xss",
+   "reason": "WordPress shortcode函数副作用导致XSS，属于XSS注入变体"
+  },
+  {
+   "id": 1167034,
+   "theme": "XSS过滤绕过",
+   "action": "fold",
+   "target": "hunt-xss",
+   "reason": "八进制编码绕过大小写转换过滤实现XSS，属于XSS编码绕过"
+  },
+  {
+   "id": 246794,
+   "theme": "XSS过滤绕过",
+   "action": "fold",
+   "target": "hunt-xss",
+   "reason": "安全处理状态标记由输入数据控制导致转义禁用，属于XSS过滤绕过"
+  },
+  {
+   "id": 1736317,
+   "theme": "模板注入",
+   "action": "fold",
+   "target": "hunt-xss",
+   "reason": "客户端模板注入导致XSS结合编码绕过，属于CSTI变体"
+  },
+  {
+   "id": 632017,
+   "theme": "XSS组合链",
+   "action": "fold",
+   "target": "hunt-xss",
+   "reason": "存储XSS与CSRF组合链实现ATO，属于XSS利用链"
+  },
+  {
+   "id": 1095645,
+   "theme": "XXE配置错误",
+   "action": "fold",
+   "target": "hunt-xxe",
+   "reason": "LIBXML_NOENT标志导致XXE，属于XXE配置错误变体"
+  },
+  {
+   "id": 845832,
+   "theme": "XXE利用",
+   "action": "fold",
+   "target": "hunt-xxe",
+   "reason": "SVG上传触发XXE进而SSRF/LFI，属于XXE利用变体"
+  },
+  {
+   "id": 905816,
+   "theme": "认证绕过",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "通过cookie中的MD5密码绕过速率限制暴力破解，属于认证绕过变体"
+  },
+  {
+   "id": 1040047,
+   "theme": "认证绕过",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "敏感令牌泄露给非预期角色导致邮箱验证绕过，属于认证绕过变体"
+  },
+  {
+   "id": 785833,
+   "theme": "账户接管",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "邮箱重复注册结合密码重置导致账户接管，属于认证绕过变体"
+  },
+  {
+   "id": 423136,
+   "theme": "会话固定",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "会话固定结合XSS实现跨应用身份冒充，属于认证绕过变体"
+  },
+  {
+   "id": 195058,
+   "theme": "信息泄露",
+   "action": "fold",
+   "target": "recognize-attack-surface",
+   "reason": "命名空间重命名后旧链接未失效导致旧导出文件泄露，属于信息泄露横切类"
+  }
+ ]
+}

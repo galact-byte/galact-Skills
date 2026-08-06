@@ -56,3 +56,26 @@
 | YAML | 1663299 |
 
 hunt 顺序：先格式指纹定位语言 → 该语言的最小带外 gadget 探可达（phar/URI）→ 授权后再上完整 RCE gadget。
+
+## 更多真实案例（第三轮单例补充）
+
+（来自第二轮单例、第三轮语义路由归入本类；仅列此前未收录的报告，作案例索引）
+
+- **反序列化**
+  - #55029 PHP unserialize 中 DateTimeZone 对象的 use-after-free 漏洞
+  - #73257 YAML解析器中的!php/object标签触发反序列化
+  - #2334460 绕过反序列化保护配置（enable_xcom_pickling=False）实现RCE
+  - #146233 PHP GC算法UAF导致反序列化RCE
+  - #350401 Node.js 反序列化中利用 IIFE 和全局对象访问执行任意代码
+  - #1702859 Ruby JSON.load 反序列化导致 ReDoS 或意外对象
+  - #274990 绕过Psych.safe_load通过YAML到Marshal转换实现RCE
+  - #1529790 通过Kafka Connect的JAAS配置触发JNDI注入实现RCE
+- **反序列化RCE**
+  - #407552 反序列化 gadget 链构造实现 RCE
+  - #410882 phar 反序列化通过 getimagesize 触发实现未认证 RCE
+- **反序列化+XXE**
+  - #416123 PHP反序列化触发XXE读取文件并泄露API令牌
+- **会话注入**
+  - #159946 PHP 会话数据注入
+- **反序列化文件操作**
+  - #921288 PHAR 反序列化触发任意文件删除

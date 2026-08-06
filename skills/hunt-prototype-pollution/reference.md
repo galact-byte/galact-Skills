@@ -58,3 +58,23 @@
 | 逻辑绕过 | 310707 / 311236 / 869574 |
 
 hunt 顺序：先 JSON body `__proto__` 探针 → 无效再 `constructor.prototype` 与 query 变体 → 命中后按语言找 gadget（服务端优先 spawn/模板，客户端优先 HTML sink）。
+
+## 更多真实案例（第三轮单例补充）
+
+（来自第二轮单例、第三轮语义路由归入本类；仅列此前未收录的报告，作案例索引）
+
+- **原型污染**
+  - #1431042 console.table 原型污染
+  - #843171 Electron 框架原型污染绕过链接验证实现 RCE
+  - #712065 lodash 原型污染：zipObjectDeep 函数
+  - #998398 原型污染 + eval gadget 实现 XSS
+  - #878181 原型污染注入NODE_OPTIONS导致RCE
+  - #1280002 Mermaid 原型污染导致存储 XSS
+- **框架行为利用**
+  - #1715536 JavaScript 原型链污染导致框架崩溃
+- **原型污染到命令注入**
+  - #390881 原型污染触发 morgan 代码注入
+- **沙箱逃逸**
+  - #809012 沙箱逃逸通过原型链和 bind 方法
+- **类型混淆**
+  - #340053 原型链 getter 导致类型混淆和 UAF

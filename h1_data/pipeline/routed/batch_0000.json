@@ -1,0 +1,144 @@
+{
+ "detailed": [
+  {
+   "id": 842625,
+   "theme": "IDOR账户接管",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "IDOR结合密码重置实现账户接管，属于认证绕过变体"
+  },
+  {
+   "id": 447930,
+   "theme": "IDOR信息泄露",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "GraphQL暴露内部主键导致IDOR，属于认证绕过变体"
+  },
+  {
+   "id": 31756,
+   "theme": "SQL注入RCE",
+   "action": "fold",
+   "target": "hunt-sqli",
+   "reason": "Drupal数组键SQL注入导致RCE，属于SQL注入变体"
+  },
+  {
+   "id": 1663299,
+   "theme": "SQL注入RCE",
+   "action": "fold",
+   "target": "hunt-sqli",
+   "reason": "SQL注入逃逸事务结合反序列化实现RCE，属于SQL注入变体"
+  },
+  {
+   "id": 713900,
+   "theme": "SSRF到RCE",
+   "action": "fold",
+   "target": "hunt-ssrf",
+   "reason": "SSRF绕过白名单结合模板注入实现RCE，属于SSRF变体"
+  },
+  {
+   "id": 341876,
+   "theme": "SSRF到RCE",
+   "action": "fold",
+   "target": "hunt-ssrf",
+   "reason": "SSRF到Kubernetes RCE攻击链，属于SSRF变体"
+  },
+  {
+   "id": 237381,
+   "theme": "SSRF绕过",
+   "action": "fold",
+   "target": "hunt-ssrf",
+   "reason": "FFmpeg HLS处理SSRF，属于SSRF变体"
+  },
+  {
+   "id": 1354335,
+   "theme": "SSRF到RCE",
+   "action": "fold",
+   "target": "hunt-ssrf",
+   "reason": "SSRF结合Gopher攻击FastCGI，属于SSRF变体"
+  },
+  {
+   "id": 1398305,
+   "theme": "XSS过滤器绕过",
+   "action": "fold",
+   "target": "hunt-xss",
+   "reason": "XSS过滤器绕过，属于XSS变体"
+  },
+  {
+   "id": 227486,
+   "theme": "XSS WAF绕过",
+   "action": "fold",
+   "target": "hunt-xss",
+   "reason": "WAF绕过编码注入，属于XSS变体"
+  },
+  {
+   "id": 232174,
+   "theme": "XSS白名单绕过",
+   "action": "fold",
+   "target": "hunt-xss",
+   "reason": "SVG白名单绕过，属于XSS变体"
+  },
+  {
+   "id": 921635,
+   "theme": "DOM XSS",
+   "action": "fold",
+   "target": "hunt-xss",
+   "reason": "DOM XSS利用存储和eval，属于XSS变体"
+  },
+  {
+   "id": 2010530,
+   "theme": "XSS账户接管",
+   "action": "fold",
+   "target": "hunt-xss",
+   "reason": "Cookie走私结合XSS，属于XSS变体"
+  },
+  {
+   "id": 662083,
+   "theme": "DOM XSS",
+   "action": "fold",
+   "target": "hunt-xss",
+   "reason": "pushState路径遍历绕过实现DOM XSS，属于XSS变体"
+  },
+  {
+   "id": 1760213,
+   "theme": "XSS WAF绕过",
+   "action": "fold",
+   "target": "hunt-xss",
+   "reason": "WAF与服务器解析差异绕过，属于XSS变体"
+  },
+  {
+   "id": 134546,
+   "theme": "Flash XSS",
+   "action": "fold",
+   "target": "hunt-xss",
+   "reason": "Flash XSS利用解析差异，属于XSS变体"
+  },
+  {
+   "id": 1444682,
+   "theme": "XSS配置错误",
+   "action": "fold",
+   "target": "hunt-xss",
+   "reason": "Swagger-UI configUrl加载data协议导致XSS，属于XSS变体"
+  },
+  {
+   "id": 743953,
+   "theme": "IDOR业务逻辑",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "导入功能未过滤关联属性导致IDOR，属于认证绕过变体"
+  },
+  {
+   "id": 1330529,
+   "theme": "业务逻辑认证",
+   "action": "fold",
+   "target": "hunt-auth-bypass",
+   "reason": "OTP验证流程参数篡改导致未授权认领，属于认证绕过变体"
+  },
+  {
+   "id": 1295844,
+   "theme": "业务逻辑支付",
+   "action": "fold",
+   "target": "recognize-attack-surface",
+   "reason": "签名拼接漏洞导致支付金额篡改，属于业务逻辑横切类"
+  }
+ ]
+}
