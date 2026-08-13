@@ -1,3 +1,7 @@
+# Trellis engine artifacts (regenerable via `trellis update` per .version)
+scripts/
+agents/
+
 # Developer identity (local only)
 .developer
 
