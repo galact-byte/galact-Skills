@@ -1,61 +1,72 @@
-# skills · 个人自用 Agent Skill 库
+# Galact Skills
 
-一套自用的 [Agent Skill](https://agentskills.io)（`SKILL.md` 标准，跨 Claude Code / Codex 等）集合。
+可复用的 Agent Skill 集合。仓库的主要交付物是 [`skills/`](skills/) 下的 Skill；其中每个 Skill 都可以独立复制到兼容 Agent 的 Skill 目录中使用。
 
-**现阶段聚焦渗透测试漏洞挖掘**；后续会按需要扩展写作、工作流、数据处理等其它自用领域。
+当前内容以**授权安全测试与研究**为主，同时包含通用工作流类 Skill。渗透测试 Skill 只能用于你明确获准测试的目标、CTF、教学和研究，禁止用于未授权目标。
 
-> ⚠️ **授权与用途声明**：`skills/` 下的渗透 skill 仅用于**你有明确授权**的安全测试、CTF、
-> 教学与研究。每个 skill 内建 scope 确认与“7 问研判”纪律，只在授权范围内取证。
-> 请勿用于未授权目标。
+## 快速使用
 
-## 仓库结构
-
-```
-skills/            15 个 skill（当前全为渗透类）
-  hunt-*/          14 个“单类漏洞猎杀” skill（ssrf/xss/sqli/…）
-  recognize-attack-surface/   攻击面识别与研判总线（路由到各 hunt skill）
-h1_data/           渗透 skill 的数据处理与蒸馏配方
-tests/             skill 校验与本地端到端测试
-```
-
-### 每个 skill 的结构
-
-```
-<skill>/
-├── SKILL.md       frontmatter（触发 description）+ 正文（猎杀流程）
-├── tools/         确定性脚本（recon → hunt → validate 流水线，零第三方依赖）
-└── reference.md   payload / 绕过手法 / 真实案例（按需加载）
-```
-
-## 当前 skill 一览
-
-- **单类漏洞猎杀（hunt-\*）**：ssrf、xss、sqli、command-injection、path-traversal、
-  xxe、csrf、open-redirect、cache-poisoning、request-smuggling、deserialization、
-  prototype-pollution、auth-bypass、nodejs-permission-bypass。
-- **研判总线**：recognize-attack-surface —— 拿到目标先分诊、路由到对应 hunt skill，
-  并处理跨组件攻击链 / 业务逻辑 / 配置错误 / 信息泄露等横切类别。
-
-## 怎么用
-
-把某个 skill 目录整个拷进你 agent 的 skill 扫描目录，重开/刷新会话即可被识别：
+将需要的 Skill 目录整体复制到 Agent 的 Skill 扫描目录，然后重启或刷新会话：
 
 ```bash
-# Claude Code（个人）
+# Claude Code
 cp -r skills/hunt-ssrf ~/.claude/skills/
+
 # Codex
 cp -r skills/hunt-ssrf ~/.codex/skills/
+
 # Pi / .agents
 cp -r skills/hunt-ssrf ~/.agents/skills/
 ```
 
-之后直接描述任务（如“测下这个 URL 抓取有没有 SSRF”）；支持该标准的 Agent 会根据 skill 的
-`description` 发现并选择合适的 skill。必要时也可明确要求使用对应 skill。
+也可以复制整个 `skills/` 目录，以一次安装全部 Skill。支持 Agent Skills 标准的 Agent 会根据 `SKILL.md` frontmatter 中的 `description` 自动发现 Skill；必要时也可以在任务中明确指定 Skill 名称。
 
-## Roadmap
+## Skill 清单
 
-- [ ] 扩展非渗透自用 skill（写作 / 工作流 / 数据处理等）。
-- [ ] 持续补充和迭代现有渗透测试 skill。
+- `agent-workflow`：判断任务何时可以自主执行、何时需要澄清或明确批准，并匹配验证强度。
+- `recognize-attack-surface`：对目标进行攻击面分诊，路由到适用的漏洞猎杀 Skill，并覆盖攻击链、业务逻辑、配置错误和信息泄露等横切类别。
+- `hunt-*`：按漏洞类别进行授权安全测试，包括 SSRF、XSS、SQL 注入、命令注入、路径穿越、XXE、CSRF、开放重定向、缓存投毒、请求走私、反序列化、原型污染、认证绕过和 Node.js 权限绕过。
+
+每个 Skill 通常包含：
+
+```text
+<skill>/
+├── SKILL.md       触发条件、流程和安全边界
+├── tools/         可重复运行的辅助脚本（如有）
+└── reference.md   参考资料和测试方法（如有）
+```
+
+## 本地验证
+
+仓库提供离线验证 harness，用于检查所有 Skill 的 frontmatter、Shell 语法、Python 编译、行尾、交叉引用和 Python `--help` 冒烟导入：
+
+```bash
+bash tests/run_tests.sh
+```
+
+验证不访问外部目标。GitHub Actions 会在 push 和 pull request 时自动运行同一检查。
+
+## 仓库结构
+
+```text
+skills/       对外复用的主要交付物
+ tests/       Skill 静态与离线验证
+ h1_data/     用于生成和蒸馏 Skill 的维护者工具与配方
+.trellis/     项目工作流与任务记录；不属于 Skill 使用者的运行时依赖
+```
+
+`h1_data/` 和 `.trellis/` 主要服务于仓库维护，不需要复制到 Agent 的 Skill 目录。运行时数据、缓存、个人 AI 配置和本地任务状态由 `.gitignore` 排除；可复用的 Skill 源文件、测试和许可证保留在仓库中。
+
+## 贡献
+
+新增或修改 Skill 后，请运行：
+
+```bash
+bash tests/run_tests.sh
+```
+
+保持每个 Skill 自包含、描述准确，并明确记录授权范围和必要的安全边界。不要提交真实目标的扫描结果、凭据、个人配置或生成的大型数据文件。
 
 ## 许可
 
-[MIT](LICENSE)。渗透相关 skill 仍仅限授权测试与研究（见顶部声明）。
+代码和文档采用 [MIT License](LICENSE)。渗透测试相关 Skill 仍受顶部授权用途声明约束。

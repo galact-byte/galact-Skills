@@ -80,3 +80,15 @@ h1_data/pipeline/singleton_routing.md
 /Prompt1.md
 /Prompt2.md
 /Prompt3.md
+
+# ===== Trellis 本地运行态与备份 =====
+.trellis/.runtime/
+.trellis/.developer
+.trellis/.backup-*/
+
+# ===== 测试与构建缓存 =====
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
