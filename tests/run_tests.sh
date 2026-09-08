@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # 全 skill 离线完整测试 harness。
-# 5 层检查（都不触网，安全可复现）：
+# 6 层检查（都不触网，安全可复现）：
 #   1. structure  — 官方 quick_validate.py（frontmatter/命名/长度规范）
 #   2. shell-syntax — 每个 tools/*.sh 过 `bash -n`
 #   3. py-compile — 每个 tools/*.py 过 py_compile
@@ -13,7 +13,20 @@ set -uo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 SKILLS_DIR="$ROOT/skills"
 VALIDATOR="$ROOT/tests/quick_validate.py"
-PYBIN="$(command -v python3 || command -v python)"
+# Windows Git Bash may expose the Microsoft Store python3 alias even when it
+# cannot run Python. Select the first interpreter that actually starts.
+PYBIN=""
+for candidate in python3 python; do
+  path="$(command -v "$candidate" 2>/dev/null || true)"
+  if [[ -n "$path" ]] && "$path" -c 'import sys' >/dev/null 2>&1; then
+    PYBIN="$path"
+    break
+  fi
+done
+if [[ -z "$PYBIN" ]]; then
+  echo "错误：找不到可运行的 Python 解释器（python3/python）" >&2
+  exit 1
+fi
 export PYTHONUTF8=1
 
 pass_total=0; fail_total=0; skill_fail=0; skill_pass=0
