@@ -41,7 +41,34 @@ tests/             skill 校验与本地离线测试
 - **通用工作流**：agent-workflow —— 判断任务何时可以自主执行、何时需要澄清或明确批准，
   并按风险匹配验证强度。
 
+本次完善了 `agent-workflow` 的部分阻塞处理、失败诊断、完成证据和默认测试/严格 TDD 边界；保留 Trellis 与显式流程的批准要求，并提供场景正反例。
+
 ## 怎么用
+
+### 通过 npx 安装
+
+已安装 Node.js 和 Git 时，可通过 [skills CLI](https://github.com/vercel-labs/skills) 选择 Skill 和目标 Agent：
+
+```bash
+npx skills@latest add galact-byte/galact-Skills
+```
+
+常用选项：
+
+```bash
+# 只查看可用 Skill，不安装
+npx skills@latest add galact-byte/galact-Skills --list
+
+# 只安装 agent-workflow
+npx skills@latest add galact-byte/galact-Skills --skill agent-workflow
+
+# 安装 agent-workflow 到全局 Pi 目录
+npx skills@latest add galact-byte/galact-Skills --skill agent-workflow -g -a pi
+```
+
+默认安装到当前项目；`-g` 表示全局安装，`-a` 指定 Agent（如 `claude-code`、`codex`、`pi`）。已有同名且自行修改过的 Skill 时，安装或更新前先保留本地修改。
+
+### 手动复制或下载 Release
 
 把某个 skill 目录整个拷进你 agent 的 skill 扫描目录，重开/刷新会话即可被识别：
 

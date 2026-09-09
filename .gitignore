@@ -92,3 +92,8 @@ h1_data/pipeline/singleton_routing.md
 .ruff_cache/
 .coverage
 htmlcov/
+
+# ===== 本地分发包与可再生成的 Trellis 引擎 =====
+/galact-skills.zip
+/.trellis/scripts/
+/.trellis/agents/
