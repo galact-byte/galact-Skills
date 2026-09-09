@@ -7,6 +7,7 @@
 #   4. lf-endings — tools/*.sh 无 CRLF（保证 Linux/mac 可执行）
 #   5. xref       — SKILL.md 里引用的 tools/* 与 reference.md 真实存在
 #   6. py-import  — 每个 hunt_*.py `--help` 退出 0（证明可 import common + argparse 正常，不触网）
+# agent-workflow 另跑文档静态契约回归，不调用模型。
 # 用法: bash tests/run_tests.sh
 set -uo pipefail
 
@@ -90,6 +91,11 @@ for skill in "$SKILLS_DIR"/*/; do
     err="$("$PYBIN" "$f" --help 2>&1 >/dev/null)" || imp_bad+="$(basename "$f"): ${err##*Error}; "
   done
   check "py-import (--help exits 0)" "$([[ -z "$imp_bad" ]] && echo 0 || echo 1)" "$imp_bad" || ok=0
+
+  if [[ "$name" == "agent-workflow" ]]; then
+    out="$("$PYBIN" "$ROOT/tests/test_agent_workflow.py" 2>&1)"; code=$?
+    check "document-contract (static, not model behavior)" "$code" "$out" || ok=0
+  fi
 
   if [[ "$ok" -eq 1 ]]; then skill_pass=$((skill_pass+1)); else skill_fail=$((skill_fail+1)); FAILED_SKILLS+=("$name"); fi
   echo

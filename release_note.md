@@ -1,21 +1,14 @@
-## ✨ 新增功能
+## 修复与优化
 
-- 新增 `agent-workflow` Skill，统一说明 Agent 的自主执行、澄清、明确批准和验证范围决策。
-- 新增 GitHub Actions 自动校验与发布流程，推送版本标签即可生成 Skill 分发包。
-- 发布资产提供只包含 `skills/` 的 `galact-skills.zip`，无需获取数据管线和 Trellis 开发材料。
+- 完善 `agent-workflow`：授权内自主选择实现与测试方式，复杂或跨文件任务不再额外触发确认；部分阻塞不妨碍独立工作继续。
+- 明确失败诊断、完整回归和完成证据要求，区分默认测试与严格 TDD，保留已有成果与显式批准节点。
+- 补充 17 个场景正反例，明确子代理必要性及按难度选择推理强度的原则。
+- README 增加 `npx skills@latest add galact-byte/galact-Skills` 安装方式，可按需选择 Skill 和目标 Agent。
+- 补充分发包及 Trellis 引擎目录的忽略规则。
 
-## 🛠️ 修复与优化
+## 兼容性说明
 
-- 修复 Windows Git Bash 下测试 harness 错误选择 Microsoft Store `python3` 别名的问题。
-- 更新 README，明确 Skill 是仓库的主要交付物，并区分使用者内容与维护者工具。
-- 补充本地运行态、备份目录和常见测试缓存的忽略规则。
-
-## 🔄 兼容性说明
-
-- Skill 按 Agent Skills `SKILL.md` 目录结构分发，可单独复制到 Claude Code、Codex、Pi / `.agents` 等兼容目录。
-- 发布前会在 Ubuntu 上运行完整离线验证，不访问外部测试目标。
-- 渗透测试相关 Skill 仅限明确授权的安全测试、CTF、教学和研究用途。
-
-## 已知边界
-
-- `h1_data/` 与 `.trellis/` 主要用于维护和生成，不属于 Skill 使用者安装所需内容。
+- 仍提供 16 个 Skill，目录结构不变；分发资产为 `galact-skills.zip`，仅包含 `skills/`。
+- 保留破坏性操作、生产访问、外部副作用、费用、数据安全和用户阶段检查点的批准要求，不自动接管 Trellis。
+- 验证包含离线结构、脚本冒烟和文档静态回归，不代表真实模型行为已得到验证。
+- 渗透测试相关 Skill 仅限明确授权的安全测试、CTF、教学与研究。
