@@ -3,7 +3,7 @@
   "name": "agent-workflow",
   "title": "新增 agent-workflow 通用 Skill",
   "description": "沉淀低风险自主执行、批准边界、风险分层验证与 TDD 适用范围",
-  "status": "in_progress",
+  "status": "completed",
   "dev_type": null,
   "scope": "skills/agent-workflow/SKILL.md",
   "package": null,
@@ -11,7 +11,7 @@
   "creator": "galact",
   "assignee": "galact",
   "createdAt": "2026-08-25",
-  "completedAt": null,
+  "completedAt": "2026-09-09",
   "branch": null,
   "base_branch": "main",
   "worktree_path": null,
@@ -20,7 +20,9 @@
   "subtasks": [],
   "children": [],
   "parent": null,
-  "relatedFiles": ["skills/agent-workflow/SKILL.md"],
+  "relatedFiles": [
+    "skills/agent-workflow/SKILL.md"
+  ],
   "notes": "Trellis scripts are absent from this checkout; task artifact created using the repository's existing task schema.",
   "meta": {}
 }
