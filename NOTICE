@@ -1,0 +1,19 @@
+galact-Skills — 版权、历史许可与第三方通知
+
+官方来源：https://github.com/galact-byte/galact-Skills
+当前许可：LicenseRef-Galact-Internal-Use-1.0（详见 LICENSE）
+商业授权：请通过上述官方仓库联系维护者，取得相关权利人的书面授权；公开源码、署名或付费下载本身不构成该授权。
+
+版权通知
+Copyright (c) 2026 galact
+本次自定义许可仅覆盖维护者有权重新授权的原创部分；未经授权的其他作者内容不因此改变许可。
+
+历史基线
+https://github.com/galact-byte/galact-Skills/tree/bf205e66db629754321d6fc00f6d6dbab0fc09d7
+该基线此前按 MIT 发布。licenses/LEGACY-MIT.txt 原样保存当时根许可，包括其版权通知与第三方例外；它是历史许可记录，不是对未来新增原创内容的统一 MIT 授权。已合法取得的旧版本、内容及其合法衍生版本继续享有原许可权利。
+
+第三方例外
+tests/quick_validate.py 来源于 anthropics/claude-plugins-official 的 skill-creator，继续适用 Apache-2.0；原文件头署名保留，完整许可见 licenses/Apache-2.0.txt。h1_data/ 等第三方平台数据按其来源的权利与使用条件处理。
+无论是否逐项列出，第三方与已有独立有效许可继续适用；本通知不是完整的第三方合规认证。
+
+修改版须标识修改者及修改事实，保留本通知和适用许可；不得冒充官方、虚假背书或将第三方经营行为表示为原作者所为。

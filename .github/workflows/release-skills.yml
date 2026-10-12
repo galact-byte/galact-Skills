@@ -35,6 +35,8 @@ jobs:
           root = Path("skills")
           output = Path("galact-skills.zip")
           with ZipFile(output, "w", ZIP_DEFLATED) as archive:
+              for legal_file in [Path("LICENSE"), Path("NOTICE"), *sorted(Path("licenses").glob("*.txt"))]:
+                  archive.write(legal_file, legal_file.as_posix())
               for path in sorted(root.rglob("*")):
                   if not path.is_file():
                       continue
