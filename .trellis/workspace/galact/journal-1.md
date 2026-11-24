@@ -100,3 +100,35 @@
 ### Status
 
 [OK] **Completed**
+
+
+## Session 4: GraphQL、WebSocket Skill 与 v0.2.0 发布
+<!-- trellis-session: v=2 fp=a0221468b7c3bcd9 -->
+
+**Date**: 2026-11-24
+**Task**: GraphQL、WebSocket Skill 与 v0.2.0 发布
+**Branch**: `master`
+
+### Summary
+
+新增两项自包含 Skill 并同步 AAASRC；筛选通用候选后不扩充。v0.2.0 已发布，27 Skill / 164 项检查通过，远端 ZIP 130 文件匹配标签原文。
+
+### Main Changes
+
+- 补充分发附件与 Git blob 的跨平台校验约定；保留用户 Trellis 初始化改动
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `cde8bba` | feat: 新增 GraphQL 与 WebSocket Skill 并准备 v0.2.0 |
+| `e29f72f` | docs: 明确发布附件与标签原文的跨平台校验 |
+
+### Testing
+
+- [OK] 本地和远端离线校验：27 Skill / 164 项，0 失败
+- [OK] AAASRC 4 文件 SHA-256 一致；Release 正文与 130 个附件文件回读一致
+
+### Status
+
+[OK] **Completed**
