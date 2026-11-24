@@ -11,10 +11,11 @@
 ## 仓库结构
 
 ```
-skills/            16 个可复用 skill
-  hunt-*/          14 个“单类漏洞猎杀” skill（ssrf/xss/sqli/…）
+skills/            25 个可复用 skill
+  hunt-*/          23 个“单类漏洞猎杀” skill（ssrf/xss/sqli/…）
   recognize-attack-surface/   攻击面识别与研判总线（路由到各 hunt skill）
   agent-workflow/  通用 Agent 工作流决策 skill
+  _toolbox.md      可选工具速查（随完整分发包提供）
 h1_data/           渗透 skill 的数据处理与蒸馏配方（维护者使用）
 tests/             skill 校验与本地离线测试
 .trellis/          项目工作流与任务记录（维护者使用）
@@ -27,21 +28,22 @@ tests/             skill 校验与本地离线测试
 ```
 <skill>/
 ├── SKILL.md       frontmatter（触发 description）+ 正文（流程与边界）
-├── tools/         确定性脚本（recon → hunt → validate 流水线，零第三方依赖）
-└── reference.md   payload / 绕过手法 / 真实案例（按需加载）
+├── tools/         可选：部分 Skill 附带的确定性脚本
+└── reference.md   可选：方法、版本条件与官方依据（也可能使用 references/）
 ```
 
 ## 当前 skill 一览
 
 - **单类漏洞猎杀（hunt-\*）**：ssrf、xss、sqli、command-injection、path-traversal、
   xxe、csrf、open-redirect、cache-poisoning、request-smuggling、deserialization、
-  prototype-pollution、auth-bypass、nodejs-permission-bypass。
+  prototype-pollution、auth-bypass、nodejs-permission-bypass、idor、file-upload、
+  oauth-jwt、logic、race-condition、ssti、subdomain-takeover、source-exposure、jndi。
 - **研判总线**：recognize-attack-surface —— 拿到目标先分诊、路由到对应 hunt skill，
   并处理跨组件攻击链 / 业务逻辑 / 配置错误 / 信息泄露等横切类别。
 - **通用工作流**：agent-workflow —— 判断任务何时可以自主执行、何时需要澄清或明确批准，
   并按风险匹配验证强度。
 
-本次完善了 `agent-workflow` 的部分阻塞处理、失败诊断、完成证据和默认测试/严格 TDD 边界；保留 Trellis 与显式流程的批准要求，并提供场景正反例。
+各专项 Skill 可独立复制使用；外部工具按现场已安装能力选择。子域接管区分悬挂线索与实际可接管条件，源码暴露区分元数据与完整源码，JNDI 区分出网查询与代码执行。缺少许可、工具或证据时保留阻塞/未定状态。
 
 ## 怎么用
 
@@ -94,7 +96,7 @@ cp -r skills/hunt-ssrf ~/.agents/skills/
 bash tests/run_tests.sh
 ```
 
-它会检查所有 Skill 的 frontmatter、Shell 语法、Python 编译、行尾、交叉引用和 Python `--help` 冒烟导入，不访问外部测试目标。GitHub Actions 会在 push、pull request 和版本发布时运行相应验证。
+它会检查所有 Skill 的 frontmatter、Shell 语法、Python 编译、行尾、交叉引用和 Python `--help` 冒烟导入，并检查本地文档链接、私有依赖和嵌套重复入口，不访问外部测试目标。这些静态与冒烟检查不证明模型在真实任务中的行为或目标漏洞可利用。GitHub Actions 会在 push、pull request 和版本发布时运行相应验证。
 
 ## Roadmap
 

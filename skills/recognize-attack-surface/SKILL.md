@@ -8,7 +8,15 @@ allowed-tools: Read, Grep, Glob
 
 这是渗透 skill 库的**分诊总线**：不直接挖某一类漏洞，而是看清目标后判断"该往哪个 hunt skill 走"，并亲自处理四类**不适合做成单点猎杀**的横切问题——跨组件攻击链、业务逻辑、配置错误、信息泄露。
 
-用法心智：先侦察→按信号路由到具体 hunt skill→对横切类别用本文的研判清单→把散点串成链。深度案例与信号目录见 `references/patterns.md`（渐进披露，判定某类时再读对应段）。
+## 当前任务约束（先于路由）
+
+先恢复当前任务的授权目标、模式、身份、动作限制、请求预算与证据约定；如宿主提供 scope/状态文件或主流程，优先读取，但本库不要求特定私有文件。下文信号与方法不增加权限，不自动启动另一模式。
+
+- SRC：以实际项目规则、范围和影响排序，不把奖励预期当作许可。
+- 客户委托：按约定检查单元、禁用动作与风险排序；约定禁止 WebShell、存储型 XSS 时，任何 Skill 默认项都不能覆盖。配置观察可独立交付，但必须有事实依据和准确状态。
+- 禁用/缺前提的验证保留已有线索，记 blocked/inconclusive，不执行后再补许可，不把未测写安全。
+
+用法心智：先识别目标与业务→按信号路由到具体 hunt skill→对横切类别使用研判清单→在当前任务需要且获准时验证关联影响。深度案例与信号目录见 `references/patterns.md`（渐进披露，判定某类时再读对应段）。
 
 ## 何时用哪个 hunt skill（路由表）
 
@@ -30,8 +38,35 @@ allowed-tools: Read, Grep, Glob
 | 状态变更操作的 CSRF 防护可疑 | `hunt-csrf` |
 | 前有缓存层 + unkeyed 输入影响响应 | `hunt-cache-poisoning` |
 | 按用户参数跳转（next/return/redirect_uri） | `hunt-open-redirect` |
+| 带 ID 参数的对象读写接口（订单/用户/文件），多角色体系 | `hunt-idor` |
+| 支付/余额/券/积分/库存/抢购，检查-执行分离 | `hunt-race-condition` |
+| 购买/审批/状态机流转/数量价格可控 | `hunt-logic` |
+| JWT / OAuth / SSO / SAML / OIDC 认证流 | `hunt-oauth-jwt` |
+| 文件上传 + 服务端解析/渲染/存储 | `hunt-file-upload` |
+| 模板引擎/自定义渲染/动态页面反射（Java EL / Jinja2 / Twig / Freemarker） | `hunt-ssti` |
+| DNS 悬挂、失效云资源指向、厂商资源不存在提示 | `hunt-subdomain-takeover` |
+| VCS 元数据、备份、私有配置疑似可通过 Web 访问 | `hunt-source-exposure` |
+| 可控 Java 命名查询、Log4j JNDI 或 LDAP/RMI 回调线索 | `hunt-jndi` |
 
-一个入口常命中多个——按"最高影响 + 最省条件"排序逐个试。找不到匹配就落到下面四类横切研判。
+### 逆向、移动端与厚客户端（可选外部能力）
+
+本库不附带逆向工具和第三方 Skill。需要时先检查现场已安装能力、真实入口与版本；缺少能力记 blocked，不自动安装，也不猜工具参数。
+
+| 信号 | 可选外部能力 | 验证重点 |
+|---|---|---|
+| Android APK/AAB、iOS IPA | 已安装的移动端逆向 Skill、反编译与运行时工具 | 受控设备/应用、真实网络与存储行为 |
+| 小程序、前端 JS 加密/混淆 | 已安装的 JS 逆向与运行时采样能力 | 静态线索与实际请求对照 |
+| Windows 原生 EXE/DLL | 已安装的 IDA/Ghidra 等分析能力 | 平台、架构、协议与运行时证据 |
+| .NET 程序集 | 已安装的 ILSpy/dnSpy 等分析能力 | 实际加载程序集与身份/数据流 |
+| 固件/IoT、Electron/Qt/WPF 厚客户端 | 已安装的对应平台分析能力 | 提取许可、设备边界、IPC/本地存储 |
+
+若现场安装了 `reverse-skill`，先读取其真实入口再选专项目录；不依赖固定本机路径或特定子 Skill 名。提取出的端点回到 Web/API 路由，发现凭据不授权使用。
+
+一个入口常命中多个：SRC 按“最高影响 + 最省条件”排序；客户模式按约定覆盖与风险排序，不能因为线索价值低就跳过约定检查。找不到匹配就落到下面四类横切研判。
+
+**SRC 高频类（无专用 hunt skill，走 `references/src-playbook.md` 对应段）**：LFI/文件包含、短信/验证码频率、GraphQL/CRLF/Host 头/WAF 绕过快查。注意：越权/IDOR、文件上传、SSTI、支付/业务逻辑、OAuth/JWT 已有专用 hunt skill（见上表），优先走 skill，不再重复走 src-playbook。这些类别按当前任务、技术和实际信号选读，不因为列在索引里就自动执行。
+
+> 可选工具、版本检查与证据要求见 [工具速查](../_toolbox.md)。单独复制此 Skill 时工具速查不是运行前提；需要它可从同一版本仓库另行获取。
 
 ## 横切类别研判（无专用 hunt skill，本文直接处理）
 
@@ -85,9 +120,11 @@ allowed-tools: Read, Grep, Glob
   - 业务逻辑：<被打破的不变量>
   - 配置错误：<具体项>
   - 信息泄露：<拿到什么>
-- 下一步：<按影响排序的行动>
+- 下一步：<按当前模式、风险与约定排序的行动>
 ```
 
 ## 参考
 
-各横切类别的信号目录与真实 HackerOne 案例见 `references/patterns.md`——研判某一类时再读对应段。
+- [横切信号与案例](references/patterns.md)：按需要选读。
+- [SRC 补充参考](references/src-playbook.md)：不覆盖当前许可与专门 Skill 的确认标准。
+- [工具速查](../_toolbox.md)：可选，不要求私有配置。

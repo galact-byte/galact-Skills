@@ -7,7 +7,7 @@
 #   4. lf-endings — tools/*.sh 无 CRLF（保证 Linux/mac 可执行）
 #   5. xref       — SKILL.md 里引用的 tools/* 与 reference.md 真实存在
 #   6. py-import  — 每个 hunt_*.py `--help` 退出 0（证明可 import common + argparse 正常，不触网）
-# agent-workflow 另跑文档静态契约回归，不调用模型。
+# agent-workflow 另跑文档静态契约回归；全库另查分发依赖，均不调用模型。
 # 用法: bash tests/run_tests.sh
 set -uo pipefail
 
@@ -101,8 +101,11 @@ for skill in "$SKILLS_DIR"/*/; do
   echo
 done
 
+out="$("$PYBIN" -m unittest discover -s "$ROOT/tests" -p test_distribution.py -v 2>&1)"; code=$?
+check "distribution (local links, private dependencies, duplicate entries)" "$code" "$out" || true
+
 echo "════════════════════════════════════════"
 echo "skills: $skill_pass PASS / $skill_fail FAIL   |   checks: $pass_total pass / $fail_total fail"
 [[ "$skill_fail" -gt 0 ]] && echo "失败 skill: ${FAILED_SKILLS[*]}"
 echo "════════════════════════════════════════"
-exit $([[ "$skill_fail" -eq 0 ]] && echo 0 || echo 1)
+exit $([[ "$fail_total" -eq 0 ]] && echo 0 || echo 1)
