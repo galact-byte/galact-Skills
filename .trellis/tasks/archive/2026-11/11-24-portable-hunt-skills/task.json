@@ -1,0 +1,22 @@
+{
+  "id": "portable-hunt-skills",
+  "name": "portable-hunt-skills",
+  "title": "补充三类专项 Skill 并修复分发依赖",
+  "status": "completed",
+  "priority": "P2",
+  "creator": "galact",
+  "assignee": "galact",
+  "createdAt": "2026-11-24",
+  "completedAt": "2026-11-24",
+  "base_branch": "master",
+  "notes": "用户已批准方案与提交推送；实施期间已由用户初始化并更新 Trellis，使用当前引擎继续既有任务；主代理执行。",
+  "relatedFiles": [
+    "skills/hunt-subdomain-takeover",
+    "skills/hunt-source-exposure",
+    "skills/hunt-jndi",
+    "tests/test_distribution.py"
+  ],
+  "children": [],
+  "parent": null,
+  "branch": "master"
+}
