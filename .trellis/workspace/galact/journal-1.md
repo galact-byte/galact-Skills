@@ -72,3 +72,31 @@
 ### Next Steps
 
 - 推送 master 与 v0.1.1 标签，等待 CI 并核对 Release 正文和 ZIP 内容。
+
+
+## Session 3: 专项 Skill 与独立分发收尾
+<!-- trellis-session: v=2 fp=e2464ba74deab628 -->
+
+**Date**: 2026-11-24
+**Task**: 专项 Skill 与独立分发收尾
+**Branch**: `master`
+
+### Summary
+
+新增三个专项 Skill，修复六个追加 Skill 的分发依赖并完成本机镜像。全量检查 25 个 Skill、152 项检查通过；发布构建解包及六个镜像文件 SHA-256 核对一致。远端文档提交已保留合并，GitHub 离线校验通过。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `6e47880` | feat: 补齐专项漏洞 Skill 并修复独立分发 |
+| `99ef09b` | Merge remote-tracking branch 'origin/master' |
+
+### Testing
+
+- [OK] bash tests/run_tests.sh：25 PASS / 0 FAIL，152 pass / 0 fail
+- [OK] 分发专项 6 个用例通过；未进行真实目标测试或模型行为评测
+
+### Status
+
+[OK] **Completed**
