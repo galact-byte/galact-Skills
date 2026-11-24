@@ -33,7 +33,8 @@ class DistributionTests(unittest.TestCase):
         self.assertEqual(distribution_errors(SKILLS), [])
 
     def test_expected_hunt_entries(self):
-        for name in ("hunt-subdomain-takeover", "hunt-source-exposure", "hunt-jndi"):
+        for name in ("hunt-subdomain-takeover", "hunt-source-exposure", "hunt-jndi",
+                     "hunt-graphql", "hunt-websocket"):
             with self.subTest(skill=name):
                 entry = SKILLS / name / "SKILL.md"
                 self.assertTrue(entry.is_file(), f"缺少 {entry}")

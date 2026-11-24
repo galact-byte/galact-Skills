@@ -11,8 +11,8 @@
 ## 仓库结构
 
 ```
-skills/            25 个可复用 skill
-  hunt-*/          23 个“单类漏洞猎杀” skill（ssrf/xss/sqli/…）
+skills/            27 个可复用 skill
+  hunt-*/          25 个“单类漏洞与协议测试” skill（ssrf/xss/sqli/…）
   recognize-attack-surface/   攻击面识别与研判总线（路由到各 hunt skill）
   agent-workflow/  通用 Agent 工作流决策 skill
   _toolbox.md      可选工具速查（随完整分发包提供）
@@ -37,7 +37,8 @@ tests/             skill 校验与本地离线测试
 - **单类漏洞猎杀（hunt-\*）**：ssrf、xss、sqli、command-injection、path-traversal、
   xxe、csrf、open-redirect、cache-poisoning、request-smuggling、deserialization、
   prototype-pollution、auth-bypass、nodejs-permission-bypass、idor、file-upload、
-  oauth-jwt、logic、race-condition、ssti、subdomain-takeover、source-exposure、jndi。
+  oauth-jwt、logic、race-condition、ssti、subdomain-takeover、source-exposure、jndi、
+  graphql、websocket。
 - **研判总线**：recognize-attack-surface —— 拿到目标先分诊、路由到对应 hunt skill，
   并处理跨组件攻击链 / 业务逻辑 / 配置错误 / 信息泄露等横切类别。
 - **通用工作流**：agent-workflow —— 判断任务何时可以自主执行、何时需要澄清或明确批准，

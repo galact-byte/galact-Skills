@@ -47,6 +47,8 @@ allowed-tools: Read, Grep, Glob
 | DNS 悬挂、失效云资源指向、厂商资源不存在提示 | `hunt-subdomain-takeover` |
 | VCS 元数据、备份、私有配置疑似可通过 Web 访问 | `hunt-source-exposure` |
 | 可控 Java 命名查询、Log4j JNDI 或 LDAP/RMI 回调线索 | `hunt-jndi` |
+| GraphQL 字段/resolver、schema、自定义批处理或 operation 限流差异 | `hunt-graphql` |
+| WebSocket/实时订阅、CSWSH、握手与消息权限或会话生命周期差异 | `hunt-websocket` |
 
 ### 逆向、移动端与厚客户端（可选外部能力）
 
@@ -64,7 +66,7 @@ allowed-tools: Read, Grep, Glob
 
 一个入口常命中多个：SRC 按“最高影响 + 最省条件”排序；客户模式按约定覆盖与风险排序，不能因为线索价值低就跳过约定检查。找不到匹配就落到下面四类横切研判。
 
-**SRC 高频类（无专用 hunt skill，走 `references/src-playbook.md` 对应段）**：LFI/文件包含、短信/验证码频率、GraphQL/CRLF/Host 头/WAF 绕过快查。注意：越权/IDOR、文件上传、SSTI、支付/业务逻辑、OAuth/JWT 已有专用 hunt skill（见上表），优先走 skill，不再重复走 src-playbook。这些类别按当前任务、技术和实际信号选读，不因为列在索引里就自动执行。
+**SRC 高频类（无专用 hunt skill，走 `references/src-playbook.md` 对应段）**：短信/验证码频率、CRLF、Host 头与 WAF 绕过快查。越权/IDOR、文件上传、SSTI、路径读取/文件包含、支付/业务逻辑、OAuth/JWT、GraphQL、WebSocket 已有专用 hunt skill（见上表），优先走对应 Skill。这些类别按当前任务、技术和实际信号选读，不因为列在索引里就自动执行。
 
 > 可选工具、版本检查与证据要求见 [工具速查](../_toolbox.md)。单独复制此 Skill 时工具速查不是运行前提；需要它可从同一版本仓库另行获取。
 

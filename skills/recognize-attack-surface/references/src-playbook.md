@@ -10,8 +10,10 @@
 | 支付/业务逻辑 | `hunt-logic` + `hunt-race-condition` | 补充场景 |
 | OAuth/JWT | `hunt-oauth-jwt` | 补充场景 |
 | LFI/文件包含 | `hunt-path-traversal` | 补充 payload |
+| GraphQL | `hunt-graphql` | 主流程见专用 Skill |
+| WebSocket/实时订阅 | `hunt-websocket` | 主流程见专用 Skill |
 
-仍缺专用 hunt skill 的类别：短信/频率、GraphQL、CRLF、Host 头注入、WAF 绕过。这些类别打法仍以本文为主。研判仍走 SKILL.md 的 7 问纪律，只做只读最小证明。
+仍缺专用 hunt skill 的类别：短信/频率、CRLF、Host 头注入、WAF 绕过。这些类别打法仍以本文为主。研判仍走 SKILL.md 的 7 问纪律，只做只读最小证明。
 
 ## 黑盒 Web 侦察顺序（吸收自 pentestagent web playbook）
 
@@ -64,7 +66,7 @@
 
 ## 7. 其余 Web 类快查（SecSkills 提炼，低频但要会认）
 
-- **GraphQL**：`/graphql` 开 introspection → 枚举 schema；批量查询/深度递归绕限流；字段级越权（REST 与 GraphQL 权限不一致，见 patterns #2382120/#2402853）。
+- **GraphQL**：优先使用 `hunt-graphql`；schema 可发现性、批量能力与越权/限流影响分别取证，不用深递归或大规模枚举做默认验证。
 - **CRLF**：`%0d%0a` 注入响应头 → set-cookie/重定向注入/缓存投毒前置。
 - **Host 头注入**：改 `Host`/`X-Forwarded-Host` → 密码重置链接投毒、缓存投毒、内网 SSRF 前置。
 - **WAF 绕过**：编码/大小写/分块/HPP/注释，绕不过就换注入点，别死磕。
